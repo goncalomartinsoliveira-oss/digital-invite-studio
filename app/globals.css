@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-inter);
+
+  /* Define a animação de zoom lento para a imagem principal */
+  @keyframes slow-zoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+  }
+  --animate-slow-zoom: slow-zoom 20s ease-in-out infinite alternate;
+}
+
+:root {
+  --background: #FDFBF7;
+  --foreground: #1a1a1a;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
