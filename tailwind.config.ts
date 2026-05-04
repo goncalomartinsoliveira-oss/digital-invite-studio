@@ -1,3 +1,4 @@
+// tailwind.config.ts
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -9,9 +10,11 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        // Estas são as variáveis que vamos configurar no layout
+        // Estas são as variáveis que configuraste no layout
         serif: ["var(--font-cormorant)"],
         sans: ["var(--font-inter)"],
+        // ADICIONADO: Esta é a linha que faltava!
+        script: ["var(--font-pinyon)", "cursive"],
       },
     },
   },

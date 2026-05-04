@@ -14,6 +14,14 @@ const AVAILABLE_TEMPLATES = [
 ];
 
 export default function DesignModule({ formData, setFormData, handleImageUpload, handleSaveDesign, saving }: DesignModuleProps) {
+  
+  // Função para remover a imagem atual do estado (precisa de ser publicada depois)
+  const handleRemoveImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation(); // Evita que o clique abra o menu de upload de ficheiros
+    setFormData({ ...formData, main_image_url: null });
+  };
+
   return (
     <div className="grid lg:grid-cols-2 gap-12 animate-in fade-in duration-500 text-left">
       <div className="space-y-8">
@@ -35,11 +43,11 @@ export default function DesignModule({ formData, setFormData, handleImageUpload,
           <div className="grid gap-6">
             <div className="space-y-1">
               <label className="text-[9px] uppercase tracking-widest opacity-40 font-bold">Noivo</label>
-              <input className="w-full border-b py-2 outline-none focus:border-black transition-colors" value={formData.groom_name} onChange={e => setFormData({...formData, groom_name: e.target.value})} />
+              <input className="w-full border-b py-2 outline-none focus:border-black transition-colors" value={formData.groom_name || ''} onChange={e => setFormData({...formData, groom_name: e.target.value})} />
             </div>
             <div className="space-y-1">
               <label className="text-[9px] uppercase tracking-widest opacity-40 font-bold">Noiva</label>
-              <input className="w-full border-b py-2 outline-none focus:border-black transition-colors" value={formData.bride_name} onChange={e => setFormData({...formData, bride_name: e.target.value})} />
+              <input className="w-full border-b py-2 outline-none focus:border-black transition-colors" value={formData.bride_name || ''} onChange={e => setFormData({...formData, bride_name: e.target.value})} />
             </div>
           </div>
         </section>
@@ -50,12 +58,23 @@ export default function DesignModule({ formData, setFormData, handleImageUpload,
           <h3 className="font-serif text-xl border-b pb-4 uppercase tracking-widest">03. Foto de Capa</h3>
           <div className="aspect-video bg-neutral-100 relative group overflow-hidden border">
             {formData.main_image_url ? (
-              <img src={formData.main_image_url} className="w-full h-full object-cover" />
+              <>
+                <img src={formData.main_image_url} className="w-full h-full object-cover" />
+                {/* Botão de Remover (Aparece sempre que há imagem) */}
+                <button 
+                  onClick={handleRemoveImage}
+                  className="absolute top-4 right-4 bg-[#72393F] text-white px-4 py-2 text-[8px] uppercase tracking-widest z-20 hover:bg-red-600 transition-colors shadow-md"
+                >
+                  Remover Foto
+                </button>
+              </>
             ) : (
               <div className="flex h-full items-center justify-center text-[10px] uppercase opacity-30">Sem Foto Selecionada</div>
             )}
-            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white text-[9px] uppercase font-bold transition-all">
-              Alterar Foto de Capa
+            
+            {/* Label de Upload (Fica por baixo do z-index do botão remover) */}
+            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white text-[9px] uppercase font-bold transition-all z-10">
+              {formData.main_image_url ? "Alterar Foto de Capa" : "Adicionar Foto de Capa"}
               <input type="file" className="hidden" onChange={handleImageUpload} />
             </label>
           </div>

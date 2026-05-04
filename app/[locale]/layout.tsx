@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter, Pinyon_Script } from "next/font/google"; // 1. Adicionada Pinyon_Script
 import "../globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -12,6 +12,13 @@ const cormorant = Cormorant_Garamond({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+// 2. Configurada a fonte Pinyon Script
+const pinyon = Pinyon_Script({
+  subsets: ["latin"],
+  weight: "400", // Pinyon Script só suporta o peso 400
+  variable: "--font-pinyon",
 });
 
 export const metadata: Metadata = {
@@ -30,7 +37,8 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${cormorant.variable} ${inter.variable} antialiased font-sans`}>
+      {/* 3. Adicionada pinyon.variable à lista de classes do body */}
+      <body className={`${cormorant.variable} ${inter.variable} ${pinyon.variable} antialiased font-sans`}>
         {children}
       </body>
     </html>

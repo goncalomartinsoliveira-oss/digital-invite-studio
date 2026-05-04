@@ -1,31 +1,43 @@
 "use client";
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#F0E9E3] text-[#332E2B] selection:bg-[#72393F] selection:text-[#F0E9E3]">
       
       {/* --- NAVIGATION --- */}
-      <nav className="fixed w-full z-50 px-8 py-4 flex justify-between items-center bg-[#F0E9E3]/90 backdrop-blur-md border-b border-[#332E2B]/5">
+      <nav className="fixed w-full z-50 px-4 md:px-8 py-4 flex justify-between items-center bg-[#F0E9E3]/90 backdrop-blur-md border-b border-[#332E2B]/5">
         <div className="flex items-center">
           <img 
             src="/logo-dis.svg" 
             alt="Digital Invite Studio" 
-            className="h-20 w-auto py-2" 
+            className="h-12 md:h-20 w-auto py-2" 
           />
         </div>
 
-        <div className="hidden md:flex gap-12 text-[10px] uppercase tracking-[0.2em] font-bold">
+        {/* --- MENU DESKTOP (Escondido em Mobile) --- */}
+        <div className="hidden md:flex items-center gap-12 text-[10px] uppercase tracking-[0.2em] font-bold">
           <a href="#" className="hover:text-[#72393F] transition-colors">Portfólio</a>
           <a href="#" className="hover:text-[#72393F] transition-colors">A Experiência</a>
           <a href="#" className="hover:text-[#72393F] transition-colors">Preços</a>
         </div>
 
-        {/* BOTÃO DA NAV EM VINHO */}
-        <button className="bg-[#72393F] text-[#F0E9E3] px-8 py-3 text-[9px] uppercase tracking-[0.2em] font-bold hover:bg-[#332E2B] transition-all duration-500 shadow-sm">
-          Começar Agora
-        </button>
+        {/* --- BOTÕES LADO DIREITO (Visíveis em Mobile e Desktop) --- */}
+        <div className="flex items-center gap-4 md:gap-8">
+          <Link 
+            href="/pt/login" 
+            className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold hover:text-[#72393F] transition-colors"
+          >
+            Login
+          </Link>
+          
+          {/* BOTÃO DA NAV EM VINHO */}
+          <button className="bg-[#72393F] text-[#F0E9E3] px-4 md:px-8 py-3 text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-bold hover:bg-[#332E2B] transition-all duration-500 shadow-sm whitespace-nowrap">
+            Começar Agora
+          </button>
+        </div>
       </nav>
 
       {/* --- HERO SECTION --- */}

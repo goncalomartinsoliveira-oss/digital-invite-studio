@@ -1,131 +1,113 @@
 "use client";
+import { motion, Variants } from "framer-motion";
+import { Pinyon_Script, Cormorant_Garamond } from "next/font/google";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+const pinyon = Pinyon_Script({ 
+  weight: "400", 
+  subsets: ["latin"],
+  display: 'swap',
+});
 
-// 1. Definição da estrutura de dados (TypeScript)
-interface LuxuryProps {
-  data?: {
-    groom_name: string;
-    bride_name: string;
-    event_date: string;
-    location_name: string;
-    story_text?: string;
-    main_image_url?: string; // Campo para a foto dinâmica
-  };
-}
+const cormorant = Cormorant_Garamond({ 
+  weight: ["300", "400"], 
+  subsets: ["latin"],
+  display: 'swap',
+});
 
-export default function LuxuryTemplate({ data }: LuxuryProps) {
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+const DEFAULT_BG_IMAGE = "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2000&auto=format&fit=crop";
 
-  // 2. Variáveis com nomes reais ou padrão (Fallback)
-  const groom = data?.groom_name || "Dmitry";
-  const bride = data?.bride_name || "Maria";
-  const location = data?.location_name || "Lisboa, Portugal";
+export default function LuxuryTemplate({ data }: { data: any }) {
   
-  const formattedDate = data?.event_date 
-    ? new Date(data.event_date).toLocaleDateString('pt-PT', { 
-        day: '2-digit', 
-        month: 'long', 
-        year: 'numeric' 
-      })
-    : "03 de Outubro de 2026";
+  const groomName = data?.groom_name || "Noivo";
+  const brideName = data?.bride_name || "Noiva";
+  const eventDate = data?.event_date || new Date().toISOString();
+  
+  const backgroundImageUrl = (data?.main_image_url && data.main_image_url.trim() !== "") 
+    ? data.main_image_url 
+    : DEFAULT_BG_IMAGE;
 
-  // 3. Configuração da animação com "as const" para evitar erros de TS
-  const fadeIn = {
-    initial: { opacity: 0, y: 40 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { 
-      duration: 1, 
-      ease: "easeOut" as const 
-    }
+  const dateObj = new Date(eventDate);
+  const formattedDate = dateObj.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).toUpperCase();
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.6, delayChildren: 0.3 } }
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } }
   };
 
   return (
-    <div className="relative bg-[#FDFBF7] text-[#1a1a1a] min-h-screen selection:bg-black selection:text-white">
+    <div className="w-full bg-[#FDFBF7]">
       
-      {/* --- HERO SECTION --- */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
-        <div className="absolute inset-0 z-0 opacity-50 animate-slow-zoom">
+      <motion.section 
+        className="relative w-full h-[100vh] min-h-[600px] overflow-hidden flex flex-col items-center justify-center bg-[#F9F8F6] text-center"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        {/* --- Fundo com Efeito Cinematográfico (como na maquete) --- */}
+        <div className="absolute inset-0 z-0">
           <img 
-            // Lógica dinâmica: Usa a foto do Supabase ou a padrão do Unsplash
-            src={data?.main_image_url || "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=2070"} 
-            alt="Casamento" 
-            className="w-full h-full object-cover"
+            src={backgroundImageUrl} 
+            alt="Paisagem do Casamento"
+            className="w-full h-full object-cover object-center"
           />
-        </div>
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2 }}
-          className="z-10 text-center text-[#FDFBF7] px-4 space-y-8"
-        >
-          <p className="font-sans text-xs uppercase tracking-[0.8em]">The Wedding of</p>
-          <h1 className="font-serif text-6xl md:text-[11rem] leading-none uppercase tracking-tighter">
-            {groom} <br /> <span className="italic font-light text-4xl md:text-8xl">&</span> {bride}
-          </h1>
-          <div className="space-y-4">
-            <p className="font-serif text-2xl italic">{formattedDate}</p>
-            <div className="h-12 w-px bg-white/20 mx-auto"></div>
-            <p className="font-sans text-[10px] uppercase tracking-widest opacity-60">{location}</p>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* --- NOSSA HISTÓRIA --- */}
-      <section className="py-32 px-6 max-w-5xl mx-auto">
-        <div className="text-center space-y-4 mb-20">
-          <span className="font-sans text-[10px] uppercase tracking-[0.6em] opacity-40 block italic">Our Journey</span>
-          <h2 className="font-serif text-5xl md:text-7xl uppercase tracking-tighter">A Nossa História</h2>
-          <div className="h-px w-16 bg-black mx-auto opacity-10 mt-6"></div>
+          {/* Gradiente: Mais escuro no topo e na base para o texto ler bem, claro no meio */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/60"></div>
+          <div className="absolute inset-0 z-10 shadow-[inset_0_0_150px_rgba(0,0,0,0.3)]"></div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-20 items-center">
-          <motion.div {...fadeIn} className="aspect-[4/5] overflow-hidden rounded-sm bg-neutral-100 shadow-xl">
-            <img 
-              // DICA: Também podes tornar esta imagem dinâmica no futuro se quiseres!
-              src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069" 
-              alt="Casal" 
-              className="w-full h-full object-cover" 
-            />
-          </motion.div>
-          <motion.div {...fadeIn} className="space-y-8">
-            <h3 className="font-serif text-4xl italic text-neutral-800">"Foi o melhor sim das nossas vidas..."</h3>
-            <p className="font-sans text-sm leading-loose opacity-70 uppercase tracking-widest text-justify">
-              {data?.story_text || "O que começou com uma simples conversa transformou-se numa vida de aventuras. Ao longo destes anos, construímos um caminho de cumplicidade, risos e um amor que agora celebramos com quem mais gostamos."}
-            </p>
-            <div className="grid grid-cols-2 gap-4 pt-10 border-t border-black/5">
-              <div>
-                <span className="block font-serif text-3xl">2018</span>
-                <span className="font-sans text-[8px] uppercase tracking-widest opacity-40">O Encontro</span>
-              </div>
-              <div>
-                <span className="block font-serif text-3xl">2026</span>
-                <span className="font-sans text-[8px] uppercase tracking-widest opacity-40">O Sim</span>
-              </div>
+        {/* --- Conteúdo Principal Otimizado para Mobile --- */}
+        <div className="relative z-20 w-full max-w-5xl mx-auto px-4 flex flex-col items-center justify-center">
+          
+          {/* 1. The Wedding Of */}
+          <motion.p 
+            variants={itemVariants}
+            className={`${cormorant.className} text-[#F0E9E3] text-[10px] sm:text-[12px] uppercase tracking-[0.4em] mb-6 drop-shadow-md`}
+          >
+            THE WEDDING OF
+          </motion.p>
+
+          {/* 2. Nomes MASSIVOS em "Escada" */}
+          <motion.div 
+            variants={itemVariants}
+            className={`${pinyon.className} text-white flex flex-col items-center w-full relative my-2`}
+          >
+            {/* Nome da Noiva */}
+            {/* Usamos leading-[0.6] para cortar o espaço vazio acima e abaixo das letras, permitindo que se juntem */}
+            <div className="text-[130px] sm:text-[160px] md:text-[220px] lg:text-[260px] leading-[0.6] transform -translate-x-6 sm:-translate-x-12 z-20 drop-shadow-lg pr-4">
+              {brideName.toLowerCase()}
+            </div>
+            
+            {/* Símbolo & - Em Script novamente, colocado estrategicamente no meio */}
+            <div className="text-[70px] sm:text-[90px] md:text-[120px] leading-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-90 z-10 drop-shadow-md">
+              &
+            </div>
+
+            {/* Nome do Noivo */}
+            <div className="text-[130px] sm:text-[160px] md:text-[220px] lg:text-[260px] leading-[0.6] transform translate-x-10 sm:translate-x-16 z-20 drop-shadow-lg pl-4 mt-2">
+              {groomName.toLowerCase()}
             </div>
           </motion.div>
-        </div>
-      </section>
 
-      {/* --- RSVP --- */}
-      <section className="py-32 bg-black text-white px-6">
-        <div className="max-w-xl mx-auto space-y-16 text-center">
-          <h2 className="font-serif text-5xl md:text-7xl uppercase tracking-tighter">RSVP</h2>
-          <p className="font-sans text-xs uppercase tracking-widest opacity-60">Por favor, confirmem a vossa presença até 01 de Setembro.</p>
-          <button className="px-12 py-5 border border-white/20 rounded-full font-sans text-[10px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all duration-700 w-full md:w-auto">
-            Confirmar Presença
-          </button>
-        </div>
-      </section>
+          {/* 3. Data */}
+          <motion.time 
+            dateTime={eventDate}
+            variants={itemVariants}
+            className={`${cormorant.className} text-[#F0E9E3]/90 text-[10px] sm:text-[12px] uppercase tracking-[0.5em] mt-10 drop-shadow-md block`}
+          >
+            {formattedDate}
+          </motion.time>
 
-      {/* --- FOOTER --- */}
-      <footer className="py-20 text-center border-t border-black/5">
-        <p className="font-sans text-[8px] uppercase tracking-[1.5em] opacity-30">
-          {groom} & {bride} — 2026
-        </p>
-      </footer>
+        </div>
+      </motion.section>
 
     </div>
   );
