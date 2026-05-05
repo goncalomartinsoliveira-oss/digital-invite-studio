@@ -39,14 +39,12 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
     });
   };
 
-  // Função dedicada para ligar/desligar um cartão específico
   const handleCardVisibility = (eventType: 'ceremony' | 'reception') => {
     const dbContent = formData.content || {};
     const currentTexts = dbContent.content || {};
     const currentEventSection = currentTexts.event || {};
     const specificEvent = currentEventSection[eventType] || {};
     
-    // Se não existir o campo 'active', assumimos que está true por defeito
     const isCurrentlyActive = specificEvent.active !== false;
 
     setFormData({
@@ -59,7 +57,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
             ...currentEventSection,
             [eventType]: {
               ...specificEvent,
-              active: !isCurrentlyActive // Inverte o estado
+              active: !isCurrentlyActive
             }
           }
         }
@@ -68,43 +66,49 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-12 animate-in fade-in duration-500 text-left pb-24">
+    <div className="space-y-8 pb-32 text-left">
       
-      {/* --- COLUNA ESQUERDA: A CERIMÓNIA --- */}
-      <div className="space-y-8">
-        <section className={`bg-white p-8 border border-[#3e3226]/10 shadow-sm space-y-6 rounded-sm transition-opacity ${ceremony.active === false ? 'opacity-50 grayscale' : ''}`}>
-          <div className="border-b border-[#3e3226]/10 pb-4 flex justify-between items-center">
+      {/* HEADER INFORMATIVO */}
+      <div className="px-4">
+        <h2 className="font-serif text-3xl text-[#722F37]">Locais & Horários</h2>
+        <p className="text-gray-400 text-sm mt-1">Configure onde e quando a magia vai acontecer.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        {/* --- BLOCO: A CERIMÓNIA --- */}
+        <section className={`bg-white p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-50 transition-all duration-500 ${ceremony.active === false ? 'opacity-50 grayscale-[0.8]' : ''}`}>
+          <div className="flex justify-between items-start mb-8">
             <div>
-              <h3 className="font-serif text-xl uppercase tracking-widest text-[#3e3226]">1. A Cerimónia</h3>
-              <p className="text-[11px] opacity-60 mt-1">Onde irão trocar as alianças.</p>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#722F37]/60">Parte I</span>
+              <h3 className="font-serif text-2xl text-[#722F37] mt-1">A Cerimónia</h3>
             </div>
             
-            {/* TOGGLE DA CERIMÓNIA */}
+            {/* TOGGLE MODERNO */}
             <button 
               onClick={() => handleCardVisibility('ceremony')}
-              className={`w-10 h-5 rounded-full relative transition-colors ${ceremony.active !== false ? 'bg-[#72393F]' : 'bg-neutral-200'}`}
-              title={ceremony.active !== false ? "Ocultar Cartão" : "Mostrar Cartão"}
+              className={`w-12 h-6 rounded-full relative transition-colors ${ceremony.active !== false ? 'bg-[#722F37]' : 'bg-gray-200'}`}
             >
-              <div className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-all ${ceremony.active !== false ? 'left-6' : 'left-1'}`}></div>
+              <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${ceremony.active !== false ? 'left-7' : 'left-1'}`}></div>
             </button>
           </div>
           
-          <div className="space-y-6 pointer-events-auto">
+          <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Título</label>
+              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Título</label>
                 <input 
-                  className="w-full border-b py-2 text-[13px] outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                  className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
                   value={ceremony.title || ""} 
                   onChange={(e) => handleEventChange('ceremony', 'title', e.target.value)}
                   placeholder="A Cerimónia"
                   disabled={ceremony.active === false}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Hora</label>
+              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Hora</label>
                 <input 
-                  className="w-full border-b py-2 text-[13px] outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                  className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
                   value={ceremony.time || ""} 
                   onChange={(e) => handleEventChange('ceremony', 'time', e.target.value)}
                   placeholder="13:30"
@@ -113,10 +117,10 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Local / Morada Curta</label>
+            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Local / Morada Curta</label>
               <input 
-                className="w-full border-b py-2 text-[13px] outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 disabled:cursor-not-allowed" 
                 value={ceremony.location || ""} 
                 onChange={(e) => handleEventChange('ceremony', 'location', e.target.value)}
                 placeholder="Igreja de São Martinho, Sintra"
@@ -124,21 +128,21 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Link do Google Maps</label>
+            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Link do Google Maps</label>
               <input 
-                className="w-full border-b py-2 text-[12px] opacity-80 outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                className="w-full bg-transparent border-none text-gray-500 text-xs focus:ring-0 p-0 mt-1 truncate disabled:cursor-not-allowed" 
                 value={ceremony.google_maps_url || ""} 
                 onChange={(e) => handleEventChange('ceremony', 'google_maps_url', e.target.value)}
-                placeholder="https://maps.google.com/..."
+                placeholder="https://goo.gl/maps/..."
                 disabled={ceremony.active === false}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Descrição Breve</label>
+            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Descrição Breve</label>
               <textarea 
-                className="w-full border p-3 text-[12px] leading-relaxed outline-none focus:border-[#72393F] bg-[#FDFBF7] rounded-sm" 
+                className="w-full bg-transparent border-none text-gray-700 text-sm focus:ring-0 p-0 mt-1 resize-none disabled:cursor-not-allowed" 
                 rows={3}
                 value={ceremony.description || ""} 
                 onChange={(e) => handleEventChange('ceremony', 'description', e.target.value)}
@@ -148,43 +152,39 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
             </div>
           </div>
         </section>
-      </div>
 
-      {/* --- COLUNA DIREITA: A RECEÇÃO --- */}
-      <div className="space-y-8">
-        <section className={`bg-white p-8 border border-[#3e3226]/10 shadow-sm space-y-6 rounded-sm transition-opacity ${reception.active === false ? 'opacity-50 grayscale' : ''}`}>
-          <div className="border-b border-[#3e3226]/10 pb-4 flex justify-between items-center">
+        {/* --- BLOCO: A RECEÇÃO --- */}
+        <section className={`bg-white p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-50 transition-all duration-500 ${reception.active === false ? 'opacity-50 grayscale-[0.8]' : ''}`}>
+          <div className="flex justify-between items-start mb-8">
             <div>
-              <h3 className="font-serif text-xl uppercase tracking-widest text-[#3e3226]">2. A Receção / Festa</h3>
-              <p className="text-[11px] opacity-60 mt-1">Onde irão celebrar com os convidados.</p>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#722F37]/60">Parte II</span>
+              <h3 className="font-serif text-2xl text-[#722F37] mt-1">A Receção</h3>
             </div>
 
-            {/* TOGGLE DA RECEÇÃO */}
             <button 
               onClick={() => handleCardVisibility('reception')}
-              className={`w-10 h-5 rounded-full relative transition-colors ${reception.active !== false ? 'bg-[#72393F]' : 'bg-neutral-200'}`}
-              title={reception.active !== false ? "Ocultar Cartão" : "Mostrar Cartão"}
+              className={`w-12 h-6 rounded-full relative transition-colors ${reception.active !== false ? 'bg-[#722F37]' : 'bg-gray-200'}`}
             >
-              <div className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-all ${reception.active !== false ? 'left-6' : 'left-1'}`}></div>
+              <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${reception.active !== false ? 'left-7' : 'left-1'}`}></div>
             </button>
           </div>
           
-          <div className="space-y-6 pointer-events-auto">
+          <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Título</label>
+              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Título</label>
                 <input 
-                  className="w-full border-b py-2 text-[13px] outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                  className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
                   value={reception.title || ""} 
                   onChange={(e) => handleEventChange('reception', 'title', e.target.value)}
                   placeholder="A Receção"
                   disabled={reception.active === false}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Hora</label>
+              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Hora</label>
                 <input 
-                  className="w-full border-b py-2 text-[13px] outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                  className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
                   value={reception.time || ""} 
                   onChange={(e) => handleEventChange('reception', 'time', e.target.value)}
                   placeholder="15:00"
@@ -193,10 +193,10 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Local / Morada Curta</label>
+            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Local / Quinta</label>
               <input 
-                className="w-full border-b py-2 text-[13px] outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 disabled:cursor-not-allowed" 
                 value={reception.location || ""} 
                 onChange={(e) => handleEventChange('reception', 'location', e.target.value)}
                 placeholder="Quinta do Vale, Sintra"
@@ -204,21 +204,21 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Link do Google Maps</label>
+            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Link do Google Maps</label>
               <input 
-                className="w-full border-b py-2 text-[12px] opacity-80 outline-none focus:border-[#72393F] transition-colors bg-transparent" 
+                className="w-full bg-transparent border-none text-gray-500 text-xs focus:ring-0 p-0 mt-1 truncate disabled:cursor-not-allowed" 
                 value={reception.google_maps_url || ""} 
                 onChange={(e) => handleEventChange('reception', 'google_maps_url', e.target.value)}
-                placeholder="https://maps.google.com/..."
+                placeholder="https://goo.gl/maps/..."
                 disabled={reception.active === false}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] uppercase tracking-widest opacity-60 font-bold">Descrição Breve</label>
+            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Descrição Breve</label>
               <textarea 
-                className="w-full border p-3 text-[12px] leading-relaxed outline-none focus:border-[#72393F] bg-[#FDFBF7] rounded-sm" 
+                className="w-full bg-transparent border-none text-gray-700 text-sm focus:ring-0 p-0 mt-1 resize-none disabled:cursor-not-allowed" 
                 rows={3}
                 value={reception.description || ""} 
                 onChange={(e) => handleEventChange('reception', 'description', e.target.value)}
@@ -230,15 +230,19 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
         </section>
       </div>
 
-      {/* BOTÃO SALVAR GLOBAL FIXO NO RODAPÉ */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#3e3226]/10 p-4 z-40 flex justify-center shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
-        <button 
+      {/* BOTÃO FLUTUANTE DE SALVAR (Desktop/Mobile) */}
+      <div className="fixed bottom-24 md:bottom-10 right-6 z-[60]">
+         <button 
             onClick={handleSaveDesign} 
             disabled={saving} 
-            className="w-full max-w-lg bg-black text-[#FDFBF7] py-4 text-[11px] uppercase tracking-[0.4em] font-bold shadow-xl hover:bg-[#3e3226] active:scale-[0.98] transition-all disabled:opacity-50 rounded-sm"
-        >
-          {saving ? "A Sincronizar..." : "Guardar Detalhes do Evento"}
-        </button>
+            className="bg-[#722F37] text-white h-14 md:h-16 px-8 md:px-12 rounded-full font-bold shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4 border-4 border-white/20"
+         >
+            {saving ? (
+              <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : (
+              "Publicar Detalhes"
+            )}
+         </button>
       </div>
 
     </div>
