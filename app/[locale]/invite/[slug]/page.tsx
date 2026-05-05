@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import SmartRsvp from "@/components/invite/SmartRsvp";
 
 // Importação dos Templates
 import LuxuryTemplate from "../../templates/luxury-01/page";
@@ -35,16 +34,8 @@ export default function DynamicInvite() {
 
   return (
     <main className="relative bg-[#FDFBF7]">
-      {/* 1. O Design Escolhido */}
+      {/* O Design Escolhido carrega tudo de forma autónoma, incluindo o novo rodapé escuro fotográfico! */}
       <SelectedTemplate data={inviteData} />
-      
-      {/* 2. O Módulo Inteligente de RSVP */}
-      <SmartRsvp invitationId={inviteData.id} />
-      
-      {/* Footer simples para finalizar o design */}
-      <footer className="py-12 bg-white text-center">
-        <p className="text-[8px] uppercase tracking-[0.5em] opacity-20">Wedding Studio • Digital Invite</p>
-      </footer>
     </main>
   );
 }
