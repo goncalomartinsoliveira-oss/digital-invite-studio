@@ -4,12 +4,11 @@ import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import DesignModule from "@/components/dashboard/DesignModule";
 import GuestsModule from "@/components/dashboard/GuestsModule";
-import EventModule from "@/components/dashboard/EventModule"; 
 import ContentModule from "@/components/dashboard/ContentModule";
 
 import LuxuryTemplate from "../../templates/luxury-01/page"; 
 
-type DashboardTab = 'design' | 'event' | 'content' | 'guests';
+type DashboardTab = 'design' | 'content' | 'guests';
 
 export default function Dashboard() {
   const params = useParams();
@@ -62,9 +61,8 @@ export default function Dashboard() {
   );
 
   const tabsConfig = [
-    { id: 'design', label: 'Design', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> },
-    { id: 'event', label: 'Locais', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> },
-    { id: 'content', label: 'Textos', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg> },
+    { id: 'design', label: 'Modelos e identidade', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> },
+    { id: 'content', label: 'Conteúdo do convite', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg> },
     { id: 'guests', label: 'Lista', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
@@ -78,8 +76,12 @@ export default function Dashboard() {
     <div className="flex h-screen bg-[#FDFBF7] text-[#2D3748] overflow-hidden font-sans">
       
       <aside className="w-64 bg-white border-r border-gray-100 hidden xl:flex flex-col z-30 shadow-sm">
-        <div className="p-8 font-serif text-xl font-bold text-[#722F37]">WeddingStudio</div>
-        <nav className="flex-1 px-4 space-y-1">
+        {/* LOGÓTIPO MAIOR COM DESTAQUE */}
+        <div className="pt-10 pb-8 px-6 flex items-center justify-center border-b border-gray-50 mb-4">
+            <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
+        </div>
+        
+        <nav className="flex-1 px-4 space-y-2">
           {tabsConfig.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${activeTab === tab.id ? 'bg-[#722F37] text-white shadow-lg shadow-[#722F37]/30' : 'text-gray-400 hover:bg-gray-50'}`}>
               {tab.icon} {tab.label}
@@ -95,15 +97,11 @@ export default function Dashboard() {
             <div className="flex items-center gap-3">
                {activeTab !== 'guests' && (
                  <button onClick={() => setShowMobilePreview(!showMobilePreview)} className="lg:hidden bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                    Ver Preview
+                   Ver Preview
                  </button>
                )}
-               {/* NOVO BOTÃO: Abrir a página do convite num novo separador */}
                <button onClick={() => window.open(`/${params.locale}/invite/${params.slug}`, '_blank')} className="hidden md:block bg-gray-100 text-gray-600 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-gray-200 transition-all">
                   Abrir Convite
-               </button>
-               <button onClick={handleSaveDesign} className="bg-[#722F37] text-white px-6 py-2.5 text-[11px] font-bold rounded-full shadow-lg hover:scale-105 transition-all">
-                  {saving ? "A Guardar..." : "Publicar"}
                </button>
             </div>
           </header>
@@ -111,7 +109,6 @@ export default function Dashboard() {
           <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-32 scroll-smooth">
             <div className="max-w-5xl mx-auto">
               {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} />}
-              {activeTab === 'event' && <EventModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} />}
               {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} />}
               {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} />}
             </div>
@@ -136,7 +133,7 @@ export default function Dashboard() {
                   
                   <div className="mx-auto w-[60%] h-7 bg-white rounded-md flex items-center justify-center shadow-sm">
                     <span className="text-[11px] font-medium text-gray-500 font-mono">
-                      weddingstudio.com/{formData.slug || 'casamento'}
+                      digitalinvitestudio.com/{formData.slug || 'casamento'}
                     </span>
                   </div>
                 </div>
@@ -166,7 +163,7 @@ export default function Dashboard() {
           {tabsConfig.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'text-[#722F37]' : 'text-gray-300'}`}>
               {tab.icon}
-              <span className="text-[10px] font-bold tracking-tight">{tab.label}</span>
+              <span className="text-[10px] font-bold tracking-tight text-center leading-tight w-20">{tab.label}</span>
             </button>
           ))}
         </nav>

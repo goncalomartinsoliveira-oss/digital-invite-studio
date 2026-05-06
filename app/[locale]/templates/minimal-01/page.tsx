@@ -23,7 +23,8 @@ const inter = Inter({
   display: 'swap' 
 });
 
-const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000";
+// URL do seu vídeo do Supabase como padrão (Fallback)
+const DEFAULT_HERO_MEDIA = "https://anvqtinrmgkfjadsftlj.supabase.co/storage/v1/object/public/invites/wedding-dream.mp4";
 const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000";
 
 export default function Minimal01Template({ data, params }: { data: any, params?: any }) {
@@ -36,11 +37,14 @@ export default function Minimal01Template({ data, params }: { data: any, params?
   const casalNomes = `${bride} & ${groom}`;
   const eventDate = data?.event_date || new Date().toISOString();
 
-  // Imagens (fallback dinâmico)
-  const heroImg = (content.hero?.main_image_url && content.hero.main_image_url.trim() !== "") 
+  // Lógica de Media: Prioridade ao que está no DB, caso contrário usa o seu vídeo do Supabase
+  const heroMediaUrl = (content.hero?.main_image_url && content.hero.main_image_url.trim() !== "") 
     ? content.hero.main_image_url 
-    : (data?.main_image_url && data.main_image_url.trim() !== "") ? data.main_image_url : DEFAULT_HERO_IMAGE;
+    : (data?.main_image_url && data.main_image_url.trim() !== "") ? data.main_image_url : DEFAULT_HERO_MEDIA;
     
+  // Verifica se o URL é um vídeo
+  const isVideo = heroMediaUrl.toLowerCase().match(/\.(mp4|webm|ogg)$/i) || heroMediaUrl.toLowerCase().includes("video");
+
   const footerImg = (content.footer?.footer_image_url && content.footer.footer_image_url.trim() !== "") 
     ? content.footer.footer_image_url 
     : DEFAULT_FOOTER_IMAGE;
@@ -48,7 +52,7 @@ export default function Minimal01Template({ data, params }: { data: any, params?
   const storyImg = (content.story?.story_image_url && content.story.story_image_url.trim() !== "")
     ? content.story.story_image_url : null;
 
-  // Formatação de Datas
+  // Formatação de Datas e Countdown
   const dateObj = new Date(eventDate);
   const formattedDate = dateObj.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, '.');
   const rsvpFormattedDeadline = content.rsvp?.text_limit_date_fixed ?? "15.10.26";
@@ -81,7 +85,6 @@ export default function Minimal01Template({ data, params }: { data: any, params?
   const showUsefulInfo = visibility.useful_info !== false;
   const showAccommodation = visibility.accommodation !== false;
 
-  // CORREÇÃO: Reposição da variável timelineEvents que estava em falta
   const timelineEvents = [
     { time: "16:00", title: "Wedding Ceremony" },
     { time: "17:00", title: "Cocktail Hour" },
@@ -92,16 +95,31 @@ export default function Minimal01Template({ data, params }: { data: any, params?
   return (
     <div className={`${inter.className} w-full bg-[#F2EFE9] text-[#2C2C2C] selection:bg-[#2C2C2C] selection:text-white`}>
       
-      {/* 01. HERO SECTION */}
+      {/* 01. HERO SECTION COM O SEU VÍDEO SUPABASE */}
       {visibility.hero !== false && (
         <section className="relative h-[90vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden bg-[#1A1A1A]">
           <motion.div 
-            initial={{ scale: 1.1, opacity: 0 }} 
-            animate={{ scale: 1, opacity: 0.6 }} 
+            initial={{ scale: 1.05, opacity: 0 }} 
+            animate={{ scale: 1, opacity: 1 }} 
             transition={{ duration: 2 }}
             className="absolute inset-0 z-0"
           >
-            <img src={heroImg} className="w-full h-full object-cover object-center" alt="Wedding" />
+            {isVideo ? (
+              <video 
+                key={heroMediaUrl} // Força o refresh do vídeo se o link mudar
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="w-full h-full object-cover object-center"
+              >
+                <source src={heroMediaUrl} type="video/mp4" />
+              </video>
+            ) : (
+              <img src={heroMediaUrl} className="w-full h-full object-cover object-center" alt="Wedding" />
+            )}
+            
+            <div className="absolute inset-0 bg-black/30"></div>
           </motion.div>
           
           <div className="relative z-10 text-center text-white px-4 flex flex-col items-center justify-center h-full">
@@ -109,7 +127,7 @@ export default function Minimal01Template({ data, params }: { data: any, params?
               initial={{ opacity: 0, letterSpacing: "0.1em" }}
               animate={{ opacity: 1, letterSpacing: "0.5em" }}
               transition={{ duration: 1.5 }}
-              className={`${cinzel.className} text-[10px] sm:text-xs uppercase mb-8 block font-light tracking-[0.5em] text-[#E5DACE]`}
+              className={`${cinzel.className} text-[10px] sm:text-xs uppercase mb-8 block font-light tracking-[0.5em] text-[#E5DACE] drop-shadow-md`}
             >
               {content.hero?.text_above_names ?? "THE WEDDING DAY OF"}
             </motion.span>
@@ -118,10 +136,10 @@ export default function Minimal01Template({ data, params }: { data: any, params?
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1.2 }}
-              className={`${playfair.className} text-6xl sm:text-8xl md:text-9xl mb-6 flex flex-col items-center gap-2`}
+              className={`${playfair.className} text-6xl sm:text-8xl md:text-9xl mb-6 flex flex-col items-center gap-2 drop-shadow-lg`}
             >
               <span className="leading-none">{bride}</span>
-              <span className="text-3xl sm:text-5xl font-light italic text-[#E5DACE]">&</span>
+              <span className="text-3xl sm:text-5xl font-light italic text-[#E5DACE] drop-shadow-md">&</span>
               <span className="leading-none">{groom}</span>
             </motion.div>
 
@@ -135,13 +153,13 @@ export default function Minimal01Template({ data, params }: { data: any, params?
             </motion.div>
           </div>
 
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/40 animate-bounce">
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/40 animate-bounce z-10">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
           </div>
         </section>
       )}
 
-      {/* 02. INTRO / STORY */}
+      {/* 02. HISTÓRIA */}
       {visibility.story !== false && (
         <section className="py-24 sm:py-40 px-6 max-w-4xl mx-auto text-center border-b border-[#2C2C2C]/5">
           <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
@@ -188,7 +206,7 @@ export default function Minimal01Template({ data, params }: { data: any, params?
         </section>
       )}
 
-      {/* 04. PROGRAM / CRONOGRAMA */}
+      {/* 04. CRONOGRAMA */}
       {visibility.program !== false && (
         <section className="py-24 sm:py-40 px-6 bg-[#F2EFE9] border-b border-[#2C2C2C]/5">
           <div className="max-w-3xl mx-auto">
@@ -217,11 +235,10 @@ export default function Minimal01Template({ data, params }: { data: any, params?
         </section>
       )}
 
-      {/* 05. DETALHES (Logística, Alojamento, Dress Code) */}
+      {/* 05. DETALHES */}
       {visibility.details_header !== false && (
         <section className="py-24 sm:py-32 bg-white border-b border-[#2C2C2C]/5">
           <div className="max-w-5xl mx-auto px-6">
-            
             <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-20 sm:mb-32">
                <h2 className={`${playfair.className} text-4xl sm:text-6xl italic text-[#2C2C2C]`}>
                  {content.details?.title_details ?? "Details"}
@@ -229,7 +246,6 @@ export default function Minimal01Template({ data, params }: { data: any, params?
             </motion.div>
 
             <div className={`grid ${showUsefulInfo && showAccommodation ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto text-center'} gap-16 sm:gap-24`}>
-              
               {showUsefulInfo && (
                 <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className={!showAccommodation ? "flex flex-col items-center" : ""}>
                   <h3 className={`${cinzel.className} text-xs tracking-[0.3em] text-[#8B7355] uppercase mb-6 border-b border-[#8B7355]/30 pb-4 inline-block font-bold`}>
@@ -266,10 +282,9 @@ export default function Minimal01Template({ data, params }: { data: any, params?
                   {content.dress_code?.title ?? "Dress Code"}
                 </h3>
                 <div className="space-y-6 font-light text-[#5A5A5A] text-base sm:text-lg leading-relaxed">
-                  {(content.dress_code?.text || ["We kindly invite you to dress in elegant attire that reflects the style and spirit of our special day."]).map((t: string, i: number) => (
+                  {(content.dress_code?.text || ["We kindly invite you to dress in elegant attire."]).map((t: string, i: number) => (
                     <p key={i}>{t}</p>
                   ))}
-                  
                   {content.dress_code?.show_palette !== false && (
                     <div className="flex justify-center gap-4 pt-10">
                       {(content.dress_code?.colors || []).map((c: string, i: number) => (
@@ -292,9 +307,8 @@ export default function Minimal01Template({ data, params }: { data: any, params?
               {content.gifts?.title ?? "Gifts"}
             </h2>
             <p className="text-base sm:text-lg font-light opacity-70 leading-relaxed mb-12 max-w-2xl mx-auto">
-              {content.gifts?.text ?? "Your presence is the greatest gift to us. However, if you wish to honor us with a present, a contribution toward our future would be sincerely appreciated."}
+              {content.gifts?.text ?? "Your presence is the greatest gift to us."}
             </p>
-            
             {content.gifts?.show_iban !== false && !showIbanData && (
               <button 
                 onClick={() => setShowIbanData(true)}
@@ -303,7 +317,6 @@ export default function Minimal01Template({ data, params }: { data: any, params?
                 {content.gifts?.iban_button_text || "Contribute"}
               </button>
             )}
-
             {showIbanData && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#1A1A1A] border border-white/10 p-8 sm:p-12 rounded-sm relative mt-8">
                  <button onClick={() => setShowIbanData(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
@@ -323,12 +336,11 @@ export default function Minimal01Template({ data, params }: { data: any, params?
       {visibility.rsvp !== false && (
         <section className="py-24 sm:py-40 bg-[#F5F2F0]">
           <div className="max-w-4xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <span className={`${playfair.className} text-3xl italic block mb-4`}>{content.rsvp?.title_please ?? "Kindly"}</span>
-              <h2 className={`${cinzel.className} text-3xl sm:text-5xl tracking-[0.2em] uppercase`}>
-                {content.rsvp?.title_confirm ?? "Confirm Attendance"}
+            <div className="text-center mb-16 sm:mb-24">
+              <h2 className={`${playfair.className} text-4xl sm:text-6xl italic text-[#2C2C2C] mb-8`}>
+                {content.rsvp?.title_confirm ?? "Confirm Your Attendance"}
               </h2>
-              <p className="mt-8 text-[10px] tracking-[0.4em] uppercase opacity-40">
+              <p className={`${inter.className} text-xs sm:text-sm tracking-[0.1em] uppercase opacity-50`}>
                 Please RSVP before {rsvpFormattedDeadline}
               </p>
             </div>
@@ -339,25 +351,37 @@ export default function Minimal01Template({ data, params }: { data: any, params?
         </section>
       )}
 
-      {/* 08. FOOTER */}
+      {/* 08. RODAPÉ */}
       {visibility.footer !== false && (
-        <footer className="relative py-40 bg-black overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 opacity-40">
+        <footer className="relative py-32 sm:py-48 bg-[#1A1A1A] overflow-hidden flex items-center justify-center border-t-8 border-[#2C2C2C]">
+          <div className="absolute inset-0 opacity-30">
             <img src={footerImg} className="w-full h-full object-cover grayscale" alt="Footer" />
           </div>
-          <div className="relative z-10 text-center text-white px-4">
+          <div className="relative z-10 text-center text-[#F2EFE9] px-4 w-full max-w-4xl mx-auto">
             <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <p className={`${cinzel.className} text-xs tracking-[0.5em] opacity-60 mb-6`}>
-                {content.footer?.title_main ?? "SEE YOU THERE"}
+              <p className={`${cinzel.className} text-[10px] sm:text-xs tracking-[0.4em] uppercase text-[#8B7355] mb-8 font-bold`}>
+                {content.footer?.title_main ?? "Hope to see you there!"}
               </p>
-              <h2 className={`${playfair.className} text-5xl sm:text-8xl italic mb-12`}>
-                {content.footer?.title_celebrate ?? "With Love"}
+              <h2 className={`${playfair.className} text-5xl sm:text-7xl md:text-8xl mb-16`}>
+                {content.footer?.title_celebrate ?? casalNomes}
               </h2>
-              <div className={`${cinzel.className} text-sm tracking-[0.3em] opacity-80 pt-12 border-t border-white/10`}>
-                {content.footer?.location_text ?? "SINTRA, PORTUGAL"}
-              </div>
-              <div className="mt-20">
-                <span className="text-[9px] tracking-[0.6em] uppercase opacity-30">
+              
+              {content.footer?.show_contacts !== false && (
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-16 pt-12 border-t border-white/10 w-full mb-16">
+                  <div className="text-center">
+                    <span className={`${playfair.className} text-xl italic block mb-2`}>{content.footer?.contact_1_name || bride}</span>
+                    <a href={`tel:${content.footer?.contact_1_phone || ""}`} className={`${cinzel.className} text-[10px] tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity`}>Contact</a>
+                  </div>
+                  <div className="hidden sm:block w-[1px] h-12 bg-white/10"></div>
+                  <div className="text-center">
+                    <span className={`${playfair.className} text-xl italic block mb-2`}>{content.footer?.contact_2_name || groom}</span>
+                    <a href={`tel:${content.footer?.contact_2_phone || ""}`} className={`${cinzel.className} text-[10px] tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity`}>Contact</a>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-16 sm:mt-24">
+                <span className={`${inter.className} text-[8px] sm:text-[9px] tracking-[0.4em] uppercase opacity-30`}>
                   Digital Invite Studio
                 </span>
               </div>

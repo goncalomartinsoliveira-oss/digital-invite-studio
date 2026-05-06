@@ -1,4 +1,3 @@
-// components/dashboard/GuestsModule.tsx
 "use client";
 import { useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
@@ -31,12 +30,11 @@ const suggestGender = (name: string) => {
 };
 
 const COLUMN_LABELS: Record<string, string> = {
-  name: 'Nome',
-  gender: 'Gen',
-  category: 'Categoria',
+  name: 'Nome do Convidado',
+  category: 'Idade',
   group_id: 'Grupo',
   side: 'Lado',
-  status: 'Estado'
+  status: 'Estado (RSVP)'
 };
 
 export default function GuestsModule({ guests, setGuests, invitationId, groomName, brideName }: GuestsModuleProps) {
@@ -45,22 +43,22 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Guest, direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
 
+  // Cálculo Avançado de Estatísticas
   const stats = useMemo(() => {
-    const calc = (key: keyof Guest, val: string) => ({
-      total: guests.filter((g: Guest) => g[key] === val).length,
-      confirmed: guests.filter((g: Guest) => g[key] === val && g.status === 'confirmed').length
-    });
-    return [
-      { label: "Total", val: { total: guests.length, confirmed: guests.filter(g => g.status === 'confirmed').length }, dark: true },
-      { label: "Adultos", val: calc('category', 'adult') },
-      { label: "Crianças", val: calc('category', 'child') },
-      { label: "Bebés", val: calc('category', 'baby') },
-      { label: "Masc.", val: calc('gender', 'masculino') },
-      { label: "Fem.", val: calc('gender', 'feminino') },
-      { label: `Lado ${groomName}`, val: calc('side', 'noivo') },
-      { label: `Lado ${brideName}`, val: calc('side', 'noiva') },
-    ];
-  }, [guests, groomName, brideName]);
+    const total = guests.length;
+    const confirmed = guests.filter(g => g.status === 'confirmed').length;
+    const pending = guests.filter(g => g.status === 'pending').length;
+    const declined = guests.filter(g => g.status === 'declined').length;
+    
+    const adults = guests.filter(g => g.category === 'adult').length;
+    const kidsAndBabies = guests.filter(g => g.category === 'child' || g.category === 'baby').length;
+
+    const brideSide = guests.filter(g => g.side === 'noiva').length;
+    const groomSide = guests.filter(g => g.side === 'noivo').length;
+    const commonSide = guests.filter(g => g.side === 'comum').length;
+
+    return { total, confirmed, pending, declined, adults, kidsAndBabies, brideSide, groomSide, commonSide };
+  }, [guests]);
 
   const sortedGuests = useMemo(() => {
     let items = [...guests];
@@ -72,12 +70,9 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     return items;
   }, [guests, sortConfig]);
 
-  // CORREÇÃO: BOTÃO ADICIONAR COM TRATAMENTO DE ERROS
   const handleSaveGroup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     const validMembers = newMembers.filter(m => m.name.trim() !== "");
-    
     if (validMembers.length === 0) {
       alert("Por favor, introduza pelo menos um nome.");
       return;
@@ -102,132 +97,233 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       setGuests([...guests, ...data]);
       setGroupTag("");
       setNewMembers([{ name: "", category: "adult", gender: "masculino", side: "comum" }]);
-      alert("Convidados adicionados com sucesso!");
     }
   };
 
+  const inputClass = "w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-[#722F37] text-sm text-gray-800 px-0 py-2 transition-colors placeholder-gray-300";
+  const labelClass = "text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1 block";
+
   return (
-    <div className="space-y-10 animate-in fade-in duration-500">
-      {/* Cards de Estatísticas */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
-        {stats.map(s => (
-          <div key={s.label} className={`${s.dark ? 'bg-black text-white' : 'bg-white'} p-4 border shadow-sm rounded-sm text-center`}>
-            <p className="text-[8px] uppercase tracking-widest opacity-50 font-bold mb-1">{s.label}</p>
-            <p className="text-lg font-serif">{s.val.confirmed}<span className="text-xs opacity-30 mx-1">/</span>{s.val.total}</p>
-          </div>
-        ))}
+    <div className="space-y-10 animate-in fade-in duration-700 max-w-6xl mx-auto pb-20">
+      
+      {/* 01. PAINEL DE ESTATÍSTICAS (ESTILO DASHBOARD PREMIUM) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* Cartão de Confirmações (Barra de Progresso) */}
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-between">
+            <div>
+                <p className={labelClass}>Presenças Confirmadas</p>
+                <div className="flex items-end gap-2 mt-2">
+                    <span className="text-5xl font-serif text-[#722F37] leading-none">{stats.confirmed}</span>
+                    <span className="text-sm font-bold text-gray-400 mb-1">/ {stats.total} total</span>
+                </div>
+            </div>
+            <div className="mt-8">
+                <div className="flex justify-between text-[10px] font-bold uppercase text-gray-400 mb-2">
+                    <span>{stats.pending} Pendentes</span>
+                    <span>{stats.declined} Recusaram</span>
+                </div>
+                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden flex">
+                    <div className="h-full bg-[#722F37] transition-all duration-1000" style={{ width: `${stats.total > 0 ? (stats.confirmed / stats.total) * 100 : 0}%` }}></div>
+                </div>
+            </div>
+        </div>
+
+        {/* Cartão de Demografia */}
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-between">
+            <p className={labelClass}>Faixa Etária</p>
+            <div className="space-y-4 mt-4">
+                <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                    <span className="text-sm text-gray-600 font-medium">Adultos</span>
+                    <span className="font-serif text-2xl text-gray-800">{stats.adults}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 font-medium">Crianças & Bebés</span>
+                    <span className="font-serif text-2xl text-gray-800">{stats.kidsAndBabies}</span>
+                </div>
+            </div>
+        </div>
+
+        {/* Cartão de Lados */}
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-between">
+            <p className={labelClass}>Convidados de...</p>
+            <div className="space-y-3 mt-4">
+                <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#722F37]">{brideName}</span>
+                    <span className="font-serif text-xl text-gray-800">{stats.brideSide}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#722F37]">{groomName}</span>
+                    <span className="font-serif text-xl text-gray-800">{stats.groomSide}</span>
+                </div>
+                <div className="flex justify-between items-center border-t border-gray-50 pt-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Em Comum</span>
+                    <span className="font-serif text-xl text-gray-400">{stats.commonSide}</span>
+                </div>
+            </div>
+        </div>
+
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-10 text-left">
-        {/* Formulário */}
-        <aside className="lg:col-span-3">
-          <div className="bg-white p-6 border shadow-sm sticky top-24">
-            <h3 className="font-serif text-lg border-b pb-4 mb-4 uppercase tracking-tighter">Registar</h3>
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
+        
+        {/* 02. FORMULÁRIO DE ADIÇÃO MINIMALISTA */}
+        <aside className="lg:col-span-4 sticky top-24">
+          <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg shadow-gray-100/50">
+            <h3 className="font-serif text-2xl text-[#722F37] mb-6 border-b border-gray-50 pb-4">Adicionar Convidados</h3>
             
-            <form onSubmit={handleSaveGroup} className="space-y-6">
-              <input className="w-full border-b p-2 text-sm outline-none focus:border-black" placeholder="Grupo (ex: Família Silva)" value={groupTag} onChange={e => setGroupTag(e.target.value)} />
+            <form onSubmit={handleSaveGroup} className="space-y-8">
+              <div>
+                <label className={labelClass}>Nome do Grupo (Opcional)</label>
+                <input className={inputClass} placeholder="Ex: Família Silva" value={groupTag} onChange={e => setGroupTag(e.target.value)} />
+              </div>
 
-              {newMembers.map((m, i) => (
-                <div key={i} className="p-4 bg-neutral-50 border border-dashed relative space-y-4 rounded-sm">
-                  {newMembers.length > 1 && (
-                    <button type="button" onClick={() => setNewMembers(newMembers.filter((_, idx) => idx !== i))} className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center">✕</button>
-                  )}
-                  
-                  <input className="w-full border p-2 text-xs outline-none bg-white" placeholder="Nome" value={m.name} onChange={e => {
-                    const u = [...newMembers]; u[i].name = e.target.value; u[i].gender = suggestGender(e.target.value); setNewMembers(u);
-                  }} />
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <select className="border text-[9px] p-2 font-bold bg-white" value={m.category} onChange={e => { const u = [...newMembers]; u[i].category = e.target.value; setNewMembers(u); }}>
-                      <option value="adult">ADULTO</option><option value="child">CRIANÇA</option><option value="baby">BEBÉ</option>
-                    </select>
-                    <select className="border text-[9px] p-2 font-bold bg-white" value={m.gender} onChange={e => { const u = [...newMembers]; u[i].gender = e.target.value; setNewMembers(u); }}>
-                      <option value="masculino">MASC</option><option value="feminino">FEM</option>
-                    </select>
-                  </div>
-                  <select className="w-full border text-[9px] p-2 font-bold bg-white uppercase" value={m.side} onChange={e => { const u = [...newMembers]; u[i].side = e.target.value; setNewMembers(u); }}>
-                    <option value="comum">AMIGOS EM COMUM</option>
-                    <option value="noivo">LADO DO {groomName}</option>
-                    <option value="noiva">LADO DA {brideName}</option>
-                  </select>
-                </div>
-              ))}
+              <div className="space-y-4">
+                  {newMembers.map((m, i) => (
+                    <div key={i} className="p-5 bg-[#F8F9FA] rounded-2xl relative border border-gray-100 group transition-all">
+                      {newMembers.length > 1 && (
+                        <button type="button" onClick={() => setNewMembers(newMembers.filter((_, idx) => idx !== i))} className="absolute -top-2 -right-2 bg-white text-red-500 shadow-sm w-6 h-6 rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold">✕</button>
+                      )}
+                      
+                      <div className="space-y-4">
+                          <div>
+                            <input className="w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-[#722F37] text-sm text-gray-900 px-0 py-1 font-bold placeholder-gray-400" placeholder="Nome Completo" value={m.name} onChange={e => {
+                                const u = [...newMembers]; u[i].name = e.target.value; u[i].gender = suggestGender(e.target.value); setNewMembers(u);
+                            }} />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <select className="bg-transparent border-0 border-b border-gray-200 text-xs font-bold text-gray-600 focus:ring-0 px-0 py-1" value={m.category} onChange={e => { const u = [...newMembers]; u[i].category = e.target.value; setNewMembers(u); }}>
+                            <option value="adult">Adulto</option><option value="child">Criança</option><option value="baby">Bebé</option>
+                            </select>
+                            <select className="bg-transparent border-0 border-b border-gray-200 text-xs font-bold text-gray-600 focus:ring-0 px-0 py-1" value={m.gender} onChange={e => { const u = [...newMembers]; u[i].gender = e.target.value; setNewMembers(u); }}>
+                            <option value="masculino">Masc.</option><option value="feminino">Fem.</option>
+                            </select>
+                          </div>
+                          <select className="w-full bg-transparent border-0 border-b border-gray-200 text-[10px] uppercase tracking-widest font-bold text-[#722F37] focus:ring-0 px-0 py-1" value={m.side} onChange={e => { const u = [...newMembers]; u[i].side = e.target.value; setNewMembers(u); }}>
+                            <option value="comum">Em Comum</option>
+                            <option value="noiva">Convidado de {brideName}</option>
+                            <option value="noivo">Convidado de {groomName}</option>
+                          </select>
+                      </div>
+                    </div>
+                  ))}
+              </div>
               
-              <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum" }])} className="w-full py-2 border-2 border-dashed border-neutral-200 text-[9px] uppercase font-bold text-neutral-400 hover:text-black hover:border-black transition-all">
-                + Pessoa
-              </button>
+              <div className="space-y-3">
+                  <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum" }])} className="w-full py-3 border border-dashed border-gray-300 rounded-xl text-[10px] uppercase font-bold tracking-widest text-gray-400 hover:text-[#722F37] hover:border-[#722F37] transition-colors">
+                    + Adicionar Pessoa ao Grupo
+                  </button>
 
-              <button type="submit" className="w-full bg-black text-white py-4 text-[10px] font-bold uppercase tracking-[0.2em]">
-                Gravar na Lista
-              </button>
+                  <button type="submit" className="w-full bg-[#722F37] text-white py-4 rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-transform">
+                    Gravar na Lista
+                  </button>
+              </div>
             </form>
           </div>
         </aside>
 
-        {/* Tabela */}
-        <div className="lg:col-span-9 bg-white border shadow-sm overflow-x-auto">
-          <table className="w-full text-left text-[10px]">
-            <thead className="bg-neutral-50 border-b">
-              <tr>
-                {Object.keys(COLUMN_LABELS).map((k) => (
-                  <th key={k} onClick={() => setSortConfig({key: k as keyof Guest, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})} className="p-4 uppercase font-bold opacity-50 cursor-pointer">
-                    {COLUMN_LABELS[k]} {sortConfig.key === k ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '⇅'}
-                  </th>
-                ))}
-                <th className="p-4"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {sortedGuests.map(g => (
-                <tr key={g.id} className="hover:bg-neutral-50">
-                  <td className="p-4 font-bold">{g.name}</td>
-                  <td className="p-4 text-center opacity-40 font-bold">{g.gender === 'feminino' ? 'F' : 'M'}</td>
-                  <td className="p-4 font-bold uppercase">{g.category === 'adult' ? 'Adulto' : g.category === 'child' ? 'Criança' : 'Bebé'}</td>
-                  <td className="p-4 opacity-40 italic">{g.group_id?.includes('SOLO-') ? '-' : g.group_id}</td>
-                  <td className="p-4 uppercase font-bold text-[8px]">{g.side === 'noivo' ? groomName : g.side === 'noiva' ? brideName : 'Amigos'}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase ${g.status === 'confirmed' ? 'bg-green-100 text-green-700' : g.status === 'declined' ? 'bg-red-100 text-red-700' : 'bg-neutral-100 text-neutral-500'}`}>
-                      {g.status === 'pending' ? 'Pendente' : g.status === 'confirmed' ? 'Confirmado' : 'Recusado'}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right space-x-2">
-                    <button onClick={() => setEditingGuest(g)} className="text-neutral-400 hover:text-black font-bold uppercase text-[9px]">Edit</button>
-                    <button onClick={async () => { if(confirm('Apagar?')){ await supabase.from('guests').delete().eq('id', g.id); setGuests(guests.filter(x => x.id !== g.id)); } }} className="text-red-200 hover:text-red-600">✕</button>
-                  </td>
+        {/* 03. TABELA DE CONVIDADOS */}
+        <div className="lg:col-span-8 bg-white border border-gray-100 shadow-sm rounded-[2rem] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-[#F8F9FA] border-b border-gray-100">
+                <tr>
+                    {Object.keys(COLUMN_LABELS).map((k) => (
+                    <th key={k} onClick={() => setSortConfig({key: k as keyof Guest, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc'})} className="p-5 text-[10px] uppercase tracking-widest font-bold text-gray-400 cursor-pointer hover:text-[#722F37] transition-colors">
+                        <div className="flex items-center gap-2">
+                            {COLUMN_LABELS[k]} 
+                            <span className="text-[8px] opacity-50">{sortConfig.key === k ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}</span>
+                        </div>
+                    </th>
+                    ))}
+                    <th className="p-5"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                {sortedGuests.map(g => (
+                    <tr key={g.id} className="hover:bg-gray-50 transition-colors group">
+                        <td className="p-5 font-bold text-gray-800 flex items-center gap-3">
+                           <div className="w-8 h-8 rounded-full bg-[#FDFBF7] border border-gray-100 flex items-center justify-center text-[10px] font-bold text-[#722F37]">
+                               {g.name.charAt(0).toUpperCase()}
+                           </div>
+                           {g.name}
+                        </td>
+                        <td className="p-5">
+                            <span className="text-xs text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full">
+                                {g.category === 'adult' ? 'Adulto' : g.category === 'child' ? 'Criança' : 'Bebé'}
+                            </span>
+                        </td>
+                        <td className="p-5 text-xs text-gray-400 italic">
+                            {g.group_id?.includes('SOLO-') ? '-' : g.group_id}
+                        </td>
+                        <td className="p-5 text-[10px] uppercase font-bold text-gray-500">
+                            {g.side === 'noivo' ? groomName : g.side === 'noiva' ? brideName : 'Comum'}
+                        </td>
+                        <td className="p-5">
+                            <span className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest ${
+                                g.status === 'confirmed' ? 'bg-green-50 text-green-600 border border-green-100' : 
+                                g.status === 'declined' ? 'bg-red-50 text-red-600 border border-red-100' : 
+                                'bg-yellow-50 text-yellow-600 border border-yellow-100'}`}>
+                            {g.status === 'pending' ? 'Pendente' : g.status === 'confirmed' ? 'Confirmado' : 'Recusado'}
+                            </span>
+                        </td>
+                        <td className="p-5 text-right space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => setEditingGuest(g)} className="text-[10px] font-bold uppercase tracking-widest text-[#722F37] hover:underline">Editar</button>
+                            <button onClick={async () => { if(confirm('Tem a certeza que deseja remover este convidado?')){ await supabase.from('guests').delete().eq('id', g.id); setGuests(guests.filter(x => x.id !== g.id)); } }} className="text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600">Remover</button>
+                        </td>
+                    </tr>
+                ))}
+                {sortedGuests.length === 0 && (
+                    <tr>
+                        <td colSpan={6} className="p-10 text-center text-gray-400 font-medium">A sua lista de convidados está vazia.</td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      {/* Modal de Edição */}
+      {/* 04. MODAL DE EDIÇÃO DE LUXO */}
       {editingGuest && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-6 text-left">
-          <div className="bg-white w-full max-w-lg p-10 shadow-2xl space-y-4">
-            <h3 className="font-serif text-2xl border-b pb-4">Editar Ficha</h3>
-            <div className="space-y-4">
-              <input className="w-full border p-3 text-sm" value={editingGuest.name} onChange={e => setEditingGuest({...editingGuest, name: e.target.value})} />
-              <div className="grid grid-cols-2 gap-4">
-                <select className="border p-3 text-xs font-bold uppercase" value={editingGuest.category} onChange={e => setEditingGuest({...editingGuest, category: e.target.value})}>
-                  <option value="adult">Adulto</option><option value="child">Criança</option><option value="baby">Bebé</option>
-                </select>
-                <select className="border p-3 text-xs font-bold uppercase" value={editingGuest.status} onChange={e => setEditingGuest({...editingGuest, status: e.target.value})}>
-                  <option value="pending">Pendente</option><option value="confirmed">Confirmado</option><option value="declined">Recusado</option>
-                </select>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg p-8 rounded-[2rem] shadow-2xl animate-in fade-in zoom-in-95 duration-300">
+            <h3 className="font-serif text-3xl text-[#722F37] mb-6">Editar Convidado</h3>
+            <div className="space-y-6">
+              <div>
+                <label className={labelClass}>Nome Completo</label>
+                <input className={inputClass} value={editingGuest.name} onChange={e => setEditingGuest({...editingGuest, name: e.target.value})} />
               </div>
-              <textarea className="w-full border p-3 text-sm h-24 outline-none" placeholder="Notas/Dieta" value={editingGuest.dietary_notes || ""} onChange={e => setEditingGuest({...editingGuest, dietary_notes: e.target.value})} />
-              <div className="flex gap-4 pt-4">
-                <button onClick={() => setEditingGuest(null)} className="flex-1 py-4 border text-[10px] font-bold uppercase">Sair</button>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                    <label className={labelClass}>Categoria</label>
+                    <select className={inputClass} value={editingGuest.category} onChange={e => setEditingGuest({...editingGuest, category: e.target.value})}>
+                    <option value="adult">Adulto</option><option value="child">Criança</option><option value="baby">Bebé</option>
+                    </select>
+                </div>
+                <div>
+                    <label className={labelClass}>Estado (RSVP)</label>
+                    <select className={inputClass} value={editingGuest.status} onChange={e => setEditingGuest({...editingGuest, status: e.target.value})}>
+                    <option value="pending">Pendente</option><option value="confirmed">Confirmado</option><option value="declined">Recusado</option>
+                    </select>
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Notas e Restrições Alimentares</label>
+                <textarea className={`${inputClass} border rounded-xl p-4 bg-gray-50 h-28 resize-none`} placeholder="O convidado é alérgico a..." value={editingGuest.dietary_notes || ""} onChange={e => setEditingGuest({...editingGuest, dietary_notes: e.target.value})} />
+              </div>
+              <div className="flex gap-4 pt-4 border-t border-gray-100">
+                <button onClick={() => setEditingGuest(null)} className="w-1/3 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black">Cancelar</button>
                 <button onClick={async () => {
                   const { error } = await supabase.from("guests").update(editingGuest).eq("id", editingGuest.id);
                   if (error) alert(`Erro ao atualizar: ${error.message}`);
                   else {
                     setGuests(guests.map(g => g.id === editingGuest.id ? editingGuest : g));
                     setEditingGuest(null);
-                    alert("Atualizado com sucesso!");
                   }
-                }} className="flex-1 py-4 bg-black text-white text-[10px] font-bold uppercase shadow-lg">Gravar</button>
+                }} className="w-2/3 py-4 bg-[#722F37] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-transform">
+                  Guardar Alterações
+                </button>
               </div>
             </div>
           </div>
