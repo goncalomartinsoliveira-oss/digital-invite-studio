@@ -5,10 +5,12 @@ import { supabase } from "@/lib/supabase";
 import DesignModule from "@/components/dashboard/DesignModule";
 import GuestsModule from "@/components/dashboard/GuestsModule";
 import ContentModule from "@/components/dashboard/ContentModule";
+import SeatingModule from "@/components/dashboard/SeatingModule";
 
 import LuxuryTemplate from "../../templates/luxury-01/page"; 
+import CollageTemplate from "../../templates/collage-01/page"; 
 
-type DashboardTab = 'design' | 'content' | 'guests';
+type DashboardTab = 'design' | 'content' | 'guests' | 'seating';
 
 export default function Dashboard() {
   const params = useParams();
@@ -64,6 +66,7 @@ export default function Dashboard() {
     { id: 'design', label: 'Modelos e identidade', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> },
     { id: 'content', label: 'Conteúdo do convite', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg> },
     { id: 'guests', label: 'Lista', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+    { id: 'seating', label: 'Mesas', icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg> }
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
   const previewScale = 0.31; 
@@ -72,11 +75,12 @@ export default function Dashboard() {
   const containerWidth = desktopWidth * previewScale;
   const containerHeight = desktopHeight * previewScale;
 
+  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating';
+
   return (
     <div className="flex h-screen bg-[#FDFBF7] text-[#2D3748] overflow-hidden font-sans">
       
       <aside className="w-64 bg-white border-r border-gray-100 hidden xl:flex flex-col z-30 shadow-sm">
-        {/* LOGÓTIPO MAIOR COM DESTAQUE */}
         <div className="pt-10 pb-8 px-6 flex items-center justify-center border-b border-gray-50 mb-4">
             <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
         </div>
@@ -95,7 +99,7 @@ export default function Dashboard() {
           <header className="h-16 md:h-20 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 flex items-center justify-between sticky top-0 z-20">
             <h1 className="text-lg font-bold text-gray-800">{tabsConfig.find(t => t.id === activeTab)?.label}</h1>
             <div className="flex items-center gap-3">
-               {activeTab !== 'guests' && (
+               {!isFullScreenTab && (
                  <button onClick={() => setShowMobilePreview(!showMobilePreview)} className="lg:hidden bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">
                    Ver Preview
                  </button>
@@ -111,11 +115,12 @@ export default function Dashboard() {
               {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} />}
               {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} />}
               {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} />}
+              {activeTab === 'seating' && <SeatingModule invitationId={formData.id} />}
             </div>
           </main>
         </div>
 
-        {activeTab !== 'guests' && (
+        {!isFullScreenTab && (
           <div className={`
             ${showMobilePreview ? 'fixed inset-0 z-[200] bg-white' : 'hidden'} 
             lg:flex lg:relative lg:w-[420px] xl:w-[460px] bg-[#F1F3F5] flex-col items-center justify-center p-4 border-l border-gray-100
@@ -139,8 +144,14 @@ export default function Dashboard() {
                 </div>
                 
                 <div className="flex-1 w-full bg-white overflow-y-auto overflow-x-hidden relative scrollbar-hide">
-                    {/* @ts-ignore */}
-                    <LuxuryTemplate data={formData} params={params} />
+                    {/* Renderização Dinâmica */}
+                    {formData.template_id === 'collage-01' ? (
+                      /* @ts-ignore */
+                      <CollageTemplate data={formData} params={params} />
+                    ) : (
+                      /* @ts-ignore */
+                      <LuxuryTemplate data={formData} params={params} />
+                    )}
                 </div>
               </div>
             </div>
