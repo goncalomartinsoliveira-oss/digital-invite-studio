@@ -39,7 +39,7 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
   return (
     <main>
       {invite.template_id === 'collage-01' ? (
-        <CollageTemplate data={invite} params={params} />
+        <CollageTemplate data={invite} />
       ) : invite.template_id === 'minimal-01' ? (
         <div className="flex min-h-screen items-center justify-center bg-white text-xl font-serif">
           O modelo Modern Minimal está em desenvolvimento.
