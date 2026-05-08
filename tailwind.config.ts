@@ -1,4 +1,3 @@
-// tailwind.config.ts
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -13,11 +12,14 @@ const config: Config = {
         // Estas são as variáveis que configuraste no layout
         serif: ["var(--font-cormorant)"],
         sans: ["var(--font-inter)"],
-        // ADICIONADO: Esta é a linha que faltava!
+        // Esta é a fonte cursiva para nomes e detalhes
         script: ["var(--font-pinyon)", "cursive"],
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };
+
 export default config;

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter, Pinyon_Script } from "next/font/google"; // 1. Adicionada Pinyon_Script
+import { Cormorant_Garamond, Inter, Pinyon_Script } from "next/font/google";
 import "../globals.css";
+
+// Usando caminhos relativos exatos para evitar o erro de "Module not found"
+import Navbar from "../../components/site/Navbar";
+import Footer from "../../components/site/Footer";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -14,10 +18,9 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-// 2. Configurada a fonte Pinyon Script
 const pinyon = Pinyon_Script({
   subsets: ["latin"],
-  weight: "400", // Pinyon Script só suporta o peso 400
+  weight: "400", 
   variable: "--font-pinyon",
 });
 
@@ -37,9 +40,16 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      {/* 3. Adicionada pinyon.variable à lista de classes do body */}
-      <body className={`${cormorant.variable} ${inter.variable} ${pinyon.variable} antialiased font-sans`}>
-        {children}
+      <body className={`${cormorant.variable} ${inter.variable} ${pinyon.variable} antialiased font-sans flex flex-col min-h-screen`}>
+        
+        <Navbar />
+        
+        <main className="flex-grow">
+          {children}
+        </main>
+
+        <Footer />
+        
       </body>
     </html>
   );
