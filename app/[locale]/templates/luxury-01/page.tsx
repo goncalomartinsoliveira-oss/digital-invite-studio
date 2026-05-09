@@ -93,7 +93,6 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
     { time: "21:00", title: "BAILE" },
   ];
 
-  // Variáveis para a lógica adaptável do layout (Secção 6)
   const showUsefulInfo = visibility.useful_info !== false;
   const showAccommodation = visibility.accommodation !== false;
   const showDetailsSection = showUsefulInfo || showAccommodation || visibility.dress_code !== false || visibility.gifts !== false || visibility.details_header !== false;
@@ -416,12 +415,11 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
         </section>
       )}
 
-      {/* SECTION 6: DETALHES (Cabeçalho, Logística, Alojamento, Dress Code, Presentes) */}
+      {/* SECTION 6: DETALHES */}
       {showDetailsSection && (
         <section className="w-full py-24 px-4 md:px-8 bg-[#eeede7] bg-no-repeat bg-center bg-cover border-t border-[#3e3226]/5" style={{ backgroundImage: "url('/moldura-relevo-mobile.webp')" }}>
           <div className="w-full max-w-5xl mx-auto p-6 md:p-16 flex flex-col items-center text-center">
             
-            {/* CABEÇALHO DOS DETALHES */}
             {visibility.details_header !== false && (
               <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex flex-col items-center justify-center mb-16 md:mb-24">
                 <h2 className={`${cinzel.className} text-[#3e3226] text-[16px] md:text-[22px] tracking-[0.4em] uppercase z-10 -mb-6 md:-mb-10 ml-4`}>{content.details?.title_the ?? "Os"}</h2>
@@ -431,10 +429,7 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
               </motion.div>
             )}
             
-            {/* Lógica Adaptável (Flex Coluna se for só 1, Grid 2 se forem 2) */}
             <div className={`w-full ${showUsefulInfo && showAccommodation ? 'grid md:grid-cols-2' : 'flex flex-col items-center'} gap-12 md:gap-16 mb-20 max-w-4xl mx-auto`}>
-              
-              {/* Informações Úteis (Localização) */}
               {showUsefulInfo && (
                 <div className="flex flex-col items-center w-full max-w-md">
                   <h3 className={`${cinzel.className} text-[#3e3226] text-[13px] md:text-[15px] tracking-[0.2em] font-bold uppercase mb-6`}>{content.details?.parking_title ?? "Informações Úteis"}</h3>
@@ -442,13 +437,10 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
                 </div>
               )}
               
-              {/* Alojamento */}
               {showAccommodation && (
                 <div className="flex flex-col items-center w-full max-w-md">
                   <h3 className={`${cinzel.className} text-[#3e3226] text-[13px] md:text-[15px] tracking-[0.2em] font-bold uppercase mb-6`}>{content.details?.accommodation_title ?? "Alojamento"}</h3>
                   <p className={`${cinzel.className} text-[#3e3226] text-[14px] md:text-[16px] leading-relaxed italic opacity-80 mb-10`}>{content.details?.accommodation_text ?? ""}</p>
-                  
-                  {/* Botões Dinâmicos de Alojamento */}
                   {(content.details?.accommodation_buttons && content.details.accommodation_buttons.length > 0) && (
                     <div className="flex flex-wrap justify-center gap-4 w-full">
                       {content.details.accommodation_buttons.map((btn: any, idx: number) => (
@@ -462,12 +454,9 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
               )}
             </div>
             
-            {/* Dress Code */}
             {visibility.dress_code !== false && (
               <div className="max-w-2xl flex flex-col items-center border-t border-[#3e3226]/10 pt-16 w-full">
                 <span className={`${passionsConflict.className} text-[#3e3226] text-[80px] md:text-[110px] leading-none mb-8`}>{content.dress_code?.title ?? "Dress Code"}</span>
-                
-                {/* Ocultar paleta se desligado no Dashboard */}
                 {content.dress_code?.show_palette !== false && (
                   <div className="flex items-center justify-center gap-4 md:gap-6 mb-8 flex-wrap">
                     {(content.dress_code?.colors || ["#4A3B32", "#7A6652", "#686343", "#A1A384"]).map((color: string, idx: number) => (
@@ -475,20 +464,16 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
                     ))}
                   </div>
                 )}
-                
                 {(content.dress_code?.text || []).map((text: string, idx: number) => (
                   <p key={idx} className={`${cinzel.className} text-[#3e3226] text-[14px] md:text-[16px] leading-relaxed italic opacity-80 mb-6`}>{text}</p>
                 ))}
               </div>
             )}
 
-            {/* Presentes */}
             {visibility.gifts !== false && (
               <div className="max-w-2xl flex flex-col items-center border-t border-[#3e3226]/10 pt-16 mt-16 w-full">
                 <h3 className={`${cinzel.className} text-[#3e3226] text-[13px] md:text-[15px] tracking-[0.2em] font-bold uppercase mb-6`}>{content.gifts?.title ?? "Presentes"}</h3>
                 <p className={`${cinzel.className} text-[#3e3226] text-[14px] md:text-[16px] leading-relaxed italic opacity-80 mb-10`}>{content.gifts?.text ?? ""}</p>
-                
-                {/* Ocultar Botão e IBAN se desligado no Dashboard */}
                 {content.gifts?.show_iban !== false && (
                   <>
                     {!showIbanData ? (
@@ -511,29 +496,49 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
                 )}
               </div>
             )}
-
           </div>
         </section>
       )}
 
-      {/* SECTION 7: RSVP */}
+      {/* SECTION 7: RSVP - CORRIGIDA PARA TODAS AS VISTAS */}
       {visibility.rsvp !== false && (
-        <section className="w-full bg-[#eeede7] py-24 md:py-32 px-6 flex flex-col items-center justify-center border-t border-[#3e3226]/10">
-          <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }} className="flex flex-col items-center w-full">
-              <div className="relative w-full flex flex-col items-center justify-center pt-16 mb-8">
-                <span className={`${passionsConflict.className} text-[#3e3226] text-[140px] sm:text-[170px] md:text-[220px] absolute top-[-30px] md:top-[-50px] z-10 leading-none opacity-90`}>{content.rsvp?.title_please ?? "Por favor"}</span>
-                <h2 className={`${cinzel.className} text-[#3e3226] text-[40px] sm:text-[55px] md:text-[75px] tracking-[0.15em] z-0 relative mt-10 md:mt-16`}>{content.rsvp?.title_confirm ?? "CONFIRMAR PRESENÇA"}</h2>
+        <section className="w-full bg-[#eeede7] py-24 md:py-32 px-6 border-t border-[#3e3226]/10">
+          <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
+            
+            {/* Contentor central com Flexbox e Gap para garantir que nada choca */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }} 
+              className="flex flex-col items-center w-full gap-8 md:gap-12"
+            >
+              
+              {/* Box dos Títulos */}
+              <div className="flex flex-col items-center text-center">
+                
+                {/* "Por favor" - Fonte Cursiva isolada sem margens negativas agressivas */}
+                <h3 className={`${passionsConflict.className} text-[#3e3226] text-[110px] sm:text-[150px] md:text-[200px] leading-[0.6] md:leading-[0.5]`}>
+                  {content.rsvp?.title_please ?? "Por favor"}
+                </h3>
+                
+                {/* "Confirmar Presença" - Fonte Cinzel com margem topo controlada */}
+                <h2 className={`${cinzel.className} text-[#3e3226] text-[28px] sm:text-[45px] md:text-[65px] tracking-[0.1em] sm:tracking-[0.15em] uppercase mt-4 md:mt-6`}>
+                  {content.rsvp?.title_confirm ?? "CONFIRMAR PRESENÇA"}
+                </h2>
+
+                <span className={`${cinzel.className} text-[#3e3226] text-[12px] md:text-[14px] tracking-[0.4em] font-medium uppercase mt-4`}>
+                  ATÉ {rsvpFormattedDeadline}
+                </span>
               </div>
-              <span className={`${cinzel.className} text-[#3e3226] text-[12px] md:text-[14px] tracking-[0.4em] font-medium uppercase mt-2`}>ATÉ {rsvpFormattedDeadline}</span>
-              <div className="flex items-center justify-center gap-4 my-12 w-full max-w-[280px]">
+
+              <div className="flex items-center justify-center gap-4 w-full max-w-[280px]">
                 <div className="h-[1px] flex-grow bg-[#3e3226]/40"></div>
-                <span className="text-[#3e3226]/60 text-xl leading-none -mt-1">❦</span>
+                <span className="text-[#3e3226]/60 text-xl leading-none">❦</span>
                 <div className="h-[1px] flex-grow bg-[#3e3226]/40"></div>
               </div>
+
               <div className="w-full max-w-2xl bg-[#FDFBF7] p-6 md:p-12 shadow-sm border border-[#3e3226]/10 rounded-sm">
                  <SmartRsvp invitationId={data?.id || ""} />
               </div>
+
             </motion.div>
           </div>
         </section>
@@ -548,20 +553,16 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
             )}
             <div className="absolute inset-0 bg-black/65"></div>
           </div>
-
           <div className="relative z-10 flex flex-col items-center justify-center w-full px-4 text-center">
             <h2 className={`${cinzel.className} text-[#F0E9E3] text-[14px] sm:text-[22px] md:text-[32px] tracking-[0.25em] md:tracking-[0.3em] uppercase mb-2`}>{content.footer?.title_main ?? "Mal podemos esperar para"}</h2>
             <span className={`${passionsConflict.className} text-[#FDFBF7] text-[75px] sm:text-[110px] md:text-[150px] leading-none drop-shadow-xl`}>{content.footer?.title_celebrate ?? "Celebrar convosco!"}</span>
           </div>
-
           <div className="absolute bottom-24 sm:bottom-28 w-full px-6 md:px-16 flex justify-between items-center z-10">
             <span className={`${cinzel.className} text-[#FDFBF7] text-[9px] sm:text-[11px] tracking-[0.3em] uppercase opacity-70`}>{footerDate}</span>
             <span className={`${cinzel.className} text-[#FDFBF7] text-[9px] sm:text-[11px] tracking-[0.3em] uppercase opacity-70`}>{content.footer?.location_text ?? "SINTRA, PORTUGAL"}</span>
           </div>
-
-          {/* Contactos Dinâmicos - Oculta se desligado no Dashboard */}
           {content.footer?.show_contacts !== false && (
-            <div className="absolute bottom-14 w-full flex justify-center gap-8 z-10 px-4">
+            <div className="absolute bottom-14 w-full flex justify-center gap-8 z-10 px-4 text-center">
                <div className="flex flex-col items-center">
                   <span className={`${cinzel.className} text-[#FDFBF7] text-[7px] tracking-widest uppercase opacity-40 mb-1`}>{content.footer?.contact_1_name || "Noiva"}</span>
                   <a href={`tel:${content.footer?.contact_1_phone || data?.bride_phone || ""}`} className={`${cinzel.className} text-[#FDFBF7] text-[9px] tracking-widest opacity-70 hover:opacity-100 transition-opacity`}>Contactar</a>
@@ -573,13 +574,11 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
                </div>
             </div>
           )}
-
           <div className="absolute bottom-4 w-full text-center z-10">
              <span className={`${cinzel.className} text-[#FDFBF7] text-[8px] tracking-[0.5em] uppercase opacity-30`}>Wedding Studio</span>
           </div>
         </section>
       )}
-
     </div>
   );
 }
