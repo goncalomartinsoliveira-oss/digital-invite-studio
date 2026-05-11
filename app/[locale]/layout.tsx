@@ -27,6 +27,13 @@ const pinyon = Pinyon_Script({
 export const metadata: Metadata = {
   title: "Digital Invite Studio | Luxury Invitations",
   description: "Convites digitais sofisticados para momentos inesquecíveis.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default async function RootLayout({
