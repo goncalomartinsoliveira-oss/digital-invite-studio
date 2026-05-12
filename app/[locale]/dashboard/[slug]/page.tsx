@@ -2,15 +2,26 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Copy, Check, ExternalLink, UserCircle, PenTool, FileText, Users, Grid } from "lucide-react";
+import { 
+  Copy, 
+  Check, 
+  ExternalLink, 
+  UserCircle, 
+  PenTool, 
+  FileText, 
+  Users, 
+  Grid, 
+  Camera // Importado para o novo módulo
+} from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
 import GuestsModule from "@/components/dashboard/GuestsModule";
 import ContentModule from "@/components/dashboard/ContentModule";
 import SeatingModule from "@/components/dashboard/SeatingModule";
 import AccountModule from "@/components/dashboard/AccountModule";
+import MomentsModule from "@/components/dashboard/MomentsModule"; // NOVO IMPORT
 
-type DashboardTab = 'design' | 'content' | 'guests' | 'seating' | 'account';
+type DashboardTab = 'design' | 'content' | 'guests' | 'seating' | 'moments' | 'account';
 
 export default function Dashboard() {
   const params = useParams();
@@ -26,7 +37,6 @@ export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
 
-  // NOVO ESTADO: Guarda o nível de acesso do utilizador atual
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
 
   useEffect(() => {
@@ -36,15 +46,13 @@ export default function Dashboard() {
       
       const email = session.user.email;
 
-      // 1. Procurar o convite pelo slug
       const { data: invite } = await supabase.from("invitations").select("*").eq("slug", params.slug).single();
       if (!invite) { router.push(`/${params.locale}/dashboard`); return; }
       
-      // 🔒 NOVA FECHADURA DE SEGURANÇA (Dono ou Colaborador)
       const isOwner = invite.user_email === email;
       const { data: collab } = await supabase
         .from("invitation_collaborators")
-        .select("id, role") // AGORA PEDIMOS TAMBÉM A "ROLE"
+        .select("id, role")
         .eq("invitation_id", invite.id)
         .eq("user_email", email)
         .maybeSingle();
@@ -55,17 +63,15 @@ export default function Dashboard() {
         return;
       }
 
-      // 2. Definir o papel do utilizador
       if (isOwner) {
         setUserRole("owner");
       } else if (collab) {
         setUserRole(collab.role as "editor" | "viewer");
       }
 
-      // Injetar o email da sessão para o AccountModule
       setFormData({
         ...invite,
-        user_email: invite.user_email || email // Mantém o email do dono original se existir
+        user_email: invite.user_email || email
       });
 
       const { data: gs } = await supabase.from("guests").select("*").eq("invitation_id", invite.id);
@@ -77,7 +83,6 @@ export default function Dashboard() {
 
   const handleSaveDesign = async () => {
     setSaving(true);
-    // Removemos o user_email apenas se for o campo virtual da sessão para não corromper o dono original
     const { user_email, ...dataToSave } = formData;
     await supabase.from("invitations").update(dataToSave).eq("id", formData.id);
     setSaving(false);
@@ -110,16 +115,17 @@ export default function Dashboard() {
     </div>
   );
 
+  // Configuração das abas com o novo MomentsModule
   const tabsConfig = [
     { id: 'design', label: 'Modelos e identidade', icon: <PenTool size={20} /> },
     { id: 'content', label: 'Conteúdo do convite', icon: <FileText size={20} /> },
     { id: 'guests', label: 'Lista', icon: <Users size={20} /> },
-    { id: 'seating', label: 'Mesas', icon: <Grid size={20} /> }
+    { id: 'seating', label: 'Mesas', icon: <Grid size={20} /> },
+    { id: 'moments', label: 'Momentos e Guestbook', icon: <Camera size={20} /> } // ADICIONADO
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
-  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'account';
+  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'moments' || activeTab === 'account';
 
-  // VARIÁVEL MÁGICA: Só pode editar se for dono ou editor
   const canEdit = userRole === "owner" || userRole === "editor";
 
   return (
@@ -157,7 +163,6 @@ export default function Dashboard() {
               <h1 className="text-lg font-bold text-gray-800 hidden sm:block font-montserrat">
                 {activeTab === 'account' ? 'Minha Conta' : tabsConfig.find(t => t.id === activeTab)?.label}
               </h1>
-              {/* Mostra um badge "Apenas Leitura" no cabeçalho se for o caso */}
               {!canEdit && (
                 <span className="bg-blue-50 text-blue-500 border border-blue-100 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md hidden sm:block">
                   Apenas Leitura
@@ -206,17 +211,19 @@ export default function Dashboard() {
 
           <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-32 scroll-smooth relative">
             <div className="max-w-5xl mx-auto">
-              {/* PASSAMOS O 'canEdit' PARA TODOS OS MÓDULOS */}
               {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} />}
               {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} />}
               {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} />}
               {activeTab === 'seating' && <SeatingModule invitationId={formData.id} canEdit={canEdit} />}
+              
+              {/* RENDERIZAÇÃO DO NOVO MÓDULO */}
+              {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} />}
+              
               {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} />}
             </div>
           </main>
         </div>
 
-        {/* MOCKUP IPHONE */}
         {!isFullScreenTab && (
           <div className={`
             ${showMobilePreview ? 'fixed inset-0 z-[200] bg-[#F1F3F5] flex' : 'hidden'} 
