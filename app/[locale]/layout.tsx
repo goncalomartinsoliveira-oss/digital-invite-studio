@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter, Pinyon_Script } from "next/font/google";
+import { Cormorant_Garamond, Montserrat, Pinyon_Script } from "next/font/google";
 import "../globals.css";
 
 // Usando caminhos relativos exatos para evitar o erro de "Module not found"
@@ -13,9 +13,10 @@ const cormorant = Cormorant_Garamond({
   style: ["normal", "italic"],
 });
 
-const inter = Inter({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-montserrat",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const pinyon = Pinyon_Script({
@@ -47,7 +48,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${cormorant.variable} ${inter.variable} ${pinyon.variable} antialiased font-sans flex flex-col min-h-screen`}>
+      <body className={`${cormorant.variable} ${montserrat.variable} ${pinyon.variable} antialiased font-montserrat flex flex-col min-h-screen`}>
         
         <Navbar />
         

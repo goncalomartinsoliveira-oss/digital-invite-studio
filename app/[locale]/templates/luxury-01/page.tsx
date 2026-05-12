@@ -388,25 +388,25 @@ export default function LuxuryTemplate({ data, params }: { data: any, params?: a
               
               {content.event?.ceremony?.active !== false && (
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="flex-1 border border-[#3e3226]/10 p-8 md:p-12 rounded-sm bg-white shadow-sm flex flex-col items-center text-center">
-                  <h3 className={`${cinzel.className} text-[#3e3226] text-[18px] md:text-[20px] tracking-[0.2em] font-bold uppercase mb-2`}>{content.event.ceremony.title ?? "A Cerimónia"}</h3>
-                  <span className={`${cinzel.className} text-[#3e3226] text-[11px] md:text-[13px] tracking-[0.1em] uppercase opacity-60 mb-6`}>{content.event.ceremony.location ?? "Igreja de São Martinho, Sintra"}</span>
-                  <span className={`${cinzel.className} text-[#B99A6E] text-[22px] md:text-[26px] tracking-[0.2em] font-medium leading-none mb-6`}>{content.event.ceremony.time ?? "13:30"}</span>
+                  <h3 className={`${cinzel.className} text-[#3e3226] text-[18px] md:text-[20px] tracking-[0.2em] font-bold uppercase mb-2`}>{content.event?.ceremony?.title ?? "A Cerimónia"}</h3>
+                  <span className={`${cinzel.className} text-[#3e3226] text-[11px] md:text-[13px] tracking-[0.1em] uppercase opacity-60 mb-6`}>{content.event?.ceremony?.location ?? "Igreja de São Martinho, Sintra"}</span>
+                  <span className={`${cinzel.className} text-[#B99A6E] text-[22px] md:text-[26px] tracking-[0.2em] font-medium leading-none mb-6`}>{content.event?.ceremony?.time ?? "13:30"}</span>
                   <p className={`${cinzel.className} text-[#3e3226] text-[13px] md:text-[15px] leading-relaxed italic opacity-80 mb-8 max-w-xs`}>
-                    {content.event.ceremony.description ?? "Testemunhem a nossa troca de votos num momento íntimo, solene e inesquecível, onde oficializaremos o nosso compromisso."}
+                    {content.event?.ceremony?.description ?? "Testemunhem a nossa troca de votos num momento íntimo, solene e inesquecível, onde oficializaremos o nosso compromisso."}
                   </p>
-                  <a href={content.event.ceremony.google_maps_url || "#"} target="_blank" rel="noopener noreferrer" className={`${cinzel.className} px-8 py-3 border border-[#3e3226]/20 text-[#3e3226] text-[11px] tracking-[0.2em] uppercase font-bold hover:bg-[#3e3226] hover:text-[#fdfbf7] transition-all duration-300`}>Ver no Mapa</a>
+                  <a href={content.event?.ceremony?.google_maps_url || "#"} target="_blank" rel="noopener noreferrer" className={`${cinzel.className} px-8 py-3 border border-[#3e3226]/20 text-[#3e3226] text-[11px] tracking-[0.2em] uppercase font-bold hover:bg-[#3e3226] hover:text-[#fdfbf7] transition-all duration-300`}>Ver no Mapa</a>
                 </motion.div>
               )}
 
               {content.event?.reception?.active !== false && (
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.4 }} className="flex-1 border border-[#3e3226]/10 p-8 md:p-12 rounded-sm bg-white shadow-sm flex flex-col items-center text-center mt-12 md:mt-0">
-                  <h3 className={`${cinzel.className} text-[#3e3226] text-[18px] md:text-[20px] tracking-[0.2em] font-bold uppercase mb-2`}>{content.event.reception.title ?? "A Receção"}</h3>
-                  <span className={`${cinzel.className} text-[#3e3226] text-[11px] md:text-[13px] tracking-[0.1em] uppercase opacity-60 mb-6`}>{content.event.reception.location ?? "Quinta do Vale, Sintra"}</span>
-                  <span className={`${cinzel.className} text-[#B99A6E] text-[22px] md:text-[26px] tracking-[0.2em] font-medium leading-none mb-6`}>{content.event.reception.time ?? "15:00"}</span>
+                  <h3 className={`${cinzel.className} text-[#3e3226] text-[18px] md:text-[20px] tracking-[0.2em] font-bold uppercase mb-2`}>{content.event?.reception?.title ?? "A Receção"}</h3>
+                  <span className={`${cinzel.className} text-[#3e3226] text-[11px] md:text-[13px] tracking-[0.1em] uppercase opacity-60 mb-6`}>{content.event?.reception?.location ?? "Quinta do Vale, Sintra"}</span>
+                  <span className={`${cinzel.className} text-[#B99A6E] text-[22px] md:text-[26px] tracking-[0.2em] font-medium leading-none mb-6`}>{content.event?.reception?.time ?? "15:00"}</span>
                   <p className={`${cinzel.className} text-[#3e3226] text-[13px] md:text-[15px] leading-relaxed italic opacity-80 mb-8 max-w-xs`}>
-                    {content.event.reception.description ?? "Juntem-se a nós para um final de tarde e noite de grande celebração, com um jantar requintado, brindes e muito baile."}
+                    {content.event?.reception?.description ?? "Juntem-se a nós para um final de tarde e noite de grande celebração, com um jantar requintado, brindes e muito baile."}
                   </p>
-                  <a href={content.event.reception.google_maps_url || "#"} target="_blank" rel="noopener noreferrer" className={`${cinzel.className} px-8 py-3 border border-[#3e3226]/20 text-[#3e3226] text-[11px] tracking-[0.2em] uppercase font-bold hover:bg-[#3e3226] hover:text-[#fdfbf7] transition-all duration-300`}>Ver no Mapa</a>
+                  <a href={content.event?.reception?.google_maps_url || "#"} target="_blank" rel="noopener noreferrer" className={`${cinzel.className} px-8 py-3 border border-[#3e3226]/20 text-[#3e3226] text-[11px] tracking-[0.2em] uppercase font-bold hover:bg-[#3e3226] hover:text-[#fdfbf7] transition-all duration-300`}>Ver no Mapa</a>
                 </motion.div>
               )}
 

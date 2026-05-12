@@ -8,13 +8,10 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // Esconde em páginas de convite, dashboard ou login
   if (pathname.includes("/invite") || pathname.includes("/dashboard") || pathname.includes("/login")) {
     return null;
   }
 
-  // 1. Extrair o locale do pathname (ex: extrai "pt" de "/pt/pricing")
-  // Isto garante que os links mantêm o utilizador no idioma correto
   const segments = pathname.split("/");
   const locale = segments[1] || "pt"; 
 
@@ -25,51 +22,52 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed w-full z-50 bg-[#FDFBF7]/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+    <nav className="fixed w-full z-50 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-[#EFDFBB]/50 transition-all duration-300 font-montserrat">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-24">
+        <div className="flex justify-between items-center h-28">
           
           {/* LOGOTIPO */}
           <Link href={`/${locale}`} className="flex items-center group">
             <img 
               src="/logo-dis.svg" 
               alt="Digital Invite Studio" 
-              className="h-12 md:h-16 w-auto transition-transform duration-500 group-hover:scale-105" 
+              className="h-12 md:h-20 w-auto transition-transform duration-500 group-hover:scale-105" 
             />
           </Link>
 
-          {/* LINKS CENTRAIS */}
+          {/* LINKS CENTRAIS - Montserrat SemiBold (Ajustado para 11px) */}
           <div className="hidden md:flex items-center space-x-12">
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href}
-                className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 hover:text-[#722F37] transition-colors relative group"
+                className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#332E2B]/70 hover:text-[#630100] transition-colors relative group"
               >
                 {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#722F37] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-[#630100] transition-all duration-300 group-hover:w-full"></span>
               </Link>
             ))}
           </div>
 
-          {/* BOTÕES LADO DIREITO */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* BOTÕES LADO DIREITO - Montserrat SemiBold (Ajustado para 11px) */}
+          <div className="hidden md:flex items-center gap-10">
             <Link 
               href={`/${locale}/login`} 
-              className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-800 hover:text-[#722F37] transition-colors"
+              className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#332E2B] hover:text-[#630100] transition-colors"
             >
               Login
             </Link>
+            
             <Link 
               href={`/${locale}/pricing`} 
-              className="bg-[#722F37] text-[#FDFBF7] px-8 py-3.5 rounded-full text-[9px] font-bold uppercase tracking-[0.2em] shadow-lg hover:bg-[#332E2B] transition-all duration-500 transform hover:-translate-y-0.5"
+              className="bg-[#630100] text-[#EFDFBB] border-2 border-[#630100] px-10 py-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] hover:bg-transparent hover:text-[#630100] transition-all duration-500 transform hover:-translate-y-0.5 shadow-lg active:scale-95"
             >
               Começar Agora
             </Link>
           </div>
 
           {/* MOBILE TOGGLE */}
-          <button className="md:hidden text-gray-800 p-2" onClick={() => setIsOpen(!isOpen)}>
+          <button className="md:hidden text-[#332E2B] p-2" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -77,20 +75,20 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       {isOpen && (
-        <div className="md:hidden bg-[#FDFBF7] border-t border-gray-100 absolute w-full shadow-2xl py-8 px-6 space-y-6">
+        <div className="md:hidden bg-[#FDFBF7] border-t border-[#EFDFBB] absolute w-full shadow-2xl py-12 px-8 space-y-8 animate-in slide-in-from-top duration-300">
           {navLinks.map((link) => (
             <Link 
               key={link.name} 
               href={link.href} 
               onClick={() => setIsOpen(false)}
-              className="block text-sm font-bold uppercase tracking-widest text-gray-800"
+              className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-[#332E2B]"
             >
               {link.name}
             </Link>
           ))}
-          <div className="pt-4 border-t border-gray-100 space-y-4">
-            <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-sm font-bold uppercase tracking-widest text-[#722F37]">Login</Link>
-            <Link href={`/${locale}/pricing`} onClick={() => setIsOpen(false)} className="block bg-[#722F37] text-white text-center py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest">
+          <div className="pt-6 border-t border-[#EFDFBB] space-y-6">
+            <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-[#630100]">Login</Link>
+            <Link href={`/${locale}/pricing`} onClick={() => setIsOpen(false)} className="block bg-[#630100] text-[#EFDFBB] text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
               Começar Agora
             </Link>
           </div>

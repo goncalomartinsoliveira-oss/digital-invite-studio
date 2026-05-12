@@ -1,71 +1,181 @@
 "use client";
-
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { Loader2, ArrowRight, ArrowLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const params = useParams();
+  
+  const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const params = useParams();
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
 
-    const { error } = await supabase.auth.signInWithPassword({ 
-      email, 
-      password 
-    });
-    
-    if (error) {
-      alert("Erro no login: " + error.message);
+    try {
+      if (isLogin) {
+        const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+        if (authError) throw authError;
+        router.push(`/${params.locale}/dashboard`);
+        
+      } else {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        if (data?.user?.identities?.length === 0) {
+          setErrorMsg("Este email já está registado. Por favor, faça login.");
+        } else {
+          router.push(`/${params.locale}/dashboard`);
+        }
+      }
+    } catch (error: any) {
+      setErrorMsg(error.message === "Invalid login credentials" ? "Email ou password incorretos." : "Ocorreu um erro. Verifique os seus dados.");
+    } finally {
       setLoading(false);
-    } else {
-      // Login com sucesso! Redireciona para o dashboard
-      // Vamos redirecionar para o slug que criámos (pedro-e-marta)
-      router.push(`/${params.locale}/dashboard/pedro-e-marta`);
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/${params.locale}/reset-password`,
+      });
+      if (error) throw error;
+      setResetSent(true);
+    } catch (error: any) {
+      setErrorMsg("Erro ao enviar email. Verifique se o endereço está correto.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-[#630100] text-base text-gray-800 px-0 py-3 transition-colors font-montserrat placeholder-gray-300";
+  const labelClass = "text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1 block font-montserrat";
+
   return (
-    <div className="h-screen flex items-center justify-center bg-[#FDFBF7] font-sans px-4">
-      <div className="bg-white p-10 shadow-sm border border-neutral-200 w-full max-w-sm space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="font-serif text-3xl uppercase tracking-tighter">Studio Login</h2>
-          <p className="text-[10px] uppercase tracking-widest opacity-40">Introduza as suas credenciais</p>
+    <div className="min-h-screen flex bg-[#FDFBF7] font-montserrat overflow-hidden">
+      
+      {/* LADO ESQUERDO: Apresentação da Marca */}
+      <div className="hidden lg:flex w-1/2 bg-[#630100] flex-col justify-between p-16 relative">
+        <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-[#8a0201] to-[#4a0100] opacity-30 blur-3xl"></div>
+        
+        {/* LOGOTIPO CLICÁVEL (DESKTOP) */}
+        <div className="relative z-10">
+          <Link href={`/${params.locale}`}>
+            <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-48 h-auto filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity cursor-pointer" />
+          </Link>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div className="space-y-1">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-50">Email</label>
-            <input 
-              type="email" 
-              required
-              className="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors"
-              onChange={(e) => setEmail(e.target.value)} 
-            />
-          </div>
+        <div className="relative z-10 text-[#EFDFBB] space-y-6 max-w-md">
+          <h1 className="font-serif text-5xl leading-tight font-light italic">O primeiro passo para o dia perfeito.</h1>
+          <p className="text-sm opacity-80 leading-relaxed font-light font-montserrat">Faça a gestão dos seus convidados, acompanhe as confirmações em tempo real e personalize o design do seu convite de luxo num só lugar.</p>
+        </div>
+        <div className="relative z-10 text-[10px] uppercase tracking-widest text-[#EFDFBB]/50 font-bold font-montserrat">© {new Date().getFullYear()} Digital Invite Studio</div>
+      </div>
+
+      {/* LADO DIREITO: Formulário */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-16 relative">
+        <div className="absolute inset-0 bg-white/50 lg:hidden"></div>
+        <div className="w-full max-w-md space-y-12 relative z-10 bg-white lg:bg-transparent p-10 lg:p-0 rounded-3xl lg:rounded-none shadow-xl lg:shadow-none border border-gray-100 lg:border-none">
           
-          <div className="space-y-1">
-            <label className="text-[8px] uppercase tracking-[0.3em] opacity-50">Password</label>
-            <input 
-              type="password" 
-              required
-              className="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors"
-              onChange={(e) => setPassword(e.target.value)} 
-            />
+          {/* LOGOTIPO CLICÁVEL (MOBILE) */}
+          <div className="lg:hidden flex justify-center mb-8">
+            <Link href={`/${params.locale}`}>
+              <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-40 h-auto cursor-pointer hover:scale-105 transition-transform" />
+            </Link>
           </div>
 
-          <button 
-            disabled={loading}
-            className="w-full bg-black text-white py-4 uppercase tracking-[0.3em] text-[10px] font-bold hover:bg-neutral-800 transition-all disabled:bg-neutral-400"
-          >
-            {loading ? "A entrar..." : "Entrar no Painel"}
-          </button>
-        </form>
+          {isForgotPassword ? (
+            <div className="animate-in slide-in-from-right-4 duration-500">
+              <button onClick={() => setIsForgotPassword(false)} className="flex items-center gap-2 text-gray-400 hover:text-[#630100] text-[10px] font-bold uppercase tracking-widest mb-8 transition-colors">
+                 <ArrowLeft size={14} /> Voltar ao Login
+              </button>
+              
+              <div className="space-y-3 text-center lg:text-left mb-8">
+                <h2 className="font-serif text-4xl text-[#630100] font-regular">Recuperar Password</h2>
+                <p className="text-sm text-gray-500 font-montserrat">Insira o seu email para receber um link seguro de recuperação.</p>
+              </div>
+
+              {resetSent ? (
+                <div className="bg-green-50 border border-green-100 p-6 rounded-2xl text-center space-y-4">
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white mx-auto">✓</div>
+                  <h3 className="text-green-800 font-bold">Email Enviado!</h3>
+                  <p className="text-xs text-green-700 font-medium">Verifique a sua caixa de entrada (e a pasta de SPAM) para redefinir a password.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleResetPassword} className="space-y-8">
+                  <AnimatePresence mode="wait">
+                    {errorMsg && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-red-50 border border-red-100 text-red-500 text-xs p-4 rounded-xl text-center font-semibold font-montserrat">{errorMsg}</motion.div>}
+                  </AnimatePresence>
+                  <div>
+                    <label className={labelClass}>Email da Conta</label>
+                    <input type="email" required className={inputClass} placeholder="exemplo@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
+                  <button type="submit" disabled={loading} className="w-full bg-[#630100] text-[#EFDFBB] py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : <>Enviar Link de Recuperação <ArrowRight size={16} /></>}
+                  </button>
+                </form>
+              )}
+            </div>
+          ) : (
+            <div className="animate-in slide-in-from-left-4 duration-500">
+              <div className="space-y-3 text-center lg:text-left mb-8">
+                <h2 className="font-serif text-4xl text-[#630100] font-regular">{isLogin ? "Bem-vindo de volta" : "Criar uma conta"}</h2>
+                <p className="text-sm text-gray-500 font-montserrat">{isLogin ? "Insira as suas credenciais para aceder ao painel." : "Comece a planear o seu convite digital de luxo."}</p>
+              </div>
+
+              <form onSubmit={handleAuth} className="space-y-8">
+                <AnimatePresence mode="wait">
+                  {errorMsg && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-red-50 border border-red-100 text-red-500 text-xs p-4 rounded-xl text-center font-semibold font-montserrat">{errorMsg}</motion.div>}
+                </AnimatePresence>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className={labelClass}>Email</label>
+                    <input type="email" required className={inputClass} placeholder="exemplo@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <label className={labelClass}>Password</label>
+                      {isLogin && (
+                        <button type="button" onClick={() => {setIsForgotPassword(true); setErrorMsg(""); setResetSent(false);}} className="text-[10px] font-bold text-gray-400 hover:text-[#630100] transition-colors font-montserrat">Esqueceu-se?</button>
+                      )}
+                    </div>
+                    <input type="password" required minLength={6} className={inputClass} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  </div>
+                </div>
+
+                <button type="submit" disabled={loading} className="w-full bg-[#630100] text-[#EFDFBB] py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <>{isLogin ? "Entrar na Conta" : "Registar Agora"} <ArrowRight size={16} /></>}
+                </button>
+              </form>
+
+              <div className="text-center pt-8 border-t border-gray-100 mt-8">
+                <p className="text-xs text-gray-500 font-montserrat">
+                  {isLogin ? "Ainda não tem o seu convite?" : "Já tem uma conta?"}
+                  <button type="button" onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); setPassword(""); }} className="font-bold text-[#630100] hover:underline underline-offset-4 ml-1 transition-all">
+                    {isLogin ? "Criar conta aqui" : "Faça login"}
+                  </button>
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
