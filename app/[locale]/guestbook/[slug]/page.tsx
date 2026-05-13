@@ -1,0 +1,321 @@
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import {
+  Loader2, MessageSquare, Mic, Video, Send, StopCircle,
+  ShieldCheck, ChevronLeft
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const premiumGradient = "bg-gradient-to-tr from-[#630100] via-[#8B0000] to-[#330100]";
+
+export default function IsolatedGuestbookPage() {
+  const { slug, locale } = useParams();
+  const [invitation, setInvitation] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  const [uploading, setUploading] = useState(false);
+  const [modalType, setModalType] = useState<'text' | 'voice' | 'video' | null>(null);
+  const [autor, setAutor] = useState("");
+  const [textoMensagem, setTextoMensagem] = useState("");
+  
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [activeStream, setActiveStream] = useState<MediaStream | null>(null);
+  
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const audioChunks = useRef<Blob[]>([]);
+  const timerRef = useRef<any>(null);
+
+  // 1. CARREGAR DADOS DO CONVITE
+  useEffect(() => {
+    fetchInitialData();
+  }, [slug]);
+
+  async function fetchInitialData() {
+    try {
+      const { data: inv, error } = await supabase.from('invitations').select('id, bride_name, groom_name, profile_image_url').eq('slug', slug).single();
+      if (error) throw error;
+      setInvitation(inv);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // 2. ATIVAR CÂMARA/MICROFONE LOGO QUE O MODAL ABRE
+  useEffect(() => {
+    let currentStream: MediaStream | null = null;
+    
+    const initMedia = async () => {
+      if (modalType === 'video' || modalType === 'voice') {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: modalType === 'video' ? { facingMode: "user" } : false
+          });
+          currentStream = stream;
+          setActiveStream(stream);
+        } catch (err) {
+          console.error("Erro no media:", err);
+          alert("Por favor, permita o acesso à câmara ou microfone para gravar.");
+          setModalType(null);
+        }
+      } else {
+        setActiveStream(null);
+      }
+    };
+
+    initMedia();
+
+    return () => {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [modalType]);
+
+  // Garante que o stream liga ao vídeo assim que a tag <video> é renderizada
+  useEffect(() => {
+    if (modalType === 'video' && videoRef.current && activeStream) {
+      videoRef.current.srcObject = activeStream;
+    }
+  }, [modalType, activeStream]);
+
+
+  // 3. INICIAR A GRAVAÇÃO (Corrigido o TS Error)
+  const startRecording = () => {
+    if (!activeStream) return;
+
+    mediaRecorder.current = new MediaRecorder(activeStream);
+    audioChunks.current = [];
+    
+    mediaRecorder.current.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunks.current.push(e.data);
+    };
+    
+    mediaRecorder.current.onstop = async () => {
+      const blob = new Blob(audioChunks.current, { type: modalType === 'video' ? 'video/mp4' : 'audio/webm' });
+      await uploadGuestbookMedia(blob, modalType!);
+    };
+    
+    mediaRecorder.current.start();
+    setIsRecording(true);
+    setRecordingTime(0);
+    
+    timerRef.current = setInterval(() => {
+      setRecordingTime(prev => { 
+        if (prev >= 29) { stopRecording(); return 30; } 
+        return prev + 1; 
+      });
+    }, 1000);
+  };
+
+  const stopRecording = () => { 
+    if (mediaRecorder.current && mediaRecorder.current.state !== 'inactive') {
+      mediaRecorder.current.stop(); 
+    }
+    setIsRecording(false); 
+    clearInterval(timerRef.current); 
+  };
+
+  const uploadGuestbookMedia = async (blob: Blob, type: string) => {
+    setUploading(true);
+    const fileName = `private_gb_${type}_${Date.now()}.${type === 'video' ? 'mp4' : 'webm'}`;
+    const path = `${invitation.id}/${fileName}`;
+    
+    const { error } = await supabase.storage.from('fotos_evento').upload(path, blob);
+    if (!error) {
+      const { data: { publicUrl } } = supabase.storage.from('fotos_evento').getPublicUrl(path);
+      await supabase.from('guestbook').insert([{ invitation_id: invitation.id, tipo: type, conteudo: publicUrl, autor: autor || 'Anónimo' }]);
+      alert("Enviado com sucesso para os noivos!");
+      setModalType(null);
+      setAutor("");
+    } else {
+      alert("Erro ao enviar. Tente novamente.");
+    }
+    setUploading(false);
+  };
+
+  const enviarTexto = async () => {
+    if (!textoMensagem || !invitation) return;
+    setUploading(true);
+    await supabase.from('guestbook').insert([{ invitation_id: invitation.id, tipo: 'texto', conteudo: textoMensagem, autor: autor || 'Anónimo' }]);
+    setUploading(false);
+    setModalType(null);
+    setTextoMensagem("");
+    setAutor("");
+    alert("Mensagem enviada com sucesso!");
+  };
+
+  if (loading) return <div className="fixed inset-0 z-[9999] bg-[#FDFBF7] flex items-center justify-center"><Loader2 className="animate-spin text-[#630100]" size={32} /></div>;
+
+  return (
+    // 🔒 RESOLUÇÃO NAVBAR/FOOTER: z-[9999] garante que fica por cima de qualquer componente global do Next.js
+    <div className="fixed inset-0 z-[9999] bg-[#FDFBF7] font-montserrat flex flex-col items-center justify-start overflow-y-auto w-full h-full">
+      
+      <AnimatePresence mode="wait">
+        {!modalType ? (
+          <motion.div 
+            key="main-menu"
+            initial={{ opacity: 0, scale: 0.95 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="w-full max-w-md flex flex-col items-center pt-16 px-6 pb-20 relative min-h-[100dvh]"
+          >
+            <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-[#EFDFBB]/30 to-transparent pointer-events-none -z-10" />
+            
+            <div className="bg-white p-2 rounded-full shadow-2xl mb-6 border border-[#EFDFBB]/50">
+              <img src={invitation?.profile_image_url || "/placeholder.png"} className="w-24 h-24 rounded-full object-cover" alt="Noivos" />
+            </div>
+            
+            <h1 className="text-3xl font-serif text-[#630100] italic mb-2 text-center">{invitation?.bride_name} & {invitation?.groom_name}</h1>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 text-center">Livro de Honra Digital</p>
+
+            <div className="bg-[#630100] text-[#EFDFBB] p-4 rounded-3xl mb-8 shadow-xl flex flex-col items-center gap-2 border border-white/10 w-full">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={16} />
+                <span className="text-[10px] font-black uppercase tracking-widest italic">100% Privado</span>
+              </div>
+              <p className="text-[9px] text-center opacity-80 leading-tight uppercase font-medium">As mensagens gravadas aqui<br/>são vistas apenas pelos noivos.</p>
+            </div>
+
+            <div className="flex flex-col gap-4 w-full flex-1">
+              <button onClick={() => setModalType('text')} className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex items-center justify-between hover:scale-[1.02] transition-transform w-full">
+                <div className="text-left">
+                  <span className="block text-sm font-black uppercase tracking-widest text-[#630100] mb-1">Mensagem Escrita</span>
+                  <span className="text-[9px] text-gray-400 uppercase font-bold tracking-widest">Escreva os seus votos</span>
+                </div>
+                <div className="bg-orange-50 p-4 rounded-2xl text-orange-500"><MessageSquare size={24}/></div>
+              </button>
+
+              <button onClick={() => setModalType('voice')} className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex items-center justify-between hover:scale-[1.02] transition-transform w-full">
+                <div className="text-left">
+                  <span className="block text-sm font-black uppercase tracking-widest text-[#630100] mb-1">Mensagem de Voz</span>
+                  <span className="text-[9px] text-gray-400 uppercase font-bold tracking-widest">Grave um áudio (30s)</span>
+                </div>
+                <div className="bg-[#630100]/5 p-4 rounded-2xl text-[#630100]"><Mic size={24}/></div>
+              </button>
+
+              <button onClick={() => setModalType('video')} className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex items-center justify-between hover:scale-[1.02] transition-transform w-full">
+                <div className="text-left">
+                  <span className="block text-sm font-black uppercase tracking-widest text-[#630100] mb-1">Vídeo Dedicatória</span>
+                  <span className="text-[9px] text-gray-400 uppercase font-bold tracking-widest">Grave uma mensagem (30s)</span>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-2xl text-purple-500"><Video size={24}/></div>
+              </button>
+            </div>
+
+            <footer className="mt-16 pb-8 flex flex-col items-center w-full">
+              <Link href={`/${locale}`} className="group flex flex-col items-center gap-2 opacity-40 hover:opacity-100 transition-all">
+                <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-gray-400">Desenvolvido por</span>
+                <img src="/logo-dis.svg" alt="Digital Invite Studio" className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all" />
+              </Link>
+            </footer>
+          </motion.div>
+
+        ) : (
+          
+          <motion.div 
+            key="action-modal"
+            initial={{ y: '10%' }} animate={{ y: 0 }} exit={{ y: '10%' }} 
+            className="w-full max-w-md flex flex-col min-h-[100dvh] pt-8 px-6 pb-12"
+          >
+            <div className="flex items-center justify-between mb-8 w-full">
+              <button 
+                className="p-3 bg-white shadow-sm rounded-full text-gray-400 hover:text-[#630100] transition-colors" 
+                onClick={() => { if(isRecording) stopRecording(); setModalType(null); }}
+              >
+                <ChevronLeft size={24}/>
+              </button>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#630100]">
+                {modalType === 'text' ? 'Escrever Votos' : modalType === 'voice' ? 'Gravar Áudio' : 'Gravar Vídeo'}
+              </span>
+              <div className="w-12"></div>
+            </div>
+
+            <div className="flex-1 w-full space-y-6 flex flex-col">
+              <input 
+                type="text" 
+                placeholder="O seu nome" 
+                className="w-full bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm outline-none font-bold text-sm text-center focus:border-[#EFDFBB] transition-colors" 
+                value={autor} 
+                onChange={e => setAutor(e.target.value)} 
+              />
+              
+              {modalType === 'text' && (
+                <textarea 
+                  placeholder="Deixe os seus votos privados aos noivos..." 
+                  className="w-full flex-1 min-h-[250px] bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm outline-none font-medium text-sm resize-none focus:border-[#EFDFBB] transition-colors" 
+                  value={textoMensagem} 
+                  onChange={e => setTextoMensagem(e.target.value)} 
+                />
+              )}
+
+              {(modalType === 'voice' || modalType === 'video') && (
+                <div className="flex-1 flex flex-col items-center justify-start gap-8 w-full mt-4">
+                  {modalType === 'video' && (
+                    <div className="w-full max-w-sm aspect-[3/4] bg-black rounded-[2.5rem] overflow-hidden shadow-2xl relative border-4 border-white">
+                      <video 
+                        ref={videoRef} 
+                        autoPlay 
+                        muted 
+                        playsInline 
+                        className="w-full h-full object-cover transform -scale-x-100" 
+                      />
+                      {isRecording && <div className="absolute top-4 right-4 w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.8)]"></div>}
+                    </div>
+                  )}
+                  
+                  {modalType === 'voice' && (
+                    <div className="w-full max-w-sm aspect-square bg-white rounded-[2.5rem] shadow-sm flex flex-col items-center justify-center gap-6 border border-gray-100">
+                       <Mic size={64} className={isRecording ? 'text-[#630100] animate-pulse' : 'text-gray-200'} />
+                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                         {isRecording ? 'A Gravar...' : 'Pronto a Gravar'}
+                       </span>
+                    </div>
+                  )}
+                  
+                  <div className="flex flex-col items-center gap-6 mt-4">
+                    <div className={`text-5xl font-black font-serif italic ${isRecording ? 'text-red-500' : 'text-[#332E2B]'}`}>
+                      00:{recordingTime < 10 ? `0${recordingTime}` : recordingTime} <span className="text-lg not-italic font-sans text-gray-400">/ 30s</span>
+                    </div>
+                    
+                    {!isRecording ? (
+                      /* 🔒 RESOLUÇÃO DO ERRO TS: Retirado o argumento modalType */
+                      <button onClick={startRecording} className="bg-[#630100] text-white p-8 rounded-full shadow-2xl hover:scale-105 transition-transform">
+                        {modalType === 'voice' ? <Mic size={36}/> : <Video size={36}/>}
+                      </button>
+                    ) : (
+                      <button onClick={stopRecording} className="bg-red-500 text-white p-8 rounded-full shadow-2xl animate-bounce">
+                        <StopCircle size={36}/>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-8 w-full mt-auto">
+              {(modalType === 'text' || uploading) && (
+                <button 
+                  onClick={enviarTexto} 
+                  disabled={uploading} 
+                  className={`w-full py-5 ${premiumGradient} text-[#EFDFBB] rounded-2xl font-bold uppercase text-[11px] tracking-[0.2em] shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
+                >
+                  {uploading ? <Loader2 className="animate-spin" size={18} /> : <Send size={18}/>}
+                  {uploading ? 'A Enviar para os noivos...' : 'Enviar aos Noivos'}
+                </button>
+              )}
+            </div>
+
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

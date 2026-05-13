@@ -94,7 +94,7 @@ export default function GuestMomentsPage() {
       link.href = blobUrl; link.download = fileName;
       document.body.appendChild(link); link.click();
       document.body.removeChild(link); window.URL.revokeObjectURL(blobUrl);
-    } catch (error) { alert("Erro ao baixar."); }
+    } catch (error) { alert("Erro ao descarregar."); }
   };
 
   const compressImage = (file: File): Promise<File | Blob> => {
@@ -181,7 +181,6 @@ export default function GuestMomentsPage() {
 
   return (
     <div className="fixed inset-0 z-[100] bg-white overflow-y-auto font-montserrat">
-      {/* 🚀 OVERLAY DE CARREGAMENTO */}
       <AnimatePresence>{uploading && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[300] bg-[#630100]/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center text-white">
           <div className="relative mb-8"><div className="w-32 h-32 border-4 border-white/10 border-t-white rounded-full animate-spin"></div><CloudUpload className="absolute inset-0 m-auto text-[#EFDFBB] animate-bounce" size={40} /></div>
@@ -203,7 +202,7 @@ export default function GuestMomentsPage() {
             <div className="bg-white p-1 rounded-full"><img src={invitation?.profile_image_url || "/placeholder.png"} className="w-24 h-24 rounded-full object-cover border-2 border-white" alt="Perfil" /></div>
           </motion.div>
           <h1 className="text-3xl font-serif italic mb-2">{invitation?.bride_name} & {invitation?.groom_name}</h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-90">{fotos.length} Momentos na Galeria Pública</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-90">{fotos.length} Momentos Partilhados</p>
           <label className={`mt-10 flex flex-col items-center gap-3 px-10 py-5 ${premiumGradient} rounded-2xl shadow-2xl cursor-pointer active:scale-95 transition-all border border-white/20`}>
               <div className="flex items-center gap-3"><Camera size={20} className="text-[#EFDFBB]" /><span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#EFDFBB]">Partilhar na Galeria Pública</span></div>
               <input type="file" accept="image/*,video/*" multiple className="hidden" onChange={(e) => handleUploadProcess(e.target.files, false)} disabled={uploading} />
@@ -222,17 +221,17 @@ export default function GuestMomentsPage() {
             </div>
           ))}
         </div>
-        {fotos.length > visibleCount && <div className="flex justify-center mt-8"><button onClick={() => setVisibleCount(v => v + 12)} className="flex items-center gap-2 px-8 py-3 bg-gray-50 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-400"><ChevronDown size={14}/> Ver mais</button></div>}
+        {fotos.length > visibleCount && <div className="flex justify-center mt-8"><button onClick={() => setVisibleCount(v => v + 12)} className="flex items-center gap-2 px-8 py-3 bg-[#FDFBF7] border border-[#EFDFBB] rounded-xl text-[10px] font-bold uppercase tracking-widest text-[#630100]"><ChevronDown size={14}/> Carregar mais momentos</button></div>}
         <footer className="mt-20 flex flex-col items-center justify-center border-t border-gray-50 pt-10 pb-20"><Link href={`/${locale}`} className="group flex flex-col items-center gap-2 opacity-40 hover:opacity-100 transition-all"><span className="text-[8px] font-bold uppercase tracking-[0.4em] text-gray-400">Desenvolvido por</span><img src="/logo-dis.svg" alt="Digital Invite Studio" className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all" /></Link></footer>
       </div>
 
-      {/* --- MENU EXPANSÍVEL GUESTBOOK --- */}
+      {/* --- MENU EXPANSÍVEL GUESTBOOK PRIVADO --- */}
       <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4">
         <AnimatePresence>{menuOpen && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="flex flex-col items-end gap-3 mb-2">
-            <div className="bg-black/90 text-white p-4 rounded-3xl mb-2 shadow-2xl flex flex-col items-center gap-2 border border-white/10">
-              <div className="flex items-center gap-2 text-green-400"><ShieldCheck size={16} /><span className="text-[9px] font-black uppercase tracking-widest italic">Área Privada</span></div>
-              <p className="text-[8px] text-center text-gray-300 leading-tight uppercase font-medium">As mensagens enviadas aqui<br/>são vistas apenas pelos noivos.</p>
+            <div className="bg-[#630100] text-[#EFDFBB] p-4 rounded-3xl mb-2 shadow-2xl flex flex-col items-center gap-2 border border-white/10">
+              <div className="flex items-center gap-2 text-[#EFDFBB]"><ShieldCheck size={16} /><span className="text-[9px] font-black uppercase tracking-widest italic">Guestbook Privado</span></div>
+              <p className="text-[8px] text-center opacity-80 leading-tight uppercase font-medium">As mensagens enviadas aqui<br/>são vistas apenas pelos noivos.</p>
             </div>
             <button onClick={() => { setModalType('text'); setMenuOpen(false); }} className="bg-white p-5 rounded-2xl shadow-2xl border border-gray-100 flex items-center justify-between w-56 hover:bg-gray-50 transition-all"><span className="text-[10px] font-black uppercase tracking-widest text-gray-600">Escrever Votos</span><div className="bg-orange-50 p-2 rounded-xl text-orange-500"><MessageSquare size={22}/></div></button>
             <button onClick={() => { setModalType('voice'); setMenuOpen(false); }} className="bg-white p-5 rounded-2xl shadow-2xl border border-gray-100 flex items-center justify-between w-56 hover:bg-gray-50 transition-all"><span className="text-[10px] font-black uppercase tracking-widest text-gray-600">Mensagem de Voz</span><div className="bg-[#630100]/5 p-2 rounded-xl text-[#630100]"><Mic size={22}/></div></button>
@@ -242,10 +241,9 @@ export default function GuestMomentsPage() {
         <button onClick={() => setMenuOpen(!menuOpen)} className={`${premiumGradient} w-16 h-16 text-[#EFDFBB] rounded-full shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/20`}>{menuOpen ? <X size={32} /> : <Plus size={35} />}</button>
       </div>
 
-      {/* MODAIS GUESTBOOK */}
       <AnimatePresence>{modalType && (
         <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 text-center text-[#332E2B]">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white w-full max-w-sm rounded-[3rem] p-10 shadow-2xl relative overflow-hidden text-center">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white w-full max-w-sm rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-green-400"></div>
             <button className="absolute top-6 right-6 text-gray-400" onClick={() => { stopRecording(); setModalType(null); }}><X size={24}/></button>
             <h3 className="font-serif text-2xl text-[#630100] mb-8 uppercase italic tracking-tighter">{modalType === 'text' ? 'Desejar Felicidades' : modalType === 'voice' ? 'Mensagem de Voz' : 'Gravar Vídeo'}</h3>
@@ -262,7 +260,6 @@ export default function GuestMomentsPage() {
         </div>
       )}</AnimatePresence>
 
-      {/* --- LIGHTBOX COM SWIPE E DOWNLOAD --- */}
       <AnimatePresence>{selectedIndex !== null && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] bg-black/98 backdrop-blur-xl flex flex-col items-center justify-center" onClick={() => setSelectedIndex(null)}>
           <div className="absolute top-6 left-0 w-full px-6 flex items-center justify-between text-white/70 z-[160]"><span className="text-[10px] font-black uppercase tracking-widest">{selectedIndex + 1} / {fotos.length}</span><div className="flex items-center gap-4"><button className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors flex items-center gap-2" onClick={(e) => { e.stopPropagation(); downloadMedia(fotos[selectedIndex].url, fotos[selectedIndex].name); }}><Download size={20} /><span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">Guardar</span></button><button className="p-2 hover:text-white transition-colors" onClick={() => setSelectedIndex(null)}><X size={32} /></button></div></div>
