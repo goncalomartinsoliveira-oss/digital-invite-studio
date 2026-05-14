@@ -113,10 +113,10 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     return items;
   }, [guests, sortConfig]);
 
-  // --- FUNÇÕES DE EXPORTAÇÃO (CORRIGIDA) ---
-  const exportToPDF = (type: 'confirmed' | 'confirmed_pending' | 'all') => {
+  // --- FUNÇÕES DE EXPORTAÇÃO (CORRIGIDA COM ESPAÇAMENTO DINÂMICO) ---
+  const exportToPDF = async (type: 'confirmed' | 'confirmed_pending' | 'all') => {
     const doc = new jsPDF();
-    const homeUrl = window.location.origin;
+    const websiteUrl = "https://digitalinvitestudio.com";
 
     let list = guests;
     let label = "Lista Total";
@@ -132,19 +132,46 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       label = "Lista Total Ativa";
     }
     
-    // Cabeçalho em Texto com Link (Resolve o erro do SVG/PNG)
-    doc.setFontSize(16);
-    doc.setTextColor(99, 1, 0); // Bordô do Digital Invite Studio
-    doc.text("DIGITAL INVITE STUDIO", 14, 20);
-    doc.link(14, 14, 70, 8, { url: homeUrl }); // Link no título
+    let contentY = 32; // Posição Y inicial por defeito
+
+    // Tentativa de carregar o logo mantendo a proporção correta
+    try {
+      const logoImg = new window.Image();
+      logoImg.src = "/logo-dis.png";
+      
+      await new Promise((resolve, reject) => {
+        logoImg.onload = resolve;
+        logoImg.onerror = reject;
+      });
+
+      const logoWidth = 40; 
+      const logoHeight = logoWidth * (logoImg.height / logoImg.width);
+      
+      doc.addImage(logoImg, "PNG", 14, 10, logoWidth, logoHeight);
+      doc.link(14, 10, logoWidth, logoHeight, { url: websiteUrl });
+
+      // Calcula a posição do texto baseada na altura real do logo + margem de 12mm
+      contentY = 10 + logoHeight + 12;
+
+    } catch (e) {
+      // Fallback em texto caso a imagem não exista
+      doc.setFontSize(16);
+      doc.setTextColor(99, 1, 0); 
+      doc.setFont("helvetica", "bold");
+      doc.text("DIGITAL INVITE STUDIO", 14, 20);
+      doc.link(14, 14, 70, 8, { url: websiteUrl }); 
+      doc.setFont("helvetica", "normal");
+      
+      contentY = 35; // Espaçamento fixo para o texto
+    }
 
     doc.setFontSize(12);
     doc.setTextColor(50, 50, 50);
-    doc.text(`Lista de Convidados: ${label}`, 14, 30);
+    doc.text(`Lista de Convidados: ${label}`, 14, contentY);
 
     doc.setFontSize(9);
     doc.setTextColor(100, 100, 100);
-    doc.text(`${brideName} & ${groomName} | Gerado em: ${new Date().toLocaleDateString()} | Total: ${list.length} pessoas`, 14, 36);
+    doc.text(`${brideName} & ${groomName} | Gerado em: ${new Date().toLocaleDateString()} | Total: ${list.length} pessoas`, 14, contentY + 6);
 
     const tableData: string[][] = list.map(g => [
       g.name ? String(g.name) : "-", 
@@ -155,7 +182,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     ]);
 
     autoTable(doc, {
-      startY: 42,
+      startY: contentY + 12, // A tabela começa 12mm abaixo do texto descritivo
       head: [['Nome', 'Grupo', 'Idade', 'Lado', 'Estado']],
       body: tableData,
       headStyles: { fillColor: [99, 1, 0], textColor: [239, 223, 187] },

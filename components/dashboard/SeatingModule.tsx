@@ -89,6 +89,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
     const activeTable = tables.find(t => t.id === selectedTableId);
     if (!activeTable) return;
     
+    // Bloqueia Valores Negativos e Limita Redondas/Quadradas a 18
     let finalCapacity = Math.max(1, activeTable.capacity);
     if ((activeTable.shape === 'round' || activeTable.shape === 'square') && finalCapacity > 18) {
       finalCapacity = 18;
@@ -112,6 +113,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
     setSelectedTableId(null);
   };
 
+  // CORREÇÃO DOS SALTOS ALEATÓRIOS: Bloqueio estrito no tamanho real com scrollWidth
   const handleDragEndTable = async (id: string, info: any, currentX: number, currentY: number, w: number, h: number) => {
     if (!canEdit || !containerRef.current) return;
     
@@ -146,8 +148,10 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
     await supabase.from('guests').update({ table_id: null }).eq('id', guestId);
   };
 
+  // CÁLCULOS GEOMÉTRICOS MELHORADOS
   const getDynamicTableSize = (shape: string, capacity: number) => {
     if (shape === 'round' || shape === 'square') return { width: 75, height: 75 };
+    // Mesa longa aumenta significativamente a largura por cada par extra para as bolinhas "respirarem"
     const pairs = Math.ceil(capacity / 2);
     const extraPairs = Math.max(0, pairs - 2); 
     return { width: 75 + extraPairs * 30, height: 55 };
@@ -170,20 +174,49 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
       const spacing = 100 / (totalOnSide + 1);
       const percentage = (positionInSide + 1) * spacing;
 
-      if (side === 0) return { ...baseStyle, left: `${percentage}%`, top: `-${chairGap}px` };
-      if (side === 1) return { ...baseStyle, left: `calc(100% + ${chairGap}px)`, top: `${percentage}%` };
-      if (side === 2) return { ...baseStyle, left: `${percentage}%`, top: `calc(100% + ${chairGap}px)` };
-      return { ...baseStyle, left: `-${chairGap}px`, top: `${percentage}%` };
+      if (side === 0) return { ...baseStyle, left: `${percentage}%`, top: `-${chairGap}px` }; // Top
+      if (side === 1) return { ...baseStyle, left: `calc(100% + ${chairGap}px)`, top: `${percentage}%` }; // Right
+      if (side === 2) return { ...baseStyle, left: `${percentage}%`, top: `calc(100% + ${chairGap}px)` }; // Bottom
+      return { ...baseStyle, left: `-${chairGap}px`, top: `${percentage}%` }; // Left
     } 
     
+    // Retangular - SEM CABECEIRAS
     const isTop = index % 2 === 0;
     const positionInSide = Math.floor(index / 2);
-    const currentSideTotal = isTop ? Math.ceil(total / 2) : Math.floor(total / 2);
+    
+    const topTotal = Math.ceil(total / 2);
+    const bottomTotal = Math.floor(total / 2);
+    const currentSideTotal = isTop ? topTotal : bottomTotal;
+    
     const spacing = tableDimensions.width / (currentSideTotal + 1);
     const xPos = (positionInSide + 1) * spacing;
     const yPos = isTop ? `-${chairGap}px` : `calc(100% + ${chairGap}px)`;
 
     return { ...baseStyle, left: `${xPos}px`, top: yPos };
+  };
+
+  const downloadQR = (format: 'png' | 'svg') => {
+    const svg = document.getElementById("qr-sala");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    if (format === 'svg') {
+      const blob = new Blob([svgData], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url; link.download = `QR-Sala-${params.slug}.svg`; link.click();
+    } else {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = 1000; canvas.height = 1000;
+        ctx!.fillStyle = "white"; ctx!.fillRect(0, 0, 1000, 1000);
+        ctx!.drawImage(img, 0, 0, 1000, 1000);
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png"); link.download = `QR-Sala-${params.slug}.png`; link.click();
+      };
+      img.src = "data:image/svg+xml;base64," + btoa(svgData);
+    }
   };
 
   // --- NOVA FUNÇÃO: EXPORTAR PARA PDF PREMIUM ---
@@ -204,28 +237,60 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
       const pdfWidth = pdf.internal.pageSize.getWidth();
       
       // --- PÁGINA 1: O MAPA VISUAL ---
-      // 1. Cabeçalho Premium
+      // 1. Cabeçalho Premium com Logo Mantendo Proporção (Sem Esticar)
       try {
-        pdf.addImage("/logo-dis.png", "PNG", 14, 10, 40, 15); // Logo no topo esquerdo
-        pdf.link(14, 10, 40, 15, { url: websiteUrl }); // Link no Logo
+        const logoImg = new window.Image();
+        logoImg.src = "/logo-dis.png";
+        
+        await new Promise((resolve, reject) => {
+          logoImg.onload = resolve;
+          logoImg.onerror = reject;
+        });
+
+        // Calcula a altura correta com base na largura que queremos (ex: 40mm) para não esticar a imagem
+        const logoRatio = logoImg.height / logoImg.width;
+        const logoWidth = 40; 
+        const logoHeight = logoWidth * logoRatio;
+        
+        pdf.addImage(logoImg, "PNG", 14, 8, logoWidth, logoHeight);
+        pdf.link(14, 8, logoWidth, logoHeight, { url: websiteUrl });
       } catch (e) {
         // Fallback se a imagem não existir
-        pdf.setFontSize(14);
+        pdf.setFontSize(16);
         pdf.setTextColor(99, 1, 0);
+        pdf.setFont("helvetica", "bold");
         pdf.text("DIGITAL INVITE STUDIO", 14, 18);
-        pdf.link(14, 10, 60, 10, { url: websiteUrl });
+        pdf.link(14, 10, 70, 10, { url: websiteUrl });
       }
 
       pdf.setFontSize(10);
+      pdf.setFont("helvetica", "normal");
       pdf.setTextColor(150, 150, 150);
       pdf.text(`Evento: ${params.slug?.toString().toUpperCase()}`, pdfWidth - 14, 15, { align: 'right' });
       pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, pdfWidth - 14, 20, { align: 'right' });
       
       pdf.setDrawColor(239, 223, 187); // Cor Dourado/Creme
+      pdf.setLineWidth(0.5);
       pdf.line(14, 28, pdfWidth - 14, 28); // Linha divisória
 
-      // 2. O Mapa
-      pdf.addImage(dataUrl, "PNG", 14, 35, pdfWidth - 28, 140);
+      // 2. O Mapa (Cálculo Rigoroso do Aspect Ratio para a sala não esticar)
+      const containerW = containerRef.current.scrollWidth;
+      const containerH = containerRef.current.scrollHeight;
+      const maxAvailableWidth = pdfWidth - 28; // Margens laterais (14+14)
+      const maxAvailableHeight = 160; // Limite vertical na página
+      
+      let printWidth = maxAvailableWidth;
+      let printHeight = (containerH * printWidth) / containerW;
+      
+      // Se a imagem for demasiado alta, ajustamos a largura para não distorcer nem sair da folha
+      if (printHeight > maxAvailableHeight) {
+        printHeight = maxAvailableHeight;
+        printWidth = (containerW * printHeight) / containerH;
+      }
+      
+      const xPos = 14 + ((maxAvailableWidth - printWidth) / 2); // Centraliza a imagem
+      
+      pdf.addImage(dataUrl, "PNG", xPos, 33, printWidth, printHeight);
       
       // 3. Rodapé
       pdf.setFontSize(8);
@@ -237,10 +302,12 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
       
       pdf.setFontSize(18);
       pdf.setTextColor(99, 1, 0);
+      pdf.setFont("helvetica", "bold");
       pdf.text("Relatório Geral de Mesas", 14, 20);
       
       pdf.setFontSize(9);
       pdf.setTextColor(120, 120, 120);
+      pdf.setFont("helvetica", "normal");
       pdf.text(`Total de Convidados Sentados: ${guests.filter(g => g.table_id).length}`, 14, 27);
       
       pdf.setDrawColor(99, 1, 0);
@@ -293,30 +360,6 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
     }
   };
 
-  const downloadQR = (format: 'png' | 'svg') => {
-    const svg = document.getElementById("qr-sala");
-    if (!svg) return;
-    const svgData = new XMLSerializer().serializeToString(svg);
-    if (format === 'svg') {
-      const blob = new Blob([svgData], { type: "image/svg+xml" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url; link.download = `QR-Sala-${params.slug}.svg`; link.click();
-    } else {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = 1000; canvas.height = 1000;
-        ctx!.fillStyle = "white"; ctx!.fillRect(0, 0, 1000, 1000);
-        ctx!.drawImage(img, 0, 0, 1000, 1000);
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png"); link.download = `QR-Sala-${params.slug}.png`; link.click();
-      };
-      img.src = "data:image/svg+xml;base64," + btoa(svgData);
-    }
-  };
-
   const activeTable = tables.find(t => t.id === selectedTableId);
   const seatedInActive = guests.filter(g => g.table_id === selectedTableId);
   const unassignedGuests = guests
@@ -328,7 +371,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
   return (
     <div className="space-y-6 animate-in fade-in duration-700 w-full pb-20 font-montserrat">
       
-      {/* 1. CARD QR CODE */}
+      {/* 1. CARD QR CODE ISOLADO & EXPLICATIVO */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
           <div className="bg-[#FDFBF7] p-4 rounded-3xl border border-[#EFDFBB]/50 shadow-inner">
@@ -393,18 +436,20 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
             onClick={() => setViewMode('list')} 
             className={`flex-1 sm:flex-none px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${viewMode === 'list' ? 'bg-[#630100] text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}
           >
-            <List size={14} /> Relatório de Mesas
+            <List size={14} /> Relatório Organizacional
           </button>
         </div>
         
-        <button 
-          onClick={exportLayoutToPDF} 
-          disabled={isExporting}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FDFBF7] border border-[#EFDFBB] text-[#630100] px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-[#630100] hover:text-white transition-all disabled:opacity-50"
-        >
-          {isExporting ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />} 
-          {isExporting ? "A Gerar PDF..." : "Exportar PDF Premium"}
-        </button>
+        {viewMode === 'map' && (
+          <button 
+            onClick={exportLayoutToPDF} 
+            disabled={isExporting}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FDFBF7] border border-[#EFDFBB] text-[#630100] px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-[#630100] hover:text-white transition-all disabled:opacity-50"
+          >
+            {isExporting ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />} 
+            {isExporting ? "A Gerar PDF..." : "Exportar PDF Premium"}
+          </button>
+        )}
       </div>
 
       {/* VISTA: MAPA (PLANTA) */}
@@ -466,7 +511,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
                           </div>
                         );
                       })}
-                      <div className={`w-full h-full shadow-lg flex items-center justify-center text-center p-1 transition-all relative z-10 ${table.shape === 'round' ? 'rounded-full' : table.shape === 'square' ? 'rounded-xl' : 'rounded-lg'} ${isSelected ? 'bg-[#630100] text-white scale-105 shadow-[#630100]/20' : 'bg-white text-[#332E2B] border border-gray-100'}`}><span className="text-[8px] font-black uppercase leading-tight pointer-events-none">{table.name}</span></div>
+                      <div className={`w-full h-full shadow-lg flex items-center justify-center text-center p-2 transition-all relative z-10 ${table.shape === 'round' ? 'rounded-full' : table.shape === 'square' ? 'rounded-xl' : 'rounded-lg'} ${isSelected ? 'bg-[#630100] text-white scale-105 shadow-[#630100]/20' : 'bg-white text-[#332E2B] border border-gray-100'}`}><span className="text-[8px] font-black uppercase leading-tight pointer-events-none">{table.name}</span></div>
                     </div>
                   </motion.div>
                 );
