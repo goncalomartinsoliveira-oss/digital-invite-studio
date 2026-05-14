@@ -1,7 +1,7 @@
 "use client";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Trash2, Edit2, UserPlus, Users, Baby, UserCheck, FileText, Download, FileSpreadsheet, Upload, Loader2, ChevronDown, CheckCircle2 } from "lucide-react";
+import { Trash2, Edit2, UserPlus, Users, Baby, UserCheck, FileText, Download, FileSpreadsheet, Upload, Loader2, ChevronDown, CheckCircle2, X } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -40,21 +40,37 @@ const COLUMN_LABELS: Record<string, string> = {
   gender: 'Sexo',
   category: 'Idade',
   side: 'Lado / Tag',
+  dietary_notes: 'Restrições',
   status: 'Estado'
 };
 
 export default function GuestsModule({ guests, setGuests, invitationId, groomName, brideName, canEdit }: GuestsModuleProps) {
   const [groupTag, setGroupTag] = useState("");
-  const [newMembers, setNewMembers] = useState([{ name: "", category: "adult", gender: "masculino", side: "comum" }]);
+  const [newMembers, setNewMembers] = useState([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "" }]);
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Guest, direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
   
   const [customSides, setCustomSides] = useState<string[]>(["comum", "noiva", "noivo"]);
   const [newSideLabel, setNewSideLabel] = useState("");
 
+  // Sistema de Tags de Restrições Alimentares
+  const [dietaryTags, setDietaryTags] = useState<string[]>(["Vegan", "Vegetariano"]);
+  const [newDietaryTag, setNewDietaryTag] = useState("");
+
   const [isImporting, setIsImporting] = useState(false);
   const [isPdfMenuOpen, setIsPdfMenuOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Extrair tags únicas já existentes na base de dados para garantir que não se perdem
+  useEffect(() => {
+    const extractedTags = new Set(["Vegan", "Vegetariano"]);
+    guests.forEach(g => {
+      if (g.dietary_notes) {
+        g.dietary_notes.split(',').forEach(t => extractedTags.add(t.trim()));
+      }
+    });
+    setDietaryTags(Array.from(extractedTags).filter(Boolean));
+  }, [guests]);
 
   const stats = useMemo(() => {
     const getSubStats = (cat: string) => {
@@ -99,7 +115,18 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
           if (g.status === 'pending') acc[g.side].pending++;
         }
         return acc;
-      }, {} as Record<string, { total: number, confirmed: number, pending: number }>)
+      }, {} as Record<string, { total: number, confirmed: number, pending: number }>),
+      // Estatísticas de Restrições Alimentares
+      dietary: guests.reduce((acc, g) => {
+        if (g.status !== 'declined' && g.dietary_notes) {
+          g.dietary_notes.split(',').filter(Boolean).forEach(tag => {
+            const cleanTag = tag.trim();
+            if (!acc[cleanTag]) acc[cleanTag] = 0;
+            acc[cleanTag]++;
+          });
+        }
+        return acc;
+      }, {} as Record<string, number>)
     };
   }, [guests]);
 
@@ -113,7 +140,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     return items;
   }, [guests, sortConfig]);
 
-  // --- FUNÇÕES DE EXPORTAÇÃO (CORRIGIDA COM ESPAÇAMENTO DINÂMICO) ---
+  // --- FUNÇÕES DE EXPORTAÇÃO ---
   const exportToPDF = async (type: 'confirmed' | 'confirmed_pending' | 'all') => {
     const doc = new jsPDF();
     const websiteUrl = "https://digitalinvitestudio.com";
@@ -132,9 +159,8 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       label = "Lista Total Ativa";
     }
     
-    let contentY = 32; // Posição Y inicial por defeito
+    let contentY = 32;
 
-    // Tentativa de carregar o logo mantendo a proporção correta
     try {
       const logoImg = new window.Image();
       logoImg.src = "/logo-dis.png";
@@ -150,19 +176,15 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       doc.addImage(logoImg, "PNG", 14, 10, logoWidth, logoHeight);
       doc.link(14, 10, logoWidth, logoHeight, { url: websiteUrl });
 
-      // Calcula a posição do texto baseada na altura real do logo + margem de 12mm
       contentY = 10 + logoHeight + 12;
-
     } catch (e) {
-      // Fallback em texto caso a imagem não exista
       doc.setFontSize(16);
       doc.setTextColor(99, 1, 0); 
       doc.setFont("helvetica", "bold");
       doc.text("DIGITAL INVITE STUDIO", 14, 20);
       doc.link(14, 14, 70, 8, { url: websiteUrl }); 
       doc.setFont("helvetica", "normal");
-      
-      contentY = 35; // Espaçamento fixo para o texto
+      contentY = 35;
     }
 
     doc.setFontSize(12);
@@ -178,12 +200,13 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       g.group_id && !g.group_id.includes('SOLO-') ? String(g.group_id) : "-", 
       g.category === 'adult' ? 'Adulto' : g.category === 'child' ? 'Criança' : 'Bebé',
       g.side === 'noiva' ? String(brideName) : g.side === 'noivo' ? String(groomName) : (g.side ? String(g.side) : "-"),
+      g.dietary_notes || "-", 
       g.status === 'confirmed' ? 'Confirmado' : g.status === 'declined' ? 'Recusado' : 'Pendente'
     ]);
 
     autoTable(doc, {
-      startY: contentY + 12, // A tabela começa 12mm abaixo do texto descritivo
-      head: [['Nome', 'Grupo', 'Idade', 'Lado', 'Estado']],
+      startY: contentY + 12,
+      head: [['Nome', 'Grupo', 'Idade', 'Lado', 'Restrições', 'Estado']],
       body: tableData,
       headStyles: { fillColor: [99, 1, 0], textColor: [239, 223, 187] },
       alternateRowStyles: { fillColor: [253, 251, 247] },
@@ -201,6 +224,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       Idade: g.category === 'adult' ? 'Adulto' : g.category === 'child' ? 'Criança' : 'Bebé',
       Sexo: g.gender === 'masculino' ? 'Masculino' : 'Feminino',
       Lado: g.side === 'noiva' ? brideName : g.side === 'noivo' ? groomName : g.side,
+      Restrições: g.dietary_notes || "-",
       Estado: g.status === 'confirmed' ? 'Confirmado' : g.status === 'declined' ? 'Recusado' : 'Pendente'
     })));
     const wb = XLSX.utils.book_new();
@@ -210,8 +234,8 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
 
   const downloadTemplate = () => {
     const data = [
-      ["Nome", "Grupo", "Idade (adulto/crianca/bebe)", "Sexo (masculino/feminino)", "Lado (comum/noivo/noiva)"],
-      ["Exemplo Convidado", "Família Exemplo", "adulto", "feminino", "noiva"]
+      ["Nome", "Grupo", "Idade (adulto/crianca/bebe)", "Sexo (masculino/feminino)", "Lado (comum/noivo/noiva)", "Restricoes"],
+      ["Exemplo Convidado", "Família Exemplo", "adulto", "feminino", "noiva", "Vegan, Sem Glúten"]
     ];
     const ws = XLSX.utils.aoa_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -240,6 +264,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
           category: row["Idade (adulto/crianca/bebe)"] === 'bebe' ? 'baby' : row["Idade (adulto/crianca/bebe)"] === 'crianca' ? 'child' : 'adult',
           gender: row["Sexo (masculino/feminino)"] || suggestGender(row["Nome"] || ""),
           side: row["Lado (comum/noivo/noiva)"] || "comum",
+          dietary_notes: row["Restricoes"] || "",
           status: 'pending'
         }));
 
@@ -273,6 +298,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       category: m.category,
       gender: m.gender,
       side: m.side,
+      dietary_notes: m.dietary_notes, 
       status: 'pending'
     }));
 
@@ -280,7 +306,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     if (!error && data) {
       setGuests([...guests, ...data]);
       setGroupTag("");
-      setNewMembers([{ name: "", category: "adult", gender: "masculino", side: "comum" }]);
+      setNewMembers([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "" }]);
     }
   };
 
@@ -304,6 +330,20 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     }
   };
 
+  const handleAddDietaryTag = () => {
+    if (!canEdit) return;
+    const formatted = newDietaryTag.trim();
+    if (formatted && !dietaryTags.includes(formatted)) {
+      setDietaryTags([...dietaryTags, formatted]);
+      setNewDietaryTag("");
+    }
+  };
+
+  const handleRemoveDietaryTag = (tagToRemove: string) => {
+    if (!canEdit) return;
+    setDietaryTags(dietaryTags.filter(t => t !== tagToRemove));
+  };
+
   const inputClass = "w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-[#630100] text-sm text-gray-800 px-0 py-2 transition-colors font-montserrat";
   const labelClass = "text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1 block font-montserrat";
 
@@ -311,99 +351,167 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     <div className="space-y-10 max-w-6xl mx-auto pb-20 px-4 md:px-0 font-montserrat">
       
       {/* PAINEL DE ESTATÍSTICAS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="flex flex-col">
         
-        {/* CARD RSVP */}
-        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
+        {/* 1. CARD RSVP (HERO HORIZONTAL) */}
+        <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm mb-6">
           <p className={labelClass}>Resumo RSVP</p>
-          <div className="mt-4 space-y-4">
-            <div className="flex justify-between items-end border-b border-gray-50 pb-2">
+          <div className="mt-4 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+            
+            <div className="flex items-center gap-6 w-full md:w-auto border-b md:border-b-0 md:border-r border-gray-50 pb-6 md:pb-0 md:pr-12">
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-800">Total Previsto</span>
-                <span className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">*(Ativos: Conf. e Pend.)</span>
+                <span className="text-base font-bold text-gray-800">Total Previsto</span>
+                <span className="text-[9px] text-gray-400 uppercase tracking-widest mt-1">*(Ativos: Conf. e Pend.)</span>
               </div>
-              <span className="font-serif text-3xl text-[#630100] leading-none">{stats.rsvp.active}</span>
+              <span className="font-serif text-5xl text-[#630100] leading-none">{stats.rsvp.active}</span>
             </div>
-            <div className="space-y-2 text-xs font-medium text-gray-600">
-              <div className="flex justify-between items-center"><span className="text-green-600 font-bold">Confirmados</span> <span className="bg-green-50 px-2 py-0.5 rounded text-green-700">{stats.rsvp.confirmed}</span></div>
-              <div className="flex justify-between items-center"><span className="text-yellow-600 font-bold">Pendentes</span> <span className="bg-yellow-50 px-2 py-0.5 rounded text-yellow-700">{stats.rsvp.pending}</span></div>
-              <div className="flex justify-between items-center"><span className="text-red-600 font-bold">Recusados</span> <span className="bg-red-50 px-2 py-0.5 rounded text-red-700">{stats.rsvp.declined}</span></div>
+
+            <div className="flex-1 w-full grid grid-cols-3 gap-4 text-center divide-x divide-gray-50">
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-3xl font-black text-green-600 mb-1">{stats.rsvp.confirmed}</span>
+                <span className="bg-green-50 px-2 py-0.5 rounded text-[9px] uppercase font-bold text-green-700 tracking-widest">Confirmados</span>
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-3xl font-black text-yellow-500 mb-1">{stats.rsvp.pending}</span>
+                <span className="bg-yellow-50 px-2 py-0.5 rounded text-[9px] uppercase font-bold text-yellow-700 tracking-widest">Pendentes</span>
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-3xl font-black text-red-500 mb-1">{stats.rsvp.declined}</span>
+                <span className="bg-red-50 px-2 py-0.5 rounded text-[9px] uppercase font-bold text-red-700 tracking-widest">Recusados</span>
+              </div>
             </div>
+
           </div>
         </div>
 
-        {/* CARD CATEGORIAS */}
-        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
-          <p className={labelClass}>Por Faixa Etária</p>
-          <div className="mt-4 space-y-4 flex-1">
-            {[
-              { label: 'Adultos', data: stats.adults },
-              { label: 'Crianças', data: stats.children },
-              { label: 'Bebés', data: stats.babies }
-            ].map(item => (
-              <div key={item.label} className="flex flex-col border-b border-gray-50 pb-2 last:border-0 last:pb-0">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-bold text-gray-800">{item.label}</span>
-                  <span className="text-sm font-serif italic text-gray-600">Total: {item.data.total}</span>
-                </div>
-                <div className="flex gap-4 text-[11px] font-medium text-gray-500">
-                  <span className="text-green-600 bg-green-50 px-1.5 rounded">{item.data.confirmed} Confirmados</span>
-                  <span className="text-yellow-600 bg-yellow-50 px-1.5 rounded">{item.data.pending} Pendentes</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CARD GÉNERO */}
-        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
-          <p className={labelClass}>Distribuição Sexo</p>
-          <div className="mt-4 space-y-4 flex-1">
-            {[
-              { label: 'Adultos', m: stats.adultsM, f: stats.adultsF },
-              { label: 'Crianças', m: stats.childrenM, f: stats.childrenF },
-              { label: 'Bebés', m: stats.babiesM, f: stats.babiesF }
-            ].map(item => (
-              <div key={item.label} className="flex flex-col border-b border-gray-50 pb-2 last:border-0 last:pb-0">
-                <span className="text-xs font-bold text-gray-800 mb-2">{item.label}</span>
-                <div className="space-y-1.5 text-[11px] font-medium">
-                  <div className="flex items-center justify-between bg-blue-50/50 px-2 py-1 rounded">
-                    <span className="text-blue-700 font-bold">Masculino</span>
-                    <span className="text-blue-600">{item.m.confirmed} Conf. | {item.m.pending} Pend.</span>
-                  </div>
-                  <div className="flex items-center justify-between bg-pink-50/50 px-2 py-1 rounded">
-                    <span className="text-pink-700 font-bold">Feminino</span>
-                    <span className="text-pink-600">{item.f.confirmed} Conf. | {item.f.pending} Pend.</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CARD LADOS */}
-        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
-          <p className={labelClass}>Convidado de...</p>
-          <div className="mt-4 space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
-            {customSides.map(side => {
-              const sideData = stats.sides[side] || { total: 0, confirmed: 0, pending: 0 };
-              if (sideData.total === 0) return null;
-              return (
-                <div key={side} className="flex flex-col border-b border-gray-50 pb-2 last:border-0 last:pb-0">
+        {/* 2. GRELHA INFERIOR (4 CARDS) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          {/* CARD CATEGORIAS */}
+          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
+            <p className={labelClass}>Por Faixa Etária</p>
+            <div className="mt-4 space-y-4 flex-1">
+              {[
+                { label: 'Adultos', data: stats.adults },
+                { label: 'Crianças', data: stats.children },
+                { label: 'Bebés', data: stats.babies }
+              ].map(item => (
+                <div key={item.label} className="flex flex-col border-b border-gray-50 pb-2 last:border-0 last:pb-0">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-bold uppercase text-[#630100]">
-                      {side === 'noiva' ? brideName : side === 'noivo' ? groomName : side}
-                    </span>
-                    <span className="text-sm font-serif italic text-gray-600">Total: {sideData.total}</span>
+                    <span className="text-xs font-bold text-gray-800">{item.label}</span>
+                    <span className="text-sm font-serif italic text-gray-600">Total: {item.data.total}</span>
                   </div>
-                  <div className="flex gap-4 text-[11px] font-medium">
-                    <span className="text-green-600 bg-green-50 px-1.5 rounded">{sideData.confirmed} Confirmados</span>
-                    <span className="text-yellow-600 bg-yellow-50 px-1.5 rounded">{sideData.pending} Pendentes</span>
+                  <div className="flex gap-4 text-[11px] font-medium text-gray-500">
+                    <span className="text-green-600 bg-green-50 px-1.5 rounded">{item.data.confirmed} Confirmados</span>
+                    <span className="text-yellow-600 bg-yellow-50 px-1.5 rounded">{item.data.pending} Pendentes</span>
                   </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
+
+          {/* CARD GÉNERO */}
+          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
+            <p className={labelClass}>Distribuição Sexo</p>
+            <div className="mt-4 space-y-4 flex-1">
+              {[
+                { label: 'Adultos', m: stats.adultsM, f: stats.adultsF },
+                { label: 'Crianças', m: stats.childrenM, f: stats.childrenF },
+                { label: 'Bebés', m: stats.babiesM, f: stats.babiesF }
+              ].map(item => (
+                <div key={item.label} className="flex flex-col border-b border-gray-50 pb-2 last:border-0 last:pb-0">
+                  <span className="text-xs font-bold text-gray-800 mb-2">{item.label}</span>
+                  <div className="space-y-1.5 text-[11px] font-medium">
+                    <div className="flex items-center justify-between bg-blue-50/50 px-2 py-1 rounded">
+                      <span className="text-blue-700 font-bold">Masculino</span>
+                      <span className="text-blue-600">{item.m.confirmed} Conf. | {item.m.pending} Pend.</span>
+                    </div>
+                    <div className="flex items-center justify-between bg-pink-50/50 px-2 py-1 rounded">
+                      <span className="text-pink-700 font-bold">Feminino</span>
+                      <span className="text-pink-600">{item.f.confirmed} Conf. | {item.f.pending} Pend.</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* CARD LADOS */}
+          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
+            <p className={labelClass}>Convidado de...</p>
+            <div className="mt-4 space-y-4 max-h-[180px] overflow-y-auto custom-scrollbar pr-1 flex-1">
+              {customSides.map(side => {
+                const sideData = stats.sides[side] || { total: 0, confirmed: 0, pending: 0 };
+                if (sideData.total === 0) return null;
+                return (
+                  <div key={side} className="flex flex-col border-b border-gray-50 pb-2 last:border-0 last:pb-0">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-xs font-bold uppercase text-[#630100]">
+                        {side === 'noiva' ? brideName : side === 'noivo' ? groomName : side}
+                      </span>
+                      <span className="text-sm font-serif italic text-gray-600">Total: {sideData.total}</span>
+                    </div>
+                    <div className="flex gap-4 text-[11px] font-medium">
+                      <span className="text-green-600 bg-green-50 px-1.5 rounded">{sideData.confirmed} Confirmados</span>
+                      <span className="text-yellow-600 bg-yellow-50 px-1.5 rounded">{sideData.pending} Pendentes</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="pt-4 mt-auto">
+              <div className="p-4 bg-[#FDFBF7] rounded-xl border border-[#EFDFBB]/50 space-y-3">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-[#630100] mb-1 block font-montserrat">Gerir Etiquetas (Lados)</p>
+                <div className="flex gap-2">
+                  <input className="flex-grow bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-[#630100]" placeholder="Ex: Trabalho" value={newSideLabel} onChange={(e) => setNewSideLabel(e.target.value)} />
+                  <button type="button" onClick={handleAddSide} className="text-[10px] font-bold text-[#630100] uppercase">Add</button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    {customSides.map(s => (
+                        <span key={s} className="bg-white border border-[#EFDFBB]/50 text-[8px] font-bold uppercase px-2 py-1 rounded-md text-[#630100]">
+                            {s === 'noiva' ? brideName : s === 'noivo' ? groomName : s}
+                        </span>
+                    ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CARD RESTRIÇÕES */}
+          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
+            <p className={labelClass}>Restrições Alimentares</p>
+            <div className="mt-4 space-y-2 max-h-[180px] overflow-y-auto custom-scrollbar pr-1 flex-1">
+              {Object.entries(stats.dietary).length === 0 && (
+                <p className="text-[10px] text-gray-400 italic uppercase tracking-widest text-center py-4">Sem restrições</p>
+              )}
+              {Object.entries(stats.dietary).map(([tag, count]) => (
+                <div key={tag} className="flex justify-between items-center bg-orange-50/50 px-3 py-2 rounded-xl">
+                  <span className="text-[10px] font-bold text-orange-800 uppercase">{tag}</span>
+                  <span className="text-[10px] font-bold text-orange-600 bg-white px-2 py-0.5 rounded-md shadow-sm">{count as number}</span>
+                </div>
+              ))}
+            </div>
+            
+            <div className="pt-4 mt-auto">
+              <div className="p-4 bg-orange-50/30 rounded-xl border border-orange-100 space-y-3">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-orange-600 mb-1 block font-montserrat">Gerir Etiquetas (Restrições)</p>
+                <div className="flex gap-2">
+                  <input className="flex-grow bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-orange-500" placeholder="Ex: Sem Glúten" value={newDietaryTag} onChange={(e) => setNewDietaryTag(e.target.value)} />
+                  <button type="button" onClick={handleAddDietaryTag} className="text-[10px] font-bold text-orange-600 uppercase">Add</button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    {dietaryTags.map(t => (
+                        <span key={t} className="bg-white border border-orange-200 text-[8px] font-bold uppercase px-2 py-1 rounded-md text-orange-600 flex items-center gap-2">
+                            {t}
+                            <button type="button" onClick={() => handleRemoveDietaryTag(t)} className="hover:text-red-500"><X size={10} strokeWidth={3}/></button>
+                        </span>
+                    ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -510,31 +618,45 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                         {customSides.map(s => <option key={s} value={s}>{s === 'noiva' ? brideName : s === 'noivo' ? groomName : s.toUpperCase()}</option>)}
                       </select>
                     </div>
+
+                    <div>
+                      <label className={labelClass}>Restrições Alimentares</label>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {dietaryTags.map(tag => {
+                          const currentTags = m.dietary_notes ? m.dietary_notes.split(',').filter(Boolean) : [];
+                          const isSelected = currentTags.includes(tag);
+                          return (
+                            <button
+                              key={tag}
+                              type="button"
+                              onClick={() => {
+                                let newTags = [...currentTags];
+                                if (isSelected) newTags = newTags.filter(t => t !== tag);
+                                else newTags.push(tag);
+                                const u = [...newMembers];
+                                u[i].dietary_notes = newTags.join(',');
+                                setNewMembers(u);
+                              }}
+                              className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase transition-colors border ${isSelected ? 'bg-orange-50 border-orange-200 text-orange-700' : 'bg-white border-gray-200 text-gray-400 hover:border-orange-200 hover:text-orange-500'}`}
+                            >
+                              {tag}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+
                   </div>
                 ))}
               </div>
               
-              <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum" }])} className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-[9px] font-black uppercase text-gray-400 hover:border-[#630100] hover:text-[#630100] transition-all flex items-center justify-center gap-2 tracking-widest"><UserPlus size={14}/> Adicionar Outro no Grupo</button>
+              <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "" }])} className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-[9px] font-black uppercase text-gray-400 hover:border-[#630100] hover:text-[#630100] transition-all flex items-center justify-center gap-2 tracking-widest"><UserPlus size={14}/> Adicionar Outro no Grupo</button>
 
               <div className="pt-4 border-t border-gray-50">
                 <label className={labelClass}>Etiqueta do Grupo</label>
                 <input className={inputClass} placeholder="Ex: Família Silva" value={groupTag} onChange={e => setGroupTag(e.target.value)} />
               </div>
 
-              <div className="p-4 bg-[#FDFBF7] rounded-xl border border-[#EFDFBB]/50 space-y-3">
-                <label className={labelClass}>Gerir Etiquetas (Lados)</label>
-                <div className="flex gap-2">
-                  <input className="flex-grow bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-[#630100]" placeholder="Ex: Trabalho" value={newSideLabel} onChange={(e) => setNewSideLabel(e.target.value)} />
-                  <button type="button" onClick={handleAddSide} className="text-[10px] font-bold text-[#630100] uppercase">Add</button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    {customSides.map(s => (
-                        <span key={s} className="bg-white border border-[#EFDFBB]/50 text-[8px] font-bold uppercase px-2 py-1 rounded-md text-[#630100]">
-                            {s === 'noiva' ? brideName : s === 'noivo' ? groomName : s}
-                        </span>
-                    ))}
-                </div>
-              </div>
               <button disabled={!canEdit} type="submit" className="w-full bg-[#630100] text-[#EFDFBB] py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50">Gravar Convidado(s)</button>
             </form>
           </div>
@@ -568,6 +690,15 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                     </td>
                     <td className="px-3 py-4 text-[10px] uppercase font-black text-[#630100]">
                       {g.side === 'noiva' ? brideName : g.side === 'noivo' ? groomName : (g.side ? g.side.toUpperCase() : '-')}
+                    </td>
+                    <td className="px-3 py-4">
+                      {g.dietary_notes ? (
+                        <div className="flex flex-wrap gap-1 max-w-[150px]">
+                          {g.dietary_notes.split(',').filter(Boolean).map(tag => (
+                            <span key={tag} className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">{tag}</span>
+                          ))}
+                        </div>
+                      ) : <span className="text-gray-300">-</span>}
                     </td>
                     <td className="px-3 py-4">
                       <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${g.status === 'confirmed' ? 'bg-green-100 text-green-700' : g.status === 'declined' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
@@ -635,6 +766,33 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                   </select>
                 </div>
               </div>
+
+              {/* SELECTOR DE RESTRIÇÕES NA EDIÇÃO */}
+              <div>
+                <label className={labelClass}>Restrições Alimentares</label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {dietaryTags.map(tag => {
+                    const currentTags = editingGuest.dietary_notes ? editingGuest.dietary_notes.split(',').filter(Boolean) : [];
+                    const isSelected = currentTags.includes(tag);
+                    return (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          let newTags = [...currentTags];
+                          if (isSelected) newTags = newTags.filter(t => t !== tag);
+                          else newTags.push(tag);
+                          setEditingGuest({...editingGuest, dietary_notes: newTags.join(',')});
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-colors border ${isSelected ? 'bg-orange-50 border-orange-200 text-orange-700' : 'bg-white border-gray-200 text-gray-400 hover:border-orange-200 hover:text-orange-500'}`}
+                      >
+                        {tag}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
               <div>
                 <label className={labelClass}>Estado (RSVP)</label>
                 <select className={inputClass} value={editingGuest.status} onChange={e => setEditingGuest({...editingGuest, status: e.target.value})}>
