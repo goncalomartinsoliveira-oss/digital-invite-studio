@@ -219,7 +219,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                       const newUrls = [...(content.gallery?.images_urls || ["", "", "", "", ""])];
                       newUrls[idx] = '';
                       handleTextChange('gallery', 'images_urls', newUrls);
-                    }} className="absolute top-2 right-2 bg-red-500/90 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-opacity shadow-md">✕</button>
+                    }} className="absolute top-2 right-2 bg-red-500/90 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-opacity shadow-md z-10 hover:scale-110">✕</button>
                   </>
                 ) : <div className="h-full flex flex-col items-center justify-center text-gray-300"><span className="text-3xl font-light">+</span></div>}
                 <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white transition-all text-[9px] font-bold tracking-widest backdrop-blur-[2px]">
@@ -297,7 +297,21 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                     <div><label className={labelClass}>Título Principal</label><input className={inputClass} value={content.event?.ceremony?.title ?? ''} onChange={e => handleTextChange('event', 'ceremony', { ...content.event?.ceremony, title: e.target.value })} /></div>
                     <div><label className={labelClass}>Hora</label><input className={inputClass} value={content.event?.ceremony?.time ?? ''} onChange={e => handleTextChange('event', 'ceremony', { ...content.event?.ceremony, time: e.target.value })} /></div>
                     <div className="md:col-span-2"><label className={labelClass}>Local / Morada</label><input className={inputClass} value={content.event?.ceremony?.location ?? ''} onChange={e => handleTextChange('event', 'ceremony', { ...content.event?.ceremony, location: e.target.value })} /></div>
-                    <div className="md:col-span-2"><label className={labelClass}>Link Google Maps</label><input className={inputClass} value={content.event?.ceremony?.google_maps_url ?? ''} onChange={e => handleTextChange('event', 'ceremony', { ...content.event?.ceremony, google_maps_url: e.target.value })} placeholder="https://maps.app.goo.gl/..." /></div>
+                    <div className="md:col-span-2">
+                      <label className={labelClass}>Link Google Maps</label>
+                      <input 
+                        className={inputClass} 
+                        value={content.event?.ceremony?.google_maps_url ?? ''} 
+                        onChange={e => handleTextChange('event', 'ceremony', { ...content.event?.ceremony, google_maps_url: e.target.value })} 
+                        onBlur={e => {
+                          let val = e.target.value.trim();
+                          if (val && !/^https?:\/\//i.test(val)) {
+                            handleTextChange('event', 'ceremony', { ...content.event?.ceremony, google_maps_url: `https://${val}` });
+                          }
+                        }}
+                        placeholder="https://..." 
+                      />
+                    </div>
                  </div>
               </div>
 
@@ -312,7 +326,21 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                     <div><label className={labelClass}>Título Principal</label><input className={inputClass} value={content.event?.reception?.title ?? ''} onChange={e => handleTextChange('event', 'reception', { ...content.event?.reception, title: e.target.value })} /></div>
                     <div><label className={labelClass}>Hora</label><input className={inputClass} value={content.event?.reception?.time ?? ''} onChange={e => handleTextChange('event', 'reception', { ...content.event?.reception, time: e.target.value })} /></div>
                     <div className="md:col-span-2"><label className={labelClass}>Local / Morada</label><input className={inputClass} value={content.event?.reception?.location ?? ''} onChange={e => handleTextChange('event', 'reception', { ...content.event?.reception, location: e.target.value })} /></div>
-                    <div className="md:col-span-2"><label className={labelClass}>Link Google Maps</label><input className={inputClass} value={content.event?.reception?.google_maps_url ?? ''} onChange={e => handleTextChange('event', 'reception', { ...content.event?.reception, google_maps_url: e.target.value })} placeholder="https://maps.app.goo.gl/..." /></div>
+                    <div className="md:col-span-2">
+                      <label className={labelClass}>Link Google Maps</label>
+                      <input 
+                        className={inputClass} 
+                        value={content.event?.reception?.google_maps_url ?? ''} 
+                        onChange={e => handleTextChange('event', 'reception', { ...content.event?.reception, google_maps_url: e.target.value })} 
+                        onBlur={e => {
+                          let val = e.target.value.trim();
+                          if (val && !/^https?:\/\//i.test(val)) {
+                            handleTextChange('event', 'reception', { ...content.event?.reception, google_maps_url: `https://${val}` });
+                          }
+                        }}
+                        placeholder="https://..." 
+                      />
+                    </div>
                  </div>
               </div>
            </div>
@@ -374,9 +402,24 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                                       const newB = [...content.details.accommodation_buttons]; newB[i].text = e.target.value; handleTextChange('details', 'accommodation_buttons', newB);
                                   }} placeholder="Nome do Hotel" />
                                   <div className="w-[1px] h-6 bg-gray-300"></div>
-                                  <input className="flex-1 bg-transparent border-none text-[13px] font-medium text-gray-500 focus:ring-0" value={btn.url} onChange={e => {
+                                  
+                                  {/* ADICIONADO onBlur PARA GARANTIR HTTPS:// NOS HOTÉIS */}
+                                  <input 
+                                    className="flex-1 bg-transparent border-none text-[13px] font-medium text-gray-500 focus:ring-0" 
+                                    value={btn.url} 
+                                    onChange={e => {
                                       const newB = [...content.details.accommodation_buttons]; newB[i].url = e.target.value; handleTextChange('details', 'accommodation_buttons', newB);
-                                  }} placeholder="https://..." />
+                                    }} 
+                                    onBlur={e => {
+                                      let val = e.target.value.trim();
+                                      if (val && !/^https?:\/\//i.test(val)) {
+                                        const newB = [...content.details.accommodation_buttons];
+                                        newB[i].url = `https://${val}`;
+                                        handleTextChange('details', 'accommodation_buttons', newB);
+                                      }
+                                    }}
+                                    placeholder="https://..." 
+                                  />
                                   <button onClick={() => {
                                       const newB = content.details.accommodation_buttons.filter((_:any, idx:number) => idx !== i);
                                       handleTextChange('details', 'accommodation_buttons', newB);

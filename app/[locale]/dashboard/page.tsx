@@ -5,6 +5,26 @@ import { supabase } from "@/lib/supabase";
 import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
+// Função extra para garantir que mostramos apenas a data e no formato correto
+const formatEventDate = (dateStr: string) => {
+  if (!dateStr) return "Por definir";
+  try {
+    const d = new Date(dateStr);
+    // Se a data for válida, formatamos para o estilo Português (DD/MM/YYYY) e removemos a hora
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString('pt-PT', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
+    // Caso de segurança: corta simplesmente a string na letra "T" ou no espaço (onde começaria a hora)
+    return dateStr.split('T')[0].split(' ')[0];
+  } catch {
+    return dateStr;
+  }
+};
+
 export default function DashboardHub() {
   const router = useRouter();
   const params = useParams();
@@ -160,7 +180,8 @@ export default function DashboardHub() {
               <div className="relative z-10 flex justify-between items-end pt-6 border-t border-gray-50 mt-4">
                 <div>
                   <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">Data do Evento</p>
-                  <p className="text-xs text-gray-700 font-semibold">{invite.event_date || "Por definir"}</p>
+                  {/* ATUALIZADO: Chama a função para formatar apenas a data */}
+                  <p className="text-xs text-gray-700 font-semibold">{formatEventDate(invite.event_date)}</p>
                 </div>
                 <div className="bg-[#630100] text-[#EFDFBB] w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300">
                   <ArrowRight size={16} />

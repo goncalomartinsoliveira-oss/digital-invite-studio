@@ -15,6 +15,7 @@ interface Guest {
   status: string;
   group_id?: string;
   dietary_notes?: string;
+  notes?: string; // NOVO CAMPO: Observações gerais
 }
 
 interface GuestsModuleProps {
@@ -41,40 +42,52 @@ const COLUMN_LABELS: Record<string, string> = {
   category: 'Idade',
   side: 'Lado / Tag',
   dietary_notes: 'Restrições',
+  notes: 'Observações', // NOVA COLUNA
   status: 'Estado'
 };
 
 export default function GuestsModule({ guests, setGuests, invitationId, groomName, brideName, canEdit }: GuestsModuleProps) {
   const [groupTag, setGroupTag] = useState("");
-  const [newMembers, setNewMembers] = useState([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "" }]);
+  const [newMembers, setNewMembers] = useState([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "", notes: "" }]);
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Guest, direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
   
   const [customSides, setCustomSides] = useState<string[]>(["comum", "noiva", "noivo"]);
   const [newSideLabel, setNewSideLabel] = useState("");
 
-  // Sistema de Tags de Restrições Alimentares
-  const [dietaryTags, setDietaryTags] = useState<string[]>(["Vegan", "Vegetariano"]);
+  // Sistema de Tags de Restrições Alimentares (Começa vazio)
+  const [dietaryTags, setDietaryTags] = useState<string[]>([]);
   const [newDietaryTag, setNewDietaryTag] = useState("");
 
   const [isImporting, setIsImporting] = useState(false);
   const [isPdfMenuOpen, setIsPdfMenuOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Extrair tags únicas já existentes na base de dados para garantir que não se perdem
-  useEffect(() => {
-    const extractedTags = new Set(["Vegan", "Vegetariano"]);
-    guests.forEach(g => {
-      if (g.dietary_notes) {
-        g.dietary_notes.split(',').forEach(t => extractedTags.add(t.trim()));
-      }
-    });
-    setDietaryTags(Array.from(extractedTags).filter(Boolean));
-  }, [guests]);
+  // SEPARAÇÃO LÓGICA: Pedidos vs Convidados Oficiais
+  const requestedGuests = useMemo(() => guests.filter(g => g.status === 'requested'), [guests]);
+  const regularGuests = useMemo(() => guests.filter(g => g.status !== 'requested'), [guests]);
 
+  // Extrair as tags guardadas nas definições do convite (tabela invitations)
+  useEffect(() => {
+    const fetchInvitationTags = async () => {
+      if (!invitationId) return;
+      const { data, error } = await supabase
+        .from('invitations')
+        .select('dietary_tags')
+        .eq('id', invitationId)
+        .single();
+
+      if (!error && data && data.dietary_tags) {
+        setDietaryTags(data.dietary_tags.split(',').map((t: string) => t.trim()).filter(Boolean));
+      }
+    };
+    fetchInvitationTags();
+  }, [invitationId]);
+
+  // As estatísticas só consideram a lista oficial (ignora os pedidos)
   const stats = useMemo(() => {
     const getSubStats = (cat: string) => {
-      const filtered = guests.filter(g => g.category === cat && g.status !== 'declined');
+      const filtered = regularGuests.filter(g => g.category === cat && g.status !== 'declined');
       return {
         confirmed: filtered.filter(g => g.status === 'confirmed').length,
         pending: filtered.filter(g => g.status === 'pending').length,
@@ -83,7 +96,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     };
 
     const getGenderStats = (cat: string, gender: string) => {
-      const filtered = guests.filter(g => g.category === cat && g.gender === gender && g.status !== 'declined');
+      const filtered = regularGuests.filter(g => g.category === cat && g.gender === gender && g.status !== 'declined');
       return {
         confirmed: filtered.filter(g => g.status === 'confirmed').length,
         pending: filtered.filter(g => g.status === 'pending').length
@@ -92,11 +105,11 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
 
     return {
       rsvp: {
-        total: guests.length,
-        active: guests.filter(g => g.status !== 'declined').length,
-        confirmed: guests.filter(g => g.status === 'confirmed').length,
-        pending: guests.filter(g => g.status === 'pending').length,
-        declined: guests.filter(g => g.status === 'declined').length
+        total: regularGuests.length,
+        active: regularGuests.filter(g => g.status !== 'declined').length,
+        confirmed: regularGuests.filter(g => g.status === 'confirmed').length,
+        pending: regularGuests.filter(g => g.status === 'pending').length,
+        declined: regularGuests.filter(g => g.status === 'declined').length
       },
       adults: getSubStats('adult'),
       children: getSubStats('child'),
@@ -107,7 +120,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       childrenF: getGenderStats('child', 'feminino'),
       babiesM: getGenderStats('baby', 'masculino'),
       babiesF: getGenderStats('baby', 'feminino'),
-      sides: guests.reduce((acc, g) => {
+      sides: regularGuests.reduce((acc, g) => {
         if (g.status !== 'declined') {
           if (!acc[g.side]) acc[g.side] = { total: 0, confirmed: 0, pending: 0 };
           acc[g.side].total++;
@@ -116,8 +129,8 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
         }
         return acc;
       }, {} as Record<string, { total: number, confirmed: number, pending: number }>),
-      // Estatísticas de Restrições Alimentares
-      dietary: guests.reduce((acc, g) => {
+      // Estatísticas de Restrições Alimentares (Apenas conta as Pílulas, ignora o campo notes)
+      dietary: regularGuests.reduce((acc, g) => {
         if (g.status !== 'declined' && g.dietary_notes) {
           g.dietary_notes.split(',').filter(Boolean).forEach(tag => {
             const cleanTag = tag.trim();
@@ -128,34 +141,34 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
         return acc;
       }, {} as Record<string, number>)
     };
-  }, [guests]);
+  }, [regularGuests]);
 
   const sortedGuests = useMemo(() => {
-    let items = [...guests];
+    let items = [...regularGuests];
     items.sort((a, b) => {
       const aV = String(a[sortConfig.key] || "").toLowerCase();
       const bV = String(b[sortConfig.key] || "").toLowerCase();
       return sortConfig.direction === 'asc' ? aV.localeCompare(bV) : bV.localeCompare(aV);
     });
     return items;
-  }, [guests, sortConfig]);
+  }, [regularGuests, sortConfig]);
 
   // --- FUNÇÕES DE EXPORTAÇÃO ---
   const exportToPDF = async (type: 'confirmed' | 'confirmed_pending' | 'all') => {
     const doc = new jsPDF();
     const websiteUrl = "https://digitalinvitestudio.com";
 
-    let list = guests;
+    let list = regularGuests;
     let label = "Lista Total";
     
     if (type === 'confirmed') {
-      list = guests.filter(g => g.status === 'confirmed');
+      list = regularGuests.filter(g => g.status === 'confirmed');
       label = "Apenas Confirmados";
     } else if (type === 'confirmed_pending') {
-      list = guests.filter(g => g.status === 'confirmed' || g.status === 'pending');
+      list = regularGuests.filter(g => g.status === 'confirmed' || g.status === 'pending');
       label = "Confirmados e Pendentes";
     } else {
-      list = guests.filter(g => g.status !== 'declined');
+      list = regularGuests.filter(g => g.status !== 'declined');
       label = "Lista Total Ativa";
     }
     
@@ -201,12 +214,13 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       g.category === 'adult' ? 'Adulto' : g.category === 'child' ? 'Criança' : 'Bebé',
       g.side === 'noiva' ? String(brideName) : g.side === 'noivo' ? String(groomName) : (g.side ? String(g.side) : "-"),
       g.dietary_notes || "-", 
+      g.notes || "-", // NOVA COLUNA
       g.status === 'confirmed' ? 'Confirmado' : g.status === 'declined' ? 'Recusado' : 'Pendente'
     ]);
 
     autoTable(doc, {
       startY: contentY + 12,
-      head: [['Nome', 'Grupo', 'Idade', 'Lado', 'Restrições', 'Estado']],
+      head: [['Nome', 'Grupo', 'Idade', 'Convidado de...', 'Restrições', 'Observações', 'Estado']],
       body: tableData,
       headStyles: { fillColor: [99, 1, 0], textColor: [239, 223, 187] },
       alternateRowStyles: { fillColor: [253, 251, 247] },
@@ -218,13 +232,14 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
   };
 
   const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(guests.map(g => ({
+    const ws = XLSX.utils.json_to_sheet(regularGuests.map(g => ({
       Nome: g.name,
       Grupo: g.group_id?.includes('SOLO-') ? '-' : g.group_id,
       Idade: g.category === 'adult' ? 'Adulto' : g.category === 'child' ? 'Criança' : 'Bebé',
       Sexo: g.gender === 'masculino' ? 'Masculino' : 'Feminino',
-      Lado: g.side === 'noiva' ? brideName : g.side === 'noivo' ? groomName : g.side,
+      'Convidado de...': g.side === 'noiva' ? brideName : g.side === 'noivo' ? groomName : g.side,
       Restrições: g.dietary_notes || "-",
+      Observações: g.notes || "-", // NOVA COLUNA
       Estado: g.status === 'confirmed' ? 'Confirmado' : g.status === 'declined' ? 'Recusado' : 'Pendente'
     })));
     const wb = XLSX.utils.book_new();
@@ -234,8 +249,8 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
 
   const downloadTemplate = () => {
     const data = [
-      ["Nome", "Grupo", "Idade (adulto/crianca/bebe)", "Sexo (masculino/feminino)", "Lado (comum/noivo/noiva)", "Restricoes"],
-      ["Exemplo Convidado", "Família Exemplo", "adulto", "feminino", "noiva", "Vegan, Sem Glúten"]
+      ["Nome", "Grupo", "Idade (adulto/crianca/bebe)", "Sexo (masculino/feminino)", "Lado (comum/noivo/noiva)", "Restricoes", "Observacoes"],
+      ["Exemplo Convidado", "Família Exemplo", "adulto", "feminino", "noiva", "Vegan, Sem Glúten", "Precisa de cadeira de bebé"]
     ];
     const ws = XLSX.utils.aoa_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -265,6 +280,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
           gender: row["Sexo (masculino/feminino)"] || suggestGender(row["Nome"] || ""),
           side: row["Lado (comum/noivo/noiva)"] || "comum",
           dietary_notes: row["Restricoes"] || "",
+          notes: row["Observacoes"] || "", // NOVA COLUNA
           status: 'pending'
         }));
 
@@ -299,6 +315,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       gender: m.gender,
       side: m.side,
       dietary_notes: m.dietary_notes, 
+      notes: m.notes, // NOVA COLUNA
       status: 'pending'
     }));
 
@@ -306,7 +323,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     if (!error && data) {
       setGuests([...guests, ...data]);
       setGroupTag("");
-      setNewMembers([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "" }]);
+      setNewMembers([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "", notes: "" }]);
     }
   };
 
@@ -321,6 +338,16 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     }
   };
 
+  const handleApproveRequest = async (id: string) => {
+    if (!canEdit) return;
+    const { error } = await supabase.from("guests").update({ status: 'pending' }).eq("id", id);
+    if (!error) {
+      setGuests(guests.map(g => g.id === id ? { ...g, status: 'pending' } : g));
+    } else {
+      alert("Erro ao aprovar o pedido.");
+    }
+  };
+
   const handleAddSide = () => {
     if (!canEdit) return;
     const formatted = newSideLabel.trim().toLowerCase();
@@ -330,18 +357,30 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     }
   };
 
-  const handleAddDietaryTag = () => {
+  // NOVA FUNÇÃO: Remover Lado
+  const handleRemoveSide = (sideToRemove: string) => {
+    if (!canEdit) return;
+    setCustomSides(customSides.filter(s => s !== sideToRemove));
+  };
+
+  // ATUALIZADO: Grava na base de dados (invitations)
+  const handleAddDietaryTag = async () => {
     if (!canEdit) return;
     const formatted = newDietaryTag.trim();
     if (formatted && !dietaryTags.includes(formatted)) {
-      setDietaryTags([...dietaryTags, formatted]);
+      const newTags = [...dietaryTags, formatted];
+      setDietaryTags(newTags);
       setNewDietaryTag("");
+      await supabase.from('invitations').update({ dietary_tags: newTags.join(',') }).eq('id', invitationId);
     }
   };
 
-  const handleRemoveDietaryTag = (tagToRemove: string) => {
+  // ATUALIZADO: Remove da base de dados (invitations)
+  const handleRemoveDietaryTag = async (tagToRemove: string) => {
     if (!canEdit) return;
-    setDietaryTags(dietaryTags.filter(t => t !== tagToRemove));
+    const newTags = dietaryTags.filter(t => t !== tagToRemove);
+    setDietaryTags(newTags);
+    await supabase.from('invitations').update({ dietary_tags: newTags.join(',') }).eq('id', invitationId);
   };
 
   const inputClass = "w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-[#630100] text-sm text-gray-800 px-0 py-2 transition-colors font-montserrat";
@@ -469,8 +508,10 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {customSides.map(s => (
-                        <span key={s} className="bg-white border border-[#EFDFBB]/50 text-[8px] font-bold uppercase px-2 py-1 rounded-md text-[#630100]">
+                        <span key={s} className="bg-white border border-[#EFDFBB]/50 text-[8px] font-bold uppercase px-2 py-1 rounded-md text-[#630100] flex items-center gap-2">
                             {s === 'noiva' ? brideName : s === 'noivo' ? groomName : s}
+                            {/* NOVO: Botão para remover a tag de lado */}
+                            <button type="button" onClick={() => handleRemoveSide(s)} className="hover:text-red-500"><X size={10} strokeWidth={3}/></button>
                         </span>
                     ))}
                 </div>
@@ -514,6 +555,40 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
 
         </div>
       </div>
+
+      {/* SECÇÃO NOVA: PEDIDOS DE CONVITE PENDENTES */}
+      {requestedGuests.length > 0 && (
+        <div className="bg-orange-50/50 p-6 md:p-8 rounded-[2rem] border-2 border-orange-200 shadow-sm flex flex-col mt-8">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+            </span>
+            <h3 className="font-serif text-2xl text-[#630100] italic">Pedidos de Acesso ({requestedGuests.length})</h3>
+          </div>
+          <p className="text-sm text-gray-600 mb-6 font-medium">Estes convidados não encontraram o seu nome na lista e solicitaram acesso. Aprove para os incluir na lista oficial.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {requestedGuests.map(req => (
+              <div key={req.id} className="bg-white p-5 rounded-2xl border border-orange-100 shadow-sm flex flex-col justify-between">
+                <div>
+                  <h4 className="font-bold text-gray-800 text-lg">{req.name}</h4>
+                  {req.notes && (
+                    <div className="mt-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                      <p className="text-[10px] uppercase font-bold text-gray-400 mb-1 tracking-widest">Mensagem / Nota</p>
+                      <p className="text-xs text-gray-600 italic">"{req.notes}"</p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2 mt-5 pt-4 border-t border-gray-50">
+                  <button onClick={() => handleApproveRequest(req.id)} className="flex-1 bg-green-50 text-green-700 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-green-500 hover:text-white transition-all flex items-center justify-center gap-2"><CheckCircle2 size={14}/> Aprovar</button>
+                  <button onClick={() => handleDeleteGuest(req.id)} className="flex-1 bg-red-50 text-red-700 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2"><Trash2 size={14}/> Ignorar</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* FERRAMENTAS DE DADOS COM TÍTULOS VISUAIS */}
       <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
@@ -576,14 +651,16 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
         </div>
       </div>
 
-      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 items-start">
+      <div className="flex flex-col gap-8 w-full">
         
-        {/* ADICIONAR CONVIDADOS */}
-        <aside className="w-full lg:col-span-4 lg:sticky lg:top-24">
-          <div className={`bg-white p-8 rounded-[2rem] border border-gray-100 shadow-lg ${!canEdit ? 'opacity-70 pointer-events-none' : ''}`}>
+        {/* ADICIONAR CONVIDADOS (AGORA EM LARGURA TOTAL) */}
+        <div className="w-full">
+          <div className={`bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-lg ${!canEdit ? 'opacity-70 pointer-events-none' : ''}`}>
             <h3 className="font-serif text-2xl text-[#630100] mb-6 border-b border-gray-50 pb-4 italic">Adicionar à Lista</h3>
             <form onSubmit={handleSaveGroup} className="space-y-6">
-              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              
+              {/* Grelha que coloca os cartões de novos convidados lado a lado em desktop */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {newMembers.map((m, i) => (
                   <div key={i} className="p-5 bg-gray-50 rounded-2xl border border-gray-100 relative space-y-4">
                     {newMembers.length > 1 && (
@@ -646,24 +723,36 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                       </div>
                     </div>
 
+                    <div>
+                      <label className={labelClass}>Observações / Notas</label>
+                      <input className="w-full bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-[#630100] italic" placeholder="Ex: Precisa de cadeira de bebé..." value={m.notes} onChange={e => {
+                        const u = [...newMembers]; u[i].notes = e.target.value; setNewMembers(u);
+                      }} />
+                    </div>
+
                   </div>
                 ))}
               </div>
               
-              <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "" }])} className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-[9px] font-black uppercase text-gray-400 hover:border-[#630100] hover:text-[#630100] transition-all flex items-center justify-center gap-2 tracking-widest"><UserPlus size={14}/> Adicionar Outro no Grupo</button>
-
-              <div className="pt-4 border-t border-gray-50">
-                <label className={labelClass}>Etiqueta do Grupo</label>
-                <input className={inputClass} placeholder="Ex: Família Silva" value={groupTag} onChange={e => setGroupTag(e.target.value)} />
+              {/* Botões de submissão dispostos lado a lado */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end pt-4 border-t border-gray-50">
+                <div>
+                  <label className={labelClass}>Etiqueta do Grupo</label>
+                  <input className="w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-[#630100] text-sm text-gray-800 px-0 py-2.5 transition-colors font-montserrat" placeholder="Ex: Família Silva" value={groupTag} onChange={e => setGroupTag(e.target.value)} />
+                </div>
+                <div>
+                  <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "", notes: "" }])} className="w-full py-3.5 border-2 border-dashed border-gray-200 rounded-xl text-[9px] font-black uppercase text-gray-400 hover:border-[#630100] hover:text-[#630100] transition-all flex items-center justify-center gap-2 tracking-widest"><UserPlus size={14}/> Adicionar Outro no Grupo</button>
+                </div>
+                <div>
+                  <button disabled={!canEdit} type="submit" className="w-full bg-[#630100] text-[#EFDFBB] py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50">Gravar Convidado(s)</button>
+                </div>
               </div>
-
-              <button disabled={!canEdit} type="submit" className="w-full bg-[#630100] text-[#EFDFBB] py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50">Gravar Convidado(s)</button>
             </form>
           </div>
-        </aside>
+        </div>
 
-        {/* TABELA DE CONVIDADOS */}
-        <div className="w-full lg:col-span-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm overflow-hidden">
+        {/* TABELA DE CONVIDADOS (AGORA EM LARGURA TOTAL) */}
+        <div className="w-full bg-white border border-gray-100 rounded-[2.5rem] shadow-sm overflow-hidden">
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-gray-50 border-b border-gray-100">
@@ -699,6 +788,9 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                           ))}
                         </div>
                       ) : <span className="text-gray-300">-</span>}
+                    </td>
+                    <td className="px-3 py-4 text-[10px] text-gray-500 truncate max-w-[150px] italic" title={g.notes}>
+                      {g.notes ? g.notes : <span className="text-gray-300">-</span>}
                     </td>
                     <td className="px-3 py-4">
                       <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${g.status === 'confirmed' ? 'bg-green-100 text-green-700' : g.status === 'declined' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
@@ -791,6 +883,18 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                     )
                   })}
                 </div>
+              </div>
+
+              {/* CAMPO DE OBSERVAÇÕES NA EDIÇÃO */}
+              <div>
+                <label className={labelClass}>Observações / Notas</label>
+                <textarea 
+                  className={`${inputClass} resize-none italic`} 
+                  rows={2} 
+                  placeholder="Ex: Confirmação pendente de voo..."
+                  value={editingGuest.notes || ''} 
+                  onChange={e => setEditingGuest({...editingGuest, notes: e.target.value})} 
+                />
               </div>
 
               <div>
