@@ -1,28 +1,17 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-// Função extra para garantir que mostramos apenas a data e no formato correto
-const formatEventDate = (dateStr: string) => {
-  if (!dateStr) return "Por definir";
-  try {
-    const d = new Date(dateStr);
-    // Se a data for válida, formatamos para o estilo Português (DD/MM/YYYY) e removemos a hora
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString('pt-PT', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    }
-    // Caso de segurança: corta simplesmente a string na letra "T" ou no espaço (onde começaria a hora)
-    return dateStr.split('T')[0].split(' ')[0];
-  } catch {
-    return dateStr;
-  }
+// 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
+import pt from "../../../dictionaries/pt";
+import en from "../../../dictionaries/en";
+
+const dictionaries = {
+  pt: pt,
+  en: en
 };
 
 export default function DashboardHub() {
@@ -33,6 +22,30 @@ export default function DashboardHub() {
   const [sharedInvites, setSharedInvites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
+
+  // 2. DESCOBRIR A LÍNGUA ATUAL
+  const locale = (params?.locale as 'en' | 'pt') || 'pt';
+  
+  // 3. SELECIONAR OS TEXTOS CORRETOS
+  const dict = dictionaries[locale]?.DashboardHub || dictionaries.pt.DashboardHub;
+
+  // Função interna atualizada para usar a localização da língua
+  const formatEventDate = (dateStr: string) => {
+    if (!dateStr) return dict.inviteState.dateUndefined;
+    try {
+      const d = new Date(dateStr);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString(locale === 'en' ? 'en-US' : 'pt-PT', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+      }
+      return dateStr.split('T')[0].split(' ')[0];
+    } catch {
+      return dateStr;
+    }
+  };
 
   useEffect(() => {
     async function loadHub() {
@@ -46,7 +59,6 @@ export default function DashboardHub() {
       const email = session.user.email || "";
       setUserEmail(email);
 
-      // 1. Disparar as duas consultas principais em simultâneo
       const [myData, collabs] = await Promise.all([
         supabase.from("invitations").select("*").eq("user_email", email),
         supabase.from("invitation_collaborators").select("invitation_id").eq("user_email", email)
@@ -55,7 +67,6 @@ export default function DashboardHub() {
       const myInvitesFound = myData.data || [];
       let sharedInvitesFound: any[] = [];
 
-      // 2. Se for colaborador de algum evento, vamos buscar os detalhes desses convites
       if (collabs.data && collabs.data.length > 0) {
         const sharedIds = collabs.data.map(c => c.invitation_id);
         const { data: sharedData } = await supabase
@@ -66,18 +77,12 @@ export default function DashboardHub() {
         sharedInvitesFound = sharedData || [];
       }
 
-      // 3. Atualizar os estados para a interface
       setInvites(myInvitesFound);
       setSharedInvites(sharedInvitesFound);
 
-      // 4. 🎯 LÓGICA CRÍTICA DE REDIRECIONAMENTO
-      // Verificamos as variáveis locais 'myInvitesFound' e 'sharedInvitesFound' 
-      // porque os estados 'invites' e 'sharedInvites' ainda não atualizaram neste ciclo.
       if (myInvitesFound.length === 0 && sharedInvitesFound.length === 0) {
-        // Utilizador totalmente novo: vai para a criação
         router.push(`/${params.locale}/dashboard/new-invite`);
       } else {
-        // Utilizador já tem conteúdo: para no Hub
         setLoading(false);
       }
     }
@@ -94,7 +99,7 @@ export default function DashboardHub() {
     <div className="h-screen flex items-center justify-center bg-[#FDFBF7]">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="w-10 h-10 border-t-[#630100] animate-spin text-[#630100]/20" />
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">A carregar projetos...</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{dict.loadingText}</p>
       </div>
     </div>
   );
@@ -116,7 +121,7 @@ export default function DashboardHub() {
             onClick={handleLogout} 
             className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 transition-colors bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full"
           >
-            <LogOut size={14} /> <span className="hidden sm:inline">Terminar Sessão</span>
+            <LogOut size={14} /> <span className="hidden sm:inline">{dict.logoutBtn}</span>
           </button>
         </div>
       </header>
@@ -127,10 +132,10 @@ export default function DashboardHub() {
         {/* SECÇÃO 1: OS MEUS PROJETOS */}
         <div className="mb-12">
           <h1 className="font-serif text-4xl sm:text-5xl text-[#630100] font-light italic mb-3">
-            Os Meus Projetos
+            {dict.title}
           </h1>
           <p className="text-gray-500 text-sm max-w-xl leading-relaxed">
-            Faça a gestão dos seus eventos ou crie um novo convite de luxo.
+            {dict.desc}
           </p>
         </div>
 
@@ -145,8 +150,8 @@ export default function DashboardHub() {
             <div className="w-16 h-16 bg-[#EFDFBB]/30 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#630100] group-hover:text-[#EFDFBB] transition-colors text-[#630100]">
               <Plus size={24} />
             </div>
-            <h3 className="font-serif text-2xl text-[#332E2B] mb-2 group-hover:text-[#630100] transition-colors">Novo Evento</h3>
-            <p className="text-xs text-gray-400 font-medium">Configurar um novo convite</p>
+            <h3 className="font-serif text-2xl text-[#332E2B] mb-2 group-hover:text-[#630100] transition-colors">{dict.newEvent.title}</h3>
+            <p className="text-xs text-gray-400 font-medium">{dict.newEvent.subtitle}</p>
           </motion.div>
 
           {/* LISTA DE EVENTOS EXISTENTES (DONO) */}
@@ -168,19 +173,18 @@ export default function DashboardHub() {
                 <h3 className="font-serif text-3xl text-[#630100] mb-3 leading-tight pr-4">
                   {invite.groom_name && invite.bride_name 
                     ? `${invite.groom_name} & ${invite.bride_name}` 
-                    : "Convite sem nome"}
+                    : dict.inviteState.noName}
                 </h3>
                 
                 <div className="inline-flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full border border-green-100">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-green-700">Dono / Ativo</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-green-700">{dict.inviteState.activeOwner}</span>
                 </div>
               </div>
 
               <div className="relative z-10 flex justify-between items-end pt-6 border-t border-gray-50 mt-4">
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">Data do Evento</p>
-                  {/* ATUALIZADO: Chama a função para formatar apenas a data */}
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.inviteState.eventDateLabel}</p>
                   <p className="text-xs text-gray-700 font-semibold">{formatEventDate(invite.event_date)}</p>
                 </div>
                 <div className="bg-[#630100] text-[#EFDFBB] w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300">
@@ -197,7 +201,7 @@ export default function DashboardHub() {
             <div className="mb-10 flex items-center gap-4">
               <Users className="text-[#630100]" size={28} />
               <h2 className="font-serif text-3xl sm:text-4xl text-[#332E2B] font-light italic">
-                Partilhados Comigo
+                {dict.sharedSectionTitle}
               </h2>
             </div>
 
@@ -218,17 +222,17 @@ export default function DashboardHub() {
                     <h3 className="font-serif text-3xl text-[#332E2B] mb-3 leading-tight pr-4">
                       {invite.groom_name && invite.bride_name 
                         ? `${invite.groom_name} & ${invite.bride_name}` 
-                        : "Convite sem nome"}
+                        : dict.inviteState.noName}
                     </h3>
                     
                     <div className="inline-flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-                      <span className="text-[9px] font-bold uppercase tracking-widest text-blue-700">Colaborador</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-blue-700">{dict.inviteState.collaborator}</span>
                     </div>
                   </div>
 
                   <div className="relative z-10 flex justify-between items-end pt-6 border-t border-[#EFDFBB]/30 mt-4">
                     <div>
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">Dono Original</p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.inviteState.originalOwnerLabel}</p>
                       <p className="text-xs text-gray-700 font-medium truncate w-32">{invite.user_email}</p>
                     </div>
                     <div className="bg-[#332E2B] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300">

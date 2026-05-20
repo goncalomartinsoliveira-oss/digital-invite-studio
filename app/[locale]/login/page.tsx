@@ -6,10 +6,23 @@ import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// 1. IMPORTAR OS DICIONÁRIOS (3 Níveis de recuo para app/[locale]/login/page.tsx)
+import pt from "../../../dictionaries/pt";
+import en from "../../../dictionaries/en";
+
+const dictionaries = {
+  pt: pt,
+  en: en
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const params = useParams();
   
+  // 2. DESCOBRIR A LÍNGUA ATUAL
+  const locale = (params?.locale as 'en' | 'pt') || 'pt';
+  const dict = dictionaries[locale]?.LoginPage || dictionaries.pt.LoginPage;
+
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetSent, setResetSent] = useState(false);
@@ -34,13 +47,13 @@ export default function LoginPage() {
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         if (data?.user?.identities?.length === 0) {
-          setErrorMsg("Este email já está registado. Por favor, faça login.");
+          setErrorMsg(dict.errors.emailInUse);
         } else {
           router.push(`/${params.locale}/dashboard`);
         }
       }
     } catch (error: any) {
-      setErrorMsg(error.message === "Invalid login credentials" ? "Email ou password incorretos." : "Ocorreu um erro. Verifique os seus dados.");
+      setErrorMsg(error.message === "Invalid login credentials" ? dict.errors.invalidCredentials : dict.errors.genericAuth);
     } finally {
       setLoading(false);
     }
@@ -58,7 +71,7 @@ export default function LoginPage() {
       if (error) throw error;
       setResetSent(true);
     } catch (error: any) {
-      setErrorMsg("Erro ao enviar email. Verifique se o endereço está correto.");
+      setErrorMsg(dict.errors.resetMail);
     } finally {
       setLoading(false);
     }
@@ -82,10 +95,10 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 text-[#EFDFBB] space-y-6 max-w-md">
-          <h1 className="font-serif text-5xl leading-tight font-light italic">O primeiro passo para o dia perfeito.</h1>
-          <p className="text-sm opacity-80 leading-relaxed font-light font-montserrat">Faça a gestão dos seus convidados, acompanhe as confirmações em tempo real e personalize o design do seu convite de luxo num só lugar.</p>
+          <h1 className="font-serif text-5xl leading-tight font-light italic">{dict.hero.title}</h1>
+          <p className="text-sm opacity-80 leading-relaxed font-light font-montserrat">{dict.hero.desc}</p>
         </div>
-        <div className="relative z-10 text-[10px] uppercase tracking-widest text-[#EFDFBB]/50 font-bold font-montserrat">© {new Date().getFullYear()} Digital Invite Studio</div>
+        <div className="relative z-10 text-[10px] uppercase tracking-widest text-[#EFDFBB]/50 font-bold font-montserrat">© {new Date().getFullYear()} {dict.hero.copyright}</div>
       </div>
 
       {/* LADO DIREITO: Formulário */}
@@ -103,19 +116,19 @@ export default function LoginPage() {
           {isForgotPassword ? (
             <div className="animate-in slide-in-from-right-4 duration-500">
               <button onClick={() => setIsForgotPassword(false)} className="flex items-center gap-2 text-gray-400 hover:text-[#630100] text-[10px] font-bold uppercase tracking-widest mb-8 transition-colors">
-                 <ArrowLeft size={14} /> Voltar ao Login
+                 <ArrowLeft size={14} /> {dict.reset.backToLogin}
               </button>
               
               <div className="space-y-3 text-center lg:text-left mb-8">
-                <h2 className="font-serif text-4xl text-[#630100] font-regular">Recuperar Password</h2>
-                <p className="text-sm text-gray-500 font-montserrat">Insira o seu email para receber um link seguro de recuperação.</p>
+                <h2 className="font-serif text-4xl text-[#630100] font-regular">{dict.reset.title}</h2>
+                <p className="text-sm text-gray-500 font-montserrat">{dict.reset.desc}</p>
               </div>
 
               {resetSent ? (
                 <div className="bg-green-50 border border-green-100 p-6 rounded-2xl text-center space-y-4">
                   <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white mx-auto">✓</div>
-                  <h3 className="text-green-800 font-bold">Email Enviado!</h3>
-                  <p className="text-xs text-green-700 font-medium">Verifique a sua caixa de entrada (e a pasta de SPAM) para redefinir a password.</p>
+                  <h3 className="text-green-800 font-bold">{dict.reset.successTitle}</h3>
+                  <p className="text-xs text-green-700 font-medium">{dict.reset.successDesc}</p>
                 </div>
               ) : (
                 <form onSubmit={handleResetPassword} className="space-y-8">
@@ -123,11 +136,11 @@ export default function LoginPage() {
                     {errorMsg && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-red-50 border border-red-100 text-red-500 text-xs p-4 rounded-xl text-center font-semibold font-montserrat">{errorMsg}</motion.div>}
                   </AnimatePresence>
                   <div>
-                    <label className={labelClass}>Email da Conta</label>
-                    <input type="email" required className={inputClass} placeholder="exemplo@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <label className={labelClass}>{dict.reset.emailLabel}</label>
+                    <input type="email" required className={inputClass} placeholder={dict.auth.emailPlaceholder} value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                   <button type="submit" disabled={loading} className="w-full bg-[#630100] text-[#EFDFBB] py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
-                    {loading ? <Loader2 size={18} className="animate-spin" /> : <>Enviar Link de Recuperação <ArrowRight size={16} /></>}
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : <>{dict.reset.btn} <ArrowRight size={16} /></>}
                   </button>
                 </form>
               )}
@@ -135,8 +148,8 @@ export default function LoginPage() {
           ) : (
             <div className="animate-in slide-in-from-left-4 duration-500">
               <div className="space-y-3 text-center lg:text-left mb-8">
-                <h2 className="font-serif text-4xl text-[#630100] font-regular">{isLogin ? "Bem-vindo de volta" : "Criar uma conta"}</h2>
-                <p className="text-sm text-gray-500 font-montserrat">{isLogin ? "Insira as suas credenciais para aceder ao painel." : "Comece a planear o seu convite digital de luxo."}</p>
+                <h2 className="font-serif text-4xl text-[#630100] font-regular">{isLogin ? dict.auth.loginTitle : dict.auth.registerTitle}</h2>
+                <p className="text-sm text-gray-500 font-montserrat">{isLogin ? dict.auth.loginDesc : dict.auth.registerDesc}</p>
               </div>
 
               <form onSubmit={handleAuth} className="space-y-8">
@@ -146,14 +159,14 @@ export default function LoginPage() {
 
                 <div className="space-y-6">
                   <div>
-                    <label className={labelClass}>Email</label>
-                    <input type="email" required className={inputClass} placeholder="exemplo@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <label className={labelClass}>{dict.auth.emailLabel}</label>
+                    <input type="email" required className={inputClass} placeholder={dict.auth.emailPlaceholder} value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                   <div>
                     <div className="flex justify-between items-center">
-                      <label className={labelClass}>Password</label>
+                      <label className={labelClass}>{dict.auth.passwordLabel}</label>
                       {isLogin && (
-                        <button type="button" onClick={() => {setIsForgotPassword(true); setErrorMsg(""); setResetSent(false);}} className="text-[10px] font-bold text-gray-400 hover:text-[#630100] transition-colors font-montserrat">Esqueceu-se?</button>
+                        <button type="button" onClick={() => {setIsForgotPassword(true); setErrorMsg(""); setResetSent(false);}} className="text-[10px] font-bold text-gray-400 hover:text-[#630100] transition-colors font-montserrat">{dict.auth.forgotPassword}</button>
                       )}
                     </div>
                     <input type="password" required minLength={6} className={inputClass} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -161,15 +174,15 @@ export default function LoginPage() {
                 </div>
 
                 <button type="submit" disabled={loading} className="w-full bg-[#630100] text-[#EFDFBB] py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : <>{isLogin ? "Entrar na Conta" : "Registar Agora"} <ArrowRight size={16} /></>}
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <>{isLogin ? dict.auth.loginBtn : dict.auth.registerBtn} <ArrowRight size={16} /></>}
                 </button>
               </form>
 
               <div className="text-center pt-8 border-t border-gray-100 mt-8">
                 <p className="text-xs text-gray-500 font-montserrat">
-                  {isLogin ? "Ainda não tem o seu convite?" : "Já tem uma conta?"}
+                  {isLogin ? dict.auth.noAccountPrompt : dict.auth.hasAccountPrompt}
                   <button type="button" onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); setPassword(""); }} className="font-bold text-[#630100] hover:underline underline-offset-4 ml-1 transition-all">
-                    {isLogin ? "Criar conta aqui" : "Faça login"}
+                    {isLogin ? dict.auth.createAccountLink : dict.auth.loginLink}
                   </button>
                 </p>
               </div>

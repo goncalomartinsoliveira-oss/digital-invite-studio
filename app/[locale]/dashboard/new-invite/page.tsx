@@ -1,9 +1,18 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
+
+// 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás a partir de app/[locale]/dashboard/new-invite/)
+import pt from "../../../../dictionaries/pt";
+import en from "../../../../dictionaries/en";
+
+const dictionaries = {
+  pt: pt,
+  en: en
+};
 
 export default function NovoConvitePage() {
   const router = useRouter();
@@ -18,6 +27,12 @@ export default function NovoConvitePage() {
   const [eventDate, setEventDate] = useState("");
   const [slug, setSlug] = useState("");
 
+  // 2. DESCOBRIR A LÍNGUA ATUAL
+  const locale = (params?.locale as 'en' | 'pt') || 'pt';
+  
+  // 3. SELECIONAR OS TEXTOS CORRETOS
+  const dict = dictionaries[locale]?.NovoConvitePage || dictionaries.pt.NovoConvitePage;
+
   // Carrega o email da sessão e o domínio base
   useEffect(() => {
     async function getUser() {
@@ -30,7 +45,6 @@ export default function NovoConvitePage() {
     }
     getUser();
     
-    // Define o URL dinâmico para mostrar no formulário (ex: localhost:3001/pt/invite/)
     setBaseUrl(`${window.location.host}/${params.locale}/invite/`);
   }, [params.locale, router]);
 
@@ -59,12 +73,12 @@ export default function NovoConvitePage() {
       const { data: existing } = await supabase.from("invitations").select("id").eq("slug", cleanSlug).maybeSingle();
       
       if (existing) {
-        alert("Este link de convite já está a ser utilizado. Por favor, adicione um número ou altere o link.");
+        alert(dict.alerts.slugExists);
         setLoading(false);
         return;
       }
 
-      // 2. Cria o novo convite apenas com os campos que sabemos que existem na base de dados
+      // 2. Cria o novo convite
       const { error } = await supabase.from("invitations").insert([{
         user_email: userEmail,
         slug: cleanSlug,
@@ -75,11 +89,11 @@ export default function NovoConvitePage() {
 
       if (error) throw error;
 
-      // 3. Sucesso! Redireciona o cliente para o seu novo painel de controlo
+      // 3. Sucesso! Redireciona para o painel de controlo
       router.push(`/${params.locale}/dashboard/${cleanSlug}`);
 
     } catch (error: any) {
-      alert("Ocorreu um erro ao criar o evento: " + error.message);
+      alert(dict.alerts.error + error.message);
       setLoading(false);
     }
   };
@@ -96,7 +110,7 @@ export default function NovoConvitePage() {
           onClick={() => router.push(`/${params.locale}/dashboard`)}
           className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#630100] transition-colors"
         >
-          <ArrowLeft size={16} /> Voltar ao Hub
+          <ArrowLeft size={16} /> {dict.backBtn}
         </button>
       </header>
 
@@ -109,10 +123,10 @@ export default function NovoConvitePage() {
         >
           <div className="mb-12 text-center">
             <h1 className="font-serif text-4xl sm:text-5xl text-[#630100] font-light italic mb-4">
-              Criar Novo Evento
+              {dict.title}
             </h1>
             <p className="text-gray-500 text-sm">
-              Vamos começar por definir os detalhes principais do vosso grande dia. Poderão personalizar tudo mais à frente.
+              {dict.desc}
             </p>
           </div>
 
@@ -121,23 +135,23 @@ export default function NovoConvitePage() {
             {/* NOMES */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
-                <label className={labelClass}>Nome do Noivo / Noiva 1</label>
+                <label className={labelClass}>{dict.labels.groom}</label>
                 <input 
                   type="text" 
                   required
                   className={inputClass} 
-                  placeholder="Ex: Gonçalo" 
+                  placeholder={dict.placeholders.groom} 
                   value={groomName}
                   onChange={(e) => setGroomName(e.target.value)}
                 />
               </div>
               <div>
-                <label className={labelClass}>Nome da Noiva / Noivo 2</label>
+                <label className={labelClass}>{dict.labels.bride}</label>
                 <input 
                   type="text" 
                   required
                   className={inputClass} 
-                  placeholder="Ex: Márcia" 
+                  placeholder={dict.placeholders.bride} 
                   value={brideName}
                   onChange={(e) => setBrideName(e.target.value)}
                 />
@@ -147,7 +161,7 @@ export default function NovoConvitePage() {
             {/* DATA E LINK */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
-                <label className={labelClass}>Data do Casamento</label>
+                <label className={labelClass}>{dict.labels.date}</label>
                 <input 
                   type="date" 
                   required
@@ -157,7 +171,7 @@ export default function NovoConvitePage() {
                 />
               </div>
               <div>
-                <label className={labelClass}>Link Personalizado</label>
+                <label className={labelClass}>{dict.labels.link}</label>
                 <div className="flex items-center border-b border-gray-300 focus-within:border-[#630100] transition-colors py-1 overflow-hidden">
                   <LinkIcon size={16} className="text-gray-400 mr-2 shrink-0" />
                   <span className="text-gray-400 text-[13px] font-medium whitespace-nowrap">{baseUrl}</span>
@@ -165,12 +179,12 @@ export default function NovoConvitePage() {
                     type="text" 
                     required
                     className="w-full bg-transparent border-0 focus:ring-0 text-sm text-[#630100] font-bold px-1 py-2" 
-                    placeholder="goncalo-e-marcia" 
+                    placeholder={dict.placeholders.link} 
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
                   />
                 </div>
-                <p className="text-[9px] text-gray-400 mt-2">Este será o endereço enviado aos convidados.</p>
+                <p className="text-[9px] text-gray-400 mt-2">{dict.linkHelp}</p>
               </div>
             </div>
 
@@ -181,7 +195,7 @@ export default function NovoConvitePage() {
                 disabled={loading}
                 className="w-full bg-[#630100] text-[#EFDFBB] py-5 rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:translate-y-0"
               >
-                {loading ? <Loader2 size={18} className="animate-spin" /> : "Gerar o meu Convite Digital"}
+                {loading ? <Loader2 size={18} className="animate-spin" /> : dict.submitBtn}
               </button>
             </div>
 

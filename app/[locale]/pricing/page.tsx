@@ -1,56 +1,47 @@
 "use client";
+import React from "react";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react"; // Certifique-se de ter lucide-react instalado ou use SVGs
+import { Check } from "lucide-react";
 
-const plans = [
-  {
-    name: "Essencial",
-    price: "49€",
-    description: "O essencial para começar a sua jornada digital.",
-    features: [
-      "Website de Casamento Personalizado",
-      "Modelos de Convite Base",
-      "Smart RSVP (Confirmações)",
-      "Gestão de Lista de Convidados",
-      "Suporte via Email",
-      "Marca de água discreta",
-    ],
-    buttonText: "Começar Agora",
-    highlight: false,
-  },
-  {
-    name: "Premium",
-    price: "119€",
-    description: "A solução completa para uma organização sem stress.",
-    features: [
-      "Tudo do Plano Essencial",
-      "Editor de Seating Plan Visual",
-      "Página de Partilha com Organizadores",
-      "Ementa Digital",
-      "Remoção total de marca de água",
-      "Prioridade no Suporte",
-    ],
-    buttonText: "Escolher Premium",
-    highlight: true, // Plano Bestseller
-  },
-  {
-    name: "Experiência Luxo",
-    price: "199€",
-    description: "A derradeira experiência digital para o dia do seu evento.",
-    features: [
-      "Tudo do Plano Premium",
-      "Live Wall (Fotos em Direto)",
-      "Digital Guestbook (Voz e Vídeo)",
-      "Photo Sharing para Convidados",
-      "Armazenamento Cloud Extra (5GB)",
-      "Modelos de Website Exclusivos",
-    ],
-    buttonText: "Escolher Luxo",
-    highlight: false,
-  },
-];
+// 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás)
+import pt from "../../../dictionaries/pt";
+import en from "../../../dictionaries/en";
+
+const dictionaries = { pt, en };
 
 export default function PricingPage() {
+  const params = useParams();
+  const locale = (params?.locale as 'en' | 'pt') || 'pt';
+  const dict = dictionaries[locale]?.PricingPage || dictionaries.pt.PricingPage;
+
+  const plans = [
+    {
+      name: dict.plans.essential.name,
+      price: dict.plans.essential.price,
+      description: dict.plans.essential.desc,
+      features: dict.plans.essential.features,
+      buttonText: dict.plans.essential.btn,
+      highlight: false,
+    },
+    {
+      name: dict.plans.premium.name,
+      price: dict.plans.premium.price,
+      description: dict.plans.premium.desc,
+      features: dict.plans.premium.features,
+      buttonText: dict.plans.premium.btn,
+      highlight: true,
+    },
+    {
+      name: dict.plans.luxury.name,
+      price: dict.plans.luxury.price,
+      description: dict.plans.luxury.desc,
+      features: dict.plans.luxury.features,
+      buttonText: dict.plans.luxury.btn,
+      highlight: false,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
@@ -62,7 +53,7 @@ export default function PricingPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-serif text-[#722F37] mb-6"
           >
-            Escolha o Plano Perfeito
+            {dict.title}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -70,7 +61,7 @@ export default function PricingPage() {
             transition={{ delay: 0.1 }}
             className="text-gray-500 max-w-2xl mx-auto text-lg"
           >
-            Pagamento único por evento. Sem subscrições mensais. Escolha a experiência que melhor se adapta ao seu grande dia.
+            {dict.desc}
           </motion.p>
         </div>
 
@@ -90,7 +81,7 @@ export default function PricingPage() {
             >
               {plan.highlight && (
                 <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#722F37] text-white text-[10px] font-bold uppercase tracking-widest px-6 py-2 rounded-full shadow-md">
-                  Mais Escolhido
+                  {dict.bestseller}
                 </div>
               )}
 
@@ -108,7 +99,7 @@ export default function PricingPage() {
               </div>
 
               <div className="flex-1 space-y-4 mb-10">
-                {plan.features.map((feature) => (
+                {plan.features.map((feature: string) => (
                   <div key={feature} className="flex items-start gap-3">
                     <div className={`mt-1 flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${plan.highlight ? "bg-[#722F37] text-white" : "bg-gray-100 text-gray-400"}`}>
                       <Check size={10} strokeWidth={4} />
@@ -139,15 +130,15 @@ export default function PricingPage() {
           className="mt-24 bg-white rounded-[3rem] p-12 border border-gray-100 shadow-sm text-center"
         >
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-serif text-3xl text-gray-800 mb-4">É Organizador de Eventos?</h2>
+            <h2 className="font-serif text-3xl text-gray-800 mb-4">{dict.b2b.title}</h2>
             <p className="text-gray-500 mb-8 leading-relaxed">
-              Oferecemos soluções especiais de <strong className="text-[#722F37]">White Label</strong> para Wedding Planners e Agências. Utilize a nossa tecnologia com a sua própria marca e beneficie de preços de revenda.
+              {dict.b2b.desc}
             </p>
             <a 
-              href="/contact" 
+              href={`/${locale}/contact`} 
               className="inline-block border-b-2 border-[#722F37] pb-1 text-[10px] font-bold uppercase tracking-widest text-gray-800 hover:text-[#722F37] transition-colors"
             >
-              Consultar Condições B2B
+              {dict.b2b.link}
             </a>
           </div>
         </motion.div>

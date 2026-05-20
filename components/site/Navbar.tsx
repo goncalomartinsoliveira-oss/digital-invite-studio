@@ -4,6 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
+// 1. IMPORTAR OS DICIONÁRIOS (2 níveis para trás a partir de components/site/)
+import pt from '../../dictionaries/pt';
+import en from '../../dictionaries/en';
+
+const dictionaries = {
+  pt: pt,
+  en: en
+};
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -12,13 +21,17 @@ export default function Navbar() {
     return null;
   }
 
+  // 2. DESCOBRIR A LÍNGUA ATUAL
   const segments = pathname.split("/");
-  const locale = segments[1] || "pt"; 
+  const locale = (segments[1] === 'en' || segments[1] === 'pt') ? segments[1] : 'pt'; 
+  
+  // 3. SELECIONAR OS TEXTOS
+  const dict = dictionaries[locale as 'pt' | 'en']?.Navbar || dictionaries.pt.Navbar;
 
   const navLinks = [
-    { name: "Funcionalidades", href: `/${locale}/features` },
-    { name: "Preços", href: `/${locale}/pricing` },
-    { name: "Contactos", href: `/${locale}/contact` },
+    { name: dict.features, href: `/${locale}/features` },
+    { name: dict.pricing, href: `/${locale}/pricing` },
+    { name: dict.contact, href: `/${locale}/contact` },
   ];
 
   return (
@@ -35,7 +48,7 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* LINKS CENTRAIS - Montserrat SemiBold (Ajustado para 11px) */}
+          {/* LINKS CENTRAIS */}
           <div className="hidden md:flex items-center space-x-12">
             {navLinks.map((link) => (
               <Link 
@@ -49,20 +62,20 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* BOTÕES LADO DIREITO - Montserrat SemiBold (Ajustado para 11px) */}
+          {/* BOTÕES LADO DIREITO */}
           <div className="hidden md:flex items-center gap-10">
             <Link 
               href={`/${locale}/login`} 
               className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#332E2B] hover:text-[#630100] transition-colors"
             >
-              Login
+              {dict.login}
             </Link>
             
             <Link 
               href={`/${locale}/pricing`} 
               className="bg-[#630100] text-[#EFDFBB] border-2 border-[#630100] px-10 py-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] hover:bg-transparent hover:text-[#630100] transition-all duration-500 transform hover:-translate-y-0.5 shadow-lg active:scale-95"
             >
-              Começar Agora
+              {dict.startNow}
             </Link>
           </div>
 
@@ -87,9 +100,9 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="pt-6 border-t border-[#EFDFBB] space-y-6">
-            <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-[#630100]">Login</Link>
+            <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-[#630100]">{dict.login}</Link>
             <Link href={`/${locale}/pricing`} onClick={() => setIsOpen(false)} className="block bg-[#630100] text-[#EFDFBB] text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
-              Começar Agora
+              {dict.startNow}
             </Link>
           </div>
         </div>

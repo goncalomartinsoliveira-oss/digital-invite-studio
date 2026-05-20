@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { 
@@ -11,7 +11,7 @@ import {
   FileText, 
   Users, 
   Grid, 
-  Camera // Importado para o novo módulo
+  Camera 
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -19,7 +19,16 @@ import GuestsModule from "@/components/dashboard/GuestsModule";
 import ContentModule from "@/components/dashboard/ContentModule";
 import SeatingModule from "@/components/dashboard/SeatingModule";
 import AccountModule from "@/components/dashboard/AccountModule";
-import MomentsModule from "@/components/dashboard/MomentsModule"; // NOVO IMPORT
+import MomentsModule from "@/components/dashboard/MomentsModule"; 
+
+// 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
+import pt from "../../../../dictionaries/pt";
+import en from "../../../../dictionaries/en";
+
+const dictionaries = {
+  pt: pt,
+  en: en
+};
 
 type DashboardTab = 'design' | 'content' | 'guests' | 'seating' | 'moments' | 'account';
 
@@ -38,6 +47,12 @@ export default function Dashboard() {
   const [iframeKey, setIframeKey] = useState(0);
 
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
+
+  // 2. DESCOBRIR A LÍNGUA ATUAL
+  const locale = (params?.locale as 'en' | 'pt') || 'pt';
+  
+  // 3. SELECIONAR OS TEXTOS CORRETOS
+  const dict = dictionaries[locale]?.Dashboard || dictionaries.pt.Dashboard;
 
   useEffect(() => {
     async function loadData() {
@@ -115,13 +130,12 @@ export default function Dashboard() {
     </div>
   );
 
-  // Configuração das abas com o novo MomentsModule
   const tabsConfig = [
-    { id: 'design', label: 'Modelos e identidade', icon: <PenTool size={20} /> },
-    { id: 'content', label: 'Conteúdo do convite', icon: <FileText size={20} /> },
-    { id: 'guests', label: 'Lista', icon: <Users size={20} /> },
-    { id: 'seating', label: 'Mesas', icon: <Grid size={20} /> },
-    { id: 'moments', label: 'Momentos e Guestbook', icon: <Camera size={20} /> } // ADICIONADO
+    { id: 'design', label: dict.tabs.design, icon: <PenTool size={20} /> },
+    { id: 'content', label: dict.tabs.content, icon: <FileText size={20} /> },
+    { id: 'guests', label: dict.tabs.guests, icon: <Users size={20} /> },
+    { id: 'seating', label: dict.tabs.seating, icon: <Grid size={20} /> },
+    { id: 'moments', label: dict.tabs.moments, icon: <Camera size={20} /> } 
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
   const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'moments' || activeTab === 'account';
@@ -150,7 +164,7 @@ export default function Dashboard() {
              onClick={() => setActiveTab('account')} 
              className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${activeTab === 'account' ? 'bg-[#332E2B] text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50'}`}
            >
-              <UserCircle size={20} /> Minha Conta
+              <UserCircle size={20} /> {dict.accountLabel}
            </button>
         </div>
       </aside>
@@ -161,11 +175,11 @@ export default function Dashboard() {
           <header className="h-20 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 flex items-center justify-between sticky top-0 z-20 shrink-0">
             <div className="flex items-center gap-3">
               <h1 className="text-lg font-bold text-gray-800 hidden sm:block font-montserrat">
-                {activeTab === 'account' ? 'Minha Conta' : tabsConfig.find(t => t.id === activeTab)?.label}
+                {activeTab === 'account' ? dict.accountLabel : tabsConfig.find(t => t.id === activeTab)?.label}
               </h1>
               {!canEdit && (
                 <span className="bg-blue-50 text-blue-500 border border-blue-100 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md hidden sm:block">
-                  Apenas Leitura
+                  {dict.readOnly}
                 </span>
               )}
             </div>
@@ -175,12 +189,12 @@ export default function Dashboard() {
                   {saving ? (
                       <>
                         <div className="w-3 h-3 border-2 border-[#630100]/30 border-t-[#630100] rounded-full animate-spin"></div>
-                        <span className="text-[9px] uppercase tracking-widest font-bold text-gray-500">A guardar...</span>
+                        <span className="text-[9px] uppercase tracking-widest font-bold text-gray-500">{dict.saving}</span>
                       </>
                   ) : (
                       <>
                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <span className="text-[9px] uppercase tracking-widest font-bold text-gray-500">Guardado</span>
+                        <span className="text-[9px] uppercase tracking-widest font-bold text-gray-500">{dict.saved}</span>
                       </>
                   )}
                </div>
@@ -190,12 +204,12 @@ export default function Dashboard() {
                  className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-[#630100] transition-all active:scale-95"
                >
                   {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-                  <span className="hidden sm:inline">{copied ? 'Copiado' : 'Copiar Link'}</span>
+                  <span className="hidden sm:inline">{copied ? dict.copied : dict.copyLink}</span>
                </button>
 
                {!isFullScreenTab && (
                  <button onClick={() => setShowMobilePreview(!showMobilePreview)} className="lg:hidden bg-gray-100 text-gray-600 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                   Ver Preview
+                   {dict.mobilePreview}
                  </button>
                )}
                
@@ -203,7 +217,7 @@ export default function Dashboard() {
                  onClick={() => window.open(`/${params.locale}/invite/${params.slug}`, '_blank')} 
                  className="flex items-center gap-2 bg-[#630100] text-white px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md hover:bg-[#4a0100] transition-all active:scale-95"
                >
-                  <span className="hidden sm:inline">Abrir Convite</span>
+                  <span className="hidden sm:inline">{dict.openInvite}</span>
                   <ExternalLink size={14} />
                </button>
             </div>
@@ -215,10 +229,7 @@ export default function Dashboard() {
               {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} />}
               {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} />}
               {activeTab === 'seating' && <SeatingModule invitationId={formData.id} canEdit={canEdit} />}
-              
-              {/* RENDERIZAÇÃO DO NOVO MÓDULO */}
               {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} />}
-              
               {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} />}
             </div>
           </main>
@@ -250,8 +261,8 @@ export default function Dashboard() {
                 </div>
             </div>
             <div className="mt-6 flex flex-col items-center gap-1">
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em]">Vista Mobile Real</span>
-              <span className="text-[9px] text-gray-400 font-montserrat">Atualiza ao guardar</span>
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em]">{dict.mobilePreviewLabel}</span>
+              <span className="text-[9px] text-gray-400 font-montserrat">{dict.mobilePreviewSub}</span>
             </div>
             {showMobilePreview && (
               <button onClick={() => setShowMobilePreview(false)} className="absolute top-8 right-8 bg-[#630100] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-2xl z-[210]">
@@ -264,7 +275,7 @@ export default function Dashboard() {
 
       {!showMobilePreview && (
         <nav className="xl:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-20 flex justify-around items-center z-[100] px-4 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
-          {[...tabsConfig, { id: 'account', label: 'Conta', icon: <UserCircle size={20} /> }].map(tab => (
+          {[...tabsConfig, { id: 'account', label: dict.accountLabel, icon: <UserCircle size={20} /> }].map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id as DashboardTab)} className={`flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'text-[#630100]' : 'text-gray-300'}`}>
               {tab.icon}
               <span className="text-[10px] font-bold tracking-tight text-center leading-tight w-20">{tab.label}</span>

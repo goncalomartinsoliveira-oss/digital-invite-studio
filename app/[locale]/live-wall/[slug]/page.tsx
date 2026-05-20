@@ -6,8 +6,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { Loader2, Maximize, Minimize, Camera } from 'lucide-react';
 
+// 1. IMPORTAR OS DICIONÁRIOS (4 níveis de recuo para app/[locale]/live-wall/[slug]/page.tsx)
+import pt from "../../../../dictionaries/pt";
+import en from "../../../../dictionaries/en";
+
+const dictionaries = {
+  pt: pt,
+  en: en
+};
+
 export default function LiveWallPage() {
   const { slug, locale } = useParams();
+  
+  // 2. DESCOBRIR A LÍNGUA ATUAL
+  const currentLocale = (locale as 'en' | 'pt') || 'pt';
+  const dict = dictionaries[currentLocale]?.LiveWallPage || dictionaries.pt.LiveWallPage;
+
   const [items, setItems] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -102,7 +116,7 @@ export default function LiveWallPage() {
   if (loading) return (
     <div className="h-screen bg-[#111] flex flex-col items-center justify-center text-white font-montserrat">
       <Loader2 className="animate-spin mb-4 text-[#EFDFBB]" size={40} />
-      <p className="font-bold uppercase tracking-widest text-[10px] opacity-50">A preparar o Mural...</p>
+      <p className="font-bold uppercase tracking-widest text-[10px] opacity-50">{dict.loadingText}</p>
     </div>
   );
 
@@ -163,7 +177,7 @@ export default function LiveWallPage() {
       <button 
         onClick={toggleFullScreen}
         className="absolute top-10 right-10 z-[110] p-4 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 transition-all text-white/50 hover:text-white"
-        title="Ecrã Inteiro"
+        title={dict.fullScreenTitle}
       >
         {isFullscreen ? <Minimize size={24} /> : <Maximize size={24} />}
       </button>
@@ -175,15 +189,15 @@ export default function LiveWallPage() {
         </div>
         <div className="flex flex-col">
           <h2 className="text-white font-black text-lg uppercase tracking-widest italic flex items-center gap-2">
-            <Camera size={20} className="text-[#EFDFBB]"/> Partilha as tuas fotos!
+            <Camera size={20} className="text-[#EFDFBB]"/> {dict.qrCodeTitle}
           </h2>
-          <p className="text-white/50 text-[10px] uppercase mt-1 tracking-[0.3em] font-bold">Mural em tempo real</p>
+          <p className="text-white/50 text-[10px] uppercase mt-1 tracking-[0.3em] font-bold">{dict.qrCodeSubtitle}</p>
         </div>
       </div>
 
       {/* ASSINATURA DIS (CANTO INFERIOR DIREITO) */}
       <div className="absolute bottom-10 right-10 z-[110] flex flex-col items-end opacity-70 hover:opacity-100 transition-opacity duration-500">
-        <span className="text-[8px] text-white/50 font-bold uppercase tracking-[0.4em] mb-2">Powered by</span>
+        <span className="text-[8px] text-white/50 font-bold uppercase tracking-[0.4em] mb-2">{dict.poweredBy}</span>
         <img src="/logo-dis.svg" alt="Digital Invite Studio" className="h-6 w-auto invert" />
       </div>
 
