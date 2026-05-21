@@ -213,11 +213,11 @@ export default function Dashboard() {
               >
                 <LayoutGrid size={16} />
               </Link>
-              <div className="hidden sm:flex flex-col justify-center">
-                <h1 className="text-lg font-bold text-gray-800 font-montserrat leading-tight">
+              <div className="flex flex-col justify-center">
+                <h1 className="hidden sm:block text-lg font-bold text-gray-800 font-montserrat leading-tight">
                   {activeTab === 'account' ? dict.accountLabel : tabsConfig.find(t => t.id === activeTab)?.label}
                 </h1>
-                {/* Nome do projeto — só visível quando a sidebar está escondida (< xl) */}
+                {/* Nome do projeto — visível em xs-lg; escondido em xl onde a sidebar já mostra */}
                 <p className="xl:hidden text-[11px] font-serif italic text-[#630100] leading-tight">
                   {formData.groom_name && formData.bride_name
                     ? `${formData.groom_name} & ${formData.bride_name}`
