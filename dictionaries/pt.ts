@@ -58,7 +58,8 @@ const pt = {
     "pricing": "Preços",
     "contact": "Contactos",
     "login": "Login",
-    "startNow": "Começar Agora"
+    "startNow": "Começar Agora",
+    "language": "Idioma"
   },
   "Footer": {
     "tagline": "O sistema operativo para o seu casamento.",

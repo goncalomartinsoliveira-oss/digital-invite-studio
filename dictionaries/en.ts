@@ -58,7 +58,8 @@ const en = {
     "pricing": "Pricing",
     "contact": "Contact",
     "login": "Login",
-    "startNow": "Start Now"
+    "startNow": "Start Now",
+    "language": "Language"
   },
   "Footer": {
     "tagline": "The operating system for your wedding.",
