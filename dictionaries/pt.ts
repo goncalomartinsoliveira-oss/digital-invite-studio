@@ -527,6 +527,62 @@ const pt = {
       "person2Placeholder": "Ex: Márcia"
     }
   },
+  "SmartRsvp": {
+    "title": "Confirmar Presença",
+    "step0": {
+      "description": "Pesquise pelo seu nome para confirmar a presença no evento.",
+      "placeholder": "Escreva o seu nome (mínimo 3 letras)...",
+      "searching": "A procurar...",
+      "minCharsHint": "Insira pelo menos 3 caracteres para iniciar a pesquisa.",
+      "selectBtn": "Selecionar →",
+      "nameNotFound": "Não encontra o seu nome na lista?"
+    },
+    "step1": {
+      "title": "Olá! Encontrámos o vosso grupo.",
+      "subtitle": "Confirmem a presença de cada membro:",
+      "categoryAdult": "🧔 Adulto",
+      "categoryChild": "👦 Criança",
+      "categoryBaby": "👶 Bebé",
+      "statusPending": "Pendente",
+      "statusConfirmed": "Vou!",
+      "statusDeclined": "Não vou",
+      "dietaryLabel": "Restrições Alimentares",
+      "notesLabel": "Observações Adicionais",
+      "notesPlaceholder": "Ex: Precisa de cadeira de bebé...",
+      "backBtn": "Voltar",
+      "savingBtn": "A gravar...",
+      "confirmBtn": "Confirmar"
+    },
+    "step2": {
+      "title": "Respostas Gravadas!",
+      "message": "Obrigado por confirmarem. Mal podemos esperar por vos ver no grande dia!",
+      "editBtn": "Alterar respostas"
+    },
+    "step3": {
+      "title": "Não encontrou o seu nome?",
+      "description": "Deixe os seus dados abaixo. Os noivos serão notificados do seu pedido.",
+      "nameLbl": "Nome Completo",
+      "contactLbl": "Telefone ou Email",
+      "messageLbl": "Mensagem Breve (Opcional)",
+      "messagePlaceholder": "Ex: Sou acompanhante da Joana...",
+      "cancelBtn": "Cancelar",
+      "sendingBtn": "A enviar...",
+      "submitBtn": "Enviar Pedido"
+    },
+    "step4": {
+      "title": "Pedido Enviado",
+      "message": "A sua informação foi enviada para os noivos com sucesso. Em breve receberá uma atualização.",
+      "backBtn": "Voltar ao Início"
+    },
+    "alerts": {
+      "saveError": "Erro ao gravar algumas respostas.",
+      "submitError": "Ocorreu um erro ao enviar o pedido. Tente novamente."
+    },
+    "notes": {
+      "contactPrefix": "Contacto",
+      "messagePrefix": "Mensagem"
+    }
+  },
   "MomentsModule": {
     "cards": {
       "photoSharingTitle": "Página Pública de Photo Sharing",
@@ -936,6 +992,21 @@ const pt = {
       "desc": "Oferecemos soluções especiais de White Label para Wedding Planners e Agências. Utilize a nossa tecnologia com a sua própria marca e beneficie de preços de revenda.",
       "link": "Consultar Condições B2B"
     }
+  },
+  "SeatingPublic": {
+    "notFound": "Evento não encontrado",
+    "notFoundSub": "Verifique se o link ou o QR Code estão corretos.",
+    "welcome": "Bem-vindo à receção",
+    "findYourSeat": "Encontre o seu lugar",
+    "searchPlaceholder": "Escreva o seu nome ou apelido...",
+    "selectYourName": "Selecione o seu nome:",
+    "notFound2": "Não encontrámos o seu nome.",
+    "notFoundTip": "Tente procurar apenas pelo último apelido.",
+    "typeMinChars": "Escreva pelo menos 2 letras\npara iniciar a pesquisa.",
+    "reservedFor": "Lugar Reservado Para",
+    "yourTableIs": "A sua mesa é a",
+    "tableNotDefined": "Mesa não definida",
+    "searchAnother": "Pesquisar outro nome"
   }
 };
 

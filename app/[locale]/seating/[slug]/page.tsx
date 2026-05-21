@@ -5,6 +5,9 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, ArrowLeft, Loader2 } from "lucide-react";
+import pt from "@/dictionaries/pt";
+import en from "@/dictionaries/en";
+const dictionaries = { pt, en };
 
 interface Guest {
   id: string;
@@ -19,7 +22,9 @@ interface Table {
 
 export default function SeatingPlanGuestView() {
   const params = useParams();
-  
+  const locale = (params?.locale as "en" | "pt") || "pt";
+  const dict = dictionaries[locale]?.SeatingPublic || dictionaries.pt.SeatingPublic;
+
   const [loading, setLoading] = useState(true);
   const [inviteData, setInviteData] = useState<{ groom_name: string; bride_name: string } | null>(null);
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -91,8 +96,8 @@ export default function SeatingPlanGuestView() {
   if (!inviteData) {
     return (
       <div className="fixed inset-0 z-[100] bg-[#FDFBF7] flex items-center justify-center flex-col text-center p-6">
-        <h1 className="font-serif text-3xl text-[#630100] mb-2">Evento não encontrado</h1>
-        <p className="text-gray-500 font-montserrat text-sm">Verifique se o link ou o QR Code estão corretos.</p>
+        <h1 className="font-serif text-3xl text-[#630100] mb-2">{dict.notFound}</h1>
+        <p className="text-gray-500 font-montserrat text-sm">{dict.notFoundSub}</p>
       </div>
     );
   }
@@ -106,7 +111,7 @@ export default function SeatingPlanGuestView() {
 
       {/* CABEÇALHO DO EVENTO */}
       <header className="pt-16 pb-8 px-6 text-center shrink-0 relative z-10">
-        <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-[#630100]/60 mb-4">Bem-vindo à receção</p>
+        <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-[#630100]/60 mb-4">{dict.welcome}</p>
         <h1 className="font-serif text-4xl text-[#630100] leading-tight">
           {inviteData.bride_name} <span className="font-light italic text-[#E5D0A1] text-3xl mx-2">&</span> {inviteData.groom_name}
         </h1>
@@ -125,13 +130,13 @@ export default function SeatingPlanGuestView() {
               className="flex-1 flex flex-col"
             >
               <div className="bg-white p-6 rounded-[2rem] shadow-2xl shadow-[#630100]/5 border border-[#EFDFBB]/30 relative z-10 mt-4">
-                <h2 className="font-serif text-2xl text-center mb-6">Encontre o seu lugar</h2>
-                
+                <h2 className="font-serif text-2xl text-center mb-6">{dict.findYourSeat}</h2>
+
                 <div className="relative group">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#630100]/40 group-focus-within:text-[#630100] transition-colors" size={20} />
-                  <input 
-                    type="text" 
-                    placeholder="Escreva o seu nome ou apelido..."
+                  <input
+                    type="text"
+                    placeholder={dict.searchPlaceholder}
                     className="w-full bg-[#FDFBF7] border border-gray-100 focus:border-[#630100]/50 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none transition-all placeholder:text-gray-300 shadow-inner"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
@@ -145,7 +150,7 @@ export default function SeatingPlanGuestView() {
                 {searchQuery.length >= 2 ? (
                   filteredGuests.length > 0 ? (
                     <div className="space-y-3">
-                      <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-4 mb-4">Selecione o seu nome:</p>
+                      <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-4 mb-4">{dict.selectYourName}</p>
                       {filteredGuests.map(guest => (
                         <button 
                           key={guest.id}
@@ -161,14 +166,14 @@ export default function SeatingPlanGuestView() {
                     </div>
                   ) : (
                     <div className="text-center mt-10">
-                      <p className="text-gray-500 text-sm font-medium">Não encontrámos o seu nome.</p>
-                      <p className="text-[10px] text-gray-400 mt-2 uppercase tracking-wider">Tente procurar apenas pelo último apelido.</p>
+                      <p className="text-gray-500 text-sm font-medium">{dict.notFound2}</p>
+                      <p className="text-[10px] text-gray-400 mt-2 uppercase tracking-wider">{dict.notFoundTip}</p>
                     </div>
                   )
                 ) : (
                   <div className="text-center mt-16 opacity-40 flex flex-col items-center">
                     <Search size={32} className="text-gray-300 mb-4" />
-                    <p className="text-xs text-gray-400 font-medium">Escreva pelo menos 2 letras<br/>para iniciar a pesquisa.</p>
+                    <p className="text-xs text-gray-400 font-medium whitespace-pre-line">{dict.typeMinChars}</p>
                   </div>
                 )}
               </div>
@@ -190,16 +195,16 @@ export default function SeatingPlanGuestView() {
                 <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#630100]/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="relative z-10">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-2">Lugar Reservado Para</p>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-2">{dict.reservedFor}</p>
                   <h3 className="font-bold text-xl mb-10 text-[#332E2B]">{selectedGuest.name}</h3>
 
                   <div className="inline-flex items-center justify-center w-24 h-24 bg-[#FDFBF7] border border-[#EFDFBB] rounded-full text-[#630100] mb-8 shadow-inner">
                     <MapPin size={36} strokeWidth={1.5} />
                   </div>
 
-                  <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-3">A sua mesa é a</p>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-3">{dict.yourTableIs}</p>
                   <h2 className="font-serif text-5xl text-[#630100] font-regular">
-                    {tables[selectedGuest.table_id] || "Mesa não definida"}
+                    {tables[selectedGuest.table_id] || dict.tableNotDefined}
                   </h2>
                 </div>
               </div>
@@ -207,11 +212,11 @@ export default function SeatingPlanGuestView() {
               <button 
                 onClick={() => {
                   setSelectedGuest(null);
-                  setSearchQuery(""); // Limpa a pesquisa para o próximo convidado
+                  setSearchQuery("");
                 }}
                 className="mt-12 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-[#630100] transition-colors"
               >
-                <ArrowLeft size={14} /> Pesquisar outro nome
+                <ArrowLeft size={14} /> {dict.searchAnother}
               </button>
             </motion.div>
           )}

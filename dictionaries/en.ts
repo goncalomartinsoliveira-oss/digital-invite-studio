@@ -527,6 +527,62 @@ const en = {
       "person2Placeholder": "e.g., Márcia"
     }
   },
+  "SmartRsvp": {
+    "title": "Confirm Attendance",
+    "step0": {
+      "description": "Search for your name to confirm your attendance at the event.",
+      "placeholder": "Type your name (minimum 3 characters)...",
+      "searching": "Searching...",
+      "minCharsHint": "Enter at least 3 characters to start searching.",
+      "selectBtn": "Select →",
+      "nameNotFound": "Can't find your name on the list?"
+    },
+    "step1": {
+      "title": "Hello! We found your group.",
+      "subtitle": "Please confirm attendance for each member:",
+      "categoryAdult": "🧔 Adult",
+      "categoryChild": "👦 Child",
+      "categoryBaby": "👶 Baby",
+      "statusPending": "Pending",
+      "statusConfirmed": "Attending!",
+      "statusDeclined": "Not attending",
+      "dietaryLabel": "Dietary Restrictions",
+      "notesLabel": "Additional Notes",
+      "notesPlaceholder": "E.g.: Needs a high chair...",
+      "backBtn": "Back",
+      "savingBtn": "Saving...",
+      "confirmBtn": "Confirm"
+    },
+    "step2": {
+      "title": "Responses Saved!",
+      "message": "Thank you for confirming. We can't wait to see you on the big day!",
+      "editBtn": "Change responses"
+    },
+    "step3": {
+      "title": "Couldn't find your name?",
+      "description": "Leave your details below. The couple will be notified of your request.",
+      "nameLbl": "Full Name",
+      "contactLbl": "Phone or Email",
+      "messageLbl": "Brief Message (Optional)",
+      "messagePlaceholder": "E.g.: I'm a plus one of Joana...",
+      "cancelBtn": "Cancel",
+      "sendingBtn": "Sending...",
+      "submitBtn": "Send Request"
+    },
+    "step4": {
+      "title": "Request Sent",
+      "message": "Your information has been successfully sent to the couple. You will receive an update soon.",
+      "backBtn": "Back to Start"
+    },
+    "alerts": {
+      "saveError": "Error saving some responses.",
+      "submitError": "An error occurred while sending the request. Please try again."
+    },
+    "notes": {
+      "contactPrefix": "Contact",
+      "messagePrefix": "Message"
+    }
+  },
   "MomentsModule": {
     "cards": {
       "photoSharingTitle": "Public Photo Sharing Page",
@@ -936,6 +992,21 @@ const en = {
       "desc": "We offer special White Label solutions for Wedding Planners and Agencies. Use our technology with your own branding and benefit from wholesale pricing.",
       "link": "Consult B2B Conditions"
     }
+  },
+  "SeatingPublic": {
+    "notFound": "Event not found",
+    "notFoundSub": "Please check that your link or QR Code is correct.",
+    "welcome": "Welcome to the reception",
+    "findYourSeat": "Find your seat",
+    "searchPlaceholder": "Type your first or last name...",
+    "selectYourName": "Select your name:",
+    "notFound2": "We couldn't find your name.",
+    "notFoundTip": "Try searching by last name only.",
+    "typeMinChars": "Type at least 2 characters\nto start searching.",
+    "reservedFor": "Seat Reserved For",
+    "yourTableIs": "Your table is",
+    "tableNotDefined": "Table not assigned",
+    "searchAnother": "Search another name"
   }
 };
 
