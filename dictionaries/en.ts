@@ -140,6 +140,7 @@ const en = {
     "mobilePreviewLabel": "Real Mobile View",
     "mobilePreviewSub": "Updates upon saving",
     "accountLabel": "My Account",
+    "backToEvents": "My Events",
     "tabs": {
       "design": "Models & identity",
       "content": "Invitation content",
@@ -187,7 +188,8 @@ const en = {
       "originalOwnerLabel": "Original Owner",
       "dateUndefined": "To be defined"
     },
-    "sharedSectionTitle": "Shared With Me"
+    "sharedSectionTitle": "Shared With Me",
+    "backToSite": "Back to website"
   },
   "DetailedFeaturesPage": {
     "hero": {

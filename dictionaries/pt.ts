@@ -140,6 +140,7 @@ const pt = {
     "mobilePreviewLabel": "Vista Mobile Real",
     "mobilePreviewSub": "Atualiza ao guardar",
     "accountLabel": "Minha Conta",
+    "backToEvents": "Meus Eventos",
     "tabs": {
       "design": "Modelos e identidade",
       "content": "Conteúdo do convite",
@@ -187,7 +188,8 @@ const pt = {
       "originalOwnerLabel": "Dono Original",
       "dateUndefined": "Por definir"
     },
-    "sharedSectionTitle": "Partilhados Comigo"
+    "sharedSectionTitle": "Partilhados Comigo",
+    "backToSite": "Voltar ao site"
   },
   "DetailedFeaturesPage": {
     "hero": {

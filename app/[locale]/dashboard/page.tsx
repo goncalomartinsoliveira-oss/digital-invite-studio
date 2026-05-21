@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
@@ -109,16 +110,27 @@ export default function DashboardHub() {
       
       {/* HEADER MINIMALISTA */}
       <header className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
-        <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-32 sm:w-40 h-auto" />
-        
+        <div className="flex items-center gap-4">
+          <Link href={`/${locale}`}>
+            <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-32 sm:w-40 h-auto hover:opacity-80 transition-opacity" />
+          </Link>
+          <Link
+            href={`/${locale}`}
+            className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#630100] transition-colors"
+          >
+            <ArrowLeft size={12} />
+            {dict.backToSite}
+          </Link>
+        </div>
+
         <div className="flex items-center gap-6">
           <div className="hidden sm:flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{userEmail}</span>
           </div>
-          
-          <button 
-            onClick={handleLogout} 
+
+          <button
+            onClick={handleLogout}
             className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 transition-colors bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full"
           >
             <LogOut size={14} /> <span className="hidden sm:inline">{dict.logoutBtn}</span>

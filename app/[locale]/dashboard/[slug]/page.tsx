@@ -2,16 +2,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { 
-  Copy, 
-  Check, 
-  ExternalLink, 
-  UserCircle, 
-  PenTool, 
-  FileText, 
-  Users, 
-  Grid, 
-  Camera 
+import Link from "next/link";
+import {
+  Copy,
+  Check,
+  ExternalLink,
+  UserCircle,
+  PenTool,
+  FileText,
+  Users,
+  Grid,
+  Camera,
+  LayoutGrid
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -147,8 +149,15 @@ export default function Dashboard() {
       
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r border-gray-100 hidden xl:flex flex-col z-30 shadow-sm shrink-0">
-        <div className="pt-10 pb-8 px-6 flex items-center justify-center border-b border-gray-50 mb-4">
-            <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
+        <div className="pt-10 pb-6 px-6 flex flex-col items-center gap-4 border-b border-gray-50 mb-4">
+          <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
+          <Link
+            href={`/${locale}/dashboard`}
+            className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#630100] transition-colors"
+          >
+            <LayoutGrid size={12} />
+            {dict.backToEvents}
+          </Link>
         </div>
         
         <nav className="px-4 space-y-2">
@@ -174,6 +183,14 @@ export default function Dashboard() {
           
           <header className="h-20 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 flex items-center justify-between sticky top-0 z-20 shrink-0">
             <div className="flex items-center gap-3">
+              {/* Botão voltar — só visível em mobile (xl tem sidebar) */}
+              <Link
+                href={`/${locale}/dashboard`}
+                className="xl:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-gray-50 text-gray-400 hover:bg-[#630100] hover:text-white transition-all"
+                aria-label={dict.backToEvents}
+              >
+                <LayoutGrid size={16} />
+              </Link>
               <h1 className="text-lg font-bold text-gray-800 hidden sm:block font-montserrat">
                 {activeTab === 'account' ? dict.accountLabel : tabsConfig.find(t => t.id === activeTab)?.label}
               </h1>
