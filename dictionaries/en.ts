@@ -141,6 +141,7 @@ const en = {
     "mobilePreviewSub": "Updates upon saving",
     "accountLabel": "My Account",
     "backToEvents": "My Events",
+    "currentProject": "Current project",
     "tabs": {
       "design": "Models & identity",
       "content": "Invitation content",

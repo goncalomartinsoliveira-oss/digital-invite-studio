@@ -160,6 +160,28 @@ export default function Dashboard() {
           </Link>
         </div>
         
+        {/* CARTÃO DO PROJETO ATUAL */}
+        <div className="px-4 mb-4">
+          <div className="bg-[#FDFBF7] border border-[#EFDFBB]/70 rounded-2xl px-4 py-3">
+            <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-1.5 font-montserrat">
+              {dict.currentProject}
+            </p>
+            <p className="font-serif text-[#630100] text-[15px] leading-snug">
+              {formData.groom_name && formData.bride_name
+                ? `${formData.groom_name} & ${formData.bride_name}`
+                : formData.slug}
+            </p>
+            {formData.event_date && (
+              <p className="text-[9px] text-gray-400 mt-1.5 font-montserrat">
+                {new Date(formData.event_date).toLocaleDateString(
+                  locale === 'en' ? 'en-US' : 'pt-PT',
+                  { day: '2-digit', month: 'long', year: 'numeric' }
+                )}
+              </p>
+            )}
+          </div>
+        </div>
+
         <nav className="px-4 space-y-2">
           {tabsConfig.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${activeTab === tab.id ? 'bg-[#630100] text-white shadow-lg shadow-[#630100]/30' : 'text-gray-400 hover:bg-gray-50'}`}>
@@ -191,9 +213,17 @@ export default function Dashboard() {
               >
                 <LayoutGrid size={16} />
               </Link>
-              <h1 className="text-lg font-bold text-gray-800 hidden sm:block font-montserrat">
-                {activeTab === 'account' ? dict.accountLabel : tabsConfig.find(t => t.id === activeTab)?.label}
-              </h1>
+              <div className="hidden sm:flex flex-col justify-center">
+                <h1 className="text-lg font-bold text-gray-800 font-montserrat leading-tight">
+                  {activeTab === 'account' ? dict.accountLabel : tabsConfig.find(t => t.id === activeTab)?.label}
+                </h1>
+                {/* Nome do projeto — só visível quando a sidebar está escondida (< xl) */}
+                <p className="xl:hidden text-[11px] font-serif italic text-[#630100] leading-tight">
+                  {formData.groom_name && formData.bride_name
+                    ? `${formData.groom_name} & ${formData.bride_name}`
+                    : formData.slug}
+                </p>
+              </div>
               {!canEdit && (
                 <span className="bg-blue-50 text-blue-500 border border-blue-100 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md hidden sm:block">
                   {dict.readOnly}

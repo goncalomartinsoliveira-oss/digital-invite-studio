@@ -141,6 +141,7 @@ const pt = {
     "mobilePreviewSub": "Atualiza ao guardar",
     "accountLabel": "Minha Conta",
     "backToEvents": "Meus Eventos",
+    "currentProject": "Projeto atual",
     "tabs": {
       "design": "Modelos e identidade",
       "content": "Conteúdo do convite",
