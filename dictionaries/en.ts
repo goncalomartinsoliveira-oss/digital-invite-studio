@@ -190,52 +190,52 @@ const en = {
   },
   "DetailedFeaturesPage": {
     "hero": {
-      "badge": "Tudo num só lugar",
-      "title1": "O sistema operativo para",
-      "title2": "o seu casamento de luxo.",
-      "desc": "Desde o primeiro convite enviado até à última fotografia partilhada na pista de dança. Desenhámos cada ferramenta para eliminar o stress da organização e elevar a experiência dos seus convidados."
+      "badge": "All in one place",
+      "title1": "The operating system for",
+      "title2": "your luxury wedding.",
+      "desc": "From the first invitation sent to the last photo shared on the dance floor. We designed every tool to eliminate the stress of planning and elevate your guests' experience."
     },
-    "discoverMore": "Descobrir mais",
-    "mockupPrefix": "[ Imagem/Mockup do Ecrã:",
+    "discoverMore": "Discover more",
+    "mockupPrefix": "[ Screen Image/Mockup:",
     "cta": {
-      "title": "Pronto para elevar o seu evento?",
-      "btn": "Ver Pacotes e Preços"
+      "title": "Ready to elevate your event?",
+      "btn": "View Packages & Pricing"
     },
     "features": {
       "website": {
-        "title": "Convites e Website Premium",
-        "desc": "A porta de entrada do seu evento. Crie uma primeira impressão inesquecível com tipografias elegantes e layouts modernos. Em vez do papel que se perde, ofereça um espaço digital imersivo que reflete a identidade visual do seu casamento.",
-        "placeholder": "Previsão do Website no Telemóvel com tipografia elegante"
+        "title": "Premium Invitations & Website",
+        "desc": "The gateway to your event. Create an unforgettable first impression with elegant typography and modern layouts. Instead of paper that gets lost, offer an immersive digital space that reflects the visual identity of your wedding.",
+        "placeholder": "Website Preview on Phone with elegant typography"
       },
       "rsvp": {
-        "title": "Gestão Inteligente & RSVP",
-        "desc": "O cérebro da organização. Esqueça as folhas de cálculo e as mensagens perdidas. Os convidados confirmam presença, indicam restrições alimentares e a sua lista atualiza automaticamente em tempo real, segmentada por idade e origem.",
-        "placeholder": "Dashboard com Gráficos de Confirmação e Alergias"
+        "title": "Smart Management & RSVP",
+        "desc": "The brain of organization. Forget spreadsheets and lost messages. Guests confirm their attendance, indicate dietary restrictions, and your list updates automatically in real time, segmented by age and origin.",
+        "placeholder": "Dashboard with Confirmation and Allergy Charts"
       },
       "seating": {
-        "title": "Seating Plan Interativo",
-        "desc": "Planear as mesas nunca foi tão visual. Um quadro digital onde pode desenhar a sala e arrastar os convidados diretamente para os lugares. A plataforma ajusta a geometria das mesas e bloqueia lugares excedentes automaticamente.",
-        "placeholder": "Interface Drag & Drop de arrastar convidados para as mesas redondas"
+        "title": "Interactive Seating Plan",
+        "desc": "Planning tables has never been so visual. A digital board where you can draw the room and drag guests directly to their seats. The platform automatically adjusts table geometry and blocks excess seats.",
+        "placeholder": "Drag & Drop interface for moving guests to round tables"
       },
       "qrcode": {
-        "title": "A Experiência no Dia (QR Code)",
-        "desc": "Elimine o engarrafamento à entrada da sala. Através de um QR Code elegante impresso no local, o convidado acede à planta digital no seu telemóvel, pesquisa o seu nome e encontra a sua mesa instantaneamente.",
-        "placeholder": "Mockup de um telemóvel a ler um QR Code num expositor floral"
+        "title": "The Day-of Experience (QR Code)",
+        "desc": "Eliminate the bottleneck at the room entrance. Through an elegant QR Code printed on-site, guests access the digital floor plan on their phone, search their name, and find their table instantly.",
+        "placeholder": "Mockup of a phone reading a QR Code on a floral display"
       },
       "photosharing": {
-        "title": "Partilha de Fotos Colaborativa",
-        "desc": "Os fotógrafos captam o oficial, os seus convidados captam o espontâneo. Um álbum digital partilhado onde todos os presentes podem carregar fotos e vídeos em direto, acessível num único lugar para guardar para sempre.",
-        "placeholder": "Galeria estilo mural cheia de fotografias divertidas de convidados"
+        "title": "Collaborative Photo Sharing",
+        "desc": "Photographers capture the official moments; your guests capture the spontaneous ones. A shared digital album where all attendees can upload photos and videos in real time, accessible in one place to keep forever.",
+        "placeholder": "Wall-style gallery filled with fun guest photographs"
       },
       "guestbook": {
-        "title": "Livro de Honras Digital",
-        "desc": "Uma reinvenção emotiva do tradicional livro de assinaturas. Os convidados utilizam os seus telemóveis para deixar dedicatórias de texto, mensagens de voz e votos de felicidade. Um arquivo de amor que nunca se irá perder.",
-        "placeholder": "Ecrã com mensagens bonitas e notas de voz a tocar"
+        "title": "Digital Guestbook",
+        "desc": "An emotional reinvention of the traditional signature book. Guests use their phones to leave text dedications, voice messages, and wishes of happiness. An archive of love that will never be lost.",
+        "placeholder": "Screen with beautiful messages and voice notes playing"
       },
       "reports": {
-        "title": "Exportações Premium para Staff",
-        "desc": "A comunicação com o Catering e o Wedding Planner tem de ser impecável. Exporte relatórios em PDF com qualidade de impressão, encabeçados pelo vosso logotipo, incluindo a planta exata da sala e listagem rigorosa por mesa.",
-        "placeholder": "Documento PDF elegante com a planta da sala e o logotipo da marca"
+        "title": "Premium Staff Exports",
+        "desc": "Communication with Catering and the Wedding Planner must be impeccable. Export print-quality PDF reports, headed with your logo, including the exact room layout and a meticulous listing by table.",
+        "placeholder": "Elegant PDF document with room layout and brand logo"
       }
     }
   },
@@ -362,6 +362,526 @@ const en = {
     "lightbox": {
       "save": "Save"
     }
+  },
+  "ContentModule": {
+    "toggle": {
+      "visible": "Visible",
+      "hidden": "Hidden"
+    },
+    "sections": {
+      "hero": {
+        "title": "01. Cover (Hero)",
+        "subtitleLabel": "Secondary Title",
+        "mediaLabel": "Photo / Video (.mp4)",
+        "noFile": "No File",
+        "uploading": "Uploading...",
+        "changeMedia": "Change Media"
+      },
+      "countdown": {
+        "title": "02. Countdown",
+        "mainTitleLabel": "Main Title"
+      },
+      "story": {
+        "title": "03. Our Story",
+        "subtitleLabel": "Secondary Title",
+        "mainTitleLabel": "Main Title",
+        "photoLabel": "Oval Photo (Optional)",
+        "photoEmpty": "PHOTO",
+        "photoUpload": "UPLOAD",
+        "textsLabel": "Story Texts",
+        "paragraphPrefix": "Paragraph"
+      },
+      "gallery": {
+        "title": "04. Editorial Gallery",
+        "subtitleLabel": "Secondary Title",
+        "mainTitleLabel": "Main Title",
+        "photosLabel": "Photos (Up to 5)"
+      },
+      "program": {
+        "title": "05. Schedule",
+        "subtitleLabel": "Secondary Title",
+        "mainTitleLabel": "Main Title",
+        "eventsLabel": "Event List",
+        "addBtn": "Add",
+        "newEventDefault": "New Event"
+      },
+      "event": {
+        "title": "06. Event Venues",
+        "sectionTitleLabel": "Section Main Title",
+        "ceremonyTitle": "The Ceremony",
+        "receptionTitle": "The Reception",
+        "titleLabel": "Main Title",
+        "timeLabel": "Time",
+        "locationLabel": "Venue / Address",
+        "mapsLabel": "Google Maps Link",
+        "mapsPlaceholder": "https://..."
+      },
+      "details": {
+        "title": "07. Event Details",
+        "subtitleLabel": "Secondary Title",
+        "mainTitleLabel": "Main Title",
+        "logistics": {
+          "title": "Logistics & Parking",
+          "titleLabel": "Main Title",
+          "infoLabel": "Informational Text"
+        },
+        "accommodation": {
+          "title": "Accommodation",
+          "titleLabel": "Main Title",
+          "infoLabel": "Informational Text",
+          "hotelsLabel": "Hotel Links",
+          "addBtn": "+ Add",
+          "hotelNamePlaceholder": "Hotel Name"
+        },
+        "dresscode": {
+          "title": "Dress Code & Colors",
+          "titleLabel": "Main Title",
+          "messageLabel": "Message",
+          "paletteLabel": "Show Visual Palette?"
+        },
+        "gifts": {
+          "title": "Gifts & IBAN",
+          "titleLabel": "Main Title",
+          "messageLabel": "Message",
+          "ibanToggleLabel": "Reveal button with Bank Details (IBAN)?",
+          "ibanBtnLabel": "Button Text",
+          "ibanBtnPlaceholder": "e.g., Contribute to the Honeymoon",
+          "ibanHoldersLabel": "Account Holder Names",
+          "ibanValueLabel": "IBAN Number",
+          "ibanValuePlaceholder": "GB29..."
+        }
+      },
+      "rsvp": {
+        "title": "08. RSVP Confirmation",
+        "subtitleLabel": "Secondary Title",
+        "mainTitleLabel": "Main Title",
+        "deadlineLabel": "Deadline (Text)",
+        "deadlinePlaceholder": "e.g., 08 | 15 | 2026"
+      },
+      "footer": {
+        "title": "09. Footer & Contacts",
+        "showContactsLabel": "Show Organization Contacts?",
+        "contact1NameLabel": "Contact 1 Name",
+        "contact1PhoneLabel": "Phone 1",
+        "contact1NamePlaceholder": "e.g., The Bride",
+        "contact1PhonePlaceholder": "+44...",
+        "contact2NameLabel": "Contact 2 Name",
+        "contact2PhoneLabel": "Phone 2",
+        "contact2NamePlaceholder": "e.g., The Groom",
+        "contact2PhonePlaceholder": "+44...",
+        "subtitleLabel": "Secondary Title",
+        "mainTitleLabel": "Main Title",
+        "locationLabel": "Bottom Location",
+        "locationPlaceholder": "e.g., LONDON, ENGLAND",
+        "photoLabel": "Background Photo",
+        "photoEmpty": "No Photo",
+        "changePhoto": "Change Photo"
+      }
+    }
+  },
+  "AccountModule": {
+    "profile": {
+      "title": "My Account",
+      "subtitle": "Profile Management",
+      "logoutBtn": "Log Out",
+      "emailLabel": "Access Email",
+      "passwordLabel": "New Password",
+      "passwordPlaceholder": "Min. 6 characters",
+      "passwordSuccess": "Password updated successfully!"
+    },
+    "ownership": {
+      "title": "Event Ownership",
+      "subtitle": "Project Administration",
+      "ownerLabel": "Original Owner",
+      "ownerBadge": "Owner"
+    },
+    "collaborators": {
+      "title": "Collaborators",
+      "subtitle": "Share access with the couple or planners",
+      "emailPlaceholder": "email@example.com",
+      "roleEditor": "Can Edit",
+      "roleViewer": "Read Only",
+      "inviteBtn": "Invite",
+      "emptyState": "This project has no external collaborators yet.",
+      "badgeEditor": "Editor",
+      "badgeViewer": "Read Only",
+      "alertSelfInvite": "You are already the owner of this project.",
+      "alertAddError": "Error adding: ",
+      "alertRemoveConfirm": "Remove this user's access?",
+      "alertPasswordError": "Error: "
+    }
+  },
+  "DesignModule": {
+    "templates": {
+      "title": "Invitation Templates",
+      "subtitle": "Select the base design for your invitation",
+      "applyBtn": "Apply Template"
+    },
+    "identity": {
+      "title": "Wedding Identity",
+      "subtitle": "Define the names of the couple and the event date",
+      "person1Label": "Person 1",
+      "person2Label": "Person 2",
+      "dateLabel": "The Big Day Date",
+      "person1Placeholder": "e.g., Gonçalo",
+      "person2Placeholder": "e.g., Márcia"
+    }
+  },
+  "MomentsModule": {
+    "cards": {
+      "photoSharingTitle": "Public Photo Sharing Page",
+      "photoSharingSubtitle": "Share photos and videos between guests",
+      "guestbookTitle": "Guestbook Page",
+      "guestbookSubtitle": "Let your guests send you a special message in text, voice, or video",
+      "liveWallTitle": "Live Wall",
+      "liveWallSubtitle": "Slideshow displaying photos and videos uploaded by guests on the Public Photo Sharing Page",
+      "openDirect": "Open Direct",
+      "copyLink": "Copy Link",
+      "galleryLinkCopied": "Gallery link copied!",
+      "guestbookLinkCopied": "Guestbook link copied!",
+      "liveWallLinkCopied": "Live Wall link copied!"
+    },
+    "profile": {
+      "title": "Content Management",
+      "subtitle": "Customise the gallery profile photo and manage your files",
+      "publicShares": "Public Shares",
+      "guestbookMessages": "Guestbook Messages"
+    },
+    "tabs": {
+      "gallery": "Public Gallery",
+      "guestbook": "Private Guestbook"
+    },
+    "media": {
+      "gridLabel": "Moments Grid",
+      "zipBtn": "ZIP"
+    },
+    "guestbook": {
+      "textTab": "Texts",
+      "audioTab": "Audios",
+      "videoTab": "Videos",
+      "zipTabBtn": "ZIP this tab",
+      "anonymousAuthor": "Anonymous",
+      "guestAuthor": "Guest",
+      "audioPrivate": "Private Audio",
+      "deleteConfirm": "Delete?"
+    },
+    "lightbox": {
+      "saveBtn": "Save"
+    },
+    "alerts": {
+      "noMessagesZip": "No messages to download in this tab.",
+      "zipError": "ZIP Error",
+      "guestbookZipError": "Error generating Guestbook ZIP",
+      "downloadError": "Error downloading individual file.",
+      "deleteMediaConfirm": "Are you sure you want to permanently delete this file?",
+      "deleteServerError": "Error deleting on server: ",
+      "deleteGuestbookConfirm": "Permanently delete this message?",
+      "deleteGuestbookError": "Error deleting."
+    },
+    "zipContent": {
+      "guestbookHeader": "GUESTBOOK - WRITTEN MESSAGES",
+      "messagePrefix": "Message",
+      "authorPrefix": "Author",
+      "datePrefix": "Date"
+    }
+  },
+  "SeatingModule": {
+    "qrCode": {
+      "title": "Digital Seating Chart",
+      "description": "This QR Code allows guests to find their table directly on their phone at the event entrance. Avoid crowding around the physical seating board.",
+      "downloadPng": "Download PNG",
+      "downloadSvg": "SVG",
+      "openBtn": "Open",
+      "copied": "Copied",
+      "copyLink": "Copy Link"
+    },
+    "orgStatus": {
+      "label": "Organisation Status",
+      "seated": "Seated",
+      "noTable": "No Table"
+    },
+    "tabs": {
+      "map": "Floor Plan",
+      "list": "Organisational Report",
+      "exportPdf": "Export Premium PDF",
+      "exportingPdf": "Generating PDF..."
+    },
+    "mapView": {
+      "addTables": "Add Tables",
+      "roundTable": "Round",
+      "squareTable": "Square",
+      "longTable": "Long",
+      "unseatedGuests": "Guests to Seat",
+      "searchPlaceholder": "Search...",
+      "seatsLabel": "Seats",
+      "defaultTableName": "Table"
+    },
+    "alerts": {
+      "removeTableConfirm": "Remove table?",
+      "tableFull": "Table is full!",
+      "pdfError": "Error generating file. Please check that the logo exists at /public/logo-dis.png"
+    },
+    "pdf": {
+      "eventLabel": "Event",
+      "generatedOn": "Generated on",
+      "reportTitle": "General Table Report",
+      "totalSeated": "Total Seated Guests",
+      "noGuestsAssigned": "No guests assigned.",
+      "footer": "digitalinvitestudio.com | Your digital seating chart"
+    },
+    "listView": {
+      "title": "Organisational Table Report",
+      "subtitle": "Detailed listing of guests by seat",
+      "seated": "Seated",
+      "seatsOf": "of",
+      "seatsLabel": "seats",
+      "emptyTable": "Empty Table"
+    }
+  },
+  "GuestsModule": {
+    "stats": {
+      "rsvpSummary": "RSVP Summary",
+      "totalForecast": "Total Expected",
+      "totalNote": "*(Active: Conf. & Pend.)",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "declined": "Declined",
+      "byAgeGroup": "By Age Group",
+      "adults": "Adults",
+      "children": "Children",
+      "babies": "Babies",
+      "total": "Total",
+      "confirmedShort": "Conf.",
+      "pendingShort": "Pend.",
+      "genderDistribution": "Gender Distribution",
+      "male": "Male",
+      "female": "Female",
+      "guestOf": "Guest of...",
+      "manageSideTags": "Manage Tags (Sides)",
+      "sideTagPlaceholder": "E.g.: Work",
+      "addBtn": "Add",
+      "dietaryRestrictions": "Dietary Restrictions",
+      "noDietary": "No restrictions",
+      "manageDietaryTags": "Manage Tags (Dietary)",
+      "dietaryTagPlaceholder": "E.g.: Gluten Free"
+    },
+    "requests": {
+      "title": "Access Requests",
+      "description": "These guests did not find their name on the list and requested access. Approve to include them in the official guest list.",
+      "messageLabel": "Message / Note",
+      "approveBtn": "Approve",
+      "ignoreBtn": "Dismiss"
+    },
+    "dataTools": {
+      "title": "Data Tools",
+      "subtitle": "Import or export guest lists",
+      "exportLabel": "Export",
+      "exportPdfBtn": "Export PDF",
+      "pdfConfirmed": "Confirmed Only",
+      "pdfConfirmedPending": "Conf. + Pending",
+      "pdfAll": "Full Active List",
+      "excelBtn": "Full Excel",
+      "importLabel": "Import",
+      "downloadTemplateBtn": "Download Template",
+      "importExcelBtn": "Import Excel"
+    },
+    "form": {
+      "title": "Add to List",
+      "nameLbl": "Name",
+      "categoryLbl": "Category",
+      "adult": "Adult",
+      "child": "Child",
+      "baby": "Baby",
+      "genderLbl": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "sideLbl": "Side",
+      "dietaryLbl": "Dietary Restrictions",
+      "notesLbl": "Notes / Observations",
+      "notesPlaceholder": "E.g.: Needs a high chair...",
+      "groupTagLbl": "Group Label",
+      "groupTagPlaceholder": "E.g.: Silva Family",
+      "addAnotherBtn": "Add Another to Group",
+      "saveBtn": "Save Guest(s)"
+    },
+    "table": {
+      "colName": "Guest",
+      "colGroup": "Group",
+      "colGender": "Gender",
+      "colAge": "Age",
+      "colSide": "Side / Tag",
+      "colDietary": "Dietary",
+      "colNotes": "Notes",
+      "colStatus": "Status",
+      "statusConfirmed": "Confirmed",
+      "statusDeclined": "Declined",
+      "statusPending": "Pending",
+      "categoryAdult": "Adult",
+      "categoryChild": "Child",
+      "categoryBaby": "Baby"
+    },
+    "editModal": {
+      "title": "Edit Guest",
+      "fullNameLbl": "Full Name",
+      "categoryLbl": "Category",
+      "genderLbl": "Gender",
+      "familyGroupLbl": "Family Group",
+      "sideTagLbl": "Side / Tag",
+      "dietaryLbl": "Dietary Restrictions",
+      "notesLbl": "Notes / Observations",
+      "notesPlaceholder": "E.g.: Waiting for flight confirmation...",
+      "statusLbl": "Status (RSVP)",
+      "statusPending": "Pending",
+      "statusConfirmed": "Confirmed",
+      "statusDeclined": "Declined",
+      "cancelBtn": "Cancel",
+      "saveBtn": "Save Changes",
+      "deleteTitle": "Delete Guest",
+      "editTitle": "Edit",
+      "deleteRowTitle": "Delete"
+    },
+    "importOverlay": {
+      "processing": "Processing guest list...",
+      "wait": "Please wait a moment"
+    },
+    "alerts": {
+      "deleteConfirm": "Are you sure you want to delete this guest?",
+      "deleteError": "Error deleting guest.",
+      "approveError": "Error approving the request.",
+      "importSuccess": "guests imported successfully!",
+      "importDbError": "Error inserting into the database.",
+      "importFileError": "Error reading the file. Please check that the format matches the template."
+    },
+    "pdf": {
+      "labelAll": "Total List",
+      "labelConfirmed": "Confirmed Only",
+      "labelConfirmedPending": "Confirmed & Pending",
+      "labelActive": "Full Active List",
+      "headerTitle": "Guest List",
+      "headerGenerated": "Generated on",
+      "headerTotal": "people",
+      "colName": "Name",
+      "colGroup": "Group",
+      "colAge": "Age",
+      "colGuestOf": "Guest of...",
+      "colDietary": "Dietary",
+      "colNotes": "Notes",
+      "colStatus": "Status",
+      "statusConfirmed": "Confirmed",
+      "statusDeclined": "Declined",
+      "statusPending": "Pending",
+      "categoryAdult": "Adult",
+      "categoryChild": "Child",
+      "categoryBaby": "Baby"
+    },
+    "excel": {
+      "colName": "Name",
+      "colGroup": "Group",
+      "colAge": "Age",
+      "colGender": "Gender",
+      "colGuestOf": "Guest of...",
+      "colDietary": "Dietary",
+      "colNotes": "Notes",
+      "colStatus": "Status",
+      "statusConfirmed": "Confirmed",
+      "statusDeclined": "Declined",
+      "statusPending": "Pending",
+      "categoryAdult": "Adult",
+      "categoryChild": "Child",
+      "categoryBaby": "Baby",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "sheetName": "Guests"
+    },
+    "template": {
+      "colName": "Name",
+      "colGroup": "Group",
+      "colAge": "Age (adult/child/baby)",
+      "colGender": "Gender (male/female)",
+      "colSide": "Side (common/groom/bride)",
+      "colDietary": "Dietary",
+      "colNotes": "Notes",
+      "valAdult": "adult",
+      "valChild": "child",
+      "valBaby": "baby",
+      "valMale": "male",
+      "valFemale": "female",
+      "valCommon": "common",
+      "valGroom": "groom",
+      "valBride": "bride",
+      "exampleName": "Example Guest",
+      "exampleGroup": "Example Family",
+      "exampleDietary": "Vegan, Gluten Free",
+      "exampleNotes": "Needs a high chair",
+      "sheetName": "Template",
+      "filename": "guest_list_template.xlsx",
+      "defaultName": "No Name"
+    }
+  },
+  "PrivacyPolicyPage": {
+    "title": "Privacy Policy",
+    "lastUpdate": "Last update: May 8, 2026",
+    "intro": "Your privacy is fundamental to Digital Invite Studio. This Privacy Policy describes how we collect, use, process, and protect your personal information and that of your guests when using our platform.",
+    "sections": {
+      "s1_title": "1. Information We Collect",
+      "s1_desc": "When using our services, we may collect the following information:",
+      "s1_items": [
+        { "bold": "Account Data:", "text": " Name, email address, and billing details of organizers/couples." },
+        { "bold": "Guest Data:", "text": " Names, emails, phone numbers, and dietary restrictions entered into the RSVP system." },
+        { "bold": "Multimedia Content:", "text": " Photos, videos, and messages uploaded through the Guestbook and Live Wall features." }
+      ],
+      "s2_title": "2. How We Use Your Data",
+      "s2_desc": "We use the information collected exclusively to provide and improve our services. We do not sell, rent, or share your personal data or guest list with third parties for marketing purposes.",
+      "s3_title": "3. Data Retention and Deletion",
+      "s3_prefix": "We understand that wedding data is temporary. Event websites, guest lists, and multimedia galleries are stored on our protected servers and are ",
+      "s3_bold": "automatically deleted 6 months after the event date",
+      "s3_suffix": ", unless you purchase the \"Lifetime Digital Archive\" package.",
+      "s4_title": "4. Data Subject Rights (GDPR)",
+      "s4_desc": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify, or request the complete deletion of your data at any time before the stipulated deadline. To exercise these rights, contact us through our support form.",
+      "s5_title": "5. Contact",
+      "s5_desc": "For any questions related to your privacy and data protection, please contact our team at "
+    }
+  },
+  "TermsPage": {
+    "title": "Terms and Conditions",
+    "lastUpdate": "Last update: May 8, 2026",
+    "intro": "Welcome to Digital Invite Studio. By using our platform, you agree to the following terms. Please read them carefully.",
+    "sections": {
+      "s1_title": "1. Service Description",
+      "s1_desc": "Digital Invite Studio provides a SaaS (Software as a Service) platform for creating wedding websites, guest management (RSVP), table planning (Seating Plan), and multimedia content sharing (Live Wall and Guestbook).",
+      "s2_title": "2. Payments and Refunds",
+      "s2_desc": "Access to premium features requires a one-time payment, according to the selected package:",
+      "s2_items": [
+        { "prefix": "", "bold": "", "text": "Prices are shown in Euros and include applicable legal taxes." },
+        { "prefix": "Due to the digital and personalized nature of the service, ", "bold": "no refunds are issued after the invitation is activated or published", "text": "." },
+        { "prefix": "", "bold": "", "text": "Users may test the tools for free before making a payment." }
+      ],
+      "s3_title": "3. User Responsibility",
+      "s3_desc": "The user is solely responsible for the content (texts, images, and videos) uploaded to the platform. Using the platform to share illegal, offensive content, or content that infringes third-party copyright is prohibited.",
+      "s4_title": "4. Limitation of Liability",
+      "s4_desc": "While we strive to guarantee 99.9% uptime, Digital Invite Studio cannot be held responsible for internet connection failures at the event venue, errors on guests' devices, or service interruptions beyond our technical control.",
+      "s5_title": "5. Intellectual Property",
+      "s5_desc": "All templates, code, design engines (such as the Seating Plan Editor), and visual elements of the platform are the exclusive property of Digital Invite Studio. Purchasing an event license grants the right to use, not to reproduce or resell the software.",
+      "s6_title": "6. Event Validity",
+      "s6_prefix": "Unless otherwise stated in a specific package, all event data (website, guest list, and photos) remains active until ",
+      "s6_bold": "6 months after the wedding date",
+      "s6_suffix": " entered in the system. After this period, data will be permanently deleted to ensure user privacy.",
+      "s7_title": "7. Applicable Law",
+      "s7_desc": "These terms are governed by Portuguese law. For the resolution of any dispute, the parties submit to the jurisdiction of the Lisbon district court."
+    },
+    "footerBox": {
+      "title": "Questions?",
+      "text": "If you have any questions about these terms, please contact us at "
+    }
+  },
+  "ResetPasswordPage": {
+    "successTitle": "Password Updated!",
+    "successDesc": "Your account is secure. Redirecting to your dashboard...",
+    "formTitle": "New Password",
+    "formDesc": "Create a new password for your account.",
+    "label": "New Password (Min. 6 Characters)",
+    "btn": "Save New Password",
+    "error": "Error updating the password. The link may have expired."
   },
   "PricingPage": {
     "title": "Choose the Perfect Plan",

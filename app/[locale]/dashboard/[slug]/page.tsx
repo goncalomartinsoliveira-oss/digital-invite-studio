@@ -225,12 +225,12 @@ export default function Dashboard() {
 
           <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-32 scroll-smooth relative">
             <div className="max-w-5xl mx-auto">
-              {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} />}
-              {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} />}
-              {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} />}
-              {activeTab === 'seating' && <SeatingModule invitationId={formData.id} canEdit={canEdit} />}
-              {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} />}
-              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} />}
+              {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />}
+              {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />}
+              {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />}
+              {activeTab === 'seating' && <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />}
+              {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} dict={dictionaries[locale]?.MomentsModule || dictionaries.pt.MomentsModule} />}
+              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
             </div>
           </main>
         </div>

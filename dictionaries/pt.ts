@@ -363,6 +363,526 @@ const pt = {
       "save": "Guardar"
     }
   },
+  "ContentModule": {
+    "toggle": {
+      "visible": "Visível",
+      "hidden": "Oculto"
+    },
+    "sections": {
+      "hero": {
+        "title": "01. Capa (Hero)",
+        "subtitleLabel": "Título Secundário",
+        "mediaLabel": "Fotografia / Vídeo (.mp4)",
+        "noFile": "Sem Ficheiro",
+        "uploading": "A carregar...",
+        "changeMedia": "Alterar Média"
+      },
+      "countdown": {
+        "title": "02. Contador Regressivo",
+        "mainTitleLabel": "Título Principal"
+      },
+      "story": {
+        "title": "03. A Nossa História",
+        "subtitleLabel": "Título Secundário",
+        "mainTitleLabel": "Título Principal",
+        "photoLabel": "Foto Oval (Opcional)",
+        "photoEmpty": "FOTO",
+        "photoUpload": "SUBIR",
+        "textsLabel": "Textos da História",
+        "paragraphPrefix": "Parágrafo"
+      },
+      "gallery": {
+        "title": "04. Galeria Editorial",
+        "subtitleLabel": "Título Secundário",
+        "mainTitleLabel": "Título Principal",
+        "photosLabel": "Fotografias (Até 5)"
+      },
+      "program": {
+        "title": "05. Cronograma",
+        "subtitleLabel": "Título Secundário",
+        "mainTitleLabel": "Título Principal",
+        "eventsLabel": "Lista de Eventos",
+        "addBtn": "Adicionar",
+        "newEventDefault": "Novo Evento"
+      },
+      "event": {
+        "title": "06. Locais do Evento",
+        "sectionTitleLabel": "Título Principal da Secção",
+        "ceremonyTitle": "A Cerimónia",
+        "receptionTitle": "A Receção",
+        "titleLabel": "Título Principal",
+        "timeLabel": "Hora",
+        "locationLabel": "Local / Morada",
+        "mapsLabel": "Link Google Maps",
+        "mapsPlaceholder": "https://..."
+      },
+      "details": {
+        "title": "07. Detalhes do Evento",
+        "subtitleLabel": "Título Secundário",
+        "mainTitleLabel": "Título Principal",
+        "logistics": {
+          "title": "Logística & Estacionamento",
+          "titleLabel": "Título Principal",
+          "infoLabel": "Texto Informativo"
+        },
+        "accommodation": {
+          "title": "Alojamento",
+          "titleLabel": "Título Principal",
+          "infoLabel": "Texto Informativo",
+          "hotelsLabel": "Links de Hotéis",
+          "addBtn": "+ Adicionar",
+          "hotelNamePlaceholder": "Nome do Hotel"
+        },
+        "dresscode": {
+          "title": "Dress Code & Cores",
+          "titleLabel": "Título Principal",
+          "messageLabel": "Mensagem",
+          "paletteLabel": "Mostrar Paleta Visual?"
+        },
+        "gifts": {
+          "title": "Presentes & IBAN",
+          "titleLabel": "Título Principal",
+          "messageLabel": "Mensagem",
+          "ibanToggleLabel": "Revelar botão com Dados Bancários (IBAN)?",
+          "ibanBtnLabel": "Texto do Botão",
+          "ibanBtnPlaceholder": "Ex: Contribuir para a Lua de Mel",
+          "ibanHoldersLabel": "Nomes dos Titulares",
+          "ibanValueLabel": "Número do IBAN",
+          "ibanValuePlaceholder": "PT50..."
+        }
+      },
+      "rsvp": {
+        "title": "08. Confirmação (RSVP)",
+        "subtitleLabel": "Título Secundário",
+        "mainTitleLabel": "Título Principal",
+        "deadlineLabel": "Data Limite (Texto)",
+        "deadlinePlaceholder": "Ex: 15 | 08 | 2026"
+      },
+      "footer": {
+        "title": "09. Rodapé & Contactos",
+        "showContactsLabel": "Mostrar Contactos da Organização?",
+        "contact1NameLabel": "Nome Contacto 1",
+        "contact1PhoneLabel": "Telefone 1",
+        "contact1NamePlaceholder": "Ex: A Noiva",
+        "contact1PhonePlaceholder": "+351...",
+        "contact2NameLabel": "Nome Contacto 2",
+        "contact2PhoneLabel": "Telefone 2",
+        "contact2NamePlaceholder": "Ex: O Noivo",
+        "contact2PhonePlaceholder": "+351...",
+        "subtitleLabel": "Título Secundário",
+        "mainTitleLabel": "Título Principal",
+        "locationLabel": "Localização Inferior",
+        "locationPlaceholder": "Ex: SINTRA, PORTUGAL",
+        "photoLabel": "Fotografia de Fundo",
+        "photoEmpty": "Sem Foto",
+        "changePhoto": "Alterar Foto"
+      }
+    }
+  },
+  "AccountModule": {
+    "profile": {
+      "title": "A Minha Conta",
+      "subtitle": "Gestão de Perfil",
+      "logoutBtn": "Terminar Sessão",
+      "emailLabel": "Email de Acesso",
+      "passwordLabel": "Nova Password",
+      "passwordPlaceholder": "Min. 6 caracteres",
+      "passwordSuccess": "Password atualizada com sucesso!"
+    },
+    "ownership": {
+      "title": "Propriedade do Evento",
+      "subtitle": "Administração do Projeto",
+      "ownerLabel": "Dono Original",
+      "ownerBadge": "Proprietário"
+    },
+    "collaborators": {
+      "title": "Colaboradores",
+      "subtitle": "Partilhe o acesso com os noivos ou planners",
+      "emailPlaceholder": "email@exemplo.com",
+      "roleEditor": "Pode Editar",
+      "roleViewer": "Apenas Leitura",
+      "inviteBtn": "Convidar",
+      "emptyState": "Este projeto ainda não tem colaboradores externos.",
+      "badgeEditor": "Editor",
+      "badgeViewer": "Apenas Leitura",
+      "alertSelfInvite": "Você já é o dono deste projeto.",
+      "alertAddError": "Erro ao adicionar: ",
+      "alertRemoveConfirm": "Remover o acesso deste utilizador?",
+      "alertPasswordError": "Erro: "
+    }
+  },
+  "DesignModule": {
+    "templates": {
+      "title": "Templates do Convite",
+      "subtitle": "Selecione o design base para o seu convite",
+      "applyBtn": "Aplicar Template"
+    },
+    "identity": {
+      "title": "Identidade do Casamento",
+      "subtitle": "Defina os nomes dos protagonistas e a data do evento",
+      "person1Label": "Pessoa 1",
+      "person2Label": "Pessoa 2",
+      "dateLabel": "Data do Grande Dia",
+      "person1Placeholder": "Ex: Gonçalo",
+      "person2Placeholder": "Ex: Márcia"
+    }
+  },
+  "MomentsModule": {
+    "cards": {
+      "photoSharingTitle": "Página Pública de Photo Sharing",
+      "photoSharingSubtitle": "Partilha de fotos e videos entre convidados",
+      "guestbookTitle": "Página de Guestbook",
+      "guestbookSubtitle": "Deixe que os seus convidados lhe enviem uma mensagem especial em texto, voz ou video",
+      "liveWallTitle": "Live Wall",
+      "liveWallSubtitle": "Slide onde são partilhadas as fotos e videos carregadas pelos convidados na Página Pública de Photo Sharing",
+      "openDirect": "Abrir Direto",
+      "copyLink": "Copiar Link",
+      "galleryLinkCopied": "Link da Galeria copiado!",
+      "guestbookLinkCopied": "Link do Guestbook copiado!",
+      "liveWallLinkCopied": "Link do Live Wall copiado!"
+    },
+    "profile": {
+      "title": "Gestão de Conteúdos",
+      "subtitle": "Personalize a foto de perfil das galerias e gira os ficheiros",
+      "publicShares": "Partilhas Públicas",
+      "guestbookMessages": "Mensagens Guestbook"
+    },
+    "tabs": {
+      "gallery": "Galeria Pública",
+      "guestbook": "Guestbook Privado"
+    },
+    "media": {
+      "gridLabel": "Grelha de Momentos",
+      "zipBtn": "ZIP"
+    },
+    "guestbook": {
+      "textTab": "Textos",
+      "audioTab": "Áudios",
+      "videoTab": "Vídeos",
+      "zipTabBtn": "ZIP da aba",
+      "anonymousAuthor": "Anónimo",
+      "guestAuthor": "Convidado",
+      "audioPrivate": "Áudio Privado",
+      "deleteConfirm": "Apagar?"
+    },
+    "lightbox": {
+      "saveBtn": "Guardar"
+    },
+    "alerts": {
+      "noMessagesZip": "Não há mensagens para descarregar nesta aba.",
+      "zipError": "Erro ZIP",
+      "guestbookZipError": "Erro ao gerar ZIP do Guestbook",
+      "downloadError": "Erro ao baixar ficheiro individual.",
+      "deleteMediaConfirm": "Tem a certeza que deseja apagar este ficheiro permanentemente?",
+      "deleteServerError": "Erro ao apagar no servidor: ",
+      "deleteGuestbookConfirm": "Apagar permanentemente esta mensagem?",
+      "deleteGuestbookError": "Erro ao apagar."
+    },
+    "zipContent": {
+      "guestbookHeader": "LIVRO DE HONRA - MENSAGENS ESCRITAS",
+      "messagePrefix": "Mensagem",
+      "authorPrefix": "Autor",
+      "datePrefix": "Data"
+    }
+  },
+  "SeatingModule": {
+    "qrCode": {
+      "title": "Planta de Sala Digital",
+      "description": "Este QR Code permite que os convidados consultem a sua mesa diretamente no telemóvel à entrada do evento. Evite aglomerados junto ao placar físico.",
+      "downloadPng": "Baixar PNG",
+      "downloadSvg": "SVG",
+      "openBtn": "Abrir",
+      "copied": "Copiado",
+      "copyLink": "Copiar Link"
+    },
+    "orgStatus": {
+      "label": "Estado da Organização",
+      "seated": "Sentados",
+      "noTable": "Sem Mesa"
+    },
+    "tabs": {
+      "map": "Planta da Sala",
+      "list": "Relatório Organizacional",
+      "exportPdf": "Exportar PDF Premium",
+      "exportingPdf": "A Gerar PDF..."
+    },
+    "mapView": {
+      "addTables": "Adicionar Mesas",
+      "roundTable": "Redonda",
+      "squareTable": "Quadrada",
+      "longTable": "Longa",
+      "unseatedGuests": "Convidados por Sentar",
+      "searchPlaceholder": "Pesquisar...",
+      "seatsLabel": "Lugares",
+      "defaultTableName": "Mesa"
+    },
+    "alerts": {
+      "removeTableConfirm": "Remover mesa?",
+      "tableFull": "Mesa cheia!",
+      "pdfError": "Erro ao gerar o ficheiro. Verifique se o logotipo existe em /public/logo-dis.png"
+    },
+    "pdf": {
+      "eventLabel": "Evento",
+      "generatedOn": "Gerado em",
+      "reportTitle": "Relatório Geral de Mesas",
+      "totalSeated": "Total de Convidados Sentados",
+      "noGuestsAssigned": "Nenhum convidado atribuído.",
+      "footer": "digitalinvitestudio.com | A sua planta de sala digital"
+    },
+    "listView": {
+      "title": "Relatório Organizacional de Mesas",
+      "subtitle": "Listagem detalhada dos convidados por lugar",
+      "seated": "Sentados",
+      "seatsOf": "de",
+      "seatsLabel": "lugares",
+      "emptyTable": "Mesa Vazia"
+    }
+  },
+  "GuestsModule": {
+    "stats": {
+      "rsvpSummary": "Resumo RSVP",
+      "totalForecast": "Total Previsto",
+      "totalNote": "*(Ativos: Conf. e Pend.)",
+      "confirmed": "Confirmados",
+      "pending": "Pendentes",
+      "declined": "Recusados",
+      "byAgeGroup": "Por Faixa Etária",
+      "adults": "Adultos",
+      "children": "Crianças",
+      "babies": "Bebés",
+      "total": "Total",
+      "confirmedShort": "Conf.",
+      "pendingShort": "Pend.",
+      "genderDistribution": "Distribuição Sexo",
+      "male": "Masculino",
+      "female": "Feminino",
+      "guestOf": "Convidado de...",
+      "manageSideTags": "Gerir Etiquetas (Lados)",
+      "sideTagPlaceholder": "Ex: Trabalho",
+      "addBtn": "Add",
+      "dietaryRestrictions": "Restrições Alimentares",
+      "noDietary": "Sem restrições",
+      "manageDietaryTags": "Gerir Etiquetas (Restrições)",
+      "dietaryTagPlaceholder": "Ex: Sem Glúten"
+    },
+    "requests": {
+      "title": "Pedidos de Acesso",
+      "description": "Estes convidados não encontraram o seu nome na lista e solicitaram acesso. Aprove para os incluir na lista oficial.",
+      "messageLabel": "Mensagem / Nota",
+      "approveBtn": "Aprovar",
+      "ignoreBtn": "Ignorar"
+    },
+    "dataTools": {
+      "title": "Ferramentas de Dados",
+      "subtitle": "Importar ou exportar listas",
+      "exportLabel": "Exportar",
+      "exportPdfBtn": "Exportar PDF",
+      "pdfConfirmed": "Apenas Confirmados",
+      "pdfConfirmedPending": "Conf. + Pendentes",
+      "pdfAll": "Lista Total Ativa",
+      "excelBtn": "Excel Total",
+      "importLabel": "Importar",
+      "downloadTemplateBtn": "Baixar Modelo",
+      "importExcelBtn": "Importar Excel"
+    },
+    "form": {
+      "title": "Adicionar à Lista",
+      "nameLbl": "Nome",
+      "categoryLbl": "Categoria",
+      "adult": "Adulto",
+      "child": "Criança",
+      "baby": "Bebé",
+      "genderLbl": "Sexo",
+      "male": "Masculino",
+      "female": "Feminino",
+      "sideLbl": "Lado",
+      "dietaryLbl": "Restrições Alimentares",
+      "notesLbl": "Observações / Notas",
+      "notesPlaceholder": "Ex: Precisa de cadeira de bebé...",
+      "groupTagLbl": "Etiqueta do Grupo",
+      "groupTagPlaceholder": "Ex: Família Silva",
+      "addAnotherBtn": "Adicionar Outro no Grupo",
+      "saveBtn": "Gravar Convidado(s)"
+    },
+    "table": {
+      "colName": "Convidado",
+      "colGroup": "Grupo",
+      "colGender": "Sexo",
+      "colAge": "Idade",
+      "colSide": "Lado / Tag",
+      "colDietary": "Restrições",
+      "colNotes": "Observações",
+      "colStatus": "Estado",
+      "statusConfirmed": "Confirmado",
+      "statusDeclined": "Recusado",
+      "statusPending": "Pendente",
+      "categoryAdult": "Adulto",
+      "categoryChild": "Criança",
+      "categoryBaby": "Bebé"
+    },
+    "editModal": {
+      "title": "Editar Ficha",
+      "fullNameLbl": "Nome Completo",
+      "categoryLbl": "Categoria",
+      "genderLbl": "Sexo",
+      "familyGroupLbl": "Grupo Familiar",
+      "sideTagLbl": "Lado / Tag",
+      "dietaryLbl": "Restrições Alimentares",
+      "notesLbl": "Observações / Notas",
+      "notesPlaceholder": "Ex: Confirmação pendente de voo...",
+      "statusLbl": "Estado (RSVP)",
+      "statusPending": "Pendente",
+      "statusConfirmed": "Confirmado",
+      "statusDeclined": "Recusado",
+      "cancelBtn": "Cancelar",
+      "saveBtn": "Salvar Alterações",
+      "deleteTitle": "Eliminar Convidado",
+      "editTitle": "Editar",
+      "deleteRowTitle": "Apagar"
+    },
+    "importOverlay": {
+      "processing": "A processar lista de convidados...",
+      "wait": "Por favor, aguarde um momento"
+    },
+    "alerts": {
+      "deleteConfirm": "Tem a certeza que deseja eliminar este convidado?",
+      "deleteError": "Erro ao apagar convidado.",
+      "approveError": "Erro ao aprovar o pedido.",
+      "importSuccess": "convidados importados com sucesso!",
+      "importDbError": "Erro ao inserir na base de dados.",
+      "importFileError": "Erro ao ler o ficheiro. Verifique se o formato está correto de acordo com o modelo."
+    },
+    "pdf": {
+      "labelAll": "Lista Total",
+      "labelConfirmed": "Apenas Confirmados",
+      "labelConfirmedPending": "Confirmados e Pendentes",
+      "labelActive": "Lista Total Ativa",
+      "headerTitle": "Lista de Convidados",
+      "headerGenerated": "Gerado em",
+      "headerTotal": "pessoas",
+      "colName": "Nome",
+      "colGroup": "Grupo",
+      "colAge": "Idade",
+      "colGuestOf": "Convidado de...",
+      "colDietary": "Restrições",
+      "colNotes": "Observações",
+      "colStatus": "Estado",
+      "statusConfirmed": "Confirmado",
+      "statusDeclined": "Recusado",
+      "statusPending": "Pendente",
+      "categoryAdult": "Adulto",
+      "categoryChild": "Criança",
+      "categoryBaby": "Bebé"
+    },
+    "excel": {
+      "colName": "Nome",
+      "colGroup": "Grupo",
+      "colAge": "Idade",
+      "colGender": "Sexo",
+      "colGuestOf": "Convidado de...",
+      "colDietary": "Restrições",
+      "colNotes": "Observações",
+      "colStatus": "Estado",
+      "statusConfirmed": "Confirmado",
+      "statusDeclined": "Recusado",
+      "statusPending": "Pendente",
+      "categoryAdult": "Adulto",
+      "categoryChild": "Criança",
+      "categoryBaby": "Bebé",
+      "genderMale": "Masculino",
+      "genderFemale": "Feminino",
+      "sheetName": "Convidados"
+    },
+    "template": {
+      "colName": "Nome",
+      "colGroup": "Grupo",
+      "colAge": "Idade (adulto/crianca/bebe)",
+      "colGender": "Sexo (masculino/feminino)",
+      "colSide": "Lado (comum/noivo/noiva)",
+      "colDietary": "Restricoes",
+      "colNotes": "Observacoes",
+      "valAdult": "adulto",
+      "valChild": "crianca",
+      "valBaby": "bebe",
+      "valMale": "masculino",
+      "valFemale": "feminino",
+      "valCommon": "comum",
+      "valGroom": "noivo",
+      "valBride": "noiva",
+      "exampleName": "Exemplo Convidado",
+      "exampleGroup": "Família Exemplo",
+      "exampleDietary": "Vegan, Sem Glúten",
+      "exampleNotes": "Precisa de cadeira de bebé",
+      "sheetName": "Modelo",
+      "filename": "modelo_importacao_convidados.xlsx",
+      "defaultName": "Sem Nome"
+    }
+  },
+  "PrivacyPolicyPage": {
+    "title": "Política de Privacidade",
+    "lastUpdate": "Última atualização: 8 de Maio de 2026",
+    "intro": "A sua privacidade é fundamental para o Digital Invite Studio. Esta Política de Privacidade descreve como recolhemos, usamos, processamos e protegemos as suas informações pessoais e as dos seus convidados ao utilizar a nossa plataforma.",
+    "sections": {
+      "s1_title": "1. Informações que Recolhemos",
+      "s1_desc": "Ao utilizar os nossos serviços, podemos recolher as seguintes informações:",
+      "s1_items": [
+        { "bold": "Dados de Conta:", "text": " Nome, endereço de email e dados de faturação dos organizadores/noivos." },
+        { "bold": "Dados de Convidados:", "text": " Nomes, emails, números de telefone e restrições alimentares inseridas no sistema de RSVP." },
+        { "bold": "Conteúdo Multimédia:", "text": " Fotografias, vídeos e mensagens carregadas através das funcionalidades de Guestbook e Live Wall." }
+      ],
+      "s2_title": "2. Como Utilizamos os seus Dados",
+      "s2_desc": "Utilizamos as informações recolhidas exclusivamente para fornecer e melhorar os nossos serviços. Não vendemos, alugamos ou partilhamos os seus dados pessoais ou a sua lista de convidados com terceiros para fins de marketing.",
+      "s3_title": "3. Retenção e Eliminação de Dados",
+      "s3_prefix": "Entendemos que os dados de um casamento são temporários. Os sites de eventos, listas de convidados e galerias multimédia são armazenados nos nossos servidores protegidos e são ",
+      "s3_bold": "automaticamente eliminados 6 meses após a data do evento",
+      "s3_suffix": ", a menos que adquira o pacote de \"Arquivo Digital Vitalício\".",
+      "s4_title": "4. Direitos dos Titulares dos Dados (RGPD)",
+      "s4_desc": "De acordo com o Regulamento Geral sobre a Proteção de Dados (RGPD), tem o direito de aceder, retificar ou solicitar a eliminação total dos seus dados a qualquer momento antes do prazo estipulado. Para exercer estes direitos, contacte-nos através do nosso formulário de suporte.",
+      "s5_title": "5. Contacto",
+      "s5_desc": "Para qualquer questão relacionada com a sua privacidade e proteção de dados, por favor contacte a nossa equipa através de "
+    }
+  },
+  "TermsPage": {
+    "title": "Termos e Condições",
+    "lastUpdate": "Última atualização: 8 de Maio de 2026",
+    "intro": "Bem-vindo ao Digital Invite Studio. Ao utilizar a nossa plataforma, concorda com os seguintes termos. Por favor, leia-os atentamente.",
+    "sections": {
+      "s1_title": "1. Objeto do Serviço",
+      "s1_desc": "O Digital Invite Studio fornece uma plataforma SaaS (Software as a Service) para a criação de websites de casamento, gestão de convidados (RSVP), planeamento de mesas (Seating Plan) e partilha de conteúdos multimédia (Live Wall e Guestbook).",
+      "s2_title": "2. Pagamentos e Reembolsos",
+      "s2_desc": "O acesso às funcionalidades premium requer um pagamento único, de acordo com o pacote selecionado:",
+      "s2_items": [
+        { "prefix": "", "bold": "", "text": "Os preços são apresentados em Euros e incluem as taxas legais em vigor." },
+        { "prefix": "Devido à natureza digital e personalizada do serviço, ", "bold": "não são efetuados reembolsos após a ativação ou publicação do convite", "text": "." },
+        { "prefix": "", "bold": "", "text": "O utilizador pode testar as ferramentas gratuitamente antes de efetuar o pagamento." }
+      ],
+      "s3_title": "3. Responsabilidade do Utilizador",
+      "s3_desc": "O utilizador é o único responsável pelo conteúdo (textos, imagens e vídeos) carregado na plataforma. É proibido o uso da plataforma para partilha de conteúdo ilegal, ofensivo ou que viole direitos de autor de terceiros.",
+      "s4_title": "4. Limitação de Responsabilidade",
+      "s4_desc": "Embora nos esforcemos para garantir 99.9% de disponibilidade, o Digital Invite Studio não pode ser responsabilizado por falhas de ligação à internet no local do evento, erros em dispositivos de convidados ou interrupções de serviço alheias ao nosso controlo técnico.",
+      "s5_title": "5. Propriedade Intelectual",
+      "s5_desc": "Todos os templates, códigos, motores de design (como o Seating Plan Editor) e elementos visuais da plataforma são propriedade exclusiva do Digital Invite Studio. A compra de uma licença de evento dá direito ao uso, não à reprodução ou revenda do software.",
+      "s6_title": "6. Validade do Evento",
+      "s6_prefix": "Salvo indicação em contrário num pacote específico, todos os dados do evento (website, lista de convidados e fotos) permanecem ativos até ",
+      "s6_bold": "6 meses após a data do casamento",
+      "s6_suffix": " inserida no sistema. Após este período, os dados serão eliminados permanentemente para garantir a privacidade dos utilizadores.",
+      "s7_title": "7. Lei Aplicável",
+      "s7_desc": "Estes termos são regidos pela lei portuguesa. Para a resolução de qualquer litígio, as partes submetem-se ao foro da comarca de Lisboa."
+    },
+    "footerBox": {
+      "title": "Dúvidas?",
+      "text": "Se tiver alguma questão sobre estes termos, contacte-nos através de "
+    }
+  },
+  "ResetPasswordPage": {
+    "successTitle": "Password Atualizada!",
+    "successDesc": "A sua conta está segura. A redirecionar para o painel...",
+    "formTitle": "Nova Password",
+    "formDesc": "Crie uma nova password para a sua conta.",
+    "label": "Nova Password (Min. 6 Caracteres)",
+    "btn": "Guardar Nova Password",
+    "error": "Erro ao atualizar a password. O link pode ter expirado."
+  },
   "PricingPage": {
     "title": "Escolha o Plano Perfeito",
     "desc": "Pagamento único por evento. Sem subscrições mensais. Escolha a experiência que melhor se adapta ao seu grande dia.",

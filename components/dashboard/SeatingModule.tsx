@@ -30,12 +30,35 @@ interface Guest {
   table_id?: string | null;
 }
 
+interface SeatingModuleDict {
+  qrCode: {
+    title: string; description: string; downloadPng: string; downloadSvg: string;
+    openBtn: string; copied: string; copyLink: string;
+  };
+  orgStatus: { label: string; seated: string; noTable: string };
+  tabs: { map: string; list: string; exportPdf: string; exportingPdf: string };
+  mapView: {
+    addTables: string; roundTable: string; squareTable: string; longTable: string;
+    unseatedGuests: string; searchPlaceholder: string; seatsLabel: string; defaultTableName: string;
+  };
+  alerts: { removeTableConfirm: string; tableFull: string; pdfError: string };
+  pdf: {
+    eventLabel: string; generatedOn: string; reportTitle: string;
+    totalSeated: string; noGuestsAssigned: string; footer: string;
+  };
+  listView: {
+    title: string; subtitle: string; seated: string;
+    seatsOf: string; seatsLabel: string; emptyTable: string;
+  };
+}
+
 interface SeatingModuleProps {
   invitationId: string;
   canEdit: boolean;
+  dict: SeatingModuleDict;
 }
 
-export default function SeatingModule({ invitationId, canEdit }: SeatingModuleProps) {
+export default function SeatingModule({ invitationId, canEdit, dict }: SeatingModuleProps) {
   const params = useParams();
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -79,7 +102,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
     if (!canEdit) return;
     const nextNumber = tables.length + 1;
     const { data } = await supabase.from(TABLES_DB).insert([{
-      invitation_id: invitationId, name: `Mesa ${nextNumber}`, shape, capacity: defaultCapacity, position_x: 50, position_y: 50
+      invitation_id: invitationId, name: `${dict.mapView.defaultTableName} ${nextNumber}`, shape, capacity: defaultCapacity, position_x: 50, position_y: 50
     }]).select().single();
     if (data) { setTables([...tables, data]); setSelectedTableId(data.id); setIsEditingTable(true); }
   };
@@ -106,7 +129,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
 
   const handleDeleteTable = async (id: string) => {
     if (!canEdit) return;
-    if (!confirm("Remover mesa?")) return;
+    if (!confirm(dict.alerts.removeTableConfirm)) return;
     await supabase.from(TABLES_DB).delete().eq("id", id);
     setTables(tables.filter(t => t.id !== id));
     setGuests(guests.map(g => g.table_id === id ? { ...g, table_id: null } : g));
@@ -139,7 +162,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
     if (table && seatedCount < table.capacity) {
       setGuests(guests.map(g => g.id === guestId ? { ...g, table_id: tableId } : g));
       await supabase.from('guests').update({ table_id: tableId }).eq('id', guestId);
-    } else { alert("Mesa cheia!"); }
+    } else { alert(dict.alerts.tableFull); }
   };
 
   const handleUnseatGuest = async (guestId: string) => {
@@ -266,8 +289,8 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(150, 150, 150);
-      pdf.text(`Evento: ${params.slug?.toString().toUpperCase()}`, pdfWidth - 14, 15, { align: 'right' });
-      pdf.text(`Gerado em: ${new Date().toLocaleDateString()}`, pdfWidth - 14, 20, { align: 'right' });
+      pdf.text(`${dict.pdf.eventLabel}: ${params.slug?.toString().toUpperCase()}`, pdfWidth - 14, 15, { align: 'right' });
+      pdf.text(`${dict.pdf.generatedOn}: ${new Date().toLocaleDateString()}`, pdfWidth - 14, 20, { align: 'right' });
       
       pdf.setDrawColor(239, 223, 187); // Cor Dourado/Creme
       pdf.setLineWidth(0.5);
@@ -294,7 +317,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
       
       // 3. Rodapé
       pdf.setFontSize(8);
-      pdf.text("digitalinvitestudio.com | A sua planta de sala digital", pdfWidth / 2, 200, { align: 'center' });
+      pdf.text(dict.pdf.footer, pdfWidth / 2, 200, { align: 'center' });
 
       // --- PÁGINA 2: O RELATÓRIO ESCRITO ---
       pdf.addPage("a4", "p"); 
@@ -303,12 +326,12 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
       pdf.setFontSize(18);
       pdf.setTextColor(99, 1, 0);
       pdf.setFont("helvetica", "bold");
-      pdf.text("Relatório Geral de Mesas", 14, 20);
+      pdf.text(dict.pdf.reportTitle, 14, 20);
       
       pdf.setFontSize(9);
       pdf.setTextColor(120, 120, 120);
       pdf.setFont("helvetica", "normal");
-      pdf.text(`Total de Convidados Sentados: ${guests.filter(g => g.table_id).length}`, 14, 27);
+      pdf.text(`${dict.pdf.totalSeated}: ${guests.filter(g => g.table_id).length}`, 14, 27);
       
       pdf.setDrawColor(99, 1, 0);
       pdf.setLineWidth(0.5);
@@ -340,7 +363,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
         pdf.setTextColor(60, 60, 60);
         
         if (seated.length === 0) {
-          pdf.text("Nenhum convidado atribuído.", 20, yPos);
+          pdf.text(dict.pdf.noGuestsAssigned, 20, yPos);
           yPos += 10;
         } else {
           seated.forEach(g => {
@@ -354,7 +377,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
       pdf.save(`Relatorio_Sala_${params.slug || 'evento'}.pdf`);
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      alert("Erro ao gerar o ficheiro. Verifique se o logotipo existe em /public/logo-dis.png");
+      alert(dict.alerts.pdfError);
     } finally {
       setIsExporting(false);
     }
@@ -381,43 +404,43 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
             <div>
               <div className="flex items-center justify-center md:justify-start gap-2 text-[#630100] mb-1">
                 <QrCode size={18} />
-                <h3 className="font-serif text-2xl">Planta de Sala Digital</h3>
+                <h3 className="font-serif text-2xl">{dict.qrCode.title}</h3>
               </div>
               <p className="text-xs text-gray-500 leading-relaxed">
-                Este QR Code permite que os convidados consultem a sua mesa diretamente no telemóvel à entrada do evento. Evite aglomerados junto ao placar físico.
+                {dict.qrCode.description}
               </p>
             </div>
             <div className="flex flex-wrap gap-2 justify-center md:justify-start">
               <button onClick={() => downloadQR('png')} className="bg-[#332E2B] text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all">
-                <Download size={14} /> Baixar PNG
+                <Download size={14} /> {dict.qrCode.downloadPng}
               </button>
               <button onClick={() => downloadQR('svg')} className="bg-white text-gray-600 border border-gray-200 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">
-                SVG
+                {dict.qrCode.downloadSvg}
               </button>
               <button onClick={() => window.open(seatingPlanUrl, '_blank')} className="bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-gray-200 transition-all">
-                <ExternalLink size={14} /> Abrir
+                <ExternalLink size={14} /> {dict.qrCode.openBtn}
               </button>
-              <button 
-                onClick={() => { navigator.clipboard.writeText(seatingPlanUrl); setCopied(true); setTimeout(()=>setCopied(false), 2000); }} 
+              <button
+                onClick={() => { navigator.clipboard.writeText(seatingPlanUrl); setCopied(true); setTimeout(()=>setCopied(false), 2000); }}
                 className="bg-[#630100]/5 text-[#630100] px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-[#630100]/10 transition-all"
               >
-                {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copiado" : "Copiar Link"}
+                {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? dict.qrCode.copied : dict.qrCode.copyLink}
               </button>
             </div>
           </div>
         </div>
 
         <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-center items-center text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">Estado da Organização</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">{dict.orgStatus.label}</p>
           <div className="flex gap-8">
             <div>
               <span className="block font-serif text-4xl text-[#630100]">{guests.filter(g => g.table_id).length}</span>
-              <span className="text-[9px] font-bold uppercase text-gray-400">Sentados</span>
+              <span className="text-[9px] font-bold uppercase text-gray-400">{dict.orgStatus.seated}</span>
             </div>
             <div className="w-[1px] bg-gray-100 h-12 my-auto"></div>
             <div>
               <span className="block font-serif text-4xl text-orange-400">{unassignedGuests.length}</span>
-              <span className="text-[9px] font-bold uppercase text-gray-400">Sem Mesa</span>
+              <span className="text-[9px] font-bold uppercase text-gray-400">{dict.orgStatus.noTable}</span>
             </div>
           </div>
         </div>
@@ -430,13 +453,13 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
             onClick={() => setViewMode('map')} 
             className={`flex-1 sm:flex-none px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${viewMode === 'map' ? 'bg-[#630100] text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}
           >
-            <MapIcon size={14} /> Planta da Sala
+            <MapIcon size={14} /> {dict.tabs.map}
           </button>
-          <button 
-            onClick={() => setViewMode('list')} 
+          <button
+            onClick={() => setViewMode('list')}
             className={`flex-1 sm:flex-none px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${viewMode === 'list' ? 'bg-[#630100] text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}
           >
-            <List size={14} /> Relatório Organizacional
+            <List size={14} /> {dict.tabs.list}
           </button>
         </div>
         
@@ -446,8 +469,8 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
             disabled={isExporting}
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FDFBF7] border border-[#EFDFBB] text-[#630100] px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-[#630100] hover:text-white transition-all disabled:opacity-50"
           >
-            {isExporting ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />} 
-            {isExporting ? "A Gerar PDF..." : "Exportar PDF Premium"}
+            {isExporting ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
+            {isExporting ? dict.tabs.exportingPdf : dict.tabs.exportPdf}
           </button>
         )}
       </div>
@@ -458,16 +481,16 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
           <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="lg:w-1/4 space-y-4">
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2"><Plus size={14} /> Adicionar Mesas</h4>
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2"><Plus size={14} /> {dict.mapView.addTables}</h4>
                 <div className="grid grid-cols-3 gap-2">
-                  <button onClick={() => handleQuickAddTable('round', 8)} className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-100 p-2 rounded-xl hover:border-[#630100]/30 group transition-all"><div className="w-5 h-5 rounded-full border-2 border-dashed border-gray-300 group-hover:border-[#630100]"></div><span className="text-[8px] font-bold uppercase">Redonda</span></button>
-                  <button onClick={() => handleQuickAddTable('square', 8)} className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-100 p-2 rounded-xl hover:border-[#630100]/30 group transition-all"><div className="w-5 h-5 border-2 border-dashed border-gray-300 group-hover:border-[#630100]"></div><span className="text-[8px] font-bold uppercase">Quadrada</span></button>
-                  <button onClick={() => handleQuickAddTable('rectangular', 10)} className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-100 p-2 rounded-xl hover:border-[#630100]/30 group transition-all"><div className="w-6 h-4 border-2 border-dashed border-gray-300 group-hover:border-[#630100]"></div><span className="text-[8px] font-bold uppercase">Longa</span></button>
+                  <button onClick={() => handleQuickAddTable('round', 8)} className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-100 p-2 rounded-xl hover:border-[#630100]/30 group transition-all"><div className="w-5 h-5 rounded-full border-2 border-dashed border-gray-300 group-hover:border-[#630100]"></div><span className="text-[8px] font-bold uppercase">{dict.mapView.roundTable}</span></button>
+                  <button onClick={() => handleQuickAddTable('square', 8)} className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-100 p-2 rounded-xl hover:border-[#630100]/30 group transition-all"><div className="w-5 h-5 border-2 border-dashed border-gray-300 group-hover:border-[#630100]"></div><span className="text-[8px] font-bold uppercase">{dict.mapView.squareTable}</span></button>
+                  <button onClick={() => handleQuickAddTable('rectangular', 10)} className="flex flex-col items-center gap-2 bg-gray-50 border border-gray-100 p-2 rounded-xl hover:border-[#630100]/30 group transition-all"><div className="w-6 h-4 border-2 border-dashed border-gray-300 group-hover:border-[#630100]"></div><span className="text-[8px] font-bold uppercase">{dict.mapView.longTable}</span></button>
                 </div>
               </div>
 
               <div className="lg:w-3/4 space-y-4 border-l border-gray-50 lg:pl-6">
-                <div className="flex items-center justify-between gap-4"><h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2"><Users size={14} /> Convidados por Sentar ({unassignedGuests.length})</h4><div className="relative w-64"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={12} /><input className="w-full bg-gray-50 border border-gray-100 rounded-full pl-8 pr-4 py-1.5 text-[10px] outline-none" placeholder="Pesquisar..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></div></div>
+                <div className="flex items-center justify-between gap-4"><h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2"><Users size={14} /> {dict.mapView.unseatedGuests} ({unassignedGuests.length})</h4><div className="relative w-64"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={12} /><input className="w-full bg-gray-50 border border-gray-100 rounded-full pl-8 pr-4 py-1.5 text-[10px] outline-none" placeholder={dict.mapView.searchPlaceholder} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></div></div>
                 <div className="max-h-32 overflow-y-auto pr-2 custom-scrollbar p-1">
                   <div className="flex flex-wrap gap-2">
                     {unassignedGuests.map(g => (<div key={g.id} draggable={canEdit} onDragStart={(e) => { e.dataTransfer.setData("guestId", g.id); }} className="bg-[#FDFBF7] border border-[#EFDFBB]/30 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center gap-2 cursor-grab active:cursor-grabbing hover:shadow-md transition-all whitespace-nowrap">{g.name} {g.category === 'child' && <span>👶</span>} {g.category === 'baby' && <span>🍼</span>}</div>))}
@@ -483,7 +506,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
                 <div className="p-6 flex flex-col md:flex-row gap-6 items-center">
                   <div className="flex-1 flex flex-wrap items-center gap-6">
                     <input className="bg-transparent border-b border-white/20 text-white font-serif text-2xl outline-none focus:border-[#EFDFBB] w-48" value={activeTable.name} onChange={e => setTables(tables.map(t => t.id === activeTable.id ? {...t, name: e.target.value} : t))} onBlur={handleUpdateTable} />
-                    <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl"><span className="text-[10px] font-bold text-gray-400 uppercase">Lugares</span><input type="number" min="1" className="bg-transparent text-white text-sm font-bold w-12 outline-none text-center" value={activeTable.capacity} onChange={e => { const val = parseInt(e.target.value); setTables(tables.map(t => t.id === activeTable.id ? {...t, capacity: isNaN(val) ? 1 : Math.max(1, val)} : t)); }} onBlur={handleUpdateTable} /></div>
+                    <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl"><span className="text-[10px] font-bold text-gray-400 uppercase">{dict.mapView.seatsLabel}</span><input type="number" min="1" className="bg-transparent text-white text-sm font-bold w-12 outline-none text-center" value={activeTable.capacity} onChange={e => { const val = parseInt(e.target.value); setTables(tables.map(t => t.id === activeTable.id ? {...t, capacity: isNaN(val) ? 1 : Math.max(1, val)} : t)); }} onBlur={handleUpdateTable} /></div>
                     <div className="flex flex-wrap gap-2 flex-1 border-l border-white/10 pl-6">{seatedInActive.map(g => (<div key={g.id} className="bg-white/10 text-white px-3 py-1.5 rounded-lg text-[10px] font-medium flex items-center gap-2">{g.name} <button onClick={() => handleUnseatGuest(g.id)} className="hover:text-red-400"><X size={12}/></button></div>))}</div>
                   </div>
                   <div className="flex gap-2"><button onClick={() => handleDeleteTable(activeTable.id)} className="p-3 bg-red-500/10 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all"><Trash2 size={20}/></button><button onClick={() => setSelectedTableId(null)} className="p-3 bg-white/10 text-white rounded-2xl hover:bg-white/20 transition-all"><CheckCircle2 size={24}/></button></div>
@@ -526,12 +549,12 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
         <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm p-8 lg:p-12 animate-in fade-in slide-in-from-bottom-4">
           <div className="mb-10 border-b border-gray-50 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
-              <h3 className="font-serif text-3xl text-[#630100]">Relatório Organizacional de Mesas</h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">Listagem detalhada dos convidados por lugar</p>
+              <h3 className="font-serif text-3xl text-[#630100]">{dict.listView.title}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-2">{dict.listView.subtitle}</p>
             </div>
             <div className="bg-[#FDFBF7] border border-[#EFDFBB]/50 px-6 py-4 rounded-2xl text-center shadow-sm">
               <span className="block font-serif text-3xl text-gray-800 leading-none">{guests.filter(g => g.table_id).length}</span>
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1 block">Sentados</span>
+              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1 block">{dict.listView.seated}</span>
             </div>
           </div>
 
@@ -542,7 +565,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
                 <div key={t.id} className="flex flex-col bg-[#FDFBF7] rounded-[2.5rem] border border-[#EFDFBB]/40 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                   <div className="bg-gradient-to-r from-[#630100] to-[#800100] p-6 text-center">
                      <h5 className="font-serif text-2xl text-[#EFDFBB]">{t.name}</h5>
-                     <p className="text-[9px] font-bold uppercase text-[#EFDFBB]/70 tracking-[0.2em] mt-1">{tableGuests.length} de {t.capacity} lugares</p>
+                     <p className="text-[9px] font-bold uppercase text-[#EFDFBB]/70 tracking-[0.2em] mt-1">{tableGuests.length} {dict.listView.seatsOf} {t.capacity} {dict.listView.seatsLabel}</p>
                   </div>
                   <div className="p-6 space-y-3 flex-1 bg-white">
                     {tableGuests.length > 0 ? (
@@ -559,7 +582,7 @@ export default function SeatingModule({ invitationId, canEdit }: SeatingModulePr
                       ))
                     ) : (
                       <div className="h-full flex items-center justify-center py-8">
-                        <p className="text-[10px] text-gray-300 italic uppercase font-bold tracking-widest">Mesa Vazia</p>
+                        <p className="text-[10px] text-gray-300 italic uppercase font-bold tracking-widest">{dict.listView.emptyTable}</p>
                       </div>
                     )}
                   </div>

@@ -5,18 +5,25 @@ import { supabase } from "@/lib/supabase";
 import { Loader2, Key, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 
+import pt from "../../../dictionaries/pt";
+import en from "../../../dictionaries/en";
+
+const dictionaries = { pt, en };
+
 export default function ResetPasswordPage() {
   const router = useRouter();
   const params = useParams();
-  
+
+  const locale = (params?.locale as "en" | "pt") || "pt";
+  const dict = dictionaries[locale]?.ResetPasswordPage || dictionaries.pt.ResetPasswordPage;
+
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // O Supabase lida com os tokens na URL automaticamente e guarda a sessão "temporária" de recuperação
   useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    supabase.auth.onAuthStateChange(async (event) => {
       if (event == "PASSWORD_RECOVERY") {
         console.log("Modo de recuperação ativado.");
       }
@@ -31,14 +38,14 @@ export default function ResetPasswordPage() {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      
+
       setSuccess(true);
       setTimeout(() => {
         router.push(`/${params.locale}/dashboard`);
       }, 3000);
-      
-    } catch (error: any) {
-      setErrorMsg("Erro ao atualizar a password. O link pode ter expirado.");
+
+    } catch {
+      setErrorMsg(dict.error);
     } finally {
       setLoading(false);
     }
@@ -49,7 +56,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] font-montserrat p-6">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md bg-white p-10 rounded-3xl shadow-xl border border-gray-100 text-center"
@@ -61,14 +68,14 @@ export default function ResetPasswordPage() {
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white mx-auto shadow-lg shadow-green-500/30">
               <CheckCircle2 size={32} />
             </div>
-            <h2 className="font-serif text-3xl text-gray-800">Password Atualizada!</h2>
-            <p className="text-sm text-gray-500">A sua conta está segura. A redirecionar para o painel...</p>
+            <h2 className="font-serif text-3xl text-gray-800">{dict.successTitle}</h2>
+            <p className="text-sm text-gray-500">{dict.successDesc}</p>
           </div>
         ) : (
           <div className="text-left space-y-6">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl text-[#630100] mb-2">Nova Password</h2>
-              <p className="text-xs text-gray-500">Crie uma nova password para a sua conta.</p>
+              <h2 className="font-serif text-3xl text-[#630100] mb-2">{dict.formTitle}</h2>
+              <p className="text-xs text-gray-500">{dict.formDesc}</p>
             </div>
 
             {errorMsg && (
@@ -79,24 +86,24 @@ export default function ResetPasswordPage() {
 
             <form onSubmit={handleUpdatePassword} className="space-y-6">
               <div>
-                <label className={labelClass}>Nova Password (Min. 6 Caracteres)</label>
-                <input 
-                  type="password" 
-                  required 
-                  minLength={6} 
-                  className={inputClass} 
-                  placeholder="••••••••" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
+                <label className={labelClass}>{dict.label}</label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  className={inputClass}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
 
-              <button 
-                type="submit" 
-                disabled={loading || password.length < 6} 
+              <button
+                type="submit"
+                disabled={loading || password.length < 6}
                 className="w-full bg-[#630100] text-[#EFDFBB] py-4 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:bg-[#4a0100] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
-                {loading ? <Loader2 size={18} className="animate-spin" /> : <><Key size={16} /> Guardar Nova Password</>}
+                {loading ? <Loader2 size={18} className="animate-spin" /> : <><Key size={16} /> {dict.btn}</>}
               </button>
             </form>
           </div>
