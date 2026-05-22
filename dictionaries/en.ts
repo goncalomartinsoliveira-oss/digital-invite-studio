@@ -51,6 +51,90 @@ const en = {
       "title": "Your big day starts with a digital \"Yes\".",
       "desc": "Discover how our invitations can elevate your guests' experience from the very first moment.",
       "btn": "Start Now"
+    },
+    "stats": {
+      "items": [
+        { "value": "500+", "label": "Weddings Created" },
+        { "value": "12", "label": "Countries" },
+        { "value": "98%", "label": "Satisfaction" },
+        { "value": "4.9★", "label": "Average Rating" }
+      ]
+    },
+    "templateShowcase": {
+      "tag": "Premium Templates",
+      "title1": "Designs crafted by",
+      "title2": "editorial artists.",
+      "desc": "Every template is developed with obsessive attention to detail — thoughtful typography, harmonious palettes, and smart sections that adapt to your unique story.",
+      "previewBtn": "See Preview",
+      "useBtn": "Use This Template",
+      "templates": [
+        { "name": "Minimal 01", "id": "minimal-01", "desc": "Minimalist elegance in forest green and gold." },
+        { "name": "Luxury 01", "id": "luxury-01", "desc": "Classic grandeur with burgundy and cream details." },
+        { "name": "Collage 01", "id": "collage-01", "desc": "Creative expression with contemporary photo collage." }
+      ]
+    },
+    "testimonials": {
+      "title": "What couples are saying",
+      "subtitle": "Real stories from couples who chose to transform their big day.",
+      "items": [
+        {
+          "quote": "Our digital invitation was our guests' first 'wow' moment. We received messages saying they had never seen anything like it. Worth every penny.",
+          "name": "Ana & Ricardo",
+          "event": "Wedding in Lisbon, Sep. 2025"
+        },
+        {
+          "quote": "The seating plan tool literally saved us hours. We placed 180 guests at their tables in under 30 minutes. Incredible.",
+          "name": "Sofia & Joao",
+          "event": "Wedding in Porto, Jun. 2025"
+        },
+        {
+          "quote": "As a wedding planner, I use the platform on all my projects. Clients are amazed and I gain efficiency. It's the best tool on the market.",
+          "name": "Margarida Costa",
+          "event": "Wedding Planner — 12 projects"
+        }
+      ]
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know before getting started.",
+      "items": [
+        {
+          "q": "Do I need to know how to code to use the platform?",
+          "a": "No. Our platform was designed to be used by anyone. You fill in a form, we take care of everything else. No code, no complexity."
+        },
+        {
+          "q": "Do guests need to install an app?",
+          "a": "No. The invitation is a website that works directly in any browser on any smartphone or computer. Just share the link."
+        },
+        {
+          "q": "Can I update event details after sending the invitations?",
+          "a": "Yes, always. Any change you make in the dashboard is immediately visible to all guests who open the link."
+        },
+        {
+          "q": "What happens to the site after the wedding?",
+          "a": "The site stays active for the duration of your plan. You can also choose to keep it as a permanent memory of your big day."
+        },
+        {
+          "q": "Is the platform suitable for wedding planners?",
+          "a": "Absolutely. We have a specific plan for professionals that allows managing multiple projects, with simplified billing and advanced tools."
+        },
+        {
+          "q": "How does RSVP work?",
+          "a": "Guests search for their name on the list, confirm attendance, indicate dietary restrictions, and menu choices. Everything appears on your dashboard in real time."
+        }
+      ]
+    },
+    "b2b": {
+      "tag": "For Professionals",
+      "title": "Built for Wedding Planners too",
+      "desc": "Manage multiple projects in one place. Impress clients with a premium product. Save hours of operational work on every wedding.",
+      "features": [
+        "Multi-project dashboard",
+        "Simplified billing",
+        "Advanced management tools",
+        "Priority support"
+      ],
+      "cta": "Learn More about the Pro Plan"
     }
   },
   "Navbar": {

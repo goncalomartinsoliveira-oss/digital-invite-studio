@@ -51,6 +51,90 @@ const pt = {
       "title": "O seu grande dia começa com um \"Sim\" digital.",
       "desc": "Descubra como os nossos convites podem elevar a experiência dos seus convidados desde o primeiro instante.",
       "btn": "Começar Agora"
+    },
+    "stats": {
+      "items": [
+        { "value": "500+", "label": "Casamentos Criados" },
+        { "value": "12", "label": "Países" },
+        { "value": "98%", "label": "Satisfação" },
+        { "value": "4.9★", "label": "Avaliação Média" }
+      ]
+    },
+    "templateShowcase": {
+      "tag": "Templates Premium",
+      "title1": "Designs criados por",
+      "title2": "artistas editoriais.",
+      "desc": "Cada template é desenvolvido com atenção obsessiva ao detalhe — tipografia cuidada, paletas harmoniosas e secções inteligentes que se adaptam à vossa história.",
+      "previewBtn": "Ver Pré-visualização",
+      "useBtn": "Usar Este Template",
+      "templates": [
+        { "name": "Minimal 01", "id": "minimal-01", "desc": "Elegância minimalista em verde-floresta e dourado." },
+        { "name": "Luxury 01", "id": "luxury-01", "desc": "Grandiosidade clássica com detalhes em bordô e creme." },
+        { "name": "Collage 01", "id": "collage-01", "desc": "Expressão criativa com colagem fotográfica contemporânea." }
+      ]
+    },
+    "testimonials": {
+      "title": "O que dizem os noivos",
+      "subtitle": "Histórias reais de casais que escolheram transformar o seu grande dia.",
+      "items": [
+        {
+          "quote": "O nosso convite digital foi o primeiro 'wow' dos nossos convidados. Recebemos mensagens a dizer que nunca tinham visto nada assim. Valeu cada cêntimo.",
+          "name": "Ana & Ricardo",
+          "event": "Casamento em Lisboa, Set. 2025"
+        },
+        {
+          "quote": "A ferramenta de seating plan poupou-nos literalmente horas. Arrastámos 180 convidados para as mesas em menos de 30 minutos. Incrível.",
+          "name": "Sofia & João",
+          "event": "Casamento no Porto, Jun. 2025"
+        },
+        {
+          "quote": "Como wedding planner, uso a plataforma em todos os meus projetos. Os clientes ficam rendidos e eu ganho eficiência. É a melhor ferramenta do mercado.",
+          "name": "Margarida Costa",
+          "event": "Wedding Planner — 12 projetos"
+        }
+      ]
+    },
+    "faq": {
+      "title": "Perguntas Frequentes",
+      "subtitle": "Tudo o que precisa de saber antes de começar.",
+      "items": [
+        {
+          "q": "Preciso de saber programar para usar a plataforma?",
+          "a": "Não. A nossa plataforma foi desenhada para ser usada por qualquer pessoa. Preenche um formulário, nós tratamos de tudo. Sem código, sem complexidade."
+        },
+        {
+          "q": "Os convidados precisam de instalar uma aplicação?",
+          "a": "Não. O convite é um website que funciona diretamente no browser de qualquer telemóvel ou computador. Basta partilhar o link."
+        },
+        {
+          "q": "Posso atualizar os detalhes do evento depois de enviar os convites?",
+          "a": "Sim, sempre. Qualquer alteração que fizer no painel fica imediatamente visível para todos os convidados que abrirem o link."
+        },
+        {
+          "q": "O que acontece ao site após o casamento?",
+          "a": "O site fica ativo durante o período do vosso plano. Podem também optar por mantê-lo como recordação permanente do vosso grande dia."
+        },
+        {
+          "q": "A plataforma é adequada para wedding planners?",
+          "a": "Absolutamente. Temos um plano específico para profissionais que permite gerir múltiplos projetos, com faturação simplificada e ferramentas avançadas."
+        },
+        {
+          "q": "Como funciona o RSVP?",
+          "a": "Os convidados pesquisam o nome na lista, confirmam presença, indicam restrições alimentares e escolhas de menu. Tudo aparece no vosso painel em tempo real."
+        }
+      ]
+    },
+    "b2b": {
+      "tag": "Para Profissionais",
+      "title": "Feito também para Wedding Planners",
+      "desc": "Gira múltiplos projetos num só lugar. Impressiona os clientes com um produto premium. Poupe horas de trabalho operacional em cada casamento.",
+      "features": [
+        "Painel multi-projeto",
+        "Faturação simplificada",
+        "Ferramentas avançadas de gestão",
+        "Suporte prioritário"
+      ],
+      "cta": "Saber Mais sobre o Plano Pro"
     }
   },
   "Navbar": {
