@@ -1,395 +1,943 @@
 "use client";
-import { motion } from "framer-motion";
-import { Cinzel, Playfair_Display, Inter } from "next/font/google";
+import { motion, type Variants } from "framer-motion";
+import { Cormorant_Garamond, Cinzel, Great_Vibes } from "next/font/google";
 import { useState, useEffect } from "react";
+import { MapPin, Clock, ChevronDown } from "lucide-react";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
 
-const cinzel = Cinzel({ 
-  subsets: ["latin"], 
-  weight: ["400", "700"],
-  display: 'swap' 
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  display: "swap",
+});
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
 });
 
-const playfair = Playfair_Display({ 
-  subsets: ["latin"], 
-  weight: ["400", "700"],
-  style: ["italic", "normal"],
-  display: 'swap' 
-});
+const DEFAULT_HERO_MEDIA =
+  "https://anvqtinrmgkfjadsftlj.supabase.co/storage/v1/object/public/invites/wedding-dream.mp4";
+const DEFAULT_FOOTER_IMAGE =
+  "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000";
 
-const inter = Inter({ 
-  subsets: ["latin"], 
-  weight: ["300", "400", "600"],
-  display: 'swap' 
-});
+// ── Decorative ornament ──────────────────────────────────────────────
+const Ornament = ({ color = "#B8945A" }: { color?: string }) => (
+  <div className="flex items-center justify-center gap-3 my-1">
+    <div className="h-px w-12 opacity-40" style={{ backgroundColor: color }} />
+    <svg width="8" height="8" viewBox="0 0 8 8" style={{ fill: color, opacity: 0.6 }}>
+      <polygon points="4,0 8,4 4,8 0,4" />
+    </svg>
+    <div className="h-px w-12 opacity-40" style={{ backgroundColor: color }} />
+  </div>
+);
 
-// URL do seu vídeo do Supabase como padrão (Fallback)
-const DEFAULT_HERO_MEDIA = "https://anvqtinrmgkfjadsftlj.supabase.co/storage/v1/object/public/invites/wedding-dream.mp4";
-const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2000";
+// ── Section heading ──────────────────────────────────────────────────
+const SectionTitle = ({
+  label,
+  title,
+  light = false,
+}: {
+  label?: string;
+  title: string;
+  light?: boolean;
+}) => (
+  <div className="text-center mb-20 sm:mb-28">
+    {label && (
+      <p
+        className={`${cinzel.className} text-[9px] tracking-[0.45em] uppercase mb-4`}
+        style={{ color: "#B8945A" }}
+      >
+        {label}
+      </p>
+    )}
+    <Ornament color={light ? "#B8945A" : "#2D4A3E"} />
+    <h2
+      className={`${cormorant.className} text-4xl sm:text-5xl md:text-6xl italic mt-6 leading-tight`}
+      style={{ color: light ? "#F7F4EE" : "#2D4A3E" }}
+    >
+      {title}
+    </h2>
+  </div>
+);
 
-export default function Minimal01Template({ data, params }: { data: any, params?: any }) {
+// ── Animation variants ───────────────────────────────────────────────
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: "easeOut" } },
+};
+const stagger: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.14 } },
+};
+
+// ════════════════════════════════════════════════════════════════════════
+export default function Minimal01Template({
+  data,
+}: {
+  data: any;
+  params?: any;
+}) {
   const dbContent = data?.content || {};
-  const visibility = dbContent.sections_visibility || {};
-  const content = dbContent.content || {};
+  const vis = dbContent.sections_visibility || {};
+  const c = dbContent.content || {};
 
-  const bride = data?.bride_name || "Julianna";
-  const groom = data?.groom_name || "Holdern";
-  const casalNomes = `${bride} & ${groom}`;
+  const bride = data?.bride_name || "Sophia";
+  const groom = data?.groom_name || "William";
+  const coupleNames = `${bride} & ${groom}`;
   const eventDate = data?.event_date || new Date().toISOString();
 
-  // Lógica de Media: Prioridade ao que está no DB, caso contrário usa o seu vídeo do Supabase
-  const heroMediaUrl = (content.hero?.main_image_url && content.hero.main_image_url.trim() !== "") 
-    ? content.hero.main_image_url 
-    : (data?.main_image_url && data.main_image_url.trim() !== "") ? data.main_image_url : DEFAULT_HERO_MEDIA;
-    
-  // Verifica se o URL é um vídeo
-  const isVideo = heroMediaUrl.toLowerCase().match(/\.(mp4|webm|ogg)$/i) || heroMediaUrl.toLowerCase().includes("video");
+  const heroMediaUrl =
+    c.hero?.main_image_url?.trim() ||
+    data?.main_image_url?.trim() ||
+    DEFAULT_HERO_MEDIA;
+  const isVideo = /\.(mp4|webm|ogg)/i.test(heroMediaUrl) || heroMediaUrl.includes("video");
 
-  const footerImg = (content.footer?.footer_image_url && content.footer.footer_image_url.trim() !== "") 
-    ? content.footer.footer_image_url 
-    : DEFAULT_FOOTER_IMAGE;
-    
-  const storyImg = (content.story?.story_image_url && content.story.story_image_url.trim() !== "")
-    ? content.story.story_image_url : null;
+  const footerImg = c.footer?.footer_image_url?.trim() || DEFAULT_FOOTER_IMAGE;
+  const storyImg = c.story?.story_image_url?.trim() || null;
 
-  // Formatação de Datas e Countdown
-  const dateObj = new Date(eventDate);
-  const formattedDate = dateObj.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, '.');
-  const rsvpFormattedDeadline = content.rsvp?.text_limit_date_fixed ?? "15.10.26";
+  const formattedDate = new Date(eventDate)
+    .toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit", year: "numeric" })
+    .replace(/\//g, " · ");
+  const rsvpDeadline = c.rsvp?.text_limit_date_fixed ?? "15.10.26";
 
   const [mounted, setMounted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
-  const [showIbanData, setShowIbanData] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({
+    days: "00", hours: "00", minutes: "00", seconds: "00",
+  });
+  const [showIban, setShowIban] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const timer = setInterval(() => {
-      const diff = +new Date(eventDate) - +new Date();
+    const tick = () => {
+      const diff = +new Date(eventDate) - Date.now();
       if (diff > 0) {
         setTimeLeft({
-          days: String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, "0"),
-          hours: String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, "0"),
-          minutes: String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, "0"),
+          days: String(Math.floor(diff / 86400000)).padStart(2, "0"),
+          hours: String(Math.floor((diff / 3600000) % 24)).padStart(2, "0"),
+          minutes: String(Math.floor((diff / 60000) % 60)).padStart(2, "0"),
           seconds: String(Math.floor((diff / 1000) % 60)).padStart(2, "0"),
         });
       }
-    }, 1000);
-    return () => clearInterval(timer);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
   }, [eventDate]);
 
-  const revealVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 1 } }
-  };
+  const galleryUrls = (c.gallery?.images_urls || []).filter((u: string) => u?.trim());
+  const hasGallery = galleryUrls.length > 0;
+  const hasCeremony = c.event?.ceremony?.active !== false;
+  const hasReception = c.event?.reception?.active !== false;
+  const showEvent = vis.event !== false && (hasCeremony || hasReception);
 
-  const showUsefulInfo = visibility.useful_info !== false;
-  const showAccommodation = visibility.accommodation !== false;
-
-  const timelineEvents = [
+  // ── Default program ────────────────────────────────────────────────
+  const defaultProgram = [
     { time: "16:00", title: "Wedding Ceremony" },
     { time: "17:00", title: "Cocktail Hour" },
     { time: "19:00", title: "Dinner" },
-    { time: "20:00", title: "Party" }
+    { time: "20:00", title: "Party" },
   ];
 
   return (
-    <div className={`${inter.className} w-full bg-[#F2EFE9] text-[#2C2C2C] selection:bg-[#2C2C2C] selection:text-white`}>
-      
-      {/* 01. HERO SECTION COM O SEU VÍDEO SUPABASE */}
-      {visibility.hero !== false && (
-        <section className="relative h-[90vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden bg-[#1A1A1A]">
-          <motion.div 
-            initial={{ scale: 1.05, opacity: 0 }} 
-            animate={{ scale: 1, opacity: 1 }} 
-            transition={{ duration: 2 }}
+    <div className="w-full bg-[#F7F4EE] text-[#1A1A1A] overflow-x-hidden">
+
+      {/* ══════════════════════════════════════════════════
+          01 · HERO
+      ══════════════════════════════════════════════════ */}
+      {vis.hero !== false && (
+        <section className="relative h-screen min-h-[640px] flex flex-col items-center justify-center overflow-hidden bg-[#2D4A3E]">
+
+          {/* Background media */}
+          <motion.div
             className="absolute inset-0 z-0"
+            initial={{ scale: 1.06, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 2.5 }}
           >
             {isVideo ? (
-              <video 
-                key={heroMediaUrl} // Força o refresh do vídeo se o link mudar
-                autoPlay 
-                loop 
-                muted 
-                playsInline 
-                className="w-full h-full object-cover object-center"
-              >
+              <video key={heroMediaUrl} autoPlay loop muted playsInline className="w-full h-full object-cover">
                 <source src={heroMediaUrl} type="video/mp4" />
               </video>
             ) : (
-              <img src={heroMediaUrl} className="w-full h-full object-cover object-center" alt="Wedding" />
+              <img src={heroMediaUrl} className="w-full h-full object-cover" alt="Wedding" />
             )}
-            
-            <div className="absolute inset-0 bg-black/30"></div>
+            <div className="absolute inset-0 bg-[#2D4A3E]/55" />
           </motion.div>
-          
-          <div className="relative z-10 text-center text-white px-4 flex flex-col items-center justify-center h-full">
-            <motion.span 
-              initial={{ opacity: 0, letterSpacing: "0.1em" }}
-              animate={{ opacity: 1, letterSpacing: "0.5em" }}
-              transition={{ duration: 1.5 }}
-              className={`${cinzel.className} text-[10px] sm:text-xs uppercase mb-8 block font-light tracking-[0.5em] text-[#E5DACE] drop-shadow-md`}
-            >
-              {content.hero?.text_above_names ?? "THE WEDDING DAY OF"}
-            </motion.span>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 1.2 }}
-              className={`${playfair.className} text-6xl sm:text-8xl md:text-9xl mb-6 flex flex-col items-center gap-2 drop-shadow-lg`}
-            >
-              <span className="leading-none">{bride}</span>
-              <span className="text-3xl sm:text-5xl font-light italic text-[#E5DACE] drop-shadow-md">&</span>
-              <span className="leading-none">{groom}</span>
-            </motion.div>
 
-            <motion.div 
+          {/* Corner accents */}
+          {["top-6 left-6 border-l border-t", "top-6 right-6 border-r border-t",
+            "bottom-6 left-6 border-l border-b", "bottom-6 right-6 border-r border-b"]
+            .map((cls, i) => (
+              <div key={i} className={`absolute z-10 w-14 h-14 sm:w-20 sm:h-20 ${cls}`}
+                style={{ borderColor: "rgba(184,148,90,0.45)" }} />
+            ))}
+
+          {/* Text */}
+          <div className="relative z-10 text-center text-white px-6 flex flex-col items-center">
+            <motion.p
+              className={`${cinzel.className} text-[9px] sm:text-[10px] tracking-[0.5em] uppercase mb-10`}
+              style={{ color: "#D4B07A" }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
-              className={`${cinzel.className} text-sm sm:text-lg tracking-[0.3em] mt-8 border-t border-white/20 pt-8 inline-block text-[#E5DACE]`}
+              transition={{ duration: 1.5, delay: 0.4 }}
             >
-              {formattedDate}
+              {c.hero?.text_above_names ?? "The Wedding of"}
+            </motion.p>
+
+            <motion.div
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.7 }}
+            >
+              <span className={`${greatVibes.className} text-7xl sm:text-8xl md:text-[7rem] leading-tight drop-shadow-lg`}>
+                {bride}
+              </span>
+              <span
+                className={`${cormorant.className} text-base sm:text-xl font-light tracking-[0.5em] my-3`}
+                style={{ color: "#D4B07A" }}
+              >
+                &
+              </span>
+              <span className={`${greatVibes.className} text-7xl sm:text-8xl md:text-[7rem] leading-tight drop-shadow-lg`}>
+                {groom}
+              </span>
+            </motion.div>
+
+            <motion.div
+              className="flex items-center gap-6 mt-10"
+              initial={{ opacity: 0, scaleX: 0.4 }}
+              animate={{ opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.9, delay: 1.3 }}
+            >
+              <div className="h-px w-10 sm:w-16" style={{ backgroundColor: "rgba(212,176,122,0.5)" }} />
+              <p className={`${cinzel.className} text-xs sm:text-sm tracking-[0.35em]`} style={{ color: "#EDE0C8" }}>
+                {formattedDate}
+              </p>
+              <div className="h-px w-10 sm:w-16" style={{ backgroundColor: "rgba(212,176,122,0.5)" }} />
             </motion.div>
           </div>
 
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/40 animate-bounce z-10">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+          {/* Scroll hint */}
+          <motion.div
+            className="absolute bottom-8 z-10 flex flex-col items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.2 }}
+          >
+            <span className={`${cinzel.className} text-[7px] tracking-[0.35em] uppercase text-white/25`}>
+              scroll
+            </span>
+            <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.6 }}>
+              <ChevronDown size={15} className="text-white/25" />
+            </motion.div>
+          </motion.div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          02 · STORY
+      ══════════════════════════════════════════════════ */}
+      {vis.story !== false && (
+        <section className="py-32 sm:py-48 px-6">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className={`grid grid-cols-1 ${storyImg ? "md:grid-cols-[1fr_300px]" : ""} gap-16 md:gap-24 items-start`}
+            >
+              <div>
+                <motion.div variants={fadeUp} className="mb-12">
+                  <SectionTitle title={c.story?.title_history ?? "Dear Friends and Family,"} />
+                </motion.div>
+                <div
+                  className={`${cormorant.className} space-y-6 text-xl sm:text-2xl font-light leading-relaxed`}
+                  style={{ color: "#5A5348" }}
+                >
+                  {(
+                    c.story?.paragraphs || [
+                      "As we prepare to say “I do,” we feel deeply grateful for every one of you who has walked this journey with us.",
+                      "Your presence would mean the world to us as we begin this new chapter of our lives together.",
+                    ]
+                  )
+                    .filter((p: string) => p?.trim())
+                    .map((p: string, i: number) => (
+                      <motion.p key={i} variants={fadeUp}>{p}</motion.p>
+                    ))}
+                </div>
+              </div>
+
+              {storyImg && (
+                <motion.div variants={fadeUp} className="relative self-start">
+                  <div
+                    className="absolute -top-4 -left-4 w-full h-full border"
+                    style={{ borderColor: "rgba(184,148,90,0.3)" }}
+                  />
+                  <div className="relative w-full aspect-[3/4] overflow-hidden shadow-2xl">
+                    <img src={storyImg} className="w-full h-full object-cover" alt="Story" />
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
           </div>
         </section>
       )}
 
-      {/* 02. HISTÓRIA */}
-      {visibility.story !== false && (
-        <section className="py-24 sm:py-40 px-6 max-w-4xl mx-auto text-center border-b border-[#2C2C2C]/5">
-          <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <h2 className={`${playfair.className} text-3xl sm:text-5xl mb-16 italic text-[#2C2C2C]`}>
-              {content.story?.title_history ?? "Dear Friends and Family,"}
-            </h2>
-            <div className="space-y-8 text-base sm:text-lg leading-relaxed text-[#5A5A5A] font-light max-w-2xl mx-auto">
-              {(content.story?.paragraphs || ["As we get ready to say “I do,” we feel grateful for the wonderful people in our lives.", "Your support means the world to us, and we would be honored to have you with us as we begin our life together."]).map((p: string, i: number) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-            {storyImg && (
-              <div className="mt-20 flex justify-center">
-                <div className="w-full max-w-[280px] aspect-[3/4] overflow-hidden p-3 bg-[#EAE5DF] shadow-xl rounded-sm">
-                  <img src={storyImg} className="w-full h-full object-cover grayscale-[30%]" alt="Our Story" />
+      {/* ══════════════════════════════════════════════════
+          03 · COUNTDOWN
+      ══════════════════════════════════════════════════ */}
+      {vis.countdown !== false && mounted && (
+        <section className="py-24 sm:py-32 bg-[#2D4A3E]">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.p
+                variants={fadeUp}
+                className={`${cinzel.className} text-[9px] sm:text-[10px] tracking-[0.45em] uppercase mb-14`}
+                style={{ color: "#B8945A" }}
+              >
+                {c.countdown?.title ?? "The Celebration Begins In"}
+              </motion.p>
+
+              <motion.div
+                variants={fadeUp}
+                className="flex justify-center items-end gap-8 sm:gap-16 md:gap-24"
+              >
+                {[
+                  { val: timeLeft.days, label: "Days" },
+                  { val: timeLeft.hours, label: "Hours" },
+                  { val: timeLeft.minutes, label: "Min" },
+                  { val: timeLeft.seconds, label: "Sec" },
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center">
+                    <span
+                      className={`${cormorant.className} text-5xl sm:text-7xl md:text-8xl font-light text-white leading-none tabular-nums`}
+                    >
+                      {item.val}
+                    </span>
+                    <span
+                      className={`${cinzel.className} text-[8px] sm:text-[9px] tracking-[0.3em] uppercase mt-3`}
+                      style={{ color: "rgba(184,148,90,0.65)" }}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          04 · CEREMONY & RECEPTION
+      ══════════════════════════════════════════════════ */}
+      {showEvent && (
+        <section className="py-32 sm:py-48 px-6 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={fadeUp}>
+                <SectionTitle
+                  label="Save the date"
+                  title={c.event?.title_main ?? "Ceremony & Celebration"}
+                />
+              </motion.div>
+
+              <div
+                className={`grid grid-cols-1 ${hasCeremony && hasReception ? "md:grid-cols-2" : ""} gap-8 sm:gap-12`}
+              >
+                {hasCeremony && (
+                  <motion.div variants={fadeUp}>
+                    <div
+                      className="relative p-10 sm:p-12 border transition-all duration-500 hover:shadow-xl group"
+                      style={{ borderColor: "#EDE8DF" }}
+                    >
+                      <div className="absolute top-0 left-0 w-1 h-full bg-[#B8945A]/70" />
+                      <p
+                        className={`${cinzel.className} text-[9px] tracking-[0.4em] uppercase mb-5`}
+                        style={{ color: "#B8945A" }}
+                      >
+                        Ceremony
+                      </p>
+                      <h3
+                        className={`${cormorant.className} text-2xl sm:text-3xl font-light mb-8`}
+                        style={{ color: "#2D4A3E" }}
+                      >
+                        {c.event?.ceremony?.title ?? "Wedding Ceremony"}
+                      </h3>
+                      <div className="space-y-4">
+                        {c.event?.ceremony?.time && (
+                          <div className="flex items-center gap-3" style={{ color: "#6B6455" }}>
+                            <Clock size={13} style={{ color: "#B8945A", flexShrink: 0 }} />
+                            <span className={`${cormorant.className} text-lg font-light`}>
+                              {c.event.ceremony.time}
+                            </span>
+                          </div>
+                        )}
+                        {c.event?.ceremony?.location && (
+                          <div className="flex items-start gap-3" style={{ color: "#6B6455" }}>
+                            <MapPin size={13} style={{ color: "#B8945A", flexShrink: 0, marginTop: 4 }} />
+                            <span className={`${cormorant.className} text-lg font-light leading-snug`}>
+                              {c.event.ceremony.location}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      {c.event?.ceremony?.google_maps_url && (
+                        <a
+                          href={c.event.ceremony.google_maps_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`${cinzel.className} text-[9px] tracking-[0.2em] uppercase mt-8 inline-block transition-colors duration-300`}
+                          style={{ color: "#2D4A3E", borderBottom: "1px solid rgba(45,74,62,0.3)" }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.color = "#B8945A";
+                            (e.currentTarget as HTMLElement).style.borderBottomColor = "#B8945A";
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.color = "#2D4A3E";
+                            (e.currentTarget as HTMLElement).style.borderBottomColor = "rgba(45,74,62,0.3)";
+                          }}
+                        >
+                          Get Directions →
+                        </a>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
+                {hasReception && (
+                  <motion.div variants={fadeUp}>
+                    <div
+                      className="relative p-10 sm:p-12 border transition-all duration-500 hover:shadow-xl"
+                      style={{ borderColor: "#EDE8DF" }}
+                    >
+                      <div className="absolute top-0 left-0 w-1 h-full bg-[#2D4A3E]/70" />
+                      <p
+                        className={`${cinzel.className} text-[9px] tracking-[0.4em] uppercase mb-5`}
+                        style={{ color: "#B8945A" }}
+                      >
+                        Reception
+                      </p>
+                      <h3
+                        className={`${cormorant.className} text-2xl sm:text-3xl font-light mb-8`}
+                        style={{ color: "#2D4A3E" }}
+                      >
+                        {c.event?.reception?.title ?? "Wedding Reception"}
+                      </h3>
+                      <div className="space-y-4">
+                        {c.event?.reception?.time && (
+                          <div className="flex items-center gap-3" style={{ color: "#6B6455" }}>
+                            <Clock size={13} style={{ color: "#B8945A", flexShrink: 0 }} />
+                            <span className={`${cormorant.className} text-lg font-light`}>
+                              {c.event.reception.time}
+                            </span>
+                          </div>
+                        )}
+                        {c.event?.reception?.location && (
+                          <div className="flex items-start gap-3" style={{ color: "#6B6455" }}>
+                            <MapPin size={13} style={{ color: "#B8945A", flexShrink: 0, marginTop: 4 }} />
+                            <span className={`${cormorant.className} text-lg font-light leading-snug`}>
+                              {c.event.reception.location}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      {c.event?.reception?.google_maps_url && (
+                        <a
+                          href={c.event.reception.google_maps_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`${cinzel.className} text-[9px] tracking-[0.2em] uppercase mt-8 inline-block transition-colors duration-300`}
+                          style={{ color: "#2D4A3E", borderBottom: "1px solid rgba(45,74,62,0.3)" }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.color = "#B8945A";
+                            (e.currentTarget as HTMLElement).style.borderBottomColor = "#B8945A";
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.color = "#2D4A3E";
+                            (e.currentTarget as HTMLElement).style.borderBottomColor = "rgba(45,74,62,0.3)";
+                          }}
+                        >
+                          Get Directions →
+                        </a>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          05 · PROGRAM
+      ══════════════════════════════════════════════════ */}
+      {vis.program !== false && (
+        <section className="py-32 sm:py-48 px-6 bg-[#F7F4EE]">
+          <div className="max-w-xl mx-auto">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={fadeUp}>
+                <SectionTitle title={c.program?.title_program ?? "Schedule of Events"} />
+              </motion.div>
+
+              <div className="relative">
+                {/* Vertical timeline line */}
+                <div
+                  className="absolute left-[4.5rem] top-0 bottom-0 w-px hidden sm:block"
+                  style={{ backgroundColor: "rgba(184,148,90,0.25)" }}
+                />
+
+                <div className="space-y-0">
+                  {(c.program?.events || defaultProgram).map((ev: any, i: number) => (
+                    <motion.div
+                      key={i}
+                      variants={fadeUp}
+                      className="flex items-start gap-6 sm:gap-8 group"
+                    >
+                      <span
+                        className={`${cinzel.className} text-xs sm:text-sm shrink-0 w-16 text-right pt-1 leading-tight`}
+                        style={{ color: "#B8945A" }}
+                      >
+                        {ev.time}
+                      </span>
+                      <div
+                        className="flex items-start gap-5 flex-1 pb-12 last:pb-0"
+                        style={{ borderBottom: "1px solid rgba(232,224,208,0.6)" }}
+                      >
+                        <div
+                          className="w-2.5 h-2.5 rounded-full border shrink-0 mt-1 relative z-10 transition-all duration-300 group-hover:scale-125"
+                          style={{
+                            borderColor: "#B8945A",
+                            backgroundColor: "#F7F4EE",
+                          }}
+                        />
+                        <h3
+                          className={`${cormorant.className} text-2xl sm:text-3xl font-light`}
+                          style={{ color: "#1A1A1A" }}
+                        >
+                          {ev.title}
+                        </h3>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          06 · GALLERY
+      ══════════════════════════════════════════════════ */}
+      {vis.gallery !== false && hasGallery && (
+        <section className="bg-white">
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {/* Row 1: first 2 images */}
+            {galleryUrls.slice(0, 2).length > 0 && (
+              <div className={`grid gap-1 ${galleryUrls.slice(0, 2).length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+                {galleryUrls.slice(0, 2).map((url: string, i: number) => (
+                  <motion.div key={i} variants={fadeUp} className="aspect-[16/9] overflow-hidden">
+                    <img
+                      src={url}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      alt={`Wedding ${i + 1}`}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {/* Row 2: remaining images */}
+            {galleryUrls.slice(2).length > 0 && (
+              <div className={`grid gap-1 mt-1 grid-cols-${Math.min(galleryUrls.slice(2).length, 3)}`}>
+                {galleryUrls.slice(2, 5).map((url: string, i: number) => (
+                  <motion.div key={i} variants={fadeUp} className="aspect-square overflow-hidden">
+                    <img
+                      src={url}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      alt={`Wedding ${i + 3}`}
+                    />
+                  </motion.div>
+                ))}
               </div>
             )}
           </motion.div>
         </section>
       )}
 
-      {/* 03. COUNTDOWN */}
-      {visibility.countdown !== false && mounted && (
-        <section className="py-24 bg-white border-b border-[#2C2C2C]/5">
-          <div className="max-w-5xl mx-auto px-6 text-center">
-            <span className={`${cinzel.className} text-[10px] tracking-[0.4em] uppercase text-[#8B7355] block mb-12 font-bold`}>
-              {content.countdown?.title ?? "The Celebration Begins In"}
-            </span>
-            <div className="flex justify-center items-center gap-4 sm:gap-16">
-              {[
-                { label: "Days", val: timeLeft.days },
-                { label: "Hours", val: timeLeft.hours },
-                { label: "Mins", val: timeLeft.minutes },
-                { label: "Secs", val: timeLeft.seconds }
-              ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <span className={`${playfair.className} text-4xl sm:text-7xl font-light text-[#2C2C2C]`}>{item.val}</span>
-                  <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] mt-4 opacity-50 font-semibold">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 04. CRONOGRAMA */}
-      {visibility.program !== false && (
-        <section className="py-24 sm:py-40 px-6 bg-[#F2EFE9] border-b border-[#2C2C2C]/5">
-          <div className="max-w-3xl mx-auto">
-            <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-24">
-              <h2 className={`${playfair.className} text-4xl sm:text-6xl mb-4 italic text-[#2C2C2C]`}>
-                {content.program?.title_program ?? "Schedule of Events"}
-              </h2>
-            </motion.div>
-            <div className="space-y-8 sm:space-y-12 max-w-xl mx-auto">
-              {(content.program?.events || timelineEvents).map((ev: any, i: number) => (
-                <motion.div 
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.8 }}
-                  className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-[#2C2C2C]/10 pb-6 group"
-                >
-                  <div className="text-left mb-2 sm:mb-0">
-                    <span className={`${cinzel.className} text-[11px] sm:text-sm tracking-[0.2em] text-[#8B7355] block mb-1 font-bold`}>{ev.time}</span>
-                    <h3 className={`${playfair.className} text-xl sm:text-2xl text-[#2C2C2C]`}>{ev.title}</h3>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 05. DETALHES */}
-      {visibility.details_header !== false && (
-        <section className="py-24 sm:py-32 bg-white border-b border-[#2C2C2C]/5">
-          <div className="max-w-5xl mx-auto px-6">
-            <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-20 sm:mb-32">
-               <h2 className={`${playfair.className} text-4xl sm:text-6xl italic text-[#2C2C2C]`}>
-                 {content.details?.title_details ?? "Details"}
-               </h2>
-            </motion.div>
-
-            <div className={`grid ${showUsefulInfo && showAccommodation ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto text-center'} gap-16 sm:gap-24`}>
-              {showUsefulInfo && (
-                <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className={!showAccommodation ? "flex flex-col items-center" : ""}>
-                  <h3 className={`${cinzel.className} text-xs tracking-[0.3em] text-[#8B7355] uppercase mb-6 border-b border-[#8B7355]/30 pb-4 inline-block font-bold`}>
-                    {content.details?.parking_title ?? "Location"}
-                  </h3>
-                  <p className="text-base sm:text-lg font-light leading-relaxed text-[#5A5A5A]">
-                    {content.details?.parking_text ?? "Chateau de Paon. Address: Petit Chemin de Saint-Gilles 13200 Arles, France."}
-                  </p>
-                </motion.div>
-              )}
-
-              {showAccommodation && (
-                <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className={!showUsefulInfo ? "flex flex-col items-center" : ""}>
-                  <h3 className={`${cinzel.className} text-xs tracking-[0.3em] text-[#8B7355] uppercase mb-6 border-b border-[#8B7355]/30 pb-4 inline-block font-bold`}>
-                    {content.details?.accommodation_title ?? "Accommodations"}
-                  </h3>
-                  <p className="text-base sm:text-lg font-light leading-relaxed text-[#5A5A5A] mb-8">
-                    {content.details?.accommodation_text ?? "We have reserved a block of rooms for your convenience."}
-                  </p>
-                  <div className={`flex flex-wrap gap-4 ${!showUsefulInfo ? 'justify-center' : ''}`}>
-                    {(content.details?.accommodation_buttons || []).map((btn: any, idx: number) => (
-                      <a key={idx} href={btn.url} target="_blank" rel="noopener noreferrer" className={`${cinzel.className} text-[10px] uppercase tracking-widest border border-[#2C2C2C] text-[#2C2C2C] px-8 py-3 hover:bg-[#2C2C2C] hover:text-white transition-colors duration-300`}>
-                        {btn.text}
-                      </a>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {visibility.dress_code !== false && (
-              <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center pt-24 sm:pt-40 mt-12 sm:mt-20 border-t border-[#2C2C2C]/10 max-w-3xl mx-auto">
-                <h3 className={`${cinzel.className} text-xs tracking-[0.3em] text-[#8B7355] uppercase mb-10 inline-block font-bold`}>
-                  {content.dress_code?.title ?? "Dress Code"}
-                </h3>
-                <div className="space-y-6 font-light text-[#5A5A5A] text-base sm:text-lg leading-relaxed">
-                  {(content.dress_code?.text || ["We kindly invite you to dress in elegant attire."]).map((t: string, i: number) => (
-                    <p key={i}>{t}</p>
-                  ))}
-                  {content.dress_code?.show_palette !== false && (
-                    <div className="flex justify-center gap-4 pt-10">
-                      {(content.dress_code?.colors || []).map((c: string, i: number) => (
-                        <div key={i} className="w-10 h-10 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: c }}></div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+      {/* ══════════════════════════════════════════════════
+          07 · DETAILS
+      ══════════════════════════════════════════════════ */}
+      {vis.details_section !== false && (
+        <section className="py-32 sm:py-48 px-6 bg-[#F7F4EE]">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={fadeUp}>
+                <SectionTitle title={c.details?.title_details ?? "Details"} />
               </motion.div>
-            )}
-          </div>
-        </section>
-      )}
 
-      {/* 06. PRESENTES / IBAN */}
-      {visibility.gifts !== false && (
-        <section className="py-24 bg-[#1A1A1A] text-white">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className={`${playfair.className} text-3xl sm:text-5xl italic mb-10`}>
-              {content.gifts?.title ?? "Gifts"}
-            </h2>
-            <p className="text-base sm:text-lg font-light opacity-70 leading-relaxed mb-12 max-w-2xl mx-auto">
-              {content.gifts?.text ?? "Your presence is the greatest gift to us."}
-            </p>
-            {content.gifts?.show_iban !== false && !showIbanData && (
-              <button 
-                onClick={() => setShowIbanData(true)}
-                className={`${cinzel.className} bg-transparent border border-[#F2EFE9] text-[#F2EFE9] px-10 py-4 text-[10px] sm:text-xs uppercase tracking-[0.2em] hover:bg-[#F2EFE9] hover:text-[#2C2C2C] transition-colors duration-500`}
+              {/* Logistics + Accommodation */}
+              <div
+                className={`grid grid-cols-1 ${vis.useful_info !== false && vis.accommodation !== false ? "md:grid-cols-2" : ""} gap-16 sm:gap-24`}
               >
-                {content.gifts?.iban_button_text || "Contribute"}
-              </button>
-            )}
-            {showIbanData && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#1A1A1A] border border-white/10 p-8 sm:p-12 rounded-sm relative mt-8">
-                 <button onClick={() => setShowIbanData(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                 </button>
-                <span className={`${cinzel.className} text-[10px] uppercase tracking-[0.2em] text-[#8B7355] block mb-2 font-bold`}>Account Holder</span>
-                <p className={`${playfair.className} text-2xl mb-8`}>{content.gifts?.iban_holders_name || casalNomes}</p>
-                <span className={`${cinzel.className} text-[10px] uppercase tracking-[0.2em] text-[#8B7355] block mb-2 font-bold`}>IBAN</span>
-                <p className={`${inter.className} text-sm sm:text-lg tracking-widest break-all`}>{content.gifts?.iban_value}</p>
-              </motion.div>
-            )}
+                {vis.useful_info !== false && (
+                  <motion.div variants={fadeUp}>
+                    <p
+                      className={`${cinzel.className} text-[9px] tracking-[0.4em] uppercase mb-3`}
+                      style={{ color: "#B8945A" }}
+                    >
+                      {c.details?.parking_title ?? "Location"}
+                    </p>
+                    <div className="w-10 h-px mb-6" style={{ backgroundColor: "rgba(184,148,90,0.45)" }} />
+                    <p
+                      className={`${cormorant.className} text-xl font-light leading-relaxed`}
+                      style={{ color: "#5A5348" }}
+                    >
+                      {c.details?.parking_text ?? "Chateau de Paon. Petit Chemin de Saint-Gilles, Arles, France."}
+                    </p>
+                  </motion.div>
+                )}
+
+                {vis.accommodation !== false && (
+                  <motion.div variants={fadeUp}>
+                    <p
+                      className={`${cinzel.className} text-[9px] tracking-[0.4em] uppercase mb-3`}
+                      style={{ color: "#B8945A" }}
+                    >
+                      {c.details?.accommodation_title ?? "Accommodations"}
+                    </p>
+                    <div className="w-10 h-px mb-6" style={{ backgroundColor: "rgba(184,148,90,0.45)" }} />
+                    <p
+                      className={`${cormorant.className} text-xl font-light leading-relaxed mb-8`}
+                      style={{ color: "#5A5348" }}
+                    >
+                      {c.details?.accommodation_text ??
+                        "We have reserved a block of rooms for your convenience."}
+                    </p>
+                    {(c.details?.accommodation_buttons || []).length > 0 && (
+                      <div className="flex flex-wrap gap-3">
+                        {c.details.accommodation_buttons.map((btn: any, idx: number) => (
+                          <a
+                            key={idx}
+                            href={btn.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`${cinzel.className} text-[9px] tracking-[0.2em] uppercase px-7 py-3 border transition-all duration-300`}
+                            style={{ borderColor: "#2D4A3E", color: "#2D4A3E" }}
+                            onMouseEnter={e => {
+                              (e.currentTarget as HTMLElement).style.backgroundColor = "#2D4A3E";
+                              (e.currentTarget as HTMLElement).style.color = "#F7F4EE";
+                            }}
+                            onMouseLeave={e => {
+                              (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
+                              (e.currentTarget as HTMLElement).style.color = "#2D4A3E";
+                            }}
+                          >
+                            {btn.text}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Dress Code */}
+              {vis.dress_code !== false && (
+                <motion.div
+                  variants={fadeUp}
+                  className="mt-28 pt-20 text-center max-w-2xl mx-auto"
+                  style={{ borderTop: "1px solid #EDE8DF" }}
+                >
+                  <p
+                    className={`${cinzel.className} text-[9px] tracking-[0.4em] uppercase mb-3`}
+                    style={{ color: "#B8945A" }}
+                  >
+                    {c.dress_code?.title ?? "Dress Code"}
+                  </p>
+                  <div className="w-10 h-px mb-8 mx-auto" style={{ backgroundColor: "rgba(184,148,90,0.45)" }} />
+                  {(c.dress_code?.text || [])
+                    .filter((t: string) => t?.trim())
+                    .map((t: string, i: number) => (
+                      <p
+                        key={i}
+                        className={`${cormorant.className} text-xl font-light leading-relaxed mb-4`}
+                        style={{ color: "#5A5348" }}
+                      >
+                        {t}
+                      </p>
+                    ))}
+                  {c.dress_code?.show_palette !== false &&
+                    (c.dress_code?.colors || []).length > 0 && (
+                      <div className="flex justify-center gap-4 mt-10">
+                        {c.dress_code.colors.map((color: string, i: number) => (
+                          <div
+                            key={i}
+                            className="w-10 h-10 rounded-full shadow-sm"
+                            style={{ backgroundColor: color, border: "1px solid rgba(0,0,0,0.07)" }}
+                          />
+                        ))}
+                      </div>
+                    )}
+                </motion.div>
+              )}
+            </motion.div>
           </div>
         </section>
       )}
 
-      {/* 07. RSVP */}
-      {visibility.rsvp !== false && (
-        <section className="py-24 sm:py-40 bg-[#F5F2F0]">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="text-center mb-16 sm:mb-24">
-              <h2 className={`${playfair.className} text-4xl sm:text-6xl italic text-[#2C2C2C] mb-8`}>
-                {content.rsvp?.title_confirm ?? "Confirm Your Attendance"}
-              </h2>
-              <p className={`${inter.className} text-xs sm:text-sm tracking-[0.1em] uppercase opacity-50`}>
-                Please RSVP before {rsvpFormattedDeadline}
-              </p>
-            </div>
-            <div className="bg-white p-8 sm:p-16 shadow-2xl rounded-sm">
-              <SmartRsvp invitationId={data?.id || ""} />
-            </div>
-          </div>
-        </section>
-      )}
+      {/* ══════════════════════════════════════════════════
+          08 · GIFTS / IBAN
+      ══════════════════════════════════════════════════ */}
+      {vis.gifts !== false && (
+        <section className="py-24 sm:py-32 bg-[#2D4A3E]">
+          <div className="max-w-2xl mx-auto px-6 text-center">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.p
+                variants={fadeUp}
+                className={`${cinzel.className} text-[9px] tracking-[0.4em] uppercase mb-3`}
+                style={{ color: "#B8945A" }}
+              >
+                {c.gifts?.title ?? "Gifts"}
+              </motion.p>
+              <motion.div
+                variants={fadeUp}
+                className="w-10 h-px mb-8 mx-auto"
+                style={{ backgroundColor: "rgba(184,148,90,0.4)" }}
+              />
+              <motion.p
+                variants={fadeUp}
+                className={`${cormorant.className} text-xl font-light leading-relaxed mb-12`}
+                style={{ color: "rgba(247,244,238,0.65)" }}
+              >
+                {c.gifts?.text ?? "Your presence is the greatest gift to us."}
+              </motion.p>
 
-      {/* 08. RODAPÉ */}
-      {visibility.footer !== false && (
-        <footer className="relative py-32 sm:py-48 bg-[#1A1A1A] overflow-hidden flex items-center justify-center border-t-8 border-[#2C2C2C]">
-          <div className="absolute inset-0 opacity-30">
-            <img src={footerImg} className="w-full h-full object-cover grayscale" alt="Footer" />
-          </div>
-          <div className="relative z-10 text-center text-[#F2EFE9] px-4 w-full max-w-4xl mx-auto">
-            <motion.div variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <p className={`${cinzel.className} text-[10px] sm:text-xs tracking-[0.4em] uppercase text-[#8B7355] mb-8 font-bold`}>
-                {content.footer?.title_main ?? "Hope to see you there!"}
-              </p>
-              <h2 className={`${playfair.className} text-5xl sm:text-7xl md:text-8xl mb-16`}>
-                {content.footer?.title_celebrate ?? casalNomes}
-              </h2>
-              
-              {content.footer?.show_contacts !== false && (
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-16 pt-12 border-t border-white/10 w-full mb-16">
-                  <div className="text-center">
-                    <span className={`${playfair.className} text-xl italic block mb-2`}>{content.footer?.contact_1_name || bride}</span>
-                    <a href={`tel:${content.footer?.contact_1_phone || ""}`} className={`${cinzel.className} text-[10px] tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity`}>Contact</a>
-                  </div>
-                  <div className="hidden sm:block w-[1px] h-12 bg-white/10"></div>
-                  <div className="text-center">
-                    <span className={`${playfair.className} text-xl italic block mb-2`}>{content.footer?.contact_2_name || groom}</span>
-                    <a href={`tel:${content.footer?.contact_2_phone || ""}`} className={`${cinzel.className} text-[10px] tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity`}>Contact</a>
-                  </div>
-                </div>
+              {c.gifts?.show_iban !== false && !showIban && (
+                <motion.button
+                  variants={fadeUp}
+                  onClick={() => setShowIban(true)}
+                  className={`${cinzel.className} text-[9px] tracking-[0.3em] uppercase px-12 py-4 border transition-all duration-500`}
+                  style={{ borderColor: "rgba(184,148,90,0.5)", color: "#B8945A" }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = "#B8945A";
+                    (e.currentTarget as HTMLElement).style.color = "#2D4A3E";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
+                    (e.currentTarget as HTMLElement).style.color = "#B8945A";
+                  }}
+                >
+                  {c.gifts?.iban_button_text ?? "Contribute"}
+                </motion.button>
               )}
 
-              <div className="mt-16 sm:mt-24">
-                <span className={`${inter.className} text-[8px] sm:text-[9px] tracking-[0.4em] uppercase opacity-30`}>
+              {showIban && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative mt-4 p-10 sm:p-14"
+                  style={{ border: "1px solid rgba(184,148,90,0.2)" }}
+                >
+                  <button
+                    onClick={() => setShowIban(false)}
+                    className="absolute top-4 right-4 transition-colors"
+                    style={{ color: "rgba(255,255,255,0.25)" }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.8)")}
+                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.25)")}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                    </svg>
+                  </button>
+                  <p
+                    className={`${cinzel.className} text-[8px] tracking-[0.35em] uppercase mb-2`}
+                    style={{ color: "#B8945A" }}
+                  >
+                    Account Holder
+                  </p>
+                  <p
+                    className={`${cormorant.className} text-2xl sm:text-3xl font-light italic text-white mb-8`}
+                  >
+                    {c.gifts?.iban_holders_name || coupleNames}
+                  </p>
+                  <p
+                    className={`${cinzel.className} text-[8px] tracking-[0.35em] uppercase mb-2`}
+                    style={{ color: "#B8945A" }}
+                  >
+                    IBAN
+                  </p>
+                  <p className="text-sm sm:text-base tracking-widest font-mono break-all"
+                    style={{ color: "rgba(247,244,238,0.6)" }}>
+                    {c.gifts?.iban_value}
+                  </p>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          09 · RSVP
+      ══════════════════════════════════════════════════ */}
+      {vis.rsvp !== false && (
+        <section className="py-32 sm:py-48 px-6 bg-[#EDE8DF]">
+          <div className="max-w-xl mx-auto">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.div variants={fadeUp}>
+                <SectionTitle title={c.rsvp?.title_confirm ?? "Confirm Your Attendance"} />
+              </motion.div>
+              <motion.p
+                variants={fadeUp}
+                className={`${cinzel.className} text-[9px] tracking-[0.3em] uppercase text-center -mt-14 mb-16`}
+                style={{ color: "#8B7B6A" }}
+              >
+                Please RSVP before {rsvpDeadline}
+              </motion.p>
+
+              <motion.div
+                variants={fadeUp}
+                className="bg-white shadow-2xl p-8 sm:p-14"
+                style={{ boxShadow: "0 20px 60px rgba(45,74,62,0.08)" }}
+              >
+                <SmartRsvp invitationId={data?.id || ""} />
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          10 · FOOTER
+      ══════════════════════════════════════════════════ */}
+      {vis.footer !== false && (
+        <footer className="relative py-40 sm:py-56 overflow-hidden flex items-center justify-center bg-[#2D4A3E]">
+          <div className="absolute inset-0">
+            <img src={footerImg} className="w-full h-full object-cover opacity-20" alt="Footer" />
+            <div className="absolute inset-0 bg-[#2D4A3E]/75" />
+          </div>
+
+          <div className="relative z-10 text-center px-6 w-full max-w-3xl mx-auto">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <motion.p
+                variants={fadeUp}
+                className={`${cinzel.className} text-[9px] tracking-[0.45em] uppercase mb-8`}
+                style={{ color: "#B8945A" }}
+              >
+                {c.footer?.title_main ?? "We hope to see you there"}
+              </motion.p>
+
+              <motion.h2
+                variants={fadeUp}
+                className={`${greatVibes.className} text-6xl sm:text-8xl md:text-[6.5rem] text-white leading-tight drop-shadow-lg mb-6`}
+              >
+                {c.footer?.title_celebrate ?? coupleNames}
+              </motion.h2>
+
+              {c.footer?.location_text && (
+                <motion.p
+                  variants={fadeUp}
+                  className={`${cormorant.className} text-lg font-light italic mb-12`}
+                  style={{ color: "rgba(247,244,238,0.45)" }}
+                >
+                  {c.footer.location_text}
+                </motion.p>
+              )}
+
+              {c.footer?.show_contacts !== false && (
+                <motion.div
+                  variants={fadeUp}
+                  className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-20 pt-12 mb-16"
+                  style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+                >
+                  {[
+                    { name: c.footer?.contact_1_name || bride, phone: c.footer?.contact_1_phone },
+                    { name: c.footer?.contact_2_name || groom, phone: c.footer?.contact_2_phone },
+                  ].map((ct, i) => (
+                    <div key={i} className="text-center">
+                      <p className={`${cormorant.className} text-2xl italic text-white font-light mb-1`}>
+                        {ct.name}
+                      </p>
+                      {ct.phone && (
+                        <a
+                          href={`tel:${ct.phone}`}
+                          className={`${cinzel.className} text-[8px] tracking-[0.3em] uppercase transition-colors`}
+                          style={{ color: "rgba(184,148,90,0.5)" }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = "#B8945A")}
+                          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = "rgba(184,148,90,0.5)")}
+                        >
+                          {ct.phone}
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+
+              <motion.div variants={fadeUp}>
+                <span
+                  className={`${cinzel.className} text-[7px] tracking-[0.45em] uppercase`}
+                  style={{ color: "rgba(247,244,238,0.18)" }}
+                >
                   Digital Invite Studio
                 </span>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </footer>
       )}
-
     </div>
   );
 }
