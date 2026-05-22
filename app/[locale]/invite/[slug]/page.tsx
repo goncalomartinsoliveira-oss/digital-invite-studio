@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import LuxuryTemplate from "../../templates/luxury-01/page";
 import CollageTemplate from "../../templates/collage-01/page";
+import Minimal01Template from "../../templates/minimal-01/page";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis de recuo)
 import pt from "../../../../dictionaries/pt";
@@ -56,9 +57,7 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
       {invite.template_id === 'collage-01' ? (
         <CollageTemplate data={invite} />
       ) : invite.template_id === 'minimal-01' ? (
-        <div className="flex min-h-screen items-center justify-center bg-white text-xl font-serif">
-          {dict.inDevelopment}
-        </div>
+        <Minimal01Template data={invite} params={params} />
       ) : (
         <LuxuryTemplate data={invite} params={params} />
       )}
