@@ -2,7 +2,7 @@
 
 @theme {
   --font-serif: var(--font-cormorant);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-jost);
 
   /* Define a animação de zoom lento para a imagem principal */
   @keyframes slow-zoom {

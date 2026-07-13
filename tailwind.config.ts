@@ -9,10 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        // Estas são as variáveis que configuraste no layout
         serif: ["var(--font-cormorant)"],
-        sans: ["var(--font-inter)"],
-        // Esta é a fonte cursiva para nomes e detalhes
+        sans: ["var(--font-jost)"],
         script: ["var(--font-pinyon)", "cursive"],
       },
     },
