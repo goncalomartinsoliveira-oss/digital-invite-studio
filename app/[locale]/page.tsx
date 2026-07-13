@@ -33,7 +33,7 @@ export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="bg-[#FDFBF7] text-[#332E2B] selection:bg-[#630100] selection:text-[#EFDFBB] font-montserrat overflow-hidden">
+    <div className="bg-[#FDFBF7] text-[#332E2B] selection:bg-[#630100] selection:text-[#EFDFBB] overflow-hidden">
 
       {/* ── 1. HERO ─────────────────────────────────────────────────── */}
       <section className="relative pt-40 pb-20 px-6 md:px-20 min-h-[95vh] flex flex-col justify-center max-w-7xl mx-auto">
