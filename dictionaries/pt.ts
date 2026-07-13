@@ -232,6 +232,24 @@ const pt = {
       "guests": "Lista",
       "seating": "Mesas",
       "moments": "Momentos e Guestbook"
+    },
+    "hubTitle": "O que quer gerir?",
+    "hubSubtitle": "Escolha uma área para começar",
+    "backToGroups": "Áreas",
+    "enterGroup": "Gerir",
+    "groups": {
+      "invite": {
+        "title": "Convite de casamento",
+        "desc": "Modelo, identidade e conteúdo do convite"
+      },
+      "guests": {
+        "title": "Convidados e mesas",
+        "desc": "Lista de convidados, RSVP e plano de mesas"
+      },
+      "moments": {
+        "title": "Momentos e Guestbook",
+        "desc": "Galeria de fotos e mensagens dos convidados"
+      }
     }
   },
   "NovoConvitePage": {

@@ -13,7 +13,10 @@ import {
   Users,
   Grid,
   Camera,
-  LayoutGrid
+  LayoutGrid,
+  Mail,
+  ChevronRight,
+  ArrowLeft
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -33,12 +36,23 @@ const dictionaries = {
 };
 
 type DashboardTab = 'design' | 'content' | 'guests' | 'seating' | 'moments' | 'account';
+// Áreas do hub: cada uma agrupa um subconjunto dos separadores existentes.
+type EventGroup = 'invite' | 'guests' | 'moments' | 'account' | null;
+
+const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
+  invite: ['design', 'content'],
+  guests: ['guests', 'seating'],
+  moments: ['moments'],
+  account: [],
+};
 
 export default function Dashboard() {
   const params = useParams();
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState<DashboardTab>('design');
+  // null → mostra o hub com as áreas; caso contrário mostra o editor filtrado.
+  const [group, setGroup] = useState<EventGroup>(null);
   const [formData, setFormData] = useState<any>(null);
   const [guests, setGuests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -144,6 +158,106 @@ export default function Dashboard() {
 
   const canEdit = userRole === "owner" || userRole === "editor";
 
+  // Separadores visíveis consoante a área selecionada no hub.
+  const visibleTabs = group ? tabsConfig.filter(t => GROUP_TABS[group].includes(t.id)) : tabsConfig;
+
+  // Abrir uma área a partir do hub → entra no editor no primeiro separador dessa área.
+  const openGroup = (g: Exclude<EventGroup, null>) => {
+    setGroup(g);
+    if (g === 'account') {
+      setActiveTab('account');
+    } else {
+      setActiveTab(GROUP_TABS[g][0]);
+    }
+  };
+
+  const projectName = formData.groom_name && formData.bride_name
+    ? `${formData.groom_name} & ${formData.bride_name}`
+    : formData.slug;
+
+  const groupCards = [
+    { id: 'invite' as const, icon: <Mail size={26} />, title: dict.groups.invite.title, desc: dict.groups.invite.desc },
+    { id: 'guests' as const, icon: <Users size={26} />, title: dict.groups.guests.title, desc: dict.groups.guests.desc },
+    { id: 'moments' as const, icon: <Camera size={26} />, title: dict.groups.moments.title, desc: dict.groups.moments.desc },
+  ];
+
+  // ── HUB: página-base com as áreas do evento ──────────────────────────
+  if (!group) {
+    return (
+      <div className="min-h-screen bg-[#FDFBF7] text-[#2D3748] font-sans flex flex-col">
+        <header className="h-20 bg-white/90 backdrop-blur-md border-b border-gray-100 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+          <div className="flex items-center gap-3 min-w-0">
+            <Link
+              href={`/${locale}/dashboard`}
+              className="flex items-center justify-center w-9 h-9 rounded-xl bg-gray-50 text-gray-400 hover:bg-[#630100] hover:text-white transition-all shrink-0"
+              aria-label={dict.backToEvents}
+            >
+              <LayoutGrid size={16} />
+            </Link>
+            <div className="flex flex-col justify-center min-w-0">
+              <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400">{dict.currentProject}</p>
+              <h1 className="font-serif text-[#630100] text-lg leading-tight truncate">{projectName}</h1>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <button
+              onClick={copyInviteLink}
+              className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-4 sm:px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-[#630100] transition-all active:scale-95"
+            >
+              {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+              <span className="hidden sm:inline">{copied ? dict.copied : dict.copyLink}</span>
+            </button>
+            <button
+              onClick={() => window.open(`/${params.locale}/invite/${params.slug}`, '_blank')}
+              className="flex items-center gap-2 bg-[#630100] text-white px-4 sm:px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md hover:bg-[#4a0100] transition-all active:scale-95"
+            >
+              <span className="hidden sm:inline">{dict.openInvite}</span>
+              <ExternalLink size={14} />
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 px-6 py-14 sm:py-20">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="font-serif text-3xl sm:text-4xl text-[#332E2B]">{dict.hubTitle}</h2>
+              <p className="text-gray-400 text-sm mt-2">{dict.hubSubtitle}</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {groupCards.map(card => (
+                <button
+                  key={card.id}
+                  onClick={() => openGroup(card.id)}
+                  className="group text-left bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-[#EFDFBB] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-[#FDFBF7] border border-[#EFDFBB]/70 flex items-center justify-center text-[#630100] mb-6 group-hover:bg-[#630100] group-hover:text-white transition-colors">
+                    {card.icon}
+                  </div>
+                  <h3 className="font-serif text-xl text-[#332E2B] leading-snug mb-2">{card.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed flex-1">{card.desc}</p>
+                  <span className="mt-6 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[#630100] group-hover:gap-3 transition-all">
+                    {dict.enterGroup} <ChevronRight size={14} />
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-12 flex justify-center">
+              <button
+                onClick={() => openGroup('account')}
+                className="flex items-center gap-2.5 px-6 py-3 rounded-full border border-gray-200 bg-white text-gray-500 text-[11px] font-bold uppercase tracking-widest hover:text-[#630100] hover:border-[#EFDFBB] transition-all"
+              >
+                <UserCircle size={16} /> {dict.accountLabel}
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-[#FDFBF7] text-[#2D3748] overflow-hidden font-sans">
       
@@ -182,8 +296,18 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Voltar às áreas do hub */}
+        <div className="px-4 mb-3">
+          <button
+            onClick={() => setGroup(null)}
+            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#630100] hover:bg-gray-50 transition-all"
+          >
+            <ArrowLeft size={14} /> {dict.backToGroups}
+          </button>
+        </div>
+
         <nav className="px-4 space-y-2">
-          {tabsConfig.map(tab => (
+          {visibleTabs.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${activeTab === tab.id ? 'bg-[#630100] text-white shadow-lg shadow-[#630100]/30' : 'text-gray-400 hover:bg-gray-50'}`}>
               {tab.icon} {tab.label}
             </button>
@@ -205,14 +329,14 @@ export default function Dashboard() {
           
           <header className="h-20 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 flex items-center justify-between sticky top-0 z-20 shrink-0">
             <div className="flex items-center gap-3">
-              {/* Botão voltar — só visível em mobile (xl tem sidebar) */}
-              <Link
-                href={`/${locale}/dashboard`}
+              {/* Botão voltar às áreas — só visível em mobile (xl tem sidebar) */}
+              <button
+                onClick={() => setGroup(null)}
                 className="xl:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-gray-50 text-gray-400 hover:bg-[#630100] hover:text-white transition-all"
-                aria-label={dict.backToEvents}
+                aria-label={dict.backToGroups}
               >
-                <LayoutGrid size={16} />
-              </Link>
+                <ArrowLeft size={16} />
+              </button>
               <div className="flex flex-col justify-center">
                 <h1 className="hidden sm:block text-lg font-bold text-gray-800 font-montserrat leading-tight">
                   {activeTab === 'account' ? dict.accountLabel : tabsConfig.find(t => t.id === activeTab)?.label}
@@ -322,7 +446,7 @@ export default function Dashboard() {
 
       {!showMobilePreview && (
         <nav className="xl:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-20 flex justify-around items-center z-[100] px-4 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
-          {[...tabsConfig, { id: 'account', label: dict.accountLabel, icon: <UserCircle size={20} /> }].map(tab => (
+          {[...visibleTabs, { id: 'account', label: dict.accountLabel, icon: <UserCircle size={20} /> }].map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id as DashboardTab)} className={`flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'text-[#630100]' : 'text-gray-300'}`}>
               {tab.icon}
               <span className="text-[10px] font-bold tracking-tight text-center leading-tight w-20">{tab.label}</span>

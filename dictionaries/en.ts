@@ -232,6 +232,24 @@ const en = {
       "guests": "List",
       "seating": "Tables",
       "moments": "Moments & Guestbook"
+    },
+    "hubTitle": "What would you like to manage?",
+    "hubSubtitle": "Choose an area to get started",
+    "backToGroups": "Areas",
+    "enterGroup": "Manage",
+    "groups": {
+      "invite": {
+        "title": "Wedding invitation",
+        "desc": "Template, identity and invitation content"
+      },
+      "guests": {
+        "title": "Guests & tables",
+        "desc": "Guest list, RSVP and seating plan"
+      },
+      "moments": {
+        "title": "Moments & Guestbook",
+        "desc": "Photo gallery and guest messages"
+      }
     }
   },
   "NovoConvitePage": {
