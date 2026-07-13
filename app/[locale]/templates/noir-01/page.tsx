@@ -69,7 +69,7 @@ export default function Noir01Template({ data }: { data?: any }) {
               variants={fadeUp}
               className={`${cormorant.className} text-5xl sm:text-6xl md:text-7xl font-light tracking-[0.15em] uppercase leading-tight`}
             >
-              {bride.split(" ").map((word, i) => (
+              {bride.split(" ").map((word: string, i: number) => (
                 <span key={i} className="block">{word}</span>
               ))}
             </motion.h1>
@@ -86,7 +86,7 @@ export default function Noir01Template({ data }: { data?: any }) {
               variants={fadeUp}
               className={`${cormorant.className} text-5xl sm:text-6xl md:text-7xl font-light tracking-[0.15em] uppercase leading-tight`}
             >
-              {groom.split(" ").map((word, i) => (
+              {groom.split(" ").map((word: string, i: number) => (
                 <span key={i} className="block">{word}</span>
               ))}
             </motion.h1>
