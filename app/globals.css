@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
+/* Fonte decorativa "Beloved" (paga) para os nomes dos noivos */
+@font-face {
+  font-family: 'Beloved';
+  src: url('/fonts/beloved_lovely-webfont.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-serif: var(--font-cormorant);
   --font-sans: var(--font-jost);
+  --font-beloved: 'Beloved', cursive;
 
   /* Define a animação de zoom lento para a imagem principal */
   @keyframes slow-zoom {
