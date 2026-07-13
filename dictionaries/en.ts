@@ -229,6 +229,7 @@ const en = {
     "tabs": {
       "design": "Models & identity",
       "content": "Invitation content",
+      "savethedate": "Save the Date",
       "guests": "List",
       "seating": "Tables",
       "moments": "Moments & Guestbook"
@@ -251,6 +252,22 @@ const en = {
         "desc": "Photo gallery and guest messages"
       }
     }
+  },
+  "SaveTheDateModule": {
+    "title": "Save the Date",
+    "subtitle": "Generate an elegant card to announce your date to guests.",
+    "photoLabel": "Photo",
+    "photoHint": "A vertical photo works best for the card format.",
+    "uploadBtn": "Upload photo",
+    "changePhoto": "Change photo",
+    "uploading": "Uploading...",
+    "cityLabel": "City / Location",
+    "cityPlaceholder": "e.g. Lisbon, PT",
+    "autoNote": "Names and date are filled automatically from the event details.",
+    "downloadBtn": "Download PDF",
+    "generating": "Generating...",
+    "previewLabel": "Preview",
+    "photoEmpty": "YOUR PHOTO"
   },
   "NovoConvitePage": {
     "backBtn": "Back to Hub",

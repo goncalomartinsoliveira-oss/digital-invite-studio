@@ -16,7 +16,8 @@ import {
   LayoutGrid,
   Mail,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  CalendarHeart
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -24,7 +25,8 @@ import GuestsModule from "@/components/dashboard/GuestsModule";
 import ContentModule from "@/components/dashboard/ContentModule";
 import SeatingModule from "@/components/dashboard/SeatingModule";
 import AccountModule from "@/components/dashboard/AccountModule";
-import MomentsModule from "@/components/dashboard/MomentsModule"; 
+import MomentsModule from "@/components/dashboard/MomentsModule";
+import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -35,12 +37,12 @@ const dictionaries = {
   en: en
 };
 
-type DashboardTab = 'design' | 'content' | 'guests' | 'seating' | 'moments' | 'account';
+type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'moments' | 'account';
 // Áreas do hub: cada uma agrupa um subconjunto dos separadores existentes.
 type EventGroup = 'invite' | 'guests' | 'moments' | 'account' | null;
 
 const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
-  invite: ['design', 'content'],
+  invite: ['design', 'content', 'savethedate'],
   guests: ['guests', 'seating'],
   moments: ['moments'],
   account: [],
@@ -149,12 +151,13 @@ export default function Dashboard() {
   const tabsConfig = [
     { id: 'design', label: dict.tabs.design, icon: <PenTool size={20} /> },
     { id: 'content', label: dict.tabs.content, icon: <FileText size={20} /> },
+    { id: 'savethedate', label: dict.tabs.savethedate, icon: <CalendarHeart size={20} /> },
     { id: 'guests', label: dict.tabs.guests, icon: <Users size={20} /> },
     { id: 'seating', label: dict.tabs.seating, icon: <Grid size={20} /> },
     { id: 'moments', label: dict.tabs.moments, icon: <Camera size={20} /> } 
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
-  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'moments' || activeTab === 'account';
+  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'moments' || activeTab === 'account' || activeTab === 'savethedate';
 
   const canEdit = userRole === "owner" || userRole === "editor";
 
@@ -398,6 +401,7 @@ export default function Dashboard() {
             <div className="max-w-5xl mx-auto">
               {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />}
               {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />}
+              {activeTab === 'savethedate' && <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />}
               {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />}
               {activeTab === 'seating' && <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />}
               {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} dict={dictionaries[locale]?.MomentsModule || dictionaries.pt.MomentsModule} />}

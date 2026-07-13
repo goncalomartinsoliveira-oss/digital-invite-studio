@@ -229,6 +229,7 @@ const pt = {
     "tabs": {
       "design": "Modelos e identidade",
       "content": "Conteúdo do convite",
+      "savethedate": "Save the Date",
       "guests": "Lista",
       "seating": "Mesas",
       "moments": "Momentos e Guestbook"
@@ -251,6 +252,22 @@ const pt = {
         "desc": "Galeria de fotos e mensagens dos convidados"
       }
     }
+  },
+  "SaveTheDateModule": {
+    "title": "Save the Date",
+    "subtitle": "Gere um cartão elegante para anunciar a data aos vossos convidados.",
+    "photoLabel": "Fotografia",
+    "photoHint": "Uma foto vertical resulta melhor no formato do cartão.",
+    "uploadBtn": "Carregar foto",
+    "changePhoto": "Trocar foto",
+    "uploading": "A carregar...",
+    "cityLabel": "Cidade / Local",
+    "cityPlaceholder": "Ex: Lisboa, PT",
+    "autoNote": "Os nomes e a data são preenchidos automaticamente a partir dos dados do evento.",
+    "downloadBtn": "Descarregar PDF",
+    "generating": "A gerar...",
+    "previewLabel": "Pré-visualização",
+    "photoEmpty": "A VOSSA FOTO"
   },
   "NovoConvitePage": {
     "backBtn": "Voltar ao Hub",
