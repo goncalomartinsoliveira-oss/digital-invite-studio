@@ -3,12 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table } from "lucide-react";
+import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS } from "@/lib/brands";
 import AdminManagementView from "@/components/dashboard/AdminManagementView";
 import MembersManagementView from "@/components/dashboard/MembersManagementView";
+import BrandsManagementView from "@/components/dashboard/BrandsManagementView";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -34,7 +35,8 @@ export default function DashboardHub() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [adminInvites, setAdminInvites] = useState<any[]>([]);
   const [guestCounts, setGuestCounts] = useState<Record<string, { total: number; confirmed: number }>>({});
-  const [viewMode, setViewMode] = useState<'events' | 'admin' | 'members'>('events');
+  const [dbBrands, setDbBrands] = useState<{ id: string; name: string }[]>([]);
+  const [viewMode, setViewMode] = useState<'events' | 'admin' | 'members' | 'brands'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -91,6 +93,12 @@ export default function DashboardHub() {
         .maybeSingle();
       const superAdmin = !!sa;
       setIsSuperAdmin(superAdmin);
+
+      // Marcas de parceiros na BD (para o super-admin gerir / preencher seletores).
+      if (superAdmin && brand.id === "dis") {
+        const { data: bd } = await supabase.from("brands").select("id, name");
+        setDbBrands(((bd as any[]) || []).map(b => ({ id: b.id, name: b.name })));
+      }
 
       // Eventos próprios e partilhados — sempre isolados pela marca ativa.
       const [myData, collabs] = await Promise.all([
@@ -190,9 +198,11 @@ export default function DashboardHub() {
   const canManage = isSuperAdmin || isAgencyMember;
   const showBrandColumn = isSuperAdmin && brand.id === "dis";
 
-  // Gestão de membros: função central → só no site master (DIS) e a super-admins.
-  const manageableBrands = Object.values(BRANDS).map(b => ({ id: b.id, name: b.name }));
+  // Gestão de membros/marcas: função central → só no site master (DIS) e a super-admins.
+  const codeBrandList = Object.values(BRANDS).map(b => ({ id: b.id, name: b.name }));
+  const manageableBrands = [...codeBrandList, ...dbBrands.filter(d => !BRANDS[d.id])];
   const canManageMembers = isSuperAdmin && brand.id === "dis";
+  const canManageBrands = isSuperAdmin && brand.id === "dis";
 
   return (
     <div className="min-h-screen bg-cream font-montserrat flex flex-col">
@@ -239,6 +249,14 @@ export default function DashboardHub() {
                   <Users size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Members' : 'Membros'}</span>
                 </button>
               )}
+              {canManageBrands && (
+                <button
+                  onClick={() => setViewMode('brands')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'brands' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+                >
+                  <Building2 size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Brands' : 'Marcas'}</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -274,6 +292,8 @@ export default function DashboardHub() {
             currentEmail={userEmail}
             locale={locale}
           />
+        ) : viewMode === 'brands' && canManageBrands ? (
+          <BrandsManagementView locale={locale} />
         ) : (
         <>
         {/* SECÇÃO 1: OS MEUS PROJETOS */}
