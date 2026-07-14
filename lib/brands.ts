@@ -13,6 +13,7 @@ export type Brand = {
   poweredBy: boolean;      // mostrar "powered by Digital Invite Studio" (co-brand)
   contactUrl?: string;     // contacto externo do parceiro; se ausente, usa /contact interno
   websiteUrl?: string;     // site principal do parceiro
+  favicon?: string;        // ícone do separador do browser; se ausente, usa o do DIS
 };
 
 export const BRANDS: Record<string, Brand> = {
@@ -37,6 +38,7 @@ export const BRANDS: Record<string, Brand> = {
     poweredBy: true,
     contactUrl: "https://amazingmoon.pt/contacto",
     websiteUrl: "https://amazingmoon.pt",
+    favicon: "/brands/amazingmoon/favicon.png",
   },
 };
 

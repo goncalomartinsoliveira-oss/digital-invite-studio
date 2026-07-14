@@ -35,13 +35,15 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: brand.id === "dis" ? "Digital Invite Studio | Luxury Invitations" : brand.name,
     description: brand.tagline,
-    icons: {
-      icon: [
-        { url: "/favicon.ico", sizes: "any" },
-        { url: "/favicon.svg", type: "image/svg+xml" },
-      ],
-      apple: "/apple-touch-icon.png",
-    },
+    icons: brand.favicon
+      ? { icon: brand.favicon, apple: brand.favicon }
+      : {
+          icon: [
+            { url: "/favicon.ico", sizes: "any" },
+            { url: "/favicon.svg", type: "image/svg+xml" },
+          ],
+          apple: "/apple-touch-icon.png",
+        },
   };
 }
 

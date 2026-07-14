@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás a partir de app/[locale]/dashboard/new-invite/)
 import pt from "../../../../dictionaries/pt";
@@ -18,6 +19,7 @@ export default function NovoConvitePage() {
   const router = useRouter();
   const params = useParams();
   
+  const brand = useBrand();
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [baseUrl, setBaseUrl] = useState("");
@@ -84,7 +86,8 @@ export default function NovoConvitePage() {
         slug: cleanSlug,
         groom_name: groomName,
         bride_name: brideName,
-        event_date: eventDate
+        event_date: eventDate,
+        brand_id: brand.id
       }]);
 
       if (error) throw error;

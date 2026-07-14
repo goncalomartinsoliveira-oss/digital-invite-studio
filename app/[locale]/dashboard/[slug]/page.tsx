@@ -92,7 +92,19 @@ export default function Dashboard() {
         .eq("user_email", email)
         .maybeSingle();
 
-      if (!isOwner && !collab) {
+      // Acesso de agência: um membro da marca do evento pode geri-lo.
+      let agencyRole: "owner" | "editor" | null = null;
+      if (!isOwner && !collab && invite.brand_id) {
+        const { data: member } = await supabase
+          .from("brand_members")
+          .select("role")
+          .eq("brand_id", invite.brand_id)
+          .eq("user_email", email)
+          .maybeSingle();
+        if (member) agencyRole = member.role === "admin" ? "owner" : "editor";
+      }
+
+      if (!isOwner && !collab && !agencyRole) {
         console.error("Acesso Negado.");
         router.push(`/${params.locale}/dashboard`);
         return;
@@ -102,6 +114,8 @@ export default function Dashboard() {
         setUserRole("owner");
       } else if (collab) {
         setUserRole(collab.role as "editor" | "viewer");
+      } else if (agencyRole) {
+        setUserRole(agencyRole);
       }
 
       setFormData({

@@ -25,6 +25,8 @@ export default function DashboardHub() {
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
   const brand = useBrand();
+  const [agencyInvites, setAgencyInvites] = useState<any[]>([]);
+  const [isAgencyMember, setIsAgencyMember] = useState(false);
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -62,8 +64,19 @@ export default function DashboardHub() {
       const email = session.user.email || "";
       setUserEmail(email);
 
+      // É membro da agência (marca ativa)? → vê todos os eventos dessa marca.
+      const { data: membership } = await supabase
+        .from("brand_members")
+        .select("role")
+        .eq("brand_id", brand.id)
+        .eq("user_email", email)
+        .maybeSingle();
+      const agencyMember = !!membership;
+      setIsAgencyMember(agencyMember);
+
+      // Eventos próprios e partilhados — sempre isolados pela marca ativa.
       const [myData, collabs] = await Promise.all([
-        supabase.from("invitations").select("*").eq("user_email", email),
+        supabase.from("invitations").select("*").eq("user_email", email).eq("brand_id", brand.id),
         supabase.from("invitation_collaborators").select("invitation_id").eq("user_email", email)
       ]);
 
@@ -75,23 +88,36 @@ export default function DashboardHub() {
         const { data: sharedData } = await supabase
           .from("invitations")
           .select("*")
-          .in("id", sharedIds);
-        
+          .in("id", sharedIds)
+          .eq("brand_id", brand.id);
+
         sharedInvitesFound = sharedData || [];
+      }
+
+      // Membro da agência → carrega todos os eventos da marca (portfólio da agência).
+      let agencyInvitesFound: any[] = [];
+      if (agencyMember) {
+        const { data: agencyData } = await supabase
+          .from("invitations")
+          .select("*")
+          .eq("brand_id", brand.id);
+        agencyInvitesFound = agencyData || [];
       }
 
       setInvites(myInvitesFound);
       setSharedInvites(sharedInvitesFound);
+      setAgencyInvites(agencyInvitesFound);
 
-      if (myInvitesFound.length === 0 && sharedInvitesFound.length === 0) {
+      const primaryCount = agencyMember ? agencyInvitesFound.length : myInvitesFound.length;
+      if (primaryCount === 0 && sharedInvitesFound.length === 0) {
         router.push(`/${params.locale}/dashboard/new-invite`);
       } else {
         setLoading(false);
       }
     }
-    
+
     loadHub();
-  }, [params.locale, router]);
+  }, [params.locale, router, brand.id]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -106,6 +132,15 @@ export default function DashboardHub() {
       </div>
     </div>
   );
+
+  // Membro de agência vê o portfólio da marca; caso contrário, os seus eventos.
+  const primaryInvites = isAgencyMember ? agencyInvites : invites;
+  const primaryHeading = isAgencyMember
+    ? (locale === 'en' ? `${brand.name} events` : `Eventos · ${brand.name}`)
+    : dict.title;
+  const primaryDesc = isAgencyMember
+    ? (locale === 'en' ? 'All your agency events in one place.' : 'Todos os eventos da agência num só lugar.')
+    : dict.desc;
 
   return (
     <div className="min-h-screen bg-cream font-montserrat flex flex-col">
@@ -149,10 +184,10 @@ export default function DashboardHub() {
         {/* SECÇÃO 1: OS MEUS PROJETOS */}
         <div className="mb-12">
           <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-3">
-            {dict.title}
+            {primaryHeading}
           </h1>
           <p className="text-gray-500 text-sm max-w-xl leading-relaxed">
-            {dict.desc}
+            {primaryDesc}
           </p>
         </div>
 
@@ -171,8 +206,8 @@ export default function DashboardHub() {
             <p className="text-xs text-gray-400 font-medium">{dict.newEvent.subtitle}</p>
           </motion.div>
 
-          {/* LISTA DE EVENTOS EXISTENTES (DONO) */}
-          {invites.map((invite) => (
+          {/* LISTA DE EVENTOS (próprios ou da agência) */}
+          {primaryInvites.map((invite) => (
             <motion.div 
               key={invite.id}
               whileHover={{ scale: 1.02, y: -5 }}
