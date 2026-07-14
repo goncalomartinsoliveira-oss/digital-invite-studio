@@ -125,10 +125,13 @@ export default function DashboardHub() {
       // Âmbito do painel de gestão: super-admin no DIS vê tudo; senão, a marca.
       let adminScope: any[] = [];
       if (superAdmin && brand.id === "dis") {
+        // Super-admin no domínio DIS → visão global (todas as marcas).
         const { data: allData } = await supabase.from("invitations").select("*");
         adminScope = allData || [];
-      } else if (agencyMember) {
-        adminScope = agencyInvitesFound;
+      } else if (superAdmin || agencyMember) {
+        // Super-admin num domínio de parceiro, ou membro de agência → eventos da marca ativa.
+        const { data: brandData } = await supabase.from("invitations").select("*").eq("brand_id", brand.id);
+        adminScope = brandData || [];
       }
       setAdminInvites(adminScope);
 
