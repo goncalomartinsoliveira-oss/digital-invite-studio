@@ -32,9 +32,15 @@ export default function Footer({ brand }: { brand?: Brand }) {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-1">
-            <Link href={`/${locale}`} className="font-serif text-2xl text-brand block mb-4">
-              {brand?.name ?? "Digital Invite Studio"}
-            </Link>
+            {brand?.websiteUrl ? (
+              <a href={brand.websiteUrl} target="_blank" rel="noopener noreferrer" className="font-serif text-2xl text-brand block mb-4">
+                {brand.name}
+              </a>
+            ) : (
+              <Link href={`/${locale}`} className="font-serif text-2xl text-brand block mb-4">
+                {brand?.name ?? "Digital Invite Studio"}
+              </Link>
+            )}
             <p className="text-sm text-gray-500">
               {dict.tagline}
             </p>

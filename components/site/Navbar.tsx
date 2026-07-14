@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, ArrowLeft } from "lucide-react";
 
 import pt from '../../dictionaries/pt';
 import en from '../../dictionaries/en';
@@ -46,6 +46,10 @@ export default function Navbar({ brand }: { brand?: Brand }) {
 
   const localeLabels: Record<Locale, string> = { pt: 'PT', en: 'EN' };
 
+  // Link de volta ao site principal do parceiro (ex.: amazingmoon.pt)
+  const mainSite = brand?.websiteUrl;
+  const mainSiteLabel = mainSite?.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
   return (
     <nav className="fixed w-full z-50 bg-cream/90 backdrop-blur-md border-b border-gold-soft/50 transition-all duration-300 font-montserrat">
       <div className="max-w-7xl mx-auto px-6">
@@ -80,6 +84,17 @@ export default function Navbar({ brand }: { brand?: Brand }) {
 
           {/* LADO DIREITO */}
           <div className="hidden md:flex items-center gap-6">
+
+            {/* VOLTAR AO SITE PRINCIPAL (parceiros) */}
+            {mainSite && (
+              <a
+                href={mainSite}
+                className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/60 hover:text-brand transition-colors"
+              >
+                <ArrowLeft size={13} />
+                {mainSiteLabel}
+              </a>
+            )}
 
             {/* SELETOR DE LÍNGUA */}
             <div className="relative">
@@ -186,6 +201,11 @@ export default function Navbar({ brand }: { brand?: Brand }) {
           </div>
 
           <div className="pt-6 border-t border-gold-soft space-y-6">
+            {mainSite && (
+              <a href={mainSite} onClick={() => setIsOpen(false)} className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.2em] text-ink/70">
+                <ArrowLeft size={15} /> {mainSiteLabel}
+              </a>
+            )}
             <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-brand">{dict.login}</Link>
             <Link href={`/${locale}/pricing`} onClick={() => setIsOpen(false)} className="block bg-brand text-gold-soft text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
               {dict.startNow}

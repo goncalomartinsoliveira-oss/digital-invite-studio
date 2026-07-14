@@ -35,7 +35,7 @@ export const BRANDS: Record<string, Brand> = {
     tagline: "Design que transforma momentos em memórias eternas.",
     domains: ["digital.amazingmoon.pt"],
     poweredBy: true,
-    contactUrl: "https://amazingmoon.pt/contactos",
+    contactUrl: "https://amazingmoon.pt/contacto",
     websiteUrl: "https://amazingmoon.pt",
   },
 };
