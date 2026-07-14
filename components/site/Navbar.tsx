@@ -27,9 +27,10 @@ export default function Navbar({ brand }: { brand?: Brand }) {
   const dict = dictionaries[locale]?.Navbar || dictionaries.pt.Navbar;
 
   const navLinks = [
-    { name: dict.features, href: `/${locale}/features` },
-    { name: dict.pricing, href: `/${locale}/pricing` },
-    { name: dict.contact, href: `/${locale}/contact` },
+    { name: dict.features, href: `/${locale}/features`, external: false },
+    { name: dict.pricing, href: `/${locale}/pricing`, external: false },
+    // Contacto: parceiros (com contactUrl) remetem para o seu próprio site
+    { name: dict.contact, href: brand?.contactUrl ?? `/${locale}/contact`, external: !!brand?.contactUrl },
   ];
 
   const switchLocale = (newLocale: Locale) => {
@@ -61,16 +62,20 @@ export default function Navbar({ brand }: { brand?: Brand }) {
 
           {/* LINKS CENTRAIS */}
           <div className="hidden md:flex items-center space-x-12">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-[11px] font-semibold uppercase tracking-[0.25em] text-ink/70 hover:text-brand transition-colors relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-brand transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const cls = "text-[11px] font-semibold uppercase tracking-[0.25em] text-ink/70 hover:text-brand transition-colors relative group";
+              const inner = (
+                <>
+                  {link.name}
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-brand transition-all duration-300 group-hover:w-full"></span>
+                </>
+              );
+              return link.external ? (
+                <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" className={cls}>{inner}</a>
+              ) : (
+                <Link key={link.name} href={link.href} className={cls}>{inner}</Link>
+              );
+            })}
           </div>
 
           {/* LADO DIREITO */}
@@ -136,14 +141,27 @@ export default function Navbar({ brand }: { brand?: Brand }) {
       {isOpen && (
         <div className="md:hidden bg-cream border-t border-gold-soft absolute w-full shadow-2xl py-12 px-8 space-y-8 animate-in slide-in-from-top duration-300">
           {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-ink"
-            >
-              {link.name}
-            </Link>
+            link.external ? (
+              <a
+                key={link.name}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsOpen(false)}
+                className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-ink"
+              >
+                {link.name}
+              </a>
+            ) : (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-ink"
+              >
+                {link.name}
+              </Link>
+            )
           ))}
 
           {/* SELETOR DE LÍNGUA MOBILE */}

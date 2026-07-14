@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import { useBrand } from "@/components/site/BrandProvider";
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import {
@@ -22,6 +23,7 @@ const premiumGradient = "bg-gradient-to-tr from-brand via-[#8B0000] to-[#330100]
 
 export default function IsolatedGuestbookPage() {
   const { slug, locale } = useParams();
+  const brand = useBrand();
   const currentLocale = (locale as 'en' | 'pt') || 'pt';
   const dict = dictionaries[currentLocale]?.IsolatedGuestbookPage || dictionaries.pt.IsolatedGuestbookPage;
 
@@ -227,7 +229,7 @@ export default function IsolatedGuestbookPage() {
             <footer className="mt-16 pb-8 flex flex-col items-center w-full">
               <Link href={`/${locale}`} className="group flex flex-col items-center gap-2 opacity-40 hover:opacity-100 transition-all">
                 <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-gray-400">{dict.footerText}</span>
-                <img src="/logo-dis.svg" alt="Digital Invite Studio" className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all" />
+                <img src={brand.logo} alt={brand.logoAlt} className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all" />
               </Link>
             </footer>
           </motion.div>

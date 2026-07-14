@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import { useBrand } from "@/components/site/BrandProvider";
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import {
@@ -23,6 +24,7 @@ const premiumGradient = "bg-gradient-to-tr from-brand via-[#8B0000] to-[#330100]
 
 export default function GuestMomentsPage() {
   const { slug, locale } = useParams();
+  const brand = useBrand();
   
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const currentLocale = (locale as 'en' | 'pt') || 'pt';
@@ -236,7 +238,7 @@ export default function GuestMomentsPage() {
           ))}
         </div>
         {fotos.length > visibleCount && <div className="flex justify-center mt-8"><button onClick={() => setVisibleCount(v => v + 12)} className="flex items-center gap-2 px-8 py-3 bg-cream border border-gold-soft rounded-xl text-[10px] font-bold uppercase tracking-widest text-brand"><ChevronDown size={14}/> {dict.loadMore}</button></div>}
-        <footer className="mt-20 flex flex-col items-center justify-center border-t border-gray-50 pt-10 pb-20"><Link href={`/${locale}`} className="group flex flex-col items-center gap-2 opacity-40 hover:opacity-100 transition-all"><span className="text-[8px] font-bold uppercase tracking-[0.4em] text-gray-400">{dict.developedBy}</span><img src="/logo-dis.svg" alt="Digital Invite Studio" className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all" /></Link></footer>
+        <footer className="mt-20 flex flex-col items-center justify-center border-t border-gray-50 pt-10 pb-20"><Link href={`/${locale}`} className="group flex flex-col items-center gap-2 opacity-40 hover:opacity-100 transition-all"><span className="text-[8px] font-bold uppercase tracking-[0.4em] text-gray-400">{dict.developedBy}</span><img src={brand.logo} alt={brand.logoAlt} className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all" /></Link></footer>
       </div>
 
       {/* --- MENU EXPANSÍVEL GUESTBOOK PRIVADO --- */}

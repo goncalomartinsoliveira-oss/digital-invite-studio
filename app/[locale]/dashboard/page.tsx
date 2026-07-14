@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -23,6 +24,7 @@ export default function DashboardHub() {
   const [sharedInvites, setSharedInvites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
+  const brand = useBrand();
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -111,8 +113,11 @@ export default function DashboardHub() {
       {/* HEADER MINIMALISTA */}
       <header className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
         <div className="flex items-center gap-4">
-          <Link href={`/${locale}`}>
-            <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-32 sm:w-40 h-auto hover:opacity-80 transition-opacity" />
+          <Link href={`/${locale}`} className="flex flex-col">
+            <img src={brand.logo} alt={brand.logoAlt} className="w-32 sm:w-40 h-auto hover:opacity-80 transition-opacity" />
+            {brand.poweredBy && (
+              <span className="text-[7px] font-semibold uppercase tracking-[0.25em] text-gray-300 mt-0.5">powered by Digital Invite Studio</span>
+            )}
           </Link>
           <Link
             href={`/${locale}`}

@@ -27,6 +27,7 @@ import SeatingModule from "@/components/dashboard/SeatingModule";
 import AccountModule from "@/components/dashboard/AccountModule";
 import MomentsModule from "@/components/dashboard/MomentsModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
+import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -65,6 +66,7 @@ export default function Dashboard() {
   const [iframeKey, setIframeKey] = useState(0);
 
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
+  const brand = useBrand();
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -267,7 +269,10 @@ export default function Dashboard() {
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r border-gray-100 hidden xl:flex flex-col z-30 shadow-sm shrink-0">
         <div className="pt-10 pb-6 px-6 flex flex-col items-center gap-4 border-b border-gray-50 mb-4">
-          <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
+          <img src={brand.logo} alt={brand.logoAlt} className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
+          {brand.poweredBy && (
+            <span className="text-[7px] font-semibold uppercase tracking-[0.25em] text-gray-300 mt-1">powered by Digital Invite Studio</span>
+          )}
           <Link
             href={`/${locale}/dashboard`}
             className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand transition-colors"

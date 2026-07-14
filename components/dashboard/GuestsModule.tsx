@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo, useRef, useEffect } from "react";
+import { useBrand } from "@/components/site/BrandProvider";
 import { supabase } from "@/lib/supabase";
 import { Trash2, Edit2, UserPlus, Users, FileText, Download, FileSpreadsheet, Upload, Loader2, ChevronDown, CheckCircle2, X } from "lucide-react";
 import jsPDF from "jspdf";
@@ -107,6 +108,7 @@ const suggestGender = (name: string) => {
 };
 
 export default function GuestsModule({ guests, setGuests, invitationId, groomName, brideName, canEdit, dict }: GuestsModuleProps) {
+  const brand = useBrand();
   const [groupTag, setGroupTag] = useState("");
   const [newMembers, setNewMembers] = useState([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "", notes: "" }]);
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
@@ -236,7 +238,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     let contentY = 32;
     try {
       const logoImg = new window.Image();
-      logoImg.src = "/logo-dis.png";
+      logoImg.src = brand.logoRaster;
       await new Promise((resolve, reject) => { logoImg.onload = resolve; logoImg.onerror = reject; });
       const logoWidth = 40;
       const logoHeight = logoWidth * (logoImg.height / logoImg.width);

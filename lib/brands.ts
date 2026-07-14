@@ -3,12 +3,16 @@
 // por uma tabela `brands` no Supabase — a forma (Brand) mantém-se igual.
 
 export type Brand = {
-  id: string;          // usado no atributo data-brand e nos overrides CSS
-  name: string;        // nome apresentável da marca
-  logo: string;        // caminho do logótipo em /public
+  id: string;              // usado no atributo data-brand e nos overrides CSS
+  name: string;            // nome apresentável da marca
+  logo: string;            // logótipo para a web (pode ser .svg)
+  logoRaster: string;      // logótipo .png (para canvas/PDF, que não lê .svg)
   logoAlt: string;
   tagline: string;
-  domains: string[];   // hostnames que mapeiam para esta marca
+  domains: string[];       // hostnames que mapeiam para esta marca
+  poweredBy: boolean;      // mostrar "powered by Digital Invite Studio" (co-brand)
+  contactUrl?: string;     // contacto externo do parceiro; se ausente, usa /contact interno
+  websiteUrl?: string;     // site principal do parceiro
 };
 
 export const BRANDS: Record<string, Brand> = {
@@ -16,17 +20,23 @@ export const BRANDS: Record<string, Brand> = {
     id: "dis",
     name: "Digital Invite Studio",
     logo: "/logo-dis.svg",
+    logoRaster: "/logo-dis.png",
     logoAlt: "Digital Invite Studio",
     tagline: "Convites digitais sofisticados para momentos inesquecíveis.",
     domains: ["digitalinvitestudio.com", "www.digitalinvitestudio.com"],
+    poweredBy: false,
   },
   amazingmoon: {
     id: "amazingmoon",
     name: "Amazing Moon",
     logo: "/brands/amazingmoon/logo.png",
+    logoRaster: "/brands/amazingmoon/logo.png",
     logoAlt: "Amazing Moon",
     tagline: "Design que transforma momentos em memórias eternas.",
     domains: ["digital.amazingmoon.pt"],
+    poweredBy: true,
+    contactUrl: "https://amazingmoon.pt/contactos",
+    websiteUrl: "https://amazingmoon.pt",
   },
 };
 

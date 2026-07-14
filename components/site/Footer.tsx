@@ -49,7 +49,13 @@ export default function Footer({ brand }: { brand?: Brand }) {
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-900 mb-6">{dict.company}</h4>
             <ul className="space-y-4">
-              <li><Link href={`/${locale}/contact`} className="text-sm text-gray-500 hover:text-brand">{dict.contact}</Link></li>
+              <li>
+                {brand?.contactUrl ? (
+                  <a href={brand.contactUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-brand">{dict.contact}</a>
+                ) : (
+                  <Link href={`/${locale}/contact`} className="text-sm text-gray-500 hover:text-brand">{dict.contact}</Link>
+                )}
+              </li>
             </ul>
           </div>
           <div>

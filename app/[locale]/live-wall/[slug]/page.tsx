@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useBrand } from "@/components/site/BrandProvider";
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
@@ -17,6 +18,7 @@ const dictionaries = {
 
 export default function LiveWallPage() {
   const { slug, locale } = useParams();
+  const brand = useBrand();
   
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const currentLocale = (locale as 'en' | 'pt') || 'pt';
@@ -198,7 +200,7 @@ export default function LiveWallPage() {
       {/* ASSINATURA DIS (CANTO INFERIOR DIREITO) */}
       <div className="absolute bottom-10 right-10 z-[110] flex flex-col items-end opacity-70 hover:opacity-100 transition-opacity duration-500">
         <span className="text-[8px] text-white/50 font-bold uppercase tracking-[0.4em] mb-2">{dict.poweredBy}</span>
-        <img src="/logo-dis.svg" alt="Digital Invite Studio" className="h-6 w-auto invert" />
+        <img src={brand.logo} alt={brand.logoAlt} className="h-6 w-auto invert" />
       </div>
 
     </div>

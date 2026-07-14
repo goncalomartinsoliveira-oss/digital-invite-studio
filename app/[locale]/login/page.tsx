@@ -5,6 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 Níveis de recuo para app/[locale]/login/page.tsx)
 import pt from "../../../dictionaries/pt";
@@ -22,6 +23,7 @@ export default function LoginPage() {
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
   const dict = dictionaries[locale]?.LoginPage || dictionaries.pt.LoginPage;
+  const brand = useBrand();
 
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
@@ -90,8 +92,11 @@ export default function LoginPage() {
         {/* LOGOTIPO CLICÁVEL (DESKTOP) */}
         <div className="relative z-10">
           <Link href={`/${params.locale}`}>
-            <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-48 h-auto filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity cursor-pointer" />
+            <img src={brand.logo} alt={brand.logoAlt} className="w-48 h-auto filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity cursor-pointer" />
           </Link>
+          {brand.poweredBy && (
+            <p className="mt-3 text-[8px] uppercase tracking-[0.25em] text-gold-soft/50 font-bold">powered by Digital Invite Studio</p>
+          )}
         </div>
 
         <div className="relative z-10 text-gold-soft space-y-6 max-w-md">
@@ -109,7 +114,7 @@ export default function LoginPage() {
           {/* LOGOTIPO CLICÁVEL (MOBILE) */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href={`/${params.locale}`}>
-              <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-40 h-auto cursor-pointer hover:scale-105 transition-transform" />
+              <img src={brand.logo} alt={brand.logoAlt} className="w-40 h-auto cursor-pointer hover:scale-105 transition-transform" />
             </Link>
           </div>
 

@@ -4,6 +4,7 @@ import { Cormorant_Garamond, Cinzel, Great_Vibes } from "next/font/google";
 import { useState, useEffect } from "react";
 import { MapPin, Clock, ChevronDown } from "lucide-react";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
+import { useBrand } from "../../../../components/site/BrandProvider";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -84,6 +85,7 @@ export default function Minimal01Template({
   data: any;
   params?: any;
 }) {
+  const brand = useBrand();
   const dbContent = data?.content || {};
   const vis = dbContent.sections_visibility || {};
   const c = dbContent.content || {};
@@ -931,7 +933,7 @@ export default function Minimal01Template({
                   className={`${cinzel.className} text-[7px] tracking-[0.45em] uppercase`}
                   style={{ color: "rgba(247,244,238,0.18)" }}
                 >
-                  Digital Invite Studio
+                  {brand.name}
                 </span>
               </motion.div>
             </motion.div>

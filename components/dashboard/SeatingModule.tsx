@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
+import { useBrand } from "@/components/site/BrandProvider";
 import { 
   Plus, Trash2, UserMinus, Loader2, Map as MapIcon, List, Search, 
   Users, QrCode, X, Copy, Check, ExternalLink, Download, 
@@ -59,6 +60,7 @@ interface SeatingModuleProps {
 }
 
 export default function SeatingModule({ invitationId, canEdit, dict }: SeatingModuleProps) {
+  const brand = useBrand();
   const params = useParams();
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -263,7 +265,7 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
       // 1. Cabeçalho Premium com Logo Mantendo Proporção (Sem Esticar)
       try {
         const logoImg = new window.Image();
-        logoImg.src = "/logo-dis.png";
+        logoImg.src = brand.logoRaster;
         
         await new Promise((resolve, reject) => {
           logoImg.onload = resolve;

@@ -3,6 +3,7 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Phone, Camera, Send } from "lucide-react";
+import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS COM OS 3 NÍVEIS CORRETOS PARA TRÁS
 import pt from "../../../dictionaries/pt";
@@ -21,6 +22,7 @@ export default function ContactPage() {
   
   // 3. SELECIONAR OS TEXTOS CORRETOS
   const dict = dictionaries[locale]?.ContactPage || dictionaries.pt.ContactPage;
+  const brand = useBrand();
 
   return (
     <div className="min-h-screen bg-cream pt-32 pb-20 font-sans">
@@ -34,7 +36,7 @@ export default function ContactPage() {
             className="text-5xl md:text-7xl font-serif text-ink mb-6"
           >
             {dict.title1} <br />
-            <span className="italic text-[#722F37]">{dict.title2}</span>
+            <span className="italic text-brand">{dict.title2}</span>
           </motion.h1>
           <p className="text-gray-500 text-lg max-w-xl">
             {dict.desc}
@@ -43,8 +45,9 @@ export default function ContactPage() {
 
         <div className="grid lg:grid-cols-2 gap-20">
           
-          {/* Informações de Contacto */}
-          <motion.div 
+          {/* Informações de Contacto (ocultas para marcas parceiras — usam o seu próprio site) */}
+          {!brand.contactUrl && (
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -53,7 +56,7 @@ export default function ContactPage() {
             <div className="space-y-8">
               {/* Email */}
               <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-[#722F37] group-hover:text-white transition-all">
+                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white transition-all">
                   <Mail size={20} />
                 </div>
                 <div>
@@ -64,7 +67,7 @@ export default function ContactPage() {
 
               {/* Telefone */}
               <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-[#722F37] group-hover:text-white transition-all">
+                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white transition-all">
                   <Phone size={20} />
                 </div>
                 <div>
@@ -75,7 +78,7 @@ export default function ContactPage() {
 
               {/* Instagram */}
               <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-[#722F37] group-hover:text-white transition-all">
+                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white transition-all">
                   <Camera size={20} />
                 </div>
                 <div>
@@ -87,13 +90,14 @@ export default function ContactPage() {
 
             {/* Caixa de Horário */}
             <div className="p-8 bg-white rounded-[2rem] border border-gray-100 shadow-sm space-y-4">
-              <h3 className="font-serif text-2xl italic text-[#722F37]">{dict.schedule.title}</h3>
+              <h3 className="font-serif text-2xl italic text-brand">{dict.schedule.title}</h3>
               <p className="text-sm text-gray-500 leading-relaxed">
                 {dict.schedule.hours} <br />
                 {dict.schedule.saturday}
               </p>
             </div>
           </motion.div>
+          )}
 
           {/* Formulário de Contacto */}
           <motion.div 
@@ -106,17 +110,17 @@ export default function ContactPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelName}</label>
-                  <input type="text" className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderName} />
+                  <input type="text" className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-brand/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderName} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelEmail}</label>
-                  <input type="email" className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderEmail} />
+                  <input type="email" className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-brand/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderEmail} />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelSubject}</label>
-                <select className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm appearance-none cursor-pointer">
+                <select className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-brand/20 transition-all outline-none text-sm appearance-none cursor-pointer">
                   {(dict.form.options as string[]).map((option, idx) => (
                     <option key={idx}>{option}</option>
                   ))}
@@ -125,13 +129,25 @@ export default function ContactPage() {
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelMessage}</label>
-                <textarea rows={5} className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm resize-none" placeholder={dict.form.placeholderMessage}></textarea>
+                <textarea rows={5} className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-brand/20 transition-all outline-none text-sm resize-none" placeholder={dict.form.placeholderMessage}></textarea>
               </div>
 
-              <button className="w-full bg-[#722F37] text-white py-5 rounded-2xl text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg hover:bg-ink transition-all flex items-center justify-center gap-3 group">
-                {dict.form.btnSubmit}
-                <Send size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </button>
+              {brand.contactUrl ? (
+                <a
+                  href={brand.contactUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-brand text-white py-5 rounded-2xl text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg hover:bg-ink transition-all flex items-center justify-center gap-3 group"
+                >
+                  {dict.form.btnSubmit}
+                  <Send size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </a>
+              ) : (
+                <button className="w-full bg-brand text-white py-5 rounded-2xl text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg hover:bg-ink transition-all flex items-center justify-center gap-3 group">
+                  {dict.form.btnSubmit}
+                  <Send size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </button>
+              )}
             </form>
           </motion.div>
 

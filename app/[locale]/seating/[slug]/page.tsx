@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
+import { useBrand } from "@/components/site/BrandProvider";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,6 +23,7 @@ interface Table {
 
 export default function SeatingPlanGuestView() {
   const params = useParams();
+  const brand = useBrand();
   const locale = (params?.locale as "en" | "pt") || "pt";
   const dict = dictionaries[locale]?.SeatingPublic || dictionaries.pt.SeatingPublic;
 
@@ -227,7 +229,7 @@ export default function SeatingPlanGuestView() {
       <footer className="mt-auto py-8 text-center shrink-0 relative z-10">
         <Link href={`/${params.locale}`} className="group flex flex-col items-center justify-center gap-1.5 opacity-50 hover:opacity-100 transition-opacity">
           <span className="text-[7px] font-bold uppercase tracking-[0.4em] text-gray-400 group-hover:text-brand transition-colors">Powered by</span>
-          <span className="text-[11px] font-serif italic tracking-wide text-gray-600 group-hover:text-brand transition-colors">Digital Invite Studio</span>
+          <span className="text-[11px] font-serif italic tracking-wide text-gray-600 group-hover:text-brand transition-colors">{brand.name}</span>
         </Link>
       </footer>
 

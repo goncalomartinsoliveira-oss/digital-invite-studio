@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Loader2, Key, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useBrand } from "@/components/site/BrandProvider";
 
 import pt from "../../../dictionaries/pt";
 import en from "../../../dictionaries/en";
@@ -17,6 +18,7 @@ export default function ResetPasswordPage() {
   const locale = (params?.locale as "en" | "pt") || "pt";
   const dict = dictionaries[locale]?.ResetPasswordPage || dictionaries.pt.ResetPasswordPage;
 
+  const brand = useBrand();
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -61,7 +63,7 @@ export default function ResetPasswordPage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md bg-white p-10 rounded-3xl shadow-xl border border-gray-100 text-center"
       >
-        <img src="/logo-dis.svg" alt="Digital Invite Studio" className="w-40 h-auto mx-auto mb-8" />
+        <img src={brand.logo} alt={brand.logoAlt} className="w-40 h-auto mx-auto mb-8" />
 
         {success ? (
           <div className="space-y-4 animate-in fade-in">
