@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft } from "lucide-react";
+import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
+import AdminManagementView from "@/components/dashboard/AdminManagementView";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -27,6 +28,10 @@ export default function DashboardHub() {
   const brand = useBrand();
   const [agencyInvites, setAgencyInvites] = useState<any[]>([]);
   const [isAgencyMember, setIsAgencyMember] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [adminInvites, setAdminInvites] = useState<any[]>([]);
+  const [guestCounts, setGuestCounts] = useState<Record<string, { total: number; confirmed: number }>>({});
+  const [viewMode, setViewMode] = useState<'events' | 'admin'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -74,6 +79,15 @@ export default function DashboardHub() {
       const agencyMember = !!membership;
       setIsAgencyMember(agencyMember);
 
+      // Super-admin (DIS) → vê todas as marcas no painel de gestão.
+      const { data: sa } = await supabase
+        .from("super_admins")
+        .select("user_email")
+        .eq("user_email", email)
+        .maybeSingle();
+      const superAdmin = !!sa;
+      setIsSuperAdmin(superAdmin);
+
       // Eventos próprios e partilhados — sempre isolados pela marca ativa.
       const [myData, collabs] = await Promise.all([
         supabase.from("invitations").select("*").eq("user_email", email).eq("brand_id", brand.id),
@@ -107,6 +121,29 @@ export default function DashboardHub() {
       setInvites(myInvitesFound);
       setSharedInvites(sharedInvitesFound);
       setAgencyInvites(agencyInvitesFound);
+
+      // Âmbito do painel de gestão: super-admin no DIS vê tudo; senão, a marca.
+      let adminScope: any[] = [];
+      if (superAdmin && brand.id === "dis") {
+        const { data: allData } = await supabase.from("invitations").select("*");
+        adminScope = allData || [];
+      } else if (agencyMember) {
+        adminScope = agencyInvitesFound;
+      }
+      setAdminInvites(adminScope);
+
+      if (adminScope.length > 0) {
+        const ids = adminScope.map((e: any) => e.id);
+        const { data: gs } = await supabase.from("guests").select("invitation_id, status").in("invitation_id", ids);
+        const counts: Record<string, { total: number; confirmed: number }> = {};
+        (gs || []).forEach((g: any) => {
+          const c = counts[g.invitation_id] || { total: 0, confirmed: 0 };
+          c.total++;
+          if (g.status === "confirmed") c.confirmed++;
+          counts[g.invitation_id] = c;
+        });
+        setGuestCounts(counts);
+      }
 
       const primaryCount = agencyMember ? agencyInvitesFound.length : myInvitesFound.length;
       if (primaryCount === 0 && sharedInvitesFound.length === 0) {
@@ -142,6 +179,10 @@ export default function DashboardHub() {
     ? (locale === 'en' ? 'All your agency events in one place.' : 'Todos os eventos da agência num só lugar.')
     : dict.desc;
 
+  // Painel de gestão: disponível a super-admins e membros de agência.
+  const canManage = isSuperAdmin || isAgencyMember;
+  const showBrandColumn = isSuperAdmin && brand.id === "dis";
+
   return (
     <div className="min-h-screen bg-cream font-montserrat flex flex-col">
       
@@ -164,6 +205,24 @@ export default function DashboardHub() {
         </div>
 
         <div className="flex items-center gap-6">
+          {/* SEPARADOR: Eventos / Gestão (admins) */}
+          {canManage && (
+            <div className="flex items-center gap-1 bg-cream rounded-full p-1 border border-gold-soft/50">
+              <button
+                onClick={() => setViewMode('events')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'events' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+              >
+                <LayoutGrid size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Events' : 'Eventos'}</span>
+              </button>
+              <button
+                onClick={() => setViewMode('admin')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'admin' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+              >
+                <Table size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Management' : 'Gestão'}</span>
+              </button>
+            </div>
+          )}
+
           <div className="hidden sm:flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{userEmail}</span>
@@ -180,7 +239,17 @@ export default function DashboardHub() {
 
       {/* ÁREA PRINCIPAL */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-12 sm:py-20">
-        
+
+        {viewMode === 'admin' && canManage ? (
+          <AdminManagementView
+            events={adminInvites}
+            guestCounts={guestCounts}
+            showBrand={showBrandColumn}
+            locale={locale}
+            onOpen={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+          />
+        ) : (
+        <>
         {/* SECÇÃO 1: OS MEUS PROJETOS */}
         <div className="mb-12">
           <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-3">
@@ -295,6 +364,8 @@ export default function DashboardHub() {
               ))}
             </div>
           </motion.div>
+        )}
+        </>
         )}
       </main>
     </div>
