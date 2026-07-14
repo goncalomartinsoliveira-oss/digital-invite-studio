@@ -6,7 +6,9 @@ import Link from "next/link";
 import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
+import { BRANDS } from "@/lib/brands";
 import AdminManagementView from "@/components/dashboard/AdminManagementView";
+import MembersManagementView from "@/components/dashboard/MembersManagementView";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -28,10 +30,11 @@ export default function DashboardHub() {
   const brand = useBrand();
   const [agencyInvites, setAgencyInvites] = useState<any[]>([]);
   const [isAgencyMember, setIsAgencyMember] = useState(false);
+  const [agencyRole, setAgencyRole] = useState<string | null>(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [adminInvites, setAdminInvites] = useState<any[]>([]);
   const [guestCounts, setGuestCounts] = useState<Record<string, { total: number; confirmed: number }>>({});
-  const [viewMode, setViewMode] = useState<'events' | 'admin'>('events');
+  const [viewMode, setViewMode] = useState<'events' | 'admin' | 'members'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -78,6 +81,7 @@ export default function DashboardHub() {
         .maybeSingle();
       const agencyMember = !!membership;
       setIsAgencyMember(agencyMember);
+      setAgencyRole((membership as any)?.role ?? null);
 
       // Super-admin (DIS) → vê todas as marcas no painel de gestão.
       const { data: sa } = await supabase
@@ -186,6 +190,12 @@ export default function DashboardHub() {
   const canManage = isSuperAdmin || isAgencyMember;
   const showBrandColumn = isSuperAdmin && brand.id === "dis";
 
+  // Gestão de membros: super-admins (todas as marcas) e admins de marca (a sua).
+  const manageableBrands = isSuperAdmin
+    ? Object.values(BRANDS).map(b => ({ id: b.id, name: b.name }))
+    : (agencyRole === 'admin' ? [{ id: brand.id, name: brand.name }] : []);
+  const canManageMembers = manageableBrands.length > 0;
+
   return (
     <div className="min-h-screen bg-cream font-montserrat flex flex-col">
       
@@ -223,6 +233,14 @@ export default function DashboardHub() {
               >
                 <Table size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Management' : 'Gestão'}</span>
               </button>
+              {canManageMembers && (
+                <button
+                  onClick={() => setViewMode('members')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'members' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+                >
+                  <Users size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Members' : 'Membros'}</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -250,6 +268,13 @@ export default function DashboardHub() {
             showBrand={showBrandColumn}
             locale={locale}
             onOpen={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+          />
+        ) : viewMode === 'members' && canManageMembers ? (
+          <MembersManagementView
+            brands={manageableBrands}
+            isSuperAdmin={isSuperAdmin}
+            currentEmail={userEmail}
+            locale={locale}
           />
         ) : (
         <>
