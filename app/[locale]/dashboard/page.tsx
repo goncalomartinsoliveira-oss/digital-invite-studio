@@ -190,11 +190,9 @@ export default function DashboardHub() {
   const canManage = isSuperAdmin || isAgencyMember;
   const showBrandColumn = isSuperAdmin && brand.id === "dis";
 
-  // Gestão de membros: super-admins (todas as marcas) e admins de marca (a sua).
-  const manageableBrands = isSuperAdmin
-    ? Object.values(BRANDS).map(b => ({ id: b.id, name: b.name }))
-    : (agencyRole === 'admin' ? [{ id: brand.id, name: brand.name }] : []);
-  const canManageMembers = manageableBrands.length > 0;
+  // Gestão de membros: função central → só no site master (DIS) e a super-admins.
+  const manageableBrands = Object.values(BRANDS).map(b => ({ id: b.id, name: b.name }));
+  const canManageMembers = isSuperAdmin && brand.id === "dis";
 
   return (
     <div className="min-h-screen bg-cream font-montserrat flex flex-col">
