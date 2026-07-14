@@ -47,14 +47,19 @@ export const DEFAULT_BRAND = BRANDS.dis;
 // Resolve a marca ativa a partir do hostname (com override opcional por cookie,
 // útil para testar antes de o subdomínio estar configurado).
 export function resolveBrand(host?: string, cookieBrand?: string): Brand {
-  if (cookieBrand && BRANDS[cookieBrand]) return BRANDS[cookieBrand];
-
   const h = (host || "").toLowerCase().split(":")[0];
+
+  // 1. Domínio manda sempre (marcas reais têm domínio próprio).
   for (const b of Object.values(BRANDS)) {
     if (b.domains.some((d) => h === d || h.endsWith("." + d))) return b;
   }
-  // Heurística: qualquer host que contenha "amazingmoon"
+  // Heurística: qualquer host que contenha "amazingmoon".
   if (h.includes("amazingmoon")) return BRANDS.amazingmoon;
 
+  // 2. Só quando o host não corresponde a nenhuma marca (ex.: URLs de preview
+  //    do Vercel) é que o override por cookie é usado.
+  if (cookieBrand && BRANDS[cookieBrand]) return BRANDS[cookieBrand];
+
+  // 3. Por defeito.
   return DEFAULT_BRAND;
 }
