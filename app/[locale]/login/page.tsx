@@ -77,15 +77,15 @@ export default function LoginPage() {
     }
   };
 
-  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-[#630100] text-base text-gray-800 px-0 py-3 transition-colors font-montserrat placeholder-gray-300";
+  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-brand text-base text-gray-800 px-0 py-3 transition-colors font-montserrat placeholder-gray-300";
   const labelClass = "text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1 block font-montserrat";
 
   return (
-    <div className="min-h-screen flex bg-[#FDFBF7] font-montserrat overflow-hidden">
+    <div className="min-h-screen flex bg-cream font-montserrat overflow-hidden">
       
       {/* LADO ESQUERDO: Apresentação da Marca */}
-      <div className="hidden lg:flex w-1/2 bg-[#630100] flex-col justify-between p-16 relative">
-        <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-[#8a0201] to-[#4a0100] opacity-30 blur-3xl"></div>
+      <div className="hidden lg:flex w-1/2 bg-brand flex-col justify-between p-16 relative">
+        <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-[#8a0201] to-brand-dark opacity-30 blur-3xl"></div>
         
         {/* LOGOTIPO CLICÁVEL (DESKTOP) */}
         <div className="relative z-10">
@@ -94,11 +94,11 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div className="relative z-10 text-[#EFDFBB] space-y-6 max-w-md">
+        <div className="relative z-10 text-gold-soft space-y-6 max-w-md">
           <h1 className="font-serif text-5xl leading-tight font-light italic">{dict.hero.title}</h1>
           <p className="text-sm opacity-80 leading-relaxed font-light font-montserrat">{dict.hero.desc}</p>
         </div>
-        <div className="relative z-10 text-[10px] uppercase tracking-widest text-[#EFDFBB]/50 font-bold font-montserrat">© {new Date().getFullYear()} {dict.hero.copyright}</div>
+        <div className="relative z-10 text-[10px] uppercase tracking-widest text-gold-soft/50 font-bold font-montserrat">© {new Date().getFullYear()} {dict.hero.copyright}</div>
       </div>
 
       {/* LADO DIREITO: Formulário */}
@@ -115,12 +115,12 @@ export default function LoginPage() {
 
           {isForgotPassword ? (
             <div className="animate-in slide-in-from-right-4 duration-500">
-              <button onClick={() => setIsForgotPassword(false)} className="flex items-center gap-2 text-gray-400 hover:text-[#630100] text-[10px] font-bold uppercase tracking-widest mb-8 transition-colors">
+              <button onClick={() => setIsForgotPassword(false)} className="flex items-center gap-2 text-gray-400 hover:text-brand text-[10px] font-bold uppercase tracking-widest mb-8 transition-colors">
                  <ArrowLeft size={14} /> {dict.reset.backToLogin}
               </button>
               
               <div className="space-y-3 text-center lg:text-left mb-8">
-                <h2 className="font-serif text-4xl text-[#630100] font-regular">{dict.reset.title}</h2>
+                <h2 className="font-serif text-4xl text-brand font-regular">{dict.reset.title}</h2>
                 <p className="text-sm text-gray-500 font-montserrat">{dict.reset.desc}</p>
               </div>
 
@@ -139,7 +139,7 @@ export default function LoginPage() {
                     <label className={labelClass}>{dict.reset.emailLabel}</label>
                     <input type="email" required className={inputClass} placeholder={dict.auth.emailPlaceholder} value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
-                  <button type="submit" disabled={loading} className="w-full bg-[#630100] text-[#EFDFBB] py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
+                  <button type="submit" disabled={loading} className="w-full bg-brand text-gold-soft py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
                     {loading ? <Loader2 size={18} className="animate-spin" /> : <>{dict.reset.btn} <ArrowRight size={16} /></>}
                   </button>
                 </form>
@@ -148,7 +148,7 @@ export default function LoginPage() {
           ) : (
             <div className="animate-in slide-in-from-left-4 duration-500">
               <div className="space-y-3 text-center lg:text-left mb-8">
-                <h2 className="font-serif text-4xl text-[#630100] font-regular">{isLogin ? dict.auth.loginTitle : dict.auth.registerTitle}</h2>
+                <h2 className="font-serif text-4xl text-brand font-regular">{isLogin ? dict.auth.loginTitle : dict.auth.registerTitle}</h2>
                 <p className="text-sm text-gray-500 font-montserrat">{isLogin ? dict.auth.loginDesc : dict.auth.registerDesc}</p>
               </div>
 
@@ -166,14 +166,14 @@ export default function LoginPage() {
                     <div className="flex justify-between items-center">
                       <label className={labelClass}>{dict.auth.passwordLabel}</label>
                       {isLogin && (
-                        <button type="button" onClick={() => {setIsForgotPassword(true); setErrorMsg(""); setResetSent(false);}} className="text-[10px] font-bold text-gray-400 hover:text-[#630100] transition-colors font-montserrat">{dict.auth.forgotPassword}</button>
+                        <button type="button" onClick={() => {setIsForgotPassword(true); setErrorMsg(""); setResetSent(false);}} className="text-[10px] font-bold text-gray-400 hover:text-brand transition-colors font-montserrat">{dict.auth.forgotPassword}</button>
                       )}
                     </div>
                     <input type="password" required minLength={6} className={inputClass} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                   </div>
                 </div>
 
-                <button type="submit" disabled={loading} className="w-full bg-[#630100] text-[#EFDFBB] py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
+                <button type="submit" disabled={loading} className="w-full bg-brand text-gold-soft py-4.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 disabled:opacity-70 font-montserrat">
                   {loading ? <Loader2 size={18} className="animate-spin" /> : <>{isLogin ? dict.auth.loginBtn : dict.auth.registerBtn} <ArrowRight size={16} /></>}
                 </button>
               </form>
@@ -181,7 +181,7 @@ export default function LoginPage() {
               <div className="text-center pt-8 border-t border-gray-100 mt-8">
                 <p className="text-xs text-gray-500 font-montserrat">
                   {isLogin ? dict.auth.noAccountPrompt : dict.auth.hasAccountPrompt}
-                  <button type="button" onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); setPassword(""); }} className="font-bold text-[#630100] hover:underline underline-offset-4 ml-1 transition-all">
+                  <button type="button" onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); setPassword(""); }} className="font-bold text-brand hover:underline underline-offset-4 ml-1 transition-all">
                     {isLogin ? dict.auth.createAccountLink : dict.auth.loginLink}
                   </button>
                 </p>

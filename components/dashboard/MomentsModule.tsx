@@ -245,7 +245,7 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
   const goNext = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex + 1) % fotos.length); };
   const goPrev = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex - 1 + fotos.length) % fotos.length); };
 
-  if (loading) return <div className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-[#630100]" size={32} /></div>;
+  if (loading) return <div className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-brand" size={32} /></div>;
 
   const c = dict.cards;
 
@@ -258,47 +258,47 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
 
         {/* CARD 1: PUBLIC GALLERY */}
         <section className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center text-center">
-          <div className="bg-[#FDFBF7] p-4 rounded-3xl border border-[#EFDFBB]/50 mb-4">
+          <div className="bg-cream p-4 rounded-3xl border border-gold-soft/50 mb-4">
             <QRCodeSVG id="qr-moments" value={urlPublica} size={110} />
           </div>
-          <h4 className="font-bold text-[#630100] text-xs uppercase tracking-widest mb-1">{c.photoSharingTitle}</h4>
+          <h4 className="font-bold text-brand text-xs uppercase tracking-widest mb-1">{c.photoSharingTitle}</h4>
           <p className="text-[9px] text-gray-400 uppercase font-bold mb-6">{c.photoSharingSubtitle}</p>
           <div className="w-full flex gap-2 mb-2 mt-auto">
             <button onClick={() => downloadQRSVG('qr-moments', `QR-Galeria-${slug}`)} className="flex-1 py-2 bg-gray-50 rounded-xl text-[9px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-100 transition-all border border-gray-100">SVG</button>
             <button onClick={() => downloadQR('qr-moments', `QR-Galeria-${slug}`)} className="flex-1 py-2 bg-gray-50 rounded-xl text-[9px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-100 transition-all border border-gray-100">PNG</button>
           </div>
           <div className="w-full flex gap-2">
-            <button onClick={() => window.open(urlPublica, '_blank')} className="flex-1 bg-[#332E2B] text-[#EFDFBB] py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-black transition-all shadow-sm"><Globe size={14} /> {c.openDirect}</button>
+            <button onClick={() => window.open(urlPublica, '_blank')} className="flex-1 bg-ink text-gold-soft py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-black transition-all shadow-sm"><Globe size={14} /> {c.openDirect}</button>
             <button onClick={() => { navigator.clipboard.writeText(urlPublica); alert(c.galleryLinkCopied); }} className="flex-1 bg-white border border-gray-200 text-gray-600 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-gray-50 transition-all"><Copy size={14} /> {c.copyLink}</button>
           </div>
         </section>
 
         {/* CARD 2: GUESTBOOK */}
         <section className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center text-center">
-          <div className="bg-[#FDFBF7] p-4 rounded-3xl border border-[#EFDFBB]/50 mb-4">
+          <div className="bg-cream p-4 rounded-3xl border border-gold-soft/50 mb-4">
             <QRCodeSVG id="qr-guestbook" value={urlGuestbook} size={110} />
           </div>
-          <h4 className="font-bold text-[#630100] text-xs uppercase tracking-widest mb-1">{c.guestbookTitle}</h4>
+          <h4 className="font-bold text-brand text-xs uppercase tracking-widest mb-1">{c.guestbookTitle}</h4>
           <p className="text-[9px] text-gray-400 uppercase font-bold mb-6">{c.guestbookSubtitle}</p>
           <div className="w-full flex gap-2 mb-2 mt-auto">
             <button onClick={() => downloadQRSVG('qr-guestbook', `QR-Guestbook-${slug}`)} className="flex-1 py-2 bg-gray-50 rounded-xl text-[9px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-100 transition-all border border-gray-100">SVG</button>
             <button onClick={() => downloadQR('qr-guestbook', `QR-Guestbook-${slug}`)} className="flex-1 py-2 bg-gray-50 rounded-xl text-[9px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-100 transition-all border border-gray-100">PNG</button>
           </div>
           <div className="w-full flex gap-2">
-            <button onClick={() => window.open(urlGuestbook, '_blank')} className="flex-1 bg-[#332E2B] text-[#EFDFBB] py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-black transition-all shadow-sm"><Globe size={14} /> {c.openDirect}</button>
+            <button onClick={() => window.open(urlGuestbook, '_blank')} className="flex-1 bg-ink text-gold-soft py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-black transition-all shadow-sm"><Globe size={14} /> {c.openDirect}</button>
             <button onClick={() => { navigator.clipboard.writeText(urlGuestbook); alert(c.guestbookLinkCopied); }} className="flex-1 bg-white border border-gray-200 text-gray-600 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-gray-50 transition-all"><Copy size={14} /> {c.copyLink}</button>
           </div>
         </section>
 
         {/* CARD 3: LIVE WALL */}
         <section className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center text-center">
-          <div className="bg-[#630100]/5 p-6 rounded-3xl border border-[#630100]/10 mb-4 flex items-center justify-center aspect-square w-[142px]">
-            <Monitor size={64} className="text-[#630100]" />
+          <div className="bg-brand/5 p-6 rounded-3xl border border-brand/10 mb-4 flex items-center justify-center aspect-square w-[142px]">
+            <Monitor size={64} className="text-brand" />
           </div>
-          <h4 className="font-bold text-[#630100] text-xs uppercase tracking-widest mb-1">{c.liveWallTitle}</h4>
+          <h4 className="font-bold text-brand text-xs uppercase tracking-widest mb-1">{c.liveWallTitle}</h4>
           <p className="text-[9px] text-gray-400 uppercase font-bold mb-6">{c.liveWallSubtitle}</p>
           <div className="w-full flex gap-2 mt-auto pt-11">
-            <button onClick={() => window.open(urlLiveWall, '_blank')} className="flex-1 bg-[#332E2B] text-[#EFDFBB] py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-black transition-all shadow-sm"><Play size={14} /> {c.openDirect}</button>
+            <button onClick={() => window.open(urlLiveWall, '_blank')} className="flex-1 bg-ink text-gold-soft py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-black transition-all shadow-sm"><Play size={14} /> {c.openDirect}</button>
             <button onClick={() => { navigator.clipboard.writeText(urlLiveWall); alert(c.liveWallLinkCopied); }} className="flex-1 bg-white border border-gray-200 text-gray-600 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-gray-50 transition-all"><Copy size={14} /> {c.copyLink}</button>
           </div>
         </section>
@@ -309,17 +309,17 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
       <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-center">
         <input type="file" ref={fileInputRef} onChange={handleProfileUpload} className="hidden" accept="image/*" />
         <div className="relative">
-          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#FDFBF7] shadow-xl bg-gray-50">
+          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-cream shadow-xl bg-gray-50">
             {profileUrl ? <img src={profileUrl} className="w-full h-full object-cover" alt="Profile" /> : <div className="w-full h-full flex items-center justify-center text-gray-200"><ImageIcon size={30} /></div>}
           </div>
           {canEdit && (
-            <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-0 right-0 bg-[#630100] text-white p-2 rounded-full shadow-lg hover:scale-110 transition-all">
+            <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-0 right-0 bg-brand text-white p-2 rounded-full shadow-lg hover:scale-110 transition-all">
               {savingProfile ? <Loader2 className="animate-spin" size={14} /> : <Camera size={14} />}
             </button>
           )}
         </div>
         <div className="flex-1 text-center md:text-left">
-          <h3 className="font-serif text-2xl text-[#630100]">{dict.profile.title}</h3>
+          <h3 className="font-serif text-2xl text-brand">{dict.profile.title}</h3>
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1 mb-4">{dict.profile.subtitle}</p>
           <div className="flex gap-4 justify-center md:justify-start">
             <div className="bg-gray-50 px-5 py-2 rounded-full border border-gray-100 flex items-center gap-2">
@@ -334,8 +334,8 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
 
       {/* MAIN TABS */}
       <div className="flex bg-gray-100 p-1.5 rounded-2xl w-fit">
-        <button onClick={() => setTabAtiva('media')} className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'media' ? 'bg-white text-[#630100] shadow-sm' : 'text-gray-400'}`}>{dict.tabs.gallery}</button>
-        <button onClick={() => setTabAtiva('guestbook')} className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'guestbook' ? 'bg-white text-[#630100] shadow-sm' : 'text-gray-400'}`}>{dict.tabs.guestbook}</button>
+        <button onClick={() => setTabAtiva('media')} className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'media' ? 'bg-white text-brand shadow-sm' : 'text-gray-400'}`}>{dict.tabs.gallery}</button>
+        <button onClick={() => setTabAtiva('guestbook')} className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'guestbook' ? 'bg-white text-brand shadow-sm' : 'text-gray-400'}`}>{dict.tabs.guestbook}</button>
       </div>
 
       {/* MEDIA TAB */}
@@ -343,7 +343,7 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
         <section className="space-y-6">
           <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{dict.media.gridLabel}</span>
-            <button onClick={baixarTudoZip} disabled={downloadingZip || fotos.length === 0} className="bg-[#332E2B] text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black disabled:opacity-30 transition-all">
+            <button onClick={baixarTudoZip} disabled={downloadingZip || fotos.length === 0} className="bg-ink text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black disabled:opacity-30 transition-all">
               {downloadingZip ? <Loader2 className="animate-spin" size={14} /> : <FileArchive size={14} />} {dict.media.zipBtn}
             </button>
           </div>
@@ -374,11 +374,11 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
         <section className="space-y-6">
           <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm gap-2">
             <div className="flex gap-2">
-              <button onClick={() => setSubTabGuestbook('texto')} className={`px-6 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${subTabGuestbook === 'texto' ? 'bg-[#630100] text-white shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>{dict.guestbook.textTab}</button>
-              <button onClick={() => setSubTabGuestbook('audio')} className={`px-6 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${subTabGuestbook === 'audio' ? 'bg-[#630100] text-white shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>{dict.guestbook.audioTab}</button>
-              <button onClick={() => setSubTabGuestbook('video')} className={`px-6 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${subTabGuestbook === 'video' ? 'bg-[#630100] text-white shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>{dict.guestbook.videoTab}</button>
+              <button onClick={() => setSubTabGuestbook('texto')} className={`px-6 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${subTabGuestbook === 'texto' ? 'bg-brand text-white shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>{dict.guestbook.textTab}</button>
+              <button onClick={() => setSubTabGuestbook('audio')} className={`px-6 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${subTabGuestbook === 'audio' ? 'bg-brand text-white shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>{dict.guestbook.audioTab}</button>
+              <button onClick={() => setSubTabGuestbook('video')} className={`px-6 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${subTabGuestbook === 'video' ? 'bg-brand text-white shadow-sm' : 'text-gray-400 hover:bg-gray-50'}`}>{dict.guestbook.videoTab}</button>
             </div>
-            <button onClick={() => baixarGuestbookZip(subTabGuestbook)} disabled={downloadingZip} className="bg-[#332E2B] text-white px-6 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black disabled:opacity-30 transition-all">
+            <button onClick={() => baixarGuestbookZip(subTabGuestbook)} disabled={downloadingZip} className="bg-ink text-white px-6 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black disabled:opacity-30 transition-all">
               {downloadingZip ? <Loader2 className="animate-spin" size={14} /> : <FileArchive size={14} />} {dict.guestbook.zipTabBtn}
             </button>
           </div>
@@ -389,7 +389,7 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
                 <div key={msg.id} className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative group">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h4 className="font-bold text-[#630100] text-sm uppercase">{msg.autor || dict.guestbook.anonymousAuthor}</h4>
+                      <h4 className="font-bold text-brand text-sm uppercase">{msg.autor || dict.guestbook.anonymousAuthor}</h4>
                       <p className="text-[8px] text-gray-300 font-bold uppercase">{new Date(msg.created_at).toLocaleDateString()}</p>
                     </div>
                     {canEdit && (
@@ -406,7 +406,7 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
             <div className="space-y-4 max-w-2xl mx-auto md:mx-0">
               {mensagens.filter(m => m.tipo === 'voice' || m.tipo === 'audio').map((msg) => (
                 <div key={msg.id} className="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-6 group">
-                  <button onClick={() => toggleAudio(msg.conteudo)} className="w-14 h-14 rounded-2xl bg-[#630100] text-[#EFDFBB] flex items-center justify-center shadow-lg hover:scale-105 transition-all">
+                  <button onClick={() => toggleAudio(msg.conteudo)} className="w-14 h-14 rounded-2xl bg-brand text-gold-soft flex items-center justify-center shadow-lg hover:scale-105 transition-all">
                     {playingAudio === msg.conteudo ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
                   </button>
                   <div className="flex-1">

@@ -19,7 +19,7 @@ const dictionaries = {
   en: en
 };
 
-const premiumGradient = "bg-gradient-to-tr from-[#630100] via-[#8B0000] to-[#330100]";
+const premiumGradient = "bg-gradient-to-tr from-brand via-[#8B0000] to-[#330100]";
 
 export default function GuestMomentsPage() {
   const { slug, locale } = useParams();
@@ -191,16 +191,16 @@ export default function GuestMomentsPage() {
   const goNext = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex + 1) % fotos.length); };
   const goPrev = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex - 1 + fotos.length) % fotos.length); };
 
-  if (loading) return <div className="fixed inset-0 z-[100] bg-white flex items-center justify-center"><Loader2 className="animate-spin text-[#630100]" size={32} /></div>;
+  if (loading) return <div className="fixed inset-0 z-[100] bg-white flex items-center justify-center"><Loader2 className="animate-spin text-brand" size={32} /></div>;
 
   return (
     <div className="fixed inset-0 z-[100] bg-white overflow-y-auto font-montserrat">
       <AnimatePresence>{uploading && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[300] bg-[#630100]/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center text-white">
-          <div className="relative mb-8"><div className="w-32 h-32 border-4 border-white/10 border-t-white rounded-full animate-spin"></div><CloudUpload className="absolute inset-0 m-auto text-[#EFDFBB] animate-bounce" size={40} /></div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[300] bg-brand/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center text-white">
+          <div className="relative mb-8"><div className="w-32 h-32 border-4 border-white/10 border-t-white rounded-full animate-spin"></div><CloudUpload className="absolute inset-0 m-auto text-gold-soft animate-bounce" size={40} /></div>
           <h2 className="font-serif text-3xl mb-2 italic">{dict.uploadOverlay.title}</h2>
-          <div className="w-full max-w-xs bg-white/10 h-1.5 rounded-full overflow-hidden mt-6"><motion.div className="h-full bg-[#EFDFBB]" initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} /></div>
-          <span className="text-[#EFDFBB] font-black mt-4 text-2xl">{uploadProgress}%</span>
+          <div className="w-full max-w-xs bg-white/10 h-1.5 rounded-full overflow-hidden mt-6"><motion.div className="h-full bg-gold-soft" initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} /></div>
+          <span className="text-gold-soft font-black mt-4 text-2xl">{uploadProgress}%</span>
         </motion.div>
       )}</AnimatePresence>
 
@@ -212,13 +212,13 @@ export default function GuestMomentsPage() {
           </motion.div>
         )) : <div className="absolute inset-0 bg-[#330100]" />}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 text-center">
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="p-1 rounded-full bg-gradient-to-tr from-[#EFDFBB] to-[#630100] mb-6 shadow-2xl">
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="p-1 rounded-full bg-gradient-to-tr from-gold-soft to-brand mb-6 shadow-2xl">
             <div className="bg-white p-1 rounded-full"><img src={invitation?.profile_image_url || "/placeholder.png"} className="w-24 h-24 rounded-full object-cover border-2 border-white" alt="Perfil" /></div>
           </motion.div>
           <h1 className="text-3xl font-serif italic mb-2">{invitation?.bride_name} & {invitation?.groom_name}</h1>
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-90">{fotos.length} {dict.sharedMoments}</p>
           <label className={`mt-10 flex flex-col items-center gap-3 px-10 py-5 ${premiumGradient} rounded-2xl shadow-2xl cursor-pointer active:scale-95 transition-all border border-white/20`}>
-              <div className="flex items-center gap-3"><Camera size={20} className="text-[#EFDFBB]" /><span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#EFDFBB]">{dict.sharePublic}</span></div>
+              <div className="flex items-center gap-3"><Camera size={20} className="text-gold-soft" /><span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold-soft">{dict.sharePublic}</span></div>
               <input type="file" accept="image/*,video/*" multiple className="hidden" onChange={(e) => handleUploadProcess(e.target.files, false)} disabled={uploading} />
           </label>
         </div>
@@ -235,7 +235,7 @@ export default function GuestMomentsPage() {
             </div>
           ))}
         </div>
-        {fotos.length > visibleCount && <div className="flex justify-center mt-8"><button onClick={() => setVisibleCount(v => v + 12)} className="flex items-center gap-2 px-8 py-3 bg-[#FDFBF7] border border-[#EFDFBB] rounded-xl text-[10px] font-bold uppercase tracking-widest text-[#630100]"><ChevronDown size={14}/> {dict.loadMore}</button></div>}
+        {fotos.length > visibleCount && <div className="flex justify-center mt-8"><button onClick={() => setVisibleCount(v => v + 12)} className="flex items-center gap-2 px-8 py-3 bg-cream border border-gold-soft rounded-xl text-[10px] font-bold uppercase tracking-widest text-brand"><ChevronDown size={14}/> {dict.loadMore}</button></div>}
         <footer className="mt-20 flex flex-col items-center justify-center border-t border-gray-50 pt-10 pb-20"><Link href={`/${locale}`} className="group flex flex-col items-center gap-2 opacity-40 hover:opacity-100 transition-all"><span className="text-[8px] font-bold uppercase tracking-[0.4em] text-gray-400">{dict.developedBy}</span><img src="/logo-dis.svg" alt="Digital Invite Studio" className="h-6 w-auto grayscale group-hover:grayscale-0 transition-all" /></Link></footer>
       </div>
 
@@ -243,32 +243,32 @@ export default function GuestMomentsPage() {
       <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4">
         <AnimatePresence>{menuOpen && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} className="flex flex-col items-end gap-3 mb-2">
-            <div className="bg-[#630100] text-[#EFDFBB] p-4 rounded-3xl mb-2 shadow-2xl flex flex-col items-center gap-2 border border-white/10">
-              <div className="flex items-center gap-2 text-[#EFDFBB]"><ShieldCheck size={16} /><span className="text-[9px] font-black uppercase tracking-widest italic">{dict.privateGuestbook.title}</span></div>
+            <div className="bg-brand text-gold-soft p-4 rounded-3xl mb-2 shadow-2xl flex flex-col items-center gap-2 border border-white/10">
+              <div className="flex items-center gap-2 text-gold-soft"><ShieldCheck size={16} /><span className="text-[9px] font-black uppercase tracking-widest italic">{dict.privateGuestbook.title}</span></div>
               <p className="text-[8px] text-center opacity-80 leading-tight uppercase font-medium">{dict.privateGuestbook.desc1}<br/>{dict.privateGuestbook.desc2}</p>
             </div>
             <button onClick={() => { setModalType('text'); setMenuOpen(false); }} className="bg-white p-5 rounded-2xl shadow-2xl border border-gray-100 flex items-center justify-between w-56 hover:bg-gray-50 transition-all"><span className="text-[10px] font-black uppercase tracking-widest text-gray-600">{dict.menu.writeWishes}</span><div className="bg-orange-50 p-2 rounded-xl text-orange-500"><MessageSquare size={22}/></div></button>
-            <button onClick={() => { setModalType('voice'); setMenuOpen(false); }} className="bg-white p-5 rounded-2xl shadow-2xl border border-gray-100 flex items-center justify-between w-56 hover:bg-gray-50 transition-all"><span className="text-[10px] font-black uppercase tracking-widest text-gray-600">{dict.menu.voiceMessage}</span><div className="bg-[#630100]/5 p-2 rounded-xl text-[#630100]"><Mic size={22}/></div></button>
+            <button onClick={() => { setModalType('voice'); setMenuOpen(false); }} className="bg-white p-5 rounded-2xl shadow-2xl border border-gray-100 flex items-center justify-between w-56 hover:bg-gray-50 transition-all"><span className="text-[10px] font-black uppercase tracking-widest text-gray-600">{dict.menu.voiceMessage}</span><div className="bg-brand/5 p-2 rounded-xl text-brand"><Mic size={22}/></div></button>
             <button onClick={() => { setModalType('video'); setMenuOpen(false); }} className="bg-white p-5 rounded-2xl shadow-2xl border border-gray-100 flex items-center justify-between w-56 hover:bg-gray-50 transition-all"><span className="text-[10px] font-black uppercase tracking-widest text-gray-600">{dict.menu.videoDedication}</span><div className="bg-purple-50 p-2 rounded-xl text-purple-500"><Video size={22}/></div></button>
           </motion.div>
         )}</AnimatePresence>
-        <button onClick={() => setMenuOpen(!menuOpen)} className={`${premiumGradient} w-16 h-16 text-[#EFDFBB] rounded-full shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/20`}>{menuOpen ? <X size={32} /> : <Plus size={35} />}</button>
+        <button onClick={() => setMenuOpen(!menuOpen)} className={`${premiumGradient} w-16 h-16 text-gold-soft rounded-full shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/20`}>{menuOpen ? <X size={32} /> : <Plus size={35} />}</button>
       </div>
 
       <AnimatePresence>{modalType && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 text-center text-[#332E2B]">
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 text-center text-ink">
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white w-full max-w-sm rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-green-400"></div>
             <button className="absolute top-6 right-6 text-gray-400" onClick={() => { stopRecording(); setModalType(null); }}><X size={24}/></button>
-            <h3 className="font-serif text-2xl text-[#630100] mb-8 uppercase italic tracking-tighter">{modalType === 'text' ? dict.modal.titleText : modalType === 'voice' ? dict.modal.titleVoice : dict.modal.titleVideo}</h3>
+            <h3 className="font-serif text-2xl text-brand mb-8 uppercase italic tracking-tighter">{modalType === 'text' ? dict.modal.titleText : modalType === 'voice' ? dict.modal.titleVoice : dict.modal.titleVideo}</h3>
             <div className="space-y-6">
               <input type="text" placeholder={dict.modal.namePlaceholder} className="w-full bg-gray-50 p-4 rounded-2xl border-none outline-none font-bold text-sm" value={autor} onChange={e => setAutor(e.target.value)} />
               {modalType === 'text' && (<><textarea placeholder={dict.modal.textPlaceholder} className="w-full bg-gray-50 p-4 rounded-2xl h-40 border-none outline-none font-medium text-sm resize-none" value={textoMensagem} onChange={e => setTextoMensagem(e.target.value)} /><button onClick={async () => {
                 if(!textoMensagem) return; setUploading(true);
                 await supabase.from('guestbook').insert([{ invitation_id: invitation.id, tipo: 'texto', conteudo: textoMensagem, autor: autor || 'Anónimo' }]);
                 setUploading(false); setModalType(null); setTextoMensagem(""); alert(dict.alerts.textSent);
-              }} className={`w-full py-5 ${premiumGradient} text-[#EFDFBB] rounded-2xl font-bold uppercase text-xs tracking-[0.2em] shadow-xl flex items-center justify-center gap-2`}><Send size={16}/> {dict.modal.submitBtn}</button></>)}
-              {(modalType === 'voice' || modalType === 'video') && (<div className="flex flex-col items-center gap-6">{modalType === 'video' && <div className="w-full aspect-[3/4] bg-black rounded-3xl overflow-hidden border-2 border-[#EFDFBB]"><video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" /></div>}<div className="flex flex-col items-center gap-2"><div className={`text-2xl font-black ${isRecording ? 'text-red-500 animate-pulse' : 'text-gray-300'}`}>00:{recordingTime < 10 ? `0${recordingTime}` : recordingTime} <span className="text-xs">/ 30s</span></div>{!isRecording ? <button onClick={() => startRecording(modalType as 'voice' | 'video')} className="bg-[#630100] text-white p-6 rounded-full shadow-xl"><Mic size={32}/></button> : <button onClick={stopRecording} className="bg-red-50 text-white p-6 rounded-full shadow-xl animate-bounce"><StopCircle size={32}/></button>}</div></div>)}
+              }} className={`w-full py-5 ${premiumGradient} text-gold-soft rounded-2xl font-bold uppercase text-xs tracking-[0.2em] shadow-xl flex items-center justify-center gap-2`}><Send size={16}/> {dict.modal.submitBtn}</button></>)}
+              {(modalType === 'voice' || modalType === 'video') && (<div className="flex flex-col items-center gap-6">{modalType === 'video' && <div className="w-full aspect-[3/4] bg-black rounded-3xl overflow-hidden border-2 border-gold-soft"><video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" /></div>}<div className="flex flex-col items-center gap-2"><div className={`text-2xl font-black ${isRecording ? 'text-red-500 animate-pulse' : 'text-gray-300'}`}>00:{recordingTime < 10 ? `0${recordingTime}` : recordingTime} <span className="text-xs">/ 30s</span></div>{!isRecording ? <button onClick={() => startRecording(modalType as 'voice' | 'video')} className="bg-brand text-white p-6 rounded-full shadow-xl"><Mic size={32}/></button> : <button onClick={stopRecording} className="bg-red-50 text-white p-6 rounded-full shadow-xl animate-bounce"><StopCircle size={32}/></button>}</div></div>)}
             </div>
           </motion.div>
         </div>

@@ -33,11 +33,11 @@ interface ContentModuleProps {
 }
 
 const AccordionItem = ({ title, children, isOpen, isVisible, onToggleOpen, onToggleVisibility, canEdit, visibleLabel, hiddenLabel }: any) => (
-  <div className={`border transition-all duration-500 rounded-3xl bg-white overflow-hidden ${isOpen ? 'border-[#630100]/20 shadow-lg my-6' : 'border-gray-100 shadow-sm hover:border-[#630100]/30 mb-4'}`}>
+  <div className={`border transition-all duration-500 rounded-3xl bg-white overflow-hidden ${isOpen ? 'border-brand/20 shadow-lg my-6' : 'border-gray-100 shadow-sm hover:border-brand/30 mb-4'}`}>
     <div className="flex items-center justify-between p-6 cursor-pointer select-none" onClick={onToggleOpen}>
       <div className="flex items-center gap-4">
-        <div className={`w-1.5 h-6 rounded-full transition-colors ${isVisible ? 'bg-[#630100]' : 'bg-gray-200'}`}></div>
-        <h3 className={`font-serif text-2xl transition-colors ${isOpen ? 'text-[#630100]' : 'text-[#332E2B]'}`}>{title}</h3>
+        <div className={`w-1.5 h-6 rounded-full transition-colors ${isVisible ? 'bg-brand' : 'bg-gray-200'}`}></div>
+        <h3 className={`font-serif text-2xl transition-colors ${isOpen ? 'text-brand' : 'text-ink'}`}>{title}</h3>
       </div>
       <div className="flex items-center gap-5" onClick={e => e.stopPropagation()}>
         <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ const AccordionItem = ({ title, children, isOpen, isVisible, onToggleOpen, onTog
       </div>
     </div>
     {isOpen && (
-      <div className="p-8 border-t border-gray-50 bg-[#FDFBF7] animate-in fade-in slide-in-from-top-2 duration-300">
+      <div className="p-8 border-t border-gray-50 bg-cream animate-in fade-in slide-in-from-top-2 duration-300">
         <div className={!canEdit ? 'opacity-70 pointer-events-none' : ''}>
           {children}
         </div>
@@ -108,7 +108,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
     setUploading(null);
   };
 
-  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-[#630100] text-sm text-[#332E2B] font-semibold px-0 py-3 transition-colors placeholder-gray-300";
+  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-brand text-sm text-ink font-semibold px-0 py-3 transition-colors placeholder-gray-300";
   const labelClass = "text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1 block";
 
   const accordionProps = (id: string, title: string) => ({
@@ -177,7 +177,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                 <label className={labelClass}>{s.story.photoLabel}</label>
                 <div className="relative w-32 h-44 rounded-full overflow-hidden bg-white border border-gray-200 shadow-sm group mt-3">
                   {content.story?.story_image_url ? <img src={content.story.story_image_url} className="w-full h-full object-cover" /> : <div className="h-full flex items-center justify-center text-[10px] font-bold text-gray-300 tracking-widest bg-gray-50">{s.story.photoEmpty}</div>}
-                  <label className="absolute inset-0 bg-[#630100]/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white text-[10px] font-bold tracking-widest transition-all">
+                  <label className="absolute inset-0 bg-brand/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white text-[10px] font-bold tracking-widest transition-all">
                     <input type="file" className="hidden" onChange={e => handleUpload(e, 'story', 'story_image_url')} /> {uploading === 'story' ? '...' : s.story.photoUpload}
                   </label>
                 </div>
@@ -186,7 +186,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             <div className="space-y-6">
               <label className={labelClass}>{s.story.textsLabel}</label>
               {[0, 1, 2].map(idx => (
-                <textarea key={idx} className={`${inputClass} resize-none bg-white p-4 rounded-xl border border-gray-100 shadow-sm focus:border-[#630100]`} rows={3} value={content.story?.paragraphs?.[idx] ?? ''} placeholder={`${s.story.paragraphPrefix} ${idx + 1}`}
+                <textarea key={idx} className={`${inputClass} resize-none bg-white p-4 rounded-xl border border-gray-100 shadow-sm focus:border-brand`} rows={3} value={content.story?.paragraphs?.[idx] ?? ''} placeholder={`${s.story.paragraphPrefix} ${idx + 1}`}
                   onChange={e => {
                     const newP = [...(content.story?.paragraphs || ["", "", ""])];
                     newP[idx] = e.target.value;
@@ -207,7 +207,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
           <label className={labelClass}>{s.gallery.photosLabel}</label>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-4">
             {[0,1,2,3,4].map(idx => (
-              <div key={idx} className="relative aspect-[3/4] bg-white rounded-2xl border-2 border-dashed border-gray-200 overflow-hidden group hover:border-[#630100]/30 transition-colors">
+              <div key={idx} className="relative aspect-[3/4] bg-white rounded-2xl border-2 border-dashed border-gray-200 overflow-hidden group hover:border-brand/30 transition-colors">
                 {content.gallery?.images_urls?.[idx] ? (
                   <>
                     <img src={content.gallery.images_urls[idx]} className="w-full h-full object-cover" />
@@ -239,18 +239,18 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             <button onClick={() => {
               const newEvs = [...(content.program?.events || []), { time: "00:00", title: s.program.newEventDefault }];
               handleTextChange('program', 'events', newEvs);
-            }} className="text-[10px] font-bold text-[#630100] uppercase tracking-widest flex items-center gap-1 bg-[#630100]/5 px-3 py-1.5 rounded-full hover:bg-[#630100]/10 transition-colors">
+            }} className="text-[10px] font-bold text-brand uppercase tracking-widest flex items-center gap-1 bg-brand/5 px-3 py-1.5 rounded-full hover:bg-brand/10 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               {s.program.addBtn}
             </button>
           </div>
           <div className="space-y-3">
             {(content.program?.events || []).map((ev: any, idx: number) => (
-              <div key={idx} className="flex gap-4 items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm group hover:border-[#630100]/20 transition-colors">
-                <input className="w-24 bg-[#FDFBF7] border border-gray-200 focus:border-[#630100] rounded-xl px-3 py-2.5 font-bold text-[#630100] text-sm text-center outline-none transition-colors" value={ev.time} onChange={e => {
+              <div key={idx} className="flex gap-4 items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm group hover:border-brand/20 transition-colors">
+                <input className="w-24 bg-cream border border-gray-200 focus:border-brand rounded-xl px-3 py-2.5 font-bold text-brand text-sm text-center outline-none transition-colors" value={ev.time} onChange={e => {
                   const newEvs = [...content.program.events]; newEvs[idx].time = e.target.value; handleTextChange('program', 'events', newEvs);
                 }} />
-                <input className="flex-grow bg-transparent border-none text-[15px] font-semibold text-[#332E2B] focus:ring-0 px-2" value={ev.title} onChange={e => {
+                <input className="flex-grow bg-transparent border-none text-[15px] font-semibold text-ink focus:ring-0 px-2" value={ev.title} onChange={e => {
                   const newEvs = [...content.program.events]; newEvs[idx].title = e.target.value; handleTextChange('program', 'events', newEvs);
                 }} />
                 <button onClick={() => {
@@ -274,7 +274,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             {/* Cerimónia */}
             <div className="p-8 border border-gray-100 rounded-3xl bg-white shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-50 pb-4">
-                <h4 className="font-serif text-[#630100] text-2xl">{s.event.ceremonyTitle}</h4>
+                <h4 className="font-serif text-brand text-2xl">{s.event.ceremonyTitle}</h4>
                 <button onClick={() => handleTextChange('event', 'ceremony', { ...content.event?.ceremony, active: !(content.event?.ceremony?.active !== false) })} className={`w-10 h-5 rounded-full relative transition-colors ${content.event?.ceremony?.active !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${content.event?.ceremony?.active !== false ? 'left-5.5' : 'left-0.5'}`}></div>
                 </button>
@@ -295,7 +295,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             {/* Receção */}
             <div className="p-8 border border-gray-100 rounded-3xl bg-white shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-50 pb-4">
-                <h4 className="font-serif text-[#630100] text-2xl">{s.event.receptionTitle}</h4>
+                <h4 className="font-serif text-brand text-2xl">{s.event.receptionTitle}</h4>
                 <button onClick={() => handleTextChange('event', 'reception', { ...content.event?.reception, active: !(content.event?.reception?.active !== false) })} className={`w-10 h-5 rounded-full relative transition-colors ${content.event?.reception?.active !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${content.event?.reception?.active !== false ? 'left-5.5' : 'left-0.5'}`}></div>
                 </button>
@@ -326,42 +326,42 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             {/* Logística */}
             <div className="p-8 border border-gray-100 rounded-3xl bg-white shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-50 pb-4">
-                <h4 className="font-serif text-[#630100] text-2xl">{s.details.logistics.title}</h4>
+                <h4 className="font-serif text-brand text-2xl">{s.details.logistics.title}</h4>
                 <button onClick={() => toggleVisibility('useful_info')} className={`w-10 h-5 rounded-full relative transition-colors ${visibility['useful_info'] !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${visibility['useful_info'] !== false ? 'left-5.5' : 'left-0.5'}`}></div>
                 </button>
               </div>
               <div className={`space-y-8 ${visibility['useful_info'] === false ? 'opacity-30 pointer-events-none' : ''}`}>
                 <div><label className={labelClass}>{s.details.logistics.titleLabel}</label><input className={inputClass} value={content.details?.parking_title ?? ''} onChange={e => handleTextChange('details', 'parking_title', e.target.value)} /></div>
-                <div><label className={labelClass}>{s.details.logistics.infoLabel}</label><textarea className={`${inputClass} resize-none bg-[#FDFBF7] p-4 rounded-xl border border-gray-100 mt-2`} rows={4} value={content.details?.parking_text ?? ''} onChange={e => handleTextChange('details', 'parking_text', e.target.value)} /></div>
+                <div><label className={labelClass}>{s.details.logistics.infoLabel}</label><textarea className={`${inputClass} resize-none bg-cream p-4 rounded-xl border border-gray-100 mt-2`} rows={4} value={content.details?.parking_text ?? ''} onChange={e => handleTextChange('details', 'parking_text', e.target.value)} /></div>
               </div>
             </div>
 
             {/* Alojamento */}
             <div className="p-8 border border-gray-100 rounded-3xl bg-white shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-50 pb-4">
-                <h4 className="font-serif text-[#630100] text-2xl">{s.details.accommodation.title}</h4>
+                <h4 className="font-serif text-brand text-2xl">{s.details.accommodation.title}</h4>
                 <button onClick={() => toggleVisibility('accommodation')} className={`w-10 h-5 rounded-full relative transition-colors ${visibility['accommodation'] !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${visibility['accommodation'] !== false ? 'left-5.5' : 'left-0.5'}`}></div>
                 </button>
               </div>
               <div className={`space-y-8 ${visibility['accommodation'] === false ? 'opacity-30 pointer-events-none' : ''}`}>
                 <div><label className={labelClass}>{s.details.accommodation.titleLabel}</label><input className={inputClass} value={content.details?.accommodation_title ?? ''} onChange={e => handleTextChange('details', 'accommodation_title', e.target.value)} /></div>
-                <div><label className={labelClass}>{s.details.accommodation.infoLabel}</label><textarea className={`${inputClass} resize-none bg-[#FDFBF7] p-4 rounded-xl border border-gray-100 mt-2`} rows={2} value={content.details?.accommodation_text ?? ''} onChange={e => handleTextChange('details', 'accommodation_text', e.target.value)} /></div>
+                <div><label className={labelClass}>{s.details.accommodation.infoLabel}</label><textarea className={`${inputClass} resize-none bg-cream p-4 rounded-xl border border-gray-100 mt-2`} rows={2} value={content.details?.accommodation_text ?? ''} onChange={e => handleTextChange('details', 'accommodation_text', e.target.value)} /></div>
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <label className={labelClass}>{s.details.accommodation.hotelsLabel}</label>
                     <button onClick={() => {
                       const newBtns = [...(content.details?.accommodation_buttons || []), { text: s.details.accommodation.hotelNamePlaceholder, url: "" }];
                       handleTextChange('details', 'accommodation_buttons', newBtns);
-                    }} className="text-[10px] font-bold text-[#630100] uppercase tracking-widest flex items-center gap-1 bg-[#630100]/5 px-3 py-1.5 rounded-full hover:bg-[#630100]/10 transition-colors">
+                    }} className="text-[10px] font-bold text-brand uppercase tracking-widest flex items-center gap-1 bg-brand/5 px-3 py-1.5 rounded-full hover:bg-brand/10 transition-colors">
                       {s.details.accommodation.addBtn}
                     </button>
                   </div>
                   <div className="space-y-3">
                     {(content.details?.accommodation_buttons || []).map((btn: any, i: number) => (
-                      <div key={i} className="flex gap-4 items-center bg-[#FDFBF7] p-3 rounded-2xl border border-gray-200 focus-within:border-[#630100]/50 transition-colors group">
-                        <input className="w-1/3 bg-transparent border-none text-[13px] font-bold text-[#332E2B] focus:ring-0" value={btn.text} onChange={e => {
+                      <div key={i} className="flex gap-4 items-center bg-cream p-3 rounded-2xl border border-gray-200 focus-within:border-brand/50 transition-colors group">
+                        <input className="w-1/3 bg-transparent border-none text-[13px] font-bold text-ink focus:ring-0" value={btn.text} onChange={e => {
                           const newB = [...content.details.accommodation_buttons]; newB[i].text = e.target.value; handleTextChange('details', 'accommodation_buttons', newB);
                         }} placeholder={s.details.accommodation.hotelNamePlaceholder} />
                         <div className="w-[1px] h-6 bg-gray-300"></div>
@@ -383,15 +383,15 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             {/* Dress Code */}
             <div className="p-8 border border-gray-100 rounded-3xl bg-white shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-50 pb-4">
-                <h4 className="font-serif text-[#630100] text-2xl">{s.details.dresscode.title}</h4>
+                <h4 className="font-serif text-brand text-2xl">{s.details.dresscode.title}</h4>
                 <button onClick={() => toggleVisibility('dress_code')} className={`w-10 h-5 rounded-full relative transition-colors ${visibility['dress_code'] !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${visibility['dress_code'] !== false ? 'left-5.5' : 'left-0.5'}`}></div>
                 </button>
               </div>
               <div className={`space-y-8 ${visibility['dress_code'] === false ? 'opacity-30 pointer-events-none' : ''}`}>
                 <div><label className={labelClass}>{s.details.dresscode.titleLabel}</label><input className={inputClass} value={content.dress_code?.title ?? ''} onChange={e => handleTextChange('dress_code', 'title', e.target.value)} /></div>
-                <div><label className={labelClass}>{s.details.dresscode.messageLabel}</label><textarea className={`${inputClass} resize-none bg-[#FDFBF7] p-4 rounded-xl border border-gray-100 mt-2`} rows={3} value={content.dress_code?.text?.[0] ?? ''} onChange={e => handleTextChange('dress_code', 'text', [e.target.value])} /></div>
-                <div className="bg-[#FDFBF7] p-6 rounded-2xl border border-gray-100">
+                <div><label className={labelClass}>{s.details.dresscode.messageLabel}</label><textarea className={`${inputClass} resize-none bg-cream p-4 rounded-xl border border-gray-100 mt-2`} rows={3} value={content.dress_code?.text?.[0] ?? ''} onChange={e => handleTextChange('dress_code', 'text', [e.target.value])} /></div>
+                <div className="bg-cream p-6 rounded-2xl border border-gray-100">
                   <div className="flex justify-between items-center mb-6">
                     <label className={labelClass}>{s.details.dresscode.paletteLabel}</label>
                     <button onClick={() => handleTextChange('dress_code', 'show_palette', !(content.dress_code?.show_palette !== false))} className={`w-10 h-5 rounded-full relative transition-colors ${content.dress_code?.show_palette !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
@@ -411,7 +411,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                     ))}
                     <button onClick={() => {
                       const newC = [...(content.dress_code?.colors || []), "#000000"]; handleTextChange('dress_code', 'colors', newC);
-                    }} className="w-14 h-14 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:text-[#630100] hover:border-[#630100] transition-colors">+</button>
+                    }} className="w-14 h-14 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:text-brand hover:border-brand transition-colors">+</button>
                   </div>
                 </div>
               </div>
@@ -420,22 +420,22 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             {/* Presentes */}
             <div className="p-8 border border-gray-100 rounded-3xl bg-white shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-50 pb-4">
-                <h4 className="font-serif text-[#630100] text-2xl">{s.details.gifts.title}</h4>
+                <h4 className="font-serif text-brand text-2xl">{s.details.gifts.title}</h4>
                 <button onClick={() => toggleVisibility('gifts')} className={`w-10 h-5 rounded-full relative transition-colors ${visibility['gifts'] !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${visibility['gifts'] !== false ? 'left-5.5' : 'left-0.5'}`}></div>
                 </button>
               </div>
               <div className={`space-y-8 ${visibility['gifts'] === false ? 'opacity-30 pointer-events-none' : ''}`}>
                 <div><label className={labelClass}>{s.details.gifts.titleLabel}</label><input className={inputClass} value={content.gifts?.title ?? ''} onChange={e => handleTextChange('gifts', 'title', e.target.value)} /></div>
-                <div><label className={labelClass}>{s.details.gifts.messageLabel}</label><textarea className={`${inputClass} resize-none bg-[#FDFBF7] p-4 rounded-xl border border-gray-100 mt-2`} rows={3} value={content.gifts?.text ?? ''} onChange={e => handleTextChange('gifts', 'text', e.target.value)} /></div>
+                <div><label className={labelClass}>{s.details.gifts.messageLabel}</label><textarea className={`${inputClass} resize-none bg-cream p-4 rounded-xl border border-gray-100 mt-2`} rows={3} value={content.gifts?.text ?? ''} onChange={e => handleTextChange('gifts', 'text', e.target.value)} /></div>
                 <div className="pt-6 border-t border-gray-100">
-                  <div className="flex justify-between items-center mb-6 bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+                  <div className="flex justify-between items-center mb-6 bg-cream p-4 rounded-2xl border border-gray-100">
                     <label className={`${labelClass} mb-0`}>{s.details.gifts.ibanToggleLabel}</label>
                     <button onClick={() => handleTextChange('gifts', 'show_iban', !(content.gifts?.show_iban !== false))} className={`w-10 h-5 rounded-full relative transition-colors ${content.gifts?.show_iban !== false ? 'bg-green-500' : 'bg-gray-200'}`}>
                       <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${content.gifts?.show_iban !== false ? 'left-5.5' : 'left-0.5'}`}></div>
                     </button>
                   </div>
-                  <div className={`grid grid-cols-1 gap-6 bg-[#FDFBF7] p-6 rounded-2xl border border-[#630100]/10 ${content.gifts?.show_iban === false ? 'hidden' : ''}`}>
+                  <div className={`grid grid-cols-1 gap-6 bg-cream p-6 rounded-2xl border border-brand/10 ${content.gifts?.show_iban === false ? 'hidden' : ''}`}>
                     <div><label className={labelClass}>{s.details.gifts.ibanBtnLabel}</label><input className={inputClass} value={content.gifts?.iban_button_text ?? ''} onChange={e => handleTextChange('gifts', 'iban_button_text', e.target.value)} placeholder={s.details.gifts.ibanBtnPlaceholder} /></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div><label className={labelClass}>{s.details.gifts.ibanHoldersLabel}</label><input className={inputClass} value={content.gifts?.iban_holders_name ?? ''} onChange={e => handleTextChange('gifts', 'iban_holders_name', e.target.value)} /></div>
@@ -466,7 +466,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                 <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${content.footer?.show_contacts !== false ? 'left-5.5' : 'left-0.5'}`}></div>
               </button>
             </div>
-            <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 bg-[#FDFBF7] p-6 rounded-3xl border border-gray-100 ${content.footer?.show_contacts === false ? 'hidden' : ''}`}>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 bg-cream p-6 rounded-3xl border border-gray-100 ${content.footer?.show_contacts === false ? 'hidden' : ''}`}>
               <div>
                 <label className={labelClass}>{s.footer.contact1NameLabel}</label>
                 <input className={inputClass} value={content.footer?.contact_1_name ?? ''} onChange={e => handleTextChange('footer', 'contact_1_name', e.target.value)} placeholder={s.footer.contact1NamePlaceholder} />

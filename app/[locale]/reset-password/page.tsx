@@ -51,11 +51,11 @@ export default function ResetPasswordPage() {
     }
   };
 
-  const inputClass = "w-full bg-gray-50 border border-gray-200 focus:border-[#630100] text-base text-gray-800 rounded-xl px-4 py-3 transition-colors font-montserrat outline-none";
+  const inputClass = "w-full bg-gray-50 border border-gray-200 focus:border-brand text-base text-gray-800 rounded-xl px-4 py-3 transition-colors font-montserrat outline-none";
   const labelClass = "text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2 block font-montserrat";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] font-montserrat p-6">
+    <div className="min-h-screen flex items-center justify-center bg-cream font-montserrat p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,7 +74,7 @@ export default function ResetPasswordPage() {
         ) : (
           <div className="text-left space-y-6">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl text-[#630100] mb-2">{dict.formTitle}</h2>
+              <h2 className="font-serif text-3xl text-brand mb-2">{dict.formTitle}</h2>
               <p className="text-xs text-gray-500">{dict.formDesc}</p>
             </div>
 
@@ -101,7 +101,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || password.length < 6}
-                className="w-full bg-[#630100] text-[#EFDFBB] py-4 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:bg-[#4a0100] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full bg-brand text-gold-soft py-4 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:bg-brand-dark transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {loading ? <Loader2 size={18} className="animate-spin" /> : <><Key size={16} /> {dict.btn}</>}
               </button>

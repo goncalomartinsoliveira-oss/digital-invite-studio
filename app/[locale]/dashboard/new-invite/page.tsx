@@ -98,17 +98,17 @@ export default function NovoConvitePage() {
     }
   };
 
-  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-[#630100] text-lg text-gray-800 px-0 py-3 transition-colors font-montserrat placeholder-gray-300";
+  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-brand text-lg text-gray-800 px-0 py-3 transition-colors font-montserrat placeholder-gray-300";
   const labelClass = "text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1 block font-montserrat";
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] font-montserrat flex flex-col">
+    <div className="min-h-screen bg-cream font-montserrat flex flex-col">
       
       {/* HEADER */}
       <header className="bg-white border-b border-gray-100 px-8 py-6 flex items-center sticky top-0 z-20">
         <button 
           onClick={() => router.push(`/${params.locale}/dashboard`)}
-          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#630100] transition-colors"
+          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand transition-colors"
         >
           <ArrowLeft size={16} /> {dict.backBtn}
         </button>
@@ -119,10 +119,10 @@ export default function NovoConvitePage() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white max-w-2xl w-full p-10 sm:p-16 rounded-[2.5rem] shadow-xl shadow-[#630100]/5 border border-gray-100"
+          className="bg-white max-w-2xl w-full p-10 sm:p-16 rounded-[2.5rem] shadow-xl shadow-brand/5 border border-gray-100"
         >
           <div className="mb-12 text-center">
-            <h1 className="font-serif text-4xl sm:text-5xl text-[#630100] font-light italic mb-4">
+            <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-4">
               {dict.title}
             </h1>
             <p className="text-gray-500 text-sm">
@@ -172,13 +172,13 @@ export default function NovoConvitePage() {
               </div>
               <div>
                 <label className={labelClass}>{dict.labels.link}</label>
-                <div className="flex items-center border-b border-gray-300 focus-within:border-[#630100] transition-colors py-1 overflow-hidden">
+                <div className="flex items-center border-b border-gray-300 focus-within:border-brand transition-colors py-1 overflow-hidden">
                   <LinkIcon size={16} className="text-gray-400 mr-2 shrink-0" />
                   <span className="text-gray-400 text-[13px] font-medium whitespace-nowrap">{baseUrl}</span>
                   <input 
                     type="text" 
                     required
-                    className="w-full bg-transparent border-0 focus:ring-0 text-sm text-[#630100] font-bold px-1 py-2" 
+                    className="w-full bg-transparent border-0 focus:ring-0 text-sm text-brand font-bold px-1 py-2" 
                     placeholder={dict.placeholders.link} 
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
@@ -193,7 +193,7 @@ export default function NovoConvitePage() {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full bg-[#630100] text-[#EFDFBB] py-5 rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:translate-y-0"
+                className="w-full bg-brand text-gold-soft py-5 rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:translate-y-0"
               >
                 {loading ? <Loader2 size={18} className="animate-spin" /> : dict.submitBtn}
               </button>

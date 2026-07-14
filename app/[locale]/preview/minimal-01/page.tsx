@@ -90,7 +90,7 @@ const DEMO_DATA = {
           "The celebration will take place partly outdoors — comfortable footwear is recommended for the garden cocktail hour.",
         ],
         show_palette: true,
-        colors: ["#2D4A3E", "#B8945A", "#EDE8DF", "#8B7355", "#D4C5B0"],
+        colors: ["#2D4A3E", "var(--color-gold)", "#EDE8DF", "#8B7355", "#D4C5B0"],
       },
       gifts: {
         title: "Gifts",
@@ -129,7 +129,7 @@ export default async function PreviewMinimal01(props: {
       {/* ── Preview banner ─────────────────────────────────── */}
       <div className="fixed top-0 left-0 right-0 z-[999] bg-[#2D4A3E] text-white flex items-center justify-between px-5 py-3 shadow-lg font-montserrat">
         <div className="flex items-center gap-3">
-          <span className="bg-[#B8945A] text-[#2D4A3E] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
+          <span className="bg-gold text-[#2D4A3E] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
             Preview
           </span>
           <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">
@@ -145,7 +145,7 @@ export default async function PreviewMinimal01(props: {
           </Link>
           <Link
             href={`/${locale}/dashboard/new-invite`}
-            className="bg-[#B8945A] text-[#2D4A3E] text-[10px] font-bold uppercase tracking-widest px-5 py-2 rounded-full hover:bg-[#C9A96E] transition-colors"
+            className="bg-gold text-[#2D4A3E] text-[10px] font-bold uppercase tracking-widest px-5 py-2 rounded-full hover:bg-[#C9A96E] transition-colors"
           >
             Use this template
           </Link>

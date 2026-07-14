@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost, Pinyon_Script } from "next/font/google";
+import { headers, cookies } from "next/headers";
 import "../globals.css";
 
 // Usando caminhos relativos exatos para evitar o erro de "Module not found"
 import Navbar from "../../components/site/Navbar";
 import Footer from "../../components/site/Footer";
+import { resolveBrand } from "../../lib/brands";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -46,18 +48,24 @@ export default async function RootLayout({
 }) {
   const { locale } = await params;
 
+  // Marca ativa (white-label): resolvida pelo domínio, com override por cookie
+  // para testar antes de o subdomínio estar configurado.
+  const h = await headers();
+  const c = await cookies();
+  const brand = resolveBrand(h.get("host") ?? "", c.get("brand")?.value);
+
   return (
-    <html lang={locale}>
+    <html lang={locale} data-brand={brand.id}>
       <body className={`${cormorant.variable} ${jost.variable} ${pinyon.variable} antialiased flex flex-col min-h-screen`}>
-        
-        <Navbar />
-        
+
+        <Navbar brand={brand} />
+
         <main className="flex-grow">
           {children}
         </main>
 
-        <Footer />
-        
+        <Footer brand={brand} />
+
       </body>
     </html>
   );

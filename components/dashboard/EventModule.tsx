@@ -95,7 +95,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
           
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <div className="bg-cream p-4 rounded-2xl border border-gray-100">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Título</label>
                 <input 
                   className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
@@ -105,7 +105,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
                   disabled={ceremony.active === false}
                 />
               </div>
-              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <div className="bg-cream p-4 rounded-2xl border border-gray-100">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Hora</label>
                 <input 
                   className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
@@ -117,7 +117,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               </div>
             </div>
 
-            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+            <div className="bg-cream p-4 rounded-2xl border border-gray-100">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Local / Morada Curta</label>
               <input 
                 className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 disabled:cursor-not-allowed" 
@@ -128,7 +128,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               />
             </div>
 
-            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+            <div className="bg-cream p-4 rounded-2xl border border-gray-100">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Link do Google Maps</label>
               <input 
                 className="w-full bg-transparent border-none text-gray-500 text-xs focus:ring-0 p-0 mt-1 truncate disabled:cursor-not-allowed" 
@@ -139,7 +139,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               />
             </div>
 
-            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+            <div className="bg-cream p-4 rounded-2xl border border-gray-100">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Descrição Breve</label>
               <textarea 
                 className="w-full bg-transparent border-none text-gray-700 text-sm focus:ring-0 p-0 mt-1 resize-none disabled:cursor-not-allowed" 
@@ -171,7 +171,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
           
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <div className="bg-cream p-4 rounded-2xl border border-gray-100">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Título</label>
                 <input 
                   className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
@@ -181,7 +181,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
                   disabled={reception.active === false}
                 />
               </div>
-              <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+              <div className="bg-cream p-4 rounded-2xl border border-gray-100">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Hora</label>
                 <input 
                   className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 text-lg disabled:cursor-not-allowed" 
@@ -193,7 +193,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               </div>
             </div>
 
-            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+            <div className="bg-cream p-4 rounded-2xl border border-gray-100">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Local / Quinta</label>
               <input 
                 className="w-full bg-transparent border-none text-gray-800 font-semibold focus:ring-0 p-0 disabled:cursor-not-allowed" 
@@ -204,7 +204,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               />
             </div>
 
-            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+            <div className="bg-cream p-4 rounded-2xl border border-gray-100">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Link do Google Maps</label>
               <input 
                 className="w-full bg-transparent border-none text-gray-500 text-xs focus:ring-0 p-0 mt-1 truncate disabled:cursor-not-allowed" 
@@ -215,7 +215,7 @@ export default function EventModule({ formData, setFormData, handleSaveDesign, s
               />
             </div>
 
-            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">
+            <div className="bg-cream p-4 rounded-2xl border border-gray-100">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Descrição Breve</label>
               <textarea 
                 className="w-full bg-transparent border-none text-gray-700 text-sm focus:ring-0 p-0 mt-1 resize-none disabled:cursor-not-allowed" 

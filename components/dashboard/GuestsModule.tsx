@@ -436,7 +436,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
     await supabase.from('invitations').update({ dietary_tags: newTags.join(',') }).eq('id', invitationId);
   };
 
-  const inputClass = "w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-[#630100] text-sm text-gray-800 px-0 py-2 transition-colors font-montserrat";
+  const inputClass = "w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-brand text-sm text-gray-800 px-0 py-2 transition-colors font-montserrat";
   const labelClass = "text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1 block font-montserrat";
   const s = dict.stats;
 
@@ -464,7 +464,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                 <span className="text-base font-bold text-gray-800">{s.totalForecast}</span>
                 <span className="text-[9px] text-gray-400 uppercase tracking-widest mt-1">{s.totalNote}</span>
               </div>
-              <span className="font-serif text-5xl text-[#630100] leading-none">{stats.rsvp.active}</span>
+              <span className="font-serif text-5xl text-brand leading-none">{stats.rsvp.active}</span>
             </div>
             <div className="flex-1 w-full grid grid-cols-3 gap-4 text-center divide-x divide-gray-50">
               <div className="flex flex-col items-center justify-center">
@@ -545,7 +545,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                 return (
                   <div key={side} className="flex flex-col border-b border-gray-50 pb-2 last:border-0 last:pb-0">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs font-bold uppercase text-[#630100]">
+                      <span className="text-xs font-bold uppercase text-brand">
                         {side === 'noiva' ? brideName : side === 'noivo' ? groomName : side}
                       </span>
                       <span className="text-sm font-serif italic text-gray-600">{s.total}: {sideData.total}</span>
@@ -559,15 +559,15 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
               })}
             </div>
             <div className="pt-4 mt-auto">
-              <div className="p-4 bg-[#FDFBF7] rounded-xl border border-[#EFDFBB]/50 space-y-3">
-                <p className="text-[9px] font-bold uppercase tracking-widest text-[#630100] mb-1 block font-montserrat">{s.manageSideTags}</p>
+              <div className="p-4 bg-cream rounded-xl border border-gold-soft/50 space-y-3">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-brand mb-1 block font-montserrat">{s.manageSideTags}</p>
                 <div className="flex gap-2">
-                  <input className="flex-grow bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-[#630100]" placeholder={s.sideTagPlaceholder} value={newSideLabel} onChange={(e) => setNewSideLabel(e.target.value)} />
-                  <button type="button" onClick={handleAddSide} className="text-[10px] font-bold text-[#630100] uppercase">{s.addBtn}</button>
+                  <input className="flex-grow bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-brand" placeholder={s.sideTagPlaceholder} value={newSideLabel} onChange={(e) => setNewSideLabel(e.target.value)} />
+                  <button type="button" onClick={handleAddSide} className="text-[10px] font-bold text-brand uppercase">{s.addBtn}</button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {customSides.map(sv => (
-                    <span key={sv} className="bg-white border border-[#EFDFBB]/50 text-[8px] font-bold uppercase px-2 py-1 rounded-md text-[#630100] flex items-center gap-2">
+                    <span key={sv} className="bg-white border border-gold-soft/50 text-[8px] font-bold uppercase px-2 py-1 rounded-md text-brand flex items-center gap-2">
                       {sv === 'noiva' ? brideName : sv === 'noivo' ? groomName : sv}
                       <button type="button" onClick={() => handleRemoveSide(sv)} className="hover:text-red-500"><X size={10} strokeWidth={3} /></button>
                     </span>
@@ -621,7 +621,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
             </span>
-            <h3 className="font-serif text-2xl text-[#630100] italic">{dict.requests.title} ({requestedGuests.length})</h3>
+            <h3 className="font-serif text-2xl text-brand italic">{dict.requests.title} ({requestedGuests.length})</h3>
           </div>
           <p className="text-sm text-gray-600 mb-6 font-medium">{dict.requests.description}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -649,7 +649,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       {/* DATA TOOLS */}
       <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4 w-full md:w-auto">
-          <div className="bg-[#630100]/5 p-3 rounded-2xl text-[#630100]"><FileSpreadsheet size={24} /></div>
+          <div className="bg-brand/5 p-3 rounded-2xl text-brand"><FileSpreadsheet size={24} /></div>
           <div>
             <h4 className="text-sm font-bold text-gray-800">{dict.dataTools.title}</h4>
             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{dict.dataTools.subtitle}</p>
@@ -657,7 +657,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
         </div>
         <div className="flex flex-wrap items-end justify-center md:justify-end gap-6 w-full md:w-auto">
           <div className="flex flex-col gap-2 w-full md:w-auto">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#630100] text-center md:text-left">{dict.dataTools.exportLabel}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-brand text-center md:text-left">{dict.dataTools.exportLabel}</span>
             <div className="flex gap-2">
               <div className="relative">
                 <button onClick={() => setIsPdfMenuOpen(!isPdfMenuOpen)} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-50 transition-all shadow-sm">
@@ -678,13 +678,13 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
           </div>
           <div className="h-10 w-[1px] bg-gray-200 hidden md:block mb-1"></div>
           <div className="flex flex-col gap-2 w-full md:w-auto">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#630100] text-center md:text-left">{dict.dataTools.importLabel}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-brand text-center md:text-left">{dict.dataTools.importLabel}</span>
             <div className="flex gap-2">
-              <button onClick={downloadTemplate} className="flex items-center gap-2 px-4 py-2.5 bg-[#FDFBF7] border border-[#EFDFBB] rounded-xl text-[10px] font-bold uppercase tracking-widest text-[#630100] hover:bg-[#F8F4E9] transition-all shadow-sm">
+              <button onClick={downloadTemplate} className="flex items-center gap-2 px-4 py-2.5 bg-cream border border-gold-soft rounded-xl text-[10px] font-bold uppercase tracking-widest text-brand hover:bg-[#F8F4E9] transition-all shadow-sm">
                 <Download size={14} /> {dict.dataTools.downloadTemplateBtn}
               </button>
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept=".xlsx, .xls, .csv" />
-              <button disabled={!canEdit || isImporting} onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-6 py-2.5 bg-[#630100] text-[#EFDFBB] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md disabled:opacity-50">
+              <button disabled={!canEdit || isImporting} onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-6 py-2.5 bg-brand text-gold-soft rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md disabled:opacity-50">
                 {isImporting ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />} {dict.dataTools.importExcelBtn}
               </button>
             </div>
@@ -697,7 +697,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
         {/* ADD GUESTS FORM */}
         <div className="w-full">
           <div className={`bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-lg ${!canEdit ? 'opacity-70 pointer-events-none' : ''}`}>
-            <h3 className="font-serif text-2xl text-[#630100] mb-6 border-b border-gray-50 pb-4 italic">{dict.form.title}</h3>
+            <h3 className="font-serif text-2xl text-brand mb-6 border-b border-gray-50 pb-4 italic">{dict.form.title}</h3>
             <form onSubmit={handleSaveGroup} className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {newMembers.map((m, i) => (
@@ -707,7 +707,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                     )}
                     <div>
                       <label className={labelClass}>{dict.form.nameLbl}</label>
-                      <input className="w-full bg-transparent border-0 border-b border-gray-200 text-sm font-bold py-1 focus:ring-0 focus:border-[#630100]" value={m.name} onChange={e => {
+                      <input className="w-full bg-transparent border-0 border-b border-gray-200 text-sm font-bold py-1 focus:ring-0 focus:border-brand" value={m.name} onChange={e => {
                         const u = [...newMembers]; u[i].name = e.target.value; u[i].gender = suggestGender(e.target.value); setNewMembers(u);
                       }} />
                     </div>
@@ -754,7 +754,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                     </div>
                     <div>
                       <label className={labelClass}>{dict.form.notesLbl}</label>
-                      <input className="w-full bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-[#630100] italic" placeholder={dict.form.notesPlaceholder} value={m.notes} onChange={e => { const u = [...newMembers]; u[i].notes = e.target.value; setNewMembers(u); }} />
+                      <input className="w-full bg-transparent border-0 border-b border-gray-200 text-xs py-1 focus:ring-0 focus:border-brand italic" placeholder={dict.form.notesPlaceholder} value={m.notes} onChange={e => { const u = [...newMembers]; u[i].notes = e.target.value; setNewMembers(u); }} />
                     </div>
                   </div>
                 ))}
@@ -762,13 +762,13 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end pt-4 border-t border-gray-50">
                 <div>
                   <label className={labelClass}>{dict.form.groupTagLbl}</label>
-                  <input className="w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-[#630100] text-sm text-gray-800 px-0 py-2.5 transition-colors font-montserrat" placeholder={dict.form.groupTagPlaceholder} value={groupTag} onChange={e => setGroupTag(e.target.value)} />
+                  <input className="w-full bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-brand text-sm text-gray-800 px-0 py-2.5 transition-colors font-montserrat" placeholder={dict.form.groupTagPlaceholder} value={groupTag} onChange={e => setGroupTag(e.target.value)} />
                 </div>
                 <div>
-                  <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "", notes: "" }])} className="w-full py-3.5 border-2 border-dashed border-gray-200 rounded-xl text-[9px] font-black uppercase text-gray-400 hover:border-[#630100] hover:text-[#630100] transition-all flex items-center justify-center gap-2 tracking-widest"><UserPlus size={14} /> {dict.form.addAnotherBtn}</button>
+                  <button type="button" onClick={() => setNewMembers([...newMembers, { name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "", notes: "" }])} className="w-full py-3.5 border-2 border-dashed border-gray-200 rounded-xl text-[9px] font-black uppercase text-gray-400 hover:border-brand hover:text-brand transition-all flex items-center justify-center gap-2 tracking-widest"><UserPlus size={14} /> {dict.form.addAnotherBtn}</button>
                 </div>
                 <div>
-                  <button disabled={!canEdit} type="submit" className="w-full bg-[#630100] text-[#EFDFBB] py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50">{dict.form.saveBtn}</button>
+                  <button disabled={!canEdit} type="submit" className="w-full bg-brand text-gold-soft py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50">{dict.form.saveBtn}</button>
                 </div>
               </div>
             </form>
@@ -782,7 +782,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
                   {Object.keys(COLUMN_LABELS).map((k) => (
-                    <th key={k} onClick={() => setSortConfig({ key: k as keyof Guest, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })} className="px-3 py-4 text-[10px] uppercase font-black text-gray-400 cursor-pointer hover:text-[#630100] tracking-widest">
+                    <th key={k} onClick={() => setSortConfig({ key: k as keyof Guest, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })} className="px-3 py-4 text-[10px] uppercase font-black text-gray-400 cursor-pointer hover:text-brand tracking-widest">
                       <div className="flex items-center gap-2">
                         {COLUMN_LABELS[k]}
                         {sortConfig.key === k && <span>{sortConfig.direction === 'asc' ? '▲' : '▼'}</span>}
@@ -799,7 +799,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                     <td className="px-3 py-4 text-[11px] font-semibold text-gray-500">{g.group_id?.includes('SOLO-') ? '-' : g.group_id}</td>
                     <td className="px-3 py-4 text-[10px] uppercase font-bold text-gray-500">{g.gender === 'masculino' ? 'M' : 'F'}</td>
                     <td className="px-3 py-4 text-[10px] uppercase font-bold text-gray-500">{resolveTableCategory(g.category)}</td>
-                    <td className="px-3 py-4 text-[10px] uppercase font-black text-[#630100]">
+                    <td className="px-3 py-4 text-[10px] uppercase font-black text-brand">
                       {g.side === 'noiva' ? brideName : g.side === 'noivo' ? groomName : (g.side ? g.side.toUpperCase() : '-')}
                     </td>
                     <td className="px-3 py-4">
@@ -840,7 +840,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg p-10 rounded-[3rem] shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-start mb-8 border-b border-gray-50 pb-4">
-              <h3 className="font-serif text-3xl text-[#630100] italic">{dict.editModal.title}</h3>
+              <h3 className="font-serif text-3xl text-brand italic">{dict.editModal.title}</h3>
               <button onClick={() => handleDeleteGuest(editingGuest.id)} className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-colors" title={dict.editModal.deleteTitle}>
                 <Trash2 size={18} />
               </button>
@@ -915,7 +915,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
                   await supabase.from("guests").update(editingGuest).eq("id", editingGuest.id);
                   setGuests(guests.map(g => g.id === editingGuest.id ? editingGuest : g));
                   setEditingGuest(null);
-                }} className="w-2/3 py-5 bg-[#630100] text-[#EFDFBB] rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl transition-all active:scale-95">{dict.editModal.saveBtn}</button>
+                }} className="w-2/3 py-5 bg-brand text-gold-soft rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl transition-all active:scale-95">{dict.editModal.saveBtn}</button>
               </div>
             </div>
           </div>
@@ -926,10 +926,10 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       {isImporting && (
         <div className="fixed inset-0 bg-white/80 backdrop-blur-md z-[10000] flex flex-col items-center justify-center">
           <div className="relative mb-6">
-            <div className="w-20 h-20 border-4 border-[#630100]/10 border-t-[#630100] rounded-full animate-spin"></div>
-            <Upload className="absolute inset-0 m-auto text-[#630100]" size={32} />
+            <div className="w-20 h-20 border-4 border-brand/10 border-t-brand rounded-full animate-spin"></div>
+            <Upload className="absolute inset-0 m-auto text-brand" size={32} />
           </div>
-          <p className="font-serif text-2xl text-[#630100] italic">{dict.importOverlay.processing}</p>
+          <p className="font-serif text-2xl text-brand italic">{dict.importOverlay.processing}</p>
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 mt-2">{dict.importOverlay.wait}</p>
         </div>
       )}

@@ -18,7 +18,7 @@ const dictionaries = {
   en: en
 };
 
-const premiumGradient = "bg-gradient-to-tr from-[#630100] via-[#8B0000] to-[#330100]";
+const premiumGradient = "bg-gradient-to-tr from-brand via-[#8B0000] to-[#330100]";
 
 export default function IsolatedGuestbookPage() {
   const { slug, locale } = useParams();
@@ -164,11 +164,11 @@ export default function IsolatedGuestbookPage() {
     alert(dict.alerts.textSuccess);
   };
 
-  if (loading) return <div className="fixed inset-0 z-[9999] bg-[#FDFBF7] flex items-center justify-center"><Loader2 className="animate-spin text-[#630100]" size={32} /></div>;
+  if (loading) return <div className="fixed inset-0 z-[9999] bg-cream flex items-center justify-center"><Loader2 className="animate-spin text-brand" size={32} /></div>;
 
   return (
     // 🔒 RESOLUÇÃO NAVBAR/FOOTER: z-[9999] garante que fica por cima de qualquer componente global do Next.js
-    <div className="fixed inset-0 z-[9999] bg-[#FDFBF7] font-montserrat flex flex-col items-center justify-start overflow-y-auto w-full h-full">
+    <div className="fixed inset-0 z-[9999] bg-cream font-montserrat flex flex-col items-center justify-start overflow-y-auto w-full h-full">
       
       <AnimatePresence mode="wait">
         {!modalType ? (
@@ -179,16 +179,16 @@ export default function IsolatedGuestbookPage() {
             exit={{ opacity: 0, scale: 0.95 }}
             className="w-full max-w-md flex flex-col items-center pt-16 px-6 pb-20 relative min-h-[100dvh]"
           >
-            <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-[#EFDFBB]/30 to-transparent pointer-events-none -z-10" />
+            <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-gold-soft/30 to-transparent pointer-events-none -z-10" />
             
-            <div className="bg-white p-2 rounded-full shadow-2xl mb-6 border border-[#EFDFBB]/50">
+            <div className="bg-white p-2 rounded-full shadow-2xl mb-6 border border-gold-soft/50">
               <img src={invitation?.profile_image_url || "/placeholder.png"} className="w-24 h-24 rounded-full object-cover" alt="Noivos" />
             </div>
             
-            <h1 className="text-3xl font-serif text-[#630100] italic mb-2 text-center">{invitation?.bride_name} & {invitation?.groom_name}</h1>
+            <h1 className="text-3xl font-serif text-brand italic mb-2 text-center">{invitation?.bride_name} & {invitation?.groom_name}</h1>
             <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 text-center">{dict.subtitle}</p>
 
-            <div className="bg-[#630100] text-[#EFDFBB] p-4 rounded-3xl mb-8 shadow-xl flex flex-col items-center gap-2 border border-white/10 w-full">
+            <div className="bg-brand text-gold-soft p-4 rounded-3xl mb-8 shadow-xl flex flex-col items-center gap-2 border border-white/10 w-full">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={16} />
                 <span className="text-[10px] font-black uppercase tracking-widest italic">{dict.privateBadge}</span>
@@ -201,7 +201,7 @@ export default function IsolatedGuestbookPage() {
             <div className="flex flex-col gap-4 w-full flex-1">
               <button onClick={() => setModalType('text')} className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex items-center justify-between hover:scale-[1.02] transition-transform w-full">
                 <div className="text-left">
-                  <span className="block text-sm font-black uppercase tracking-widest text-[#630100] mb-1">{dict.options.textTitle}</span>
+                  <span className="block text-sm font-black uppercase tracking-widest text-brand mb-1">{dict.options.textTitle}</span>
                   <span className="text-[9px] text-gray-400 uppercase font-bold tracking-widest">{dict.options.textSub}</span>
                 </div>
                 <div className="bg-orange-50 p-4 rounded-2xl text-orange-500"><MessageSquare size={24}/></div>
@@ -209,15 +209,15 @@ export default function IsolatedGuestbookPage() {
 
               <button onClick={() => setModalType('voice')} className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex items-center justify-between hover:scale-[1.02] transition-transform w-full">
                 <div className="text-left">
-                  <span className="block text-sm font-black uppercase tracking-widest text-[#630100] mb-1">{dict.options.voiceTitle}</span>
+                  <span className="block text-sm font-black uppercase tracking-widest text-brand mb-1">{dict.options.voiceTitle}</span>
                   <span className="text-[9px] text-gray-400 uppercase font-bold tracking-widest">{dict.options.voiceSub}</span>
                 </div>
-                <div className="bg-[#630100]/5 p-4 rounded-2xl text-[#630100]"><Mic size={24}/></div>
+                <div className="bg-brand/5 p-4 rounded-2xl text-brand"><Mic size={24}/></div>
               </button>
 
               <button onClick={() => setModalType('video')} className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex items-center justify-between hover:scale-[1.02] transition-transform w-full">
                 <div className="text-left">
-                  <span className="block text-sm font-black uppercase tracking-widest text-[#630100] mb-1">{dict.options.videoTitle}</span>
+                  <span className="block text-sm font-black uppercase tracking-widest text-brand mb-1">{dict.options.videoTitle}</span>
                   <span className="text-[9px] text-gray-400 uppercase font-bold tracking-widest">{dict.options.videoSub}</span>
                 </div>
                 <div className="bg-purple-50 p-4 rounded-2xl text-purple-500"><Video size={24}/></div>
@@ -241,12 +241,12 @@ export default function IsolatedGuestbookPage() {
           >
             <div className="flex items-center justify-between mb-8 w-full">
               <button 
-                className="p-3 bg-white shadow-sm rounded-full text-gray-400 hover:text-[#630100] transition-colors" 
+                className="p-3 bg-white shadow-sm rounded-full text-gray-400 hover:text-brand transition-colors" 
                 onClick={() => { if(isRecording) stopRecording(); setModalType(null); }}
               >
                 <ChevronLeft size={24}/>
               </button>
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#630100]">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-brand">
                 {modalType === 'text' ? dict.modalTitles.text : modalType === 'voice' ? dict.modalTitles.voice : dict.modalTitles.video}
               </span>
               <div className="w-12"></div>
@@ -256,7 +256,7 @@ export default function IsolatedGuestbookPage() {
               <input 
                 type="text" 
                 placeholder={dict.form.namePlaceholder} 
-                className="w-full bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm outline-none font-bold text-sm text-center focus:border-[#EFDFBB] transition-colors" 
+                className="w-full bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm outline-none font-bold text-sm text-center focus:border-gold-soft transition-colors" 
                 value={autor} 
                 onChange={e => setAutor(e.target.value)} 
               />
@@ -264,7 +264,7 @@ export default function IsolatedGuestbookPage() {
               {modalType === 'text' && (
                 <textarea 
                   placeholder={dict.form.textPlaceholder} 
-                  className="w-full flex-1 min-h-[250px] bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm outline-none font-medium text-sm resize-none focus:border-[#EFDFBB] transition-colors" 
+                  className="w-full flex-1 min-h-[250px] bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm outline-none font-medium text-sm resize-none focus:border-gold-soft transition-colors" 
                   value={textoMensagem} 
                   onChange={e => setTextoMensagem(e.target.value)} 
                 />
@@ -287,7 +287,7 @@ export default function IsolatedGuestbookPage() {
                   
                   {modalType === 'voice' && (
                     <div className="w-full max-w-sm aspect-square bg-white rounded-[2.5rem] shadow-sm flex flex-col items-center justify-center gap-6 border border-gray-100">
-                       <Mic size={64} className={isRecording ? 'text-[#630100] animate-pulse' : 'text-gray-200'} />
+                       <Mic size={64} className={isRecording ? 'text-brand animate-pulse' : 'text-gray-200'} />
                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                          {isRecording ? dict.form.recording : dict.form.ready}
                        </span>
@@ -295,13 +295,13 @@ export default function IsolatedGuestbookPage() {
                   )}
                   
                   <div className="flex flex-col items-center gap-6 mt-4">
-                    <div className={`text-5xl font-black font-serif italic ${isRecording ? 'text-red-500' : 'text-[#332E2B]'}`}>
+                    <div className={`text-5xl font-black font-serif italic ${isRecording ? 'text-red-500' : 'text-ink'}`}>
                       00:{recordingTime < 10 ? `0${recordingTime}` : recordingTime} <span className="text-lg not-italic font-sans text-gray-400">{dict.form.maxTime}</span>
                     </div>
                     
                     {!isRecording ? (
                       /* 🔒 RESOLUÇÃO DO ERRO TS: Retirado o argumento modalType */
-                      <button onClick={startRecording} className="bg-[#630100] text-white p-8 rounded-full shadow-2xl hover:scale-105 transition-transform">
+                      <button onClick={startRecording} className="bg-brand text-white p-8 rounded-full shadow-2xl hover:scale-105 transition-transform">
                         {modalType === 'voice' ? <Mic size={36}/> : <Video size={36}/>}
                       </button>
                     ) : (
@@ -319,7 +319,7 @@ export default function IsolatedGuestbookPage() {
                 <button 
                   onClick={enviarTexto} 
                   disabled={uploading} 
-                  className={`w-full py-5 ${premiumGradient} text-[#EFDFBB] rounded-2xl font-bold uppercase text-[11px] tracking-[0.2em] shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
+                  className={`w-full py-5 ${premiumGradient} text-gold-soft rounded-2xl font-bold uppercase text-[11px] tracking-[0.2em] shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
                 >
                   {uploading ? <Loader2 className="animate-spin" size={18} /> : <Send size={18}/>}
                   {uploading ? dict.form.uploading : dict.form.submit}

@@ -39,7 +39,7 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
   // 7. Ecrã amigável caso não encontre (agora já não deve dar erro!)
   if (error || !invite) {
     return (
-      <div className="flex flex-col min-h-screen items-center justify-center bg-[#FDFBF7] p-8 text-center font-sans">
+      <div className="flex flex-col min-h-screen items-center justify-center bg-cream p-8 text-center font-sans">
         <h1 className="text-3xl font-serif text-[#722F37] mb-4">{dict.notFoundTitle}</h1>
         <p className="text-gray-600 mb-6">{dict.notFoundDesc}<br/><strong className="text-gray-900 text-lg">{decodedSlug}</strong></p>
         

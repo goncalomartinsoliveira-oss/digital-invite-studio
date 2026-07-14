@@ -101,7 +101,7 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20 font-sans overflow-hidden">
+    <div className="min-h-screen bg-cream pt-32 pb-20 font-sans overflow-hidden">
       
       {/* Hero Section */}
       <div className="max-w-6xl mx-auto px-6 text-center mb-32">

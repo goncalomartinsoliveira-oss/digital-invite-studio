@@ -98,7 +98,7 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
   };
 
   const labelClass = "text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 block";
-  const inputClass = "w-full bg-[#FDFBF7] border border-gray-200 rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-[#630100]/20 focus:border-[#630100] outline-none transition-all font-montserrat";
+  const inputClass = "w-full bg-cream border border-gray-200 rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand outline-none transition-all font-montserrat";
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500 font-montserrat pb-20">
@@ -107,11 +107,11 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
       <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#630100]/5 rounded-2xl flex items-center justify-center text-[#630100]">
+            <div className="w-12 h-12 bg-brand/5 rounded-2xl flex items-center justify-center text-brand">
               <User size={24} />
             </div>
             <div>
-              <h3 className="font-serif text-2xl text-[#332E2B]">{dict.profile.title}</h3>
+              <h3 className="font-serif text-2xl text-ink">{dict.profile.title}</h3>
               <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{dict.profile.subtitle}</p>
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
               <button
                 type="submit"
                 disabled={savingPass || newPassword.length < 6}
-                className="bg-[#332E2B] text-white px-5 rounded-2xl hover:bg-black disabled:opacity-30 transition-all"
+                className="bg-ink text-white px-5 rounded-2xl hover:bg-black disabled:opacity-30 transition-all"
               >
                 {savingPass ? <Loader2 size={16} className="animate-spin" /> : <Key size={16} />}
               </button>
@@ -154,23 +154,23 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
       {/* 02. PROPRIEDADE DO EVENTO */}
       <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
         <div className="flex items-center gap-4 mb-8">
-          <div className="w-12 h-12 bg-[#630100]/5 rounded-2xl flex items-center justify-center text-[#630100]">
+          <div className="w-12 h-12 bg-brand/5 rounded-2xl flex items-center justify-center text-brand">
             <ShieldCheck size={24} />
           </div>
           <div>
-            <h3 className="font-serif text-2xl text-[#332E2B]">{dict.ownership.title}</h3>
+            <h3 className="font-serif text-2xl text-ink">{dict.ownership.title}</h3>
             <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{dict.ownership.subtitle}</p>
           </div>
         </div>
 
-        <div className="bg-[#FDFBF7] p-6 rounded-3xl border border-[#EFDFBB]/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-cream p-6 rounded-3xl border border-gold-soft/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 text-green-500">
               <ShieldCheck size={18} />
             </div>
             <div>
               <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{dict.ownership.ownerLabel}</p>
-              <p className="text-sm font-bold text-[#332E2B]">{userEmail}</p>
+              <p className="text-sm font-bold text-ink">{userEmail}</p>
             </div>
           </div>
           <span className="bg-green-100 text-green-700 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">{dict.ownership.ownerBadge}</span>
@@ -181,11 +181,11 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
       <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
         <div className="mb-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#630100]/5 rounded-2xl flex items-center justify-center text-[#630100]">
+            <div className="w-12 h-12 bg-brand/5 rounded-2xl flex items-center justify-center text-brand">
               <UserPlus size={24} />
             </div>
             <div>
-              <h3 className="font-serif text-2xl text-[#332E2B]">{dict.collaborators.title}</h3>
+              <h3 className="font-serif text-2xl text-ink">{dict.collaborators.title}</h3>
               <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{dict.collaborators.subtitle}</p>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
           </div>
 
           <select
-            className="bg-[#FDFBF7] border border-gray-200 rounded-2xl px-4 py-4 sm:py-0 text-[11px] font-bold text-gray-600 uppercase tracking-wider outline-none focus:border-[#630100] font-montserrat h-[54px]"
+            className="bg-cream border border-gray-200 rounded-2xl px-4 py-4 sm:py-0 text-[11px] font-bold text-gray-600 uppercase tracking-wider outline-none focus:border-brand font-montserrat h-[54px]"
             value={collaboratorRole}
             onChange={(e) => setCollaboratorRole(e.target.value)}
           >
@@ -216,7 +216,7 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
           <button
             type="submit"
             disabled={adding}
-            className="bg-[#630100] text-[#EFDFBB] h-[54px] px-8 rounded-2xl font-bold text-[11px] uppercase tracking-widest hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="bg-brand text-gold-soft h-[54px] px-8 rounded-2xl font-bold text-[11px] uppercase tracking-widest hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {adding ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
             {dict.collaborators.inviteBtn}
@@ -232,7 +232,7 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
             </div>
           ) : (
             collaborators.map((collab) => (
-              <div key={collab.id} className="flex items-center justify-between p-5 bg-white border border-gray-100 rounded-2xl hover:border-[#630100]/20 transition-colors shadow-sm">
+              <div key={collab.id} className="flex items-center justify-between p-5 bg-white border border-gray-100 rounded-2xl hover:border-brand/20 transition-colors shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
                     <Mail size={14} />

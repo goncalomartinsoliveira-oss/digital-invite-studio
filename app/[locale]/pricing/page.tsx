@@ -43,7 +43,7 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20 px-6 font-sans">
+    <div className="min-h-screen bg-cream pt-32 pb-20 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
         
         {/* Cabeçalho da Página */}

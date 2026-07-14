@@ -14,6 +14,18 @@
   --font-sans: var(--font-jost);
   --font-beloved: 'Beloved', cursive;
 
+  /* ── Tokens de cor da MARCA (white-label) ──────────────────────────
+     Os utilitários (bg-brand, text-ink, …) referenciam estas variáveis.
+     Apontamos para var(--brand) etc. (definidas em :root) — assim o
+     Tailwind NÃO fixa a cor, e mesmo as variantes com opacidade
+     (bg-gold-soft/30) trocam de marca em runtime via [data-brand]. */
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+
   /* Define a animação de zoom lento para a imagem principal */
   @keyframes slow-zoom {
     from { transform: scale(1); }
@@ -23,8 +35,27 @@
 }
 
 :root {
+  /* Marca por defeito: Digital Invite Studio */
+  --brand: #630100;        /* ação / botões / destaques primários */
+  --brand-dark: #4a0100;   /* hover do primário */
+  --cream: #FDFBF7;        /* fundo claro */
+  --ink: #332E2B;          /* texto/escuro da marca */
+  --gold: #B8945A;         /* dourado / acento */
+  --gold-soft: #EFDFBB;    /* dourado suave / bordas */
+
   --background: #FDFBF7;
   --foreground: #1a1a1a;
+}
+
+/* ── Marca: Amazing Moon ── */
+[data-brand="amazingmoon"] {
+  --brand: #1C1C1E;        /* Midnight */
+  --brand-dark: #0D0D0E;
+  --cream: #FAF7F2;        /* Ivory */
+  --ink: #2D3B2D;          /* Deep Forest */
+  --gold: #B49A6E;         /* Lunar Gold */
+  --gold-soft: #F5F0E8;    /* Moonstone */
+  --background: #FAF7F2;
 }
 
 body {

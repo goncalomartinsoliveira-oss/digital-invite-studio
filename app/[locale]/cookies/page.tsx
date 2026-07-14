@@ -22,7 +22,7 @@ export default function CookiesPolicyPage() {
   const dict = dictionaries[locale]?.CookiesPolicyPage || dictionaries.pt.CookiesPolicyPage;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20 px-6 font-sans">
+    <div className="min-h-screen bg-cream pt-32 pb-20 px-6 font-sans">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -115,7 +115,7 @@ export default function LiveWallPage() {
 
   if (loading) return (
     <div className="h-screen bg-[#111] flex flex-col items-center justify-center text-white font-montserrat">
-      <Loader2 className="animate-spin mb-4 text-[#EFDFBB]" size={40} />
+      <Loader2 className="animate-spin mb-4 text-gold-soft" size={40} />
       <p className="font-bold uppercase tracking-widest text-[10px] opacity-50">{dict.loadingText}</p>
     </div>
   );
@@ -189,7 +189,7 @@ export default function LiveWallPage() {
         </div>
         <div className="flex flex-col">
           <h2 className="text-white font-black text-lg uppercase tracking-widest italic flex items-center gap-2">
-            <Camera size={20} className="text-[#EFDFBB]"/> {dict.qrCodeTitle}
+            <Camera size={20} className="text-gold-soft"/> {dict.qrCodeTitle}
           </h2>
           <p className="text-white/50 text-[10px] uppercase mt-1 tracking-[0.3em] font-bold">{dict.qrCodeSubtitle}</p>
         </div>

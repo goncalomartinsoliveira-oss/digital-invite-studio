@@ -23,7 +23,7 @@ export default function ContactPage() {
   const dict = dictionaries[locale]?.ContactPage || dictionaries.pt.ContactPage;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20 font-sans">
+    <div className="min-h-screen bg-cream pt-32 pb-20 font-sans">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Cabeçalho */}
@@ -31,7 +31,7 @@ export default function ContactPage() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-serif text-[#332E2B] mb-6"
+            className="text-5xl md:text-7xl font-serif text-ink mb-6"
           >
             {dict.title1} <br />
             <span className="italic text-[#722F37]">{dict.title2}</span>
@@ -58,7 +58,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.email}</p>
-                  <p className="text-lg text-[#332E2B]">hello@digitalinvitestudio.com</p>
+                  <p className="text-lg text-ink">hello@digitalinvitestudio.com</p>
                 </div>
               </div>
 
@@ -69,7 +69,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.whatsapp}</p>
-                  <p className="text-lg text-[#332E2B]">+351 912 345 678</p>
+                  <p className="text-lg text-ink">+351 912 345 678</p>
                 </div>
               </div>
 
@@ -80,7 +80,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.instagram}</p>
-                  <p className="text-lg text-[#332E2B]">@digitalinvitestudio</p>
+                  <p className="text-lg text-ink">@digitalinvitestudio</p>
                 </div>
               </div>
             </div>
@@ -106,17 +106,17 @@ export default function ContactPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelName}</label>
-                  <input type="text" className="w-full bg-[#FDFBF7] border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderName} />
+                  <input type="text" className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderName} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelEmail}</label>
-                  <input type="email" className="w-full bg-[#FDFBF7] border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderEmail} />
+                  <input type="email" className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm" placeholder={dict.form.placeholderEmail} />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelSubject}</label>
-                <select className="w-full bg-[#FDFBF7] border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm appearance-none cursor-pointer">
+                <select className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm appearance-none cursor-pointer">
                   {(dict.form.options as string[]).map((option, idx) => (
                     <option key={idx}>{option}</option>
                   ))}
@@ -125,10 +125,10 @@ export default function ContactPage() {
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">{dict.form.labelMessage}</label>
-                <textarea rows={5} className="w-full bg-[#FDFBF7] border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm resize-none" placeholder={dict.form.placeholderMessage}></textarea>
+                <textarea rows={5} className="w-full bg-cream border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-[#722F37]/20 transition-all outline-none text-sm resize-none" placeholder={dict.form.placeholderMessage}></textarea>
               </div>
 
-              <button className="w-full bg-[#722F37] text-white py-5 rounded-2xl text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg hover:bg-[#332E2B] transition-all flex items-center justify-center gap-3 group">
+              <button className="w-full bg-[#722F37] text-white py-5 rounded-2xl text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg hover:bg-ink transition-all flex items-center justify-center gap-3 group">
                 {dict.form.btnSubmit}
                 <Send size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </button>

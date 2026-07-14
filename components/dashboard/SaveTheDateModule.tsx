@@ -110,14 +110,14 @@ export default function SaveTheDateModule({
   };
 
   const labelClass = "text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-2 block";
-  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-[#630100] text-sm text-[#332E2B] font-semibold px-0 py-3 transition-colors placeholder-gray-300";
+  const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-brand text-sm text-ink font-semibold px-0 py-3 transition-colors placeholder-gray-300";
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 lg:gap-16 items-start">
 
       {/* ── Controlos ── */}
       <div className={!canEdit ? "opacity-70 pointer-events-none" : ""}>
-        <h2 className="font-serif text-3xl text-[#332E2B]">{dict.title}</h2>
+        <h2 className="font-serif text-3xl text-ink">{dict.title}</h2>
         <p className="text-gray-400 text-sm mt-1 mb-10">{dict.subtitle}</p>
 
         {/* Foto */}
@@ -130,7 +130,7 @@ export default function SaveTheDateModule({
                 : <ImagePlus size={22} className="text-gray-300" />}
             </div>
             <div>
-              <label className="inline-flex items-center gap-2 cursor-pointer bg-[#630100] text-white px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#4a0100] transition-all">
+              <label className="inline-flex items-center gap-2 cursor-pointer bg-brand text-white px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-dark transition-all">
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
                 {uploading ? dict.uploading : (std.photo_url ? dict.changePhoto : dict.uploadBtn)}
                 <input type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={!canEdit || uploading} />
@@ -151,7 +151,7 @@ export default function SaveTheDateModule({
           />
         </div>
 
-        <p className="text-[11px] text-gray-400 italic border-l-2 border-[#EFDFBB] pl-3">{dict.autoNote}</p>
+        <p className="text-[11px] text-gray-400 italic border-l-2 border-gold-soft pl-3">{dict.autoNote}</p>
       </div>
 
       {/* ── Preview + download ── */}
@@ -223,7 +223,7 @@ export default function SaveTheDateModule({
         <button
           onClick={handleDownload}
           disabled={generating}
-          className="inline-flex items-center gap-2 bg-[#630100] text-white px-8 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-widest shadow-md hover:bg-[#4a0100] transition-all active:scale-95 disabled:opacity-60"
+          className="inline-flex items-center gap-2 bg-brand text-white px-8 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-widest shadow-md hover:bg-brand-dark transition-all active:scale-95 disabled:opacity-60"
         >
           {generating ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
           {generating ? dict.generating : dict.downloadBtn}

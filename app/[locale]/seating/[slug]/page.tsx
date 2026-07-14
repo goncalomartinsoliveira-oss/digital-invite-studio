@@ -87,16 +87,16 @@ export default function SeatingPlanGuestView() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-[100] bg-[#FDFBF7] flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#630100]" size={40} />
+      <div className="fixed inset-0 z-[100] bg-cream flex items-center justify-center">
+        <Loader2 className="animate-spin text-brand" size={40} />
       </div>
     );
   }
 
   if (!inviteData) {
     return (
-      <div className="fixed inset-0 z-[100] bg-[#FDFBF7] flex items-center justify-center flex-col text-center p-6">
-        <h1 className="font-serif text-3xl text-[#630100] mb-2">{dict.notFound}</h1>
+      <div className="fixed inset-0 z-[100] bg-cream flex items-center justify-center flex-col text-center p-6">
+        <h1 className="font-serif text-3xl text-brand mb-2">{dict.notFound}</h1>
         <p className="text-gray-500 font-montserrat text-sm">{dict.notFoundSub}</p>
       </div>
     );
@@ -104,15 +104,15 @@ export default function SeatingPlanGuestView() {
 
   return (
     /* O 'fixed inset-0 z-[100] overflow-y-auto' garante que a página cobre a Navbar e o Footer globais */
-    <div className="fixed inset-0 z-[100] bg-[#FDFBF7] text-[#332E2B] font-montserrat flex flex-col selection:bg-[#630100] selection:text-[#EFDFBB] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] bg-cream text-ink font-montserrat flex flex-col selection:bg-brand selection:text-gold-soft overflow-y-auto">
       
       {/* BACKGROUND DECORATIVO PREMIUM */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-40 bg-gradient-to-b from-[#EFDFBB]/30 to-transparent blur-2xl pointer-events-none"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-40 bg-gradient-to-b from-gold-soft/30 to-transparent blur-2xl pointer-events-none"></div>
 
       {/* CABEÇALHO DO EVENTO */}
       <header className="pt-16 pb-8 px-6 text-center shrink-0 relative z-10">
-        <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-[#630100]/60 mb-4">{dict.welcome}</p>
-        <h1 className="font-serif text-4xl text-[#630100] leading-tight">
+        <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-brand/60 mb-4">{dict.welcome}</p>
+        <h1 className="font-serif text-4xl text-brand leading-tight">
           {inviteData.bride_name} <span className="font-light italic text-[#E5D0A1] text-3xl mx-2">&</span> {inviteData.groom_name}
         </h1>
       </header>
@@ -129,15 +129,15 @@ export default function SeatingPlanGuestView() {
               exit={{ opacity: 0, x: -20 }}
               className="flex-1 flex flex-col"
             >
-              <div className="bg-white p-6 rounded-[2rem] shadow-2xl shadow-[#630100]/5 border border-[#EFDFBB]/30 relative z-10 mt-4">
+              <div className="bg-white p-6 rounded-[2rem] shadow-2xl shadow-brand/5 border border-gold-soft/30 relative z-10 mt-4">
                 <h2 className="font-serif text-2xl text-center mb-6">{dict.findYourSeat}</h2>
 
                 <div className="relative group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#630100]/40 group-focus-within:text-[#630100] transition-colors" size={20} />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand/40 group-focus-within:text-brand transition-colors" size={20} />
                   <input
                     type="text"
                     placeholder={dict.searchPlaceholder}
-                    className="w-full bg-[#FDFBF7] border border-gray-100 focus:border-[#630100]/50 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none transition-all placeholder:text-gray-300 shadow-inner"
+                    className="w-full bg-cream border border-gray-100 focus:border-brand/50 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium outline-none transition-all placeholder:text-gray-300 shadow-inner"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     autoFocus
@@ -155,10 +155,10 @@ export default function SeatingPlanGuestView() {
                         <button 
                           key={guest.id}
                           onClick={() => setSelectedGuest(guest)}
-                          className="w-full bg-white p-5 rounded-2xl border border-gray-100 flex items-center justify-between hover:border-[#630100]/30 active:scale-95 transition-all text-left group shadow-sm"
+                          className="w-full bg-white p-5 rounded-2xl border border-gray-100 flex items-center justify-between hover:border-brand/30 active:scale-95 transition-all text-left group shadow-sm"
                         >
-                          <span className="font-semibold text-[14px] text-gray-700 group-hover:text-[#630100] transition-colors">{guest.name}</span>
-                          <div className="w-8 h-8 rounded-full bg-[#630100]/5 text-[#630100] flex items-center justify-center group-hover:bg-[#630100] group-hover:text-[#EFDFBB] transition-colors shrink-0">
+                          <span className="font-semibold text-[14px] text-gray-700 group-hover:text-brand transition-colors">{guest.name}</span>
+                          <div className="w-8 h-8 rounded-full bg-brand/5 text-brand flex items-center justify-center group-hover:bg-brand group-hover:text-gold-soft transition-colors shrink-0">
                             <MapPin size={14} />
                           </div>
                         </button>
@@ -188,22 +188,22 @@ export default function SeatingPlanGuestView() {
               exit={{ opacity: 0, scale: 0.95 }}
               className="flex-1 flex flex-col justify-center items-center pb-20 mt-4"
             >
-              <div className="w-full bg-white p-10 rounded-[3rem] shadow-2xl shadow-[#630100]/10 border border-[#EFDFBB]/50 text-center relative overflow-hidden">
+              <div className="w-full bg-white p-10 rounded-[3rem] shadow-2xl shadow-brand/10 border border-gold-soft/50 text-center relative overflow-hidden">
                 {/* Background Decorativo Cartão VIP */}
-                <div className="absolute top-0 left-0 w-full h-1.5 bg-[#630100]"></div>
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#EFDFBB]/30 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#630100]/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-brand"></div>
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-gold-soft/30 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-brand/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="relative z-10">
                   <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-2">{dict.reservedFor}</p>
-                  <h3 className="font-bold text-xl mb-10 text-[#332E2B]">{selectedGuest.name}</h3>
+                  <h3 className="font-bold text-xl mb-10 text-ink">{selectedGuest.name}</h3>
 
-                  <div className="inline-flex items-center justify-center w-24 h-24 bg-[#FDFBF7] border border-[#EFDFBB] rounded-full text-[#630100] mb-8 shadow-inner">
+                  <div className="inline-flex items-center justify-center w-24 h-24 bg-cream border border-gold-soft rounded-full text-brand mb-8 shadow-inner">
                     <MapPin size={36} strokeWidth={1.5} />
                   </div>
 
                   <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-3">{dict.yourTableIs}</p>
-                  <h2 className="font-serif text-5xl text-[#630100] font-regular">
+                  <h2 className="font-serif text-5xl text-brand font-regular">
                     {tables[selectedGuest.table_id] || dict.tableNotDefined}
                   </h2>
                 </div>
@@ -214,7 +214,7 @@ export default function SeatingPlanGuestView() {
                   setSelectedGuest(null);
                   setSearchQuery("");
                 }}
-                className="mt-12 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-[#630100] transition-colors"
+                className="mt-12 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-brand transition-colors"
               >
                 <ArrowLeft size={14} /> {dict.searchAnother}
               </button>
@@ -226,8 +226,8 @@ export default function SeatingPlanGuestView() {
       {/* RODAPÉ DIGITAL INVITE STUDIO */}
       <footer className="mt-auto py-8 text-center shrink-0 relative z-10">
         <Link href={`/${params.locale}`} className="group flex flex-col items-center justify-center gap-1.5 opacity-50 hover:opacity-100 transition-opacity">
-          <span className="text-[7px] font-bold uppercase tracking-[0.4em] text-gray-400 group-hover:text-[#630100] transition-colors">Powered by</span>
-          <span className="text-[11px] font-serif italic tracking-wide text-gray-600 group-hover:text-[#630100] transition-colors">Digital Invite Studio</span>
+          <span className="text-[7px] font-bold uppercase tracking-[0.4em] text-gray-400 group-hover:text-brand transition-colors">Powered by</span>
+          <span className="text-[11px] font-serif italic tracking-wide text-gray-600 group-hover:text-brand transition-colors">Digital Invite Studio</span>
         </Link>
       </footer>
 

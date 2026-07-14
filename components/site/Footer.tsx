@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 // 1. IMPORTAR OS DICIONÁRIOS
 import pt from '../../dictionaries/pt';
 import en from '../../dictionaries/en';
+import type { Brand } from '../../lib/brands';
 
 const dictionaries = {
   pt: pt,
   en: en
 };
 
-export default function Footer() {
+export default function Footer({ brand }: { brand?: Brand }) {
   const currentYear = new Date().getFullYear();
   const pathname = usePathname();
 
@@ -31,8 +32,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-1">
-            <Link href={`/${locale}`} className="font-serif text-2xl text-[#722F37] block mb-4">
-              Digital Invite Studio
+            <Link href={`/${locale}`} className="font-serif text-2xl text-brand block mb-4">
+              {brand?.name ?? "Digital Invite Studio"}
             </Link>
             <p className="text-sm text-gray-500">
               {dict.tagline}
@@ -41,20 +42,20 @@ export default function Footer() {
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-900 mb-6">{dict.product}</h4>
             <ul className="space-y-4">
-              <li><Link href={`/${locale}/features`} className="text-sm text-gray-500 hover:text-[#722F37]">{dict.features}</Link></li>
-              <li><Link href={`/${locale}/pricing`} className="text-sm text-gray-500 hover:text-[#722F37]">{dict.pricing}</Link></li>
+              <li><Link href={`/${locale}/features`} className="text-sm text-gray-500 hover:text-brand">{dict.features}</Link></li>
+              <li><Link href={`/${locale}/pricing`} className="text-sm text-gray-500 hover:text-brand">{dict.pricing}</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-900 mb-6">{dict.company}</h4>
             <ul className="space-y-4">
-              <li><Link href={`/${locale}/contact`} className="text-sm text-gray-500 hover:text-[#722F37]">{dict.contact}</Link></li>
+              <li><Link href={`/${locale}/contact`} className="text-sm text-gray-500 hover:text-brand">{dict.contact}</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-900 mb-6">{dict.legal}</h4>
             <ul className="space-y-4">
-              <li><Link href={`/${locale}/privacy`} className="text-sm text-gray-500 hover:text-[#722F37]">{dict.privacy}</Link></li>
+              <li><Link href={`/${locale}/privacy`} className="text-sm text-gray-500 hover:text-brand">{dict.privacy}</Link></li>
             </ul>
           </div>
         </div>

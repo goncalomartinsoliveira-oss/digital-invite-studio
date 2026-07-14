@@ -97,16 +97,16 @@ export default function DashboardHub() {
   };
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-[#FDFBF7]">
+    <div className="h-screen flex items-center justify-center bg-cream">
       <div className="flex flex-col items-center gap-4">
-        <Loader2 className="w-10 h-10 border-t-[#630100] animate-spin text-[#630100]/20" />
+        <Loader2 className="w-10 h-10 border-t-brand animate-spin text-brand/20" />
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{dict.loadingText}</p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] font-montserrat flex flex-col">
+    <div className="min-h-screen bg-cream font-montserrat flex flex-col">
       
       {/* HEADER MINIMALISTA */}
       <header className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
@@ -116,7 +116,7 @@ export default function DashboardHub() {
           </Link>
           <Link
             href={`/${locale}`}
-            className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#630100] transition-colors"
+            className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand transition-colors"
           >
             <ArrowLeft size={12} />
             {dict.backToSite}
@@ -143,7 +143,7 @@ export default function DashboardHub() {
         
         {/* SECÇÃO 1: OS MEUS PROJETOS */}
         <div className="mb-12">
-          <h1 className="font-serif text-4xl sm:text-5xl text-[#630100] font-light italic mb-3">
+          <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-3">
             {dict.title}
           </h1>
           <p className="text-gray-500 text-sm max-w-xl leading-relaxed">
@@ -157,12 +157,12 @@ export default function DashboardHub() {
             whileHover={{ scale: 1.02, y: -5 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => router.push(`/${params.locale}/dashboard/new-invite`)}
-            className="bg-[#FDFBF7] border-2 border-dashed border-[#EFDFBB] rounded-[2rem] p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#630100] hover:bg-white hover:shadow-xl transition-all h-[280px] group"
+            className="bg-cream border-2 border-dashed border-gold-soft rounded-[2rem] p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:border-brand hover:bg-white hover:shadow-xl transition-all h-[280px] group"
           >
-            <div className="w-16 h-16 bg-[#EFDFBB]/30 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#630100] group-hover:text-[#EFDFBB] transition-colors text-[#630100]">
+            <div className="w-16 h-16 bg-gold-soft/30 rounded-full flex items-center justify-center mb-6 group-hover:bg-brand group-hover:text-gold-soft transition-colors text-brand">
               <Plus size={24} />
             </div>
-            <h3 className="font-serif text-2xl text-[#332E2B] mb-2 group-hover:text-[#630100] transition-colors">{dict.newEvent.title}</h3>
+            <h3 className="font-serif text-2xl text-ink mb-2 group-hover:text-brand transition-colors">{dict.newEvent.title}</h3>
             <p className="text-xs text-gray-400 font-medium">{dict.newEvent.subtitle}</p>
           </motion.div>
 
@@ -173,16 +173,16 @@ export default function DashboardHub() {
               whileHover={{ scale: 1.02, y: -5 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => router.push(`/${params.locale}/dashboard/${invite.slug}`)}
-              className="bg-white border border-gray-100 rounded-[2rem] p-8 flex flex-col justify-between cursor-pointer hover:shadow-2xl hover:shadow-[#630100]/5 transition-all h-[280px] relative overflow-hidden group"
+              className="bg-white border border-gray-100 rounded-[2rem] p-8 flex flex-col justify-between cursor-pointer hover:shadow-2xl hover:shadow-brand/5 transition-all h-[280px] relative overflow-hidden group"
             >
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FDFBF7] rounded-full z-0 group-hover:scale-110 transition-transform duration-500"></div>
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-cream rounded-full z-0 group-hover:scale-110 transition-transform duration-500"></div>
               
               <div className="relative z-10">
-                <div className="w-12 h-12 bg-white border border-[#EFDFBB] rounded-full flex items-center justify-center mb-6 text-[#630100] shadow-sm">
+                <div className="w-12 h-12 bg-white border border-gold-soft rounded-full flex items-center justify-center mb-6 text-brand shadow-sm">
                   <Calendar size={18} />
                 </div>
                 
-                <h3 className="font-serif text-3xl text-[#630100] mb-3 leading-tight pr-4">
+                <h3 className="font-serif text-3xl text-brand mb-3 leading-tight pr-4">
                   {invite.groom_name && invite.bride_name 
                     ? `${invite.groom_name} & ${invite.bride_name}` 
                     : dict.inviteState.noName}
@@ -199,7 +199,7 @@ export default function DashboardHub() {
                   <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.inviteState.eventDateLabel}</p>
                   <p className="text-xs text-gray-700 font-semibold">{formatEventDate(invite.event_date)}</p>
                 </div>
-                <div className="bg-[#630100] text-[#EFDFBB] w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300">
+                <div className="bg-brand text-gold-soft w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300">
                   <ArrowRight size={16} />
                 </div>
               </div>
@@ -211,8 +211,8 @@ export default function DashboardHub() {
         {sharedInvites.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-12 border-t border-gray-100">
             <div className="mb-10 flex items-center gap-4">
-              <Users className="text-[#630100]" size={28} />
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#332E2B] font-light italic">
+              <Users className="text-brand" size={28} />
+              <h2 className="font-serif text-3xl sm:text-4xl text-ink font-light italic">
                 {dict.sharedSectionTitle}
               </h2>
             </div>
@@ -224,14 +224,14 @@ export default function DashboardHub() {
                   whileHover={{ scale: 1.02, y: -5 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => router.push(`/${params.locale}/dashboard/${invite.slug}`)}
-                  className="bg-[#FDFBF7] border border-[#EFDFBB]/50 rounded-[2rem] p-8 flex flex-col justify-between cursor-pointer hover:shadow-xl transition-all h-[280px] relative overflow-hidden group"
+                  className="bg-cream border border-gold-soft/50 rounded-[2rem] p-8 flex flex-col justify-between cursor-pointer hover:shadow-xl transition-all h-[280px] relative overflow-hidden group"
                 >
                   <div className="relative z-10">
                     <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-6 text-gray-400 shadow-sm border border-gray-100">
                       <Users size={18} />
                     </div>
                     
-                    <h3 className="font-serif text-3xl text-[#332E2B] mb-3 leading-tight pr-4">
+                    <h3 className="font-serif text-3xl text-ink mb-3 leading-tight pr-4">
                       {invite.groom_name && invite.bride_name 
                         ? `${invite.groom_name} & ${invite.bride_name}` 
                         : dict.inviteState.noName}
@@ -242,12 +242,12 @@ export default function DashboardHub() {
                     </div>
                   </div>
 
-                  <div className="relative z-10 flex justify-between items-end pt-6 border-t border-[#EFDFBB]/30 mt-4">
+                  <div className="relative z-10 flex justify-between items-end pt-6 border-t border-gold-soft/30 mt-4">
                     <div>
                       <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.inviteState.originalOwnerLabel}</p>
                       <p className="text-xs text-gray-700 font-medium truncate w-32">{invite.user_email}</p>
                     </div>
-                    <div className="bg-[#332E2B] text-white w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300">
+                    <div className="bg-ink text-white w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300">
                       <ArrowRight size={16} />
                     </div>
                   </div>
