@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useBrand } from "@/components/site/BrandProvider";
+import { resolveBrandById } from "@/lib/brands";
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
@@ -19,6 +20,7 @@ const dictionaries = {
 export default function LiveWallPage() {
   const { slug, locale } = useParams();
   const brand = useBrand();
+  const [eventBrand, setEventBrand] = useState<any>(null);
   
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const currentLocale = (locale as 'en' | 'pt') || 'pt';
@@ -49,9 +51,10 @@ export default function LiveWallPage() {
   }, []);
 
   async function fetchInitialData() {
-    const { data: inv } = await supabase.from('invitations').select('id').eq('slug', slug).single();
+    const { data: inv } = await supabase.from('invitations').select('id, brand_id').eq('slug', slug).single();
     if (inv) {
       await fetchItems(inv.id);
+      setEventBrand(await resolveBrandById(supabase, (inv as any)?.brand_id));
     }
   }
 
@@ -59,7 +62,7 @@ export default function LiveWallPage() {
     // Se não passarmos ID, tenta ir buscar à primeira imagem (para a atualização de 60s)
     let currentInvId = invId;
     if (!currentInvId) {
-       const { data: inv } = await supabase.from('invitations').select('id').eq('slug', slug).single();
+       const { data: inv } = await supabase.from('invitations').select('id, brand_id').eq('slug', slug).single();
        if (inv) currentInvId = inv.id;
     }
     if (!currentInvId) return;
@@ -200,7 +203,7 @@ export default function LiveWallPage() {
       {/* ASSINATURA DIS (CANTO INFERIOR DIREITO) */}
       <div className="absolute bottom-10 right-10 z-[110] flex flex-col items-end opacity-70 hover:opacity-100 transition-opacity duration-500">
         <span className="text-[8px] text-white/50 font-bold uppercase tracking-[0.4em] mb-2">{dict.poweredBy}</span>
-        <img src={brand.logo} alt={brand.logoAlt} className="h-6 w-auto invert" />
+        <img src={eventBrand?.logo ?? brand.logo} alt={eventBrand?.name ?? brand.logoAlt} className="h-6 w-auto invert" />
       </div>
 
     </div>
