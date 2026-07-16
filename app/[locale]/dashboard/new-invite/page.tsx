@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
+import { resolveWorkingBrand } from "@/lib/brands";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás a partir de app/[locale]/dashboard/new-invite/)
 import pt from "../../../../dictionaries/pt";
@@ -22,6 +23,7 @@ export default function NovoConvitePage() {
   const brand = useBrand();
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [workingBrandId, setWorkingBrandId] = useState<string | null>(null);
   const [baseUrl, setBaseUrl] = useState("");
   
   const [groomName, setGroomName] = useState("");
@@ -43,7 +45,11 @@ export default function NovoConvitePage() {
         router.push(`/${params.locale}/login`);
         return;
       }
-      setUserEmail(session.user.email || "");
+      const email = session.user.email || "";
+      setUserEmail(email);
+      // Parceiro leve: os eventos que cria ficam com a marca dele.
+      const wb = await resolveWorkingBrand(supabase, email, brand.id);
+      setWorkingBrandId(wb?.id ?? null);
     }
     getUser();
     
@@ -87,7 +93,7 @@ export default function NovoConvitePage() {
         groom_name: groomName,
         bride_name: brideName,
         event_date: eventDate,
-        brand_id: brand.id
+        brand_id: workingBrandId || brand.id
       }]);
 
       if (error) throw error;

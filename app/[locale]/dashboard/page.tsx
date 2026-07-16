@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
-import { BRANDS } from "@/lib/brands";
+import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
 import AdminManagementView from "@/components/dashboard/AdminManagementView";
 import MembersManagementView from "@/components/dashboard/MembersManagementView";
 import BrandsManagementView from "@/components/dashboard/BrandsManagementView";
@@ -36,6 +36,7 @@ export default function DashboardHub() {
   const [adminInvites, setAdminInvites] = useState<any[]>([]);
   const [guestCounts, setGuestCounts] = useState<Record<string, { total: number; confirmed: number }>>({});
   const [dbBrands, setDbBrands] = useState<{ id: string; name: string }[]>([]);
+  const [workingBrand, setWorkingBrand] = useState<WorkingBrand | null>(null);
   const [viewMode, setViewMode] = useState<'events' | 'admin' | 'members' | 'brands'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
@@ -73,6 +74,9 @@ export default function DashboardHub() {
       
       const email = session.user.email || "";
       setUserEmail(email);
+
+      // Marca de trabalho (parceiro leve no domínio DIS) → logo do parceiro no dashboard.
+      setWorkingBrand(await resolveWorkingBrand(supabase, email, brand.id));
 
       // É membro da agência (marca ativa)? → vê todos os eventos dessa marca.
       const { data: membership } = await supabase
@@ -211,8 +215,8 @@ export default function DashboardHub() {
       <header className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
         <div className="flex items-center gap-4">
           <Link href={`/${locale}`} className="flex flex-col">
-            <img src={brand.logo} alt={brand.logoAlt} className="w-32 sm:w-40 h-auto hover:opacity-80 transition-opacity" />
-            {brand.poweredBy && (
+            <img src={workingBrand?.logo ?? brand.logo} alt={workingBrand?.name ?? brand.logoAlt} className="w-32 sm:w-40 h-auto hover:opacity-80 transition-opacity" />
+            {(brand.poweredBy || !!workingBrand) && (
               <span className="text-[7px] font-semibold uppercase tracking-[0.25em] text-gray-300 mt-0.5">powered by Digital Invite Studio</span>
             )}
           </Link>

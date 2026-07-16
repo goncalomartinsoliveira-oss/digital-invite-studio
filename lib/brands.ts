@@ -44,6 +44,33 @@ export const BRANDS: Record<string, Brand> = {
 
 export const DEFAULT_BRAND = BRANDS.dis;
 
+// ── Marca "de trabalho" (parceiros leves, sem domínio) ────────────────
+// Resolve a info (nome + logo) de uma marca por id, do registry OU da BD.
+export type WorkingBrand = { id: string; name: string; logo: string; logoRaster: string };
+
+export async function resolveBrandById(sb: any, id?: string): Promise<WorkingBrand | null> {
+  if (!id || id === "dis") return null; // 'dis' é o default — sem override
+  if (BRANDS[id]) {
+    const b = BRANDS[id];
+    return { id: b.id, name: b.name, logo: b.logo, logoRaster: b.logoRaster };
+  }
+  const { data } = await sb.from("brands").select("id, name, logo_url").eq("id", id).maybeSingle();
+  if (!data) return null;
+  return { id: data.id, name: data.name, logo: data.logo_url || "/logo-dis.svg", logoRaster: data.logo_url || "/logo-dis.png" };
+}
+
+// A marca do parceiro a que o utilizador pertence (usada no domínio DIS para
+// mostrar o logo do parceiro e etiquetar os eventos que ele cria).
+export async function resolveWorkingBrand(sb: any, email: string, domainBrandId: string): Promise<WorkingBrand | null> {
+  if (domainBrandId !== "dis" || !email) return null;
+  // Super-admins são staff do master — não assumem a marca de um parceiro.
+  const { data: sa } = await sb.from("super_admins").select("user_email").eq("user_email", email).maybeSingle();
+  if (sa) return null;
+  const { data: mems } = await sb.from("brand_members").select("brand_id").eq("user_email", email);
+  const partnerId = ((mems as any[]) || []).map(m => m.brand_id).find((id: string) => id && id !== "dis");
+  return resolveBrandById(sb, partnerId);
+}
+
 // Resolve a marca ativa a partir do hostname (com override opcional por cookie,
 // útil para testar antes de o subdomínio estar configurado).
 export function resolveBrand(host?: string, cookieBrand?: string): Brand {
