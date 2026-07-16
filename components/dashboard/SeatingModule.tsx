@@ -273,9 +273,13 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
         });
 
         // Calcula a altura correta com base na largura que queremos (ex: 40mm) para não esticar a imagem
+        // Ajusta a uma caixa (máx. 40mm largura × 16mm altura) mantendo a proporção,
+        // para que logótipos quadrados (parceiros) não fiquem enormes.
         const logoRatio = logoImg.height / logoImg.width;
-        const logoWidth = 40; 
-        const logoHeight = logoWidth * logoRatio;
+        const maxLogoW = 40, maxLogoH = 16;
+        let logoWidth = maxLogoW;
+        let logoHeight = logoWidth * logoRatio;
+        if (logoHeight > maxLogoH) { logoHeight = maxLogoH; logoWidth = logoHeight / logoRatio; }
         
         pdf.addImage(logoImg, "PNG", 14, 8, logoWidth, logoHeight);
         pdf.link(14, 8, logoWidth, logoHeight, { url: websiteUrl });

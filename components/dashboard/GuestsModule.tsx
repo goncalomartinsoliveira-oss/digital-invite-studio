@@ -240,8 +240,11 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
       const logoImg = new window.Image();
       logoImg.src = brand.logoRaster;
       await new Promise((resolve, reject) => { logoImg.onload = resolve; logoImg.onerror = reject; });
-      const logoWidth = 40;
-      const logoHeight = logoWidth * (logoImg.height / logoImg.width);
+      // Caixa máx. 40mm × 16mm, proporção mantida (logos quadrados de parceiros não ficam enormes).
+      const logoRatio = logoImg.height / logoImg.width;
+      let logoWidth = 40;
+      let logoHeight = logoWidth * logoRatio;
+      if (logoHeight > 16) { logoHeight = 16; logoWidth = logoHeight / logoRatio; }
       doc.addImage(logoImg, "PNG", 14, 10, logoWidth, logoHeight);
       doc.link(14, 10, logoWidth, logoHeight, { url: websiteUrl });
       contentY = 10 + logoHeight + 12;
