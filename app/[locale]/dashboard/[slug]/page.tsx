@@ -28,6 +28,7 @@ import AccountModule from "@/components/dashboard/AccountModule";
 import MomentsModule from "@/components/dashboard/MomentsModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
 import { useBrand } from "@/components/site/BrandProvider";
+import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -67,6 +68,7 @@ export default function Dashboard() {
 
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
   const brand = useBrand();
+  const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -122,6 +124,9 @@ export default function Dashboard() {
         ...invite,
         user_email: invite.user_email || email
       });
+
+      // Marca do próprio evento → logo do parceiro no editor.
+      setEventBrand(await resolveBrandById(supabase, invite.brand_id));
 
       const { data: gs } = await supabase.from("guests").select("*").eq("invitation_id", invite.id);
       setGuests(gs || []);
@@ -283,8 +288,8 @@ export default function Dashboard() {
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r border-gray-100 hidden xl:flex flex-col z-30 shadow-sm shrink-0">
         <div className="pt-10 pb-6 px-6 flex flex-col items-center gap-4 border-b border-gray-50 mb-4">
-          <img src={brand.logo} alt={brand.logoAlt} className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
-          {brand.poweredBy && (
+          <img src={eventBrand?.logo ?? brand.logo} alt={eventBrand?.name ?? brand.logoAlt} className="w-52 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-500" />
+          {(brand.poweredBy || !!eventBrand) && (
             <span className="text-[7px] font-semibold uppercase tracking-[0.25em] text-gray-300 mt-1">powered by Digital Invite Studio</span>
           )}
           <Link

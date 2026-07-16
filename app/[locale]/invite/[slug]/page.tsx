@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import LuxuryTemplate from "../../templates/luxury-01/page";
 import CollageTemplate from "../../templates/collage-01/page";
 import Minimal01Template from "../../templates/minimal-01/page";
+import { EventBrandProvider } from "../../../../components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis de recuo)
 import pt from "../../../../dictionaries/pt";
@@ -51,16 +52,18 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
     );
   }
 
-  // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO
+  // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO (com a marca do próprio evento)
   return (
     <main>
-      {invite.template_id === 'collage-01' ? (
-        <CollageTemplate data={invite} />
-      ) : invite.template_id === 'minimal-01' ? (
-        <Minimal01Template data={invite} params={params} />
-      ) : (
-        <LuxuryTemplate data={invite} params={params} />
-      )}
+      <EventBrandProvider brandId={invite.brand_id}>
+        {invite.template_id === 'collage-01' ? (
+          <CollageTemplate data={invite} />
+        ) : invite.template_id === 'minimal-01' ? (
+          <Minimal01Template data={invite} params={params} />
+        ) : (
+          <LuxuryTemplate data={invite} params={params} />
+        )}
+      </EventBrandProvider>
     </main>
   );
 }
