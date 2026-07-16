@@ -94,9 +94,17 @@ export default function Dashboard() {
         .eq("user_email", email)
         .maybeSingle();
 
+      // Super-admin → acesso total a qualquer evento.
+      const { data: sa } = await supabase
+        .from("super_admins")
+        .select("user_email")
+        .eq("user_email", email)
+        .maybeSingle();
+      const isSuper = !!sa;
+
       // Acesso de agência: um membro da marca do evento pode geri-lo.
       let agencyRole: "owner" | "editor" | null = null;
-      if (!isOwner && !collab && invite.brand_id) {
+      if (!isOwner && !collab && !isSuper && invite.brand_id) {
         const { data: member } = await supabase
           .from("brand_members")
           .select("role")
@@ -106,13 +114,13 @@ export default function Dashboard() {
         if (member) agencyRole = member.role === "admin" ? "owner" : "editor";
       }
 
-      if (!isOwner && !collab && !agencyRole) {
+      if (!isOwner && !collab && !agencyRole && !isSuper) {
         console.error("Acesso Negado.");
         router.push(`/${params.locale}/dashboard`);
         return;
       }
 
-      if (isOwner) {
+      if (isSuper || isOwner) {
         setUserRole("owner");
       } else if (collab) {
         setUserRole(collab.role as "editor" | "viewer");

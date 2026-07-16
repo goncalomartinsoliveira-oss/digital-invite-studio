@@ -75,14 +75,17 @@ export default function DashboardHub() {
       const email = session.user.email || "";
       setUserEmail(email);
 
-      // Marca de trabalho (parceiro leve no domínio DIS) → logo do parceiro no dashboard.
-      setWorkingBrand(await resolveWorkingBrand(supabase, email, brand.id));
+      // Marca de trabalho (parceiro leve): sobrepõe a marca do domínio no dashboard
+      // — logo, lista de eventos e etiqueta de novos eventos passam a ser do parceiro.
+      const wb = await resolveWorkingBrand(supabase, email, brand.id);
+      setWorkingBrand(wb);
+      const effBrandId = wb?.id ?? brand.id;
 
-      // É membro da agência (marca ativa)? → vê todos os eventos dessa marca.
+      // É membro/admin da marca efetiva? → vê todos os eventos dessa marca.
       const { data: membership } = await supabase
         .from("brand_members")
         .select("role")
-        .eq("brand_id", brand.id)
+        .eq("brand_id", effBrandId)
         .eq("user_email", email)
         .maybeSingle();
       const agencyMember = !!membership;
@@ -104,9 +107,9 @@ export default function DashboardHub() {
         setDbBrands(((bd as any[]) || []).map(b => ({ id: b.id, name: b.name })));
       }
 
-      // Eventos próprios e partilhados — sempre isolados pela marca ativa.
+      // Eventos próprios e partilhados — isolados pela marca efetiva.
       const [myData, collabs] = await Promise.all([
-        supabase.from("invitations").select("*").eq("user_email", email).eq("brand_id", brand.id),
+        supabase.from("invitations").select("*").eq("user_email", email).eq("brand_id", effBrandId),
         supabase.from("invitation_collaborators").select("invitation_id").eq("user_email", email)
       ]);
 
@@ -119,7 +122,7 @@ export default function DashboardHub() {
           .from("invitations")
           .select("*")
           .in("id", sharedIds)
-          .eq("brand_id", brand.id);
+          .eq("brand_id", effBrandId);
 
         sharedInvitesFound = sharedData || [];
       }
@@ -130,7 +133,7 @@ export default function DashboardHub() {
         const { data: agencyData } = await supabase
           .from("invitations")
           .select("*")
-          .eq("brand_id", brand.id);
+          .eq("brand_id", effBrandId);
         agencyInvitesFound = agencyData || [];
       }
 
@@ -145,8 +148,8 @@ export default function DashboardHub() {
         const { data: allData } = await supabase.from("invitations").select("*");
         adminScope = allData || [];
       } else if (superAdmin || agencyMember) {
-        // Super-admin num domínio de parceiro, ou membro de agência → eventos da marca ativa.
-        const { data: brandData } = await supabase.from("invitations").select("*").eq("brand_id", brand.id);
+        // Super-admin num domínio de parceiro, ou admin de marca → eventos da marca efetiva.
+        const { data: brandData } = await supabase.from("invitations").select("*").eq("brand_id", effBrandId);
         adminScope = brandData || [];
       }
       setAdminInvites(adminScope);
@@ -191,8 +194,9 @@ export default function DashboardHub() {
 
   // Membro de agência vê o portfólio da marca; caso contrário, os seus eventos.
   const primaryInvites = isAgencyMember ? agencyInvites : invites;
+  const effBrandName = workingBrand?.name ?? brand.name;
   const primaryHeading = isAgencyMember
-    ? (locale === 'en' ? `${brand.name} events` : `Eventos · ${brand.name}`)
+    ? (locale === 'en' ? `${effBrandName} events` : `Eventos · ${effBrandName}`)
     : dict.title;
   const primaryDesc = isAgencyMember
     ? (locale === 'en' ? 'All your agency events in one place.' : 'Todos os eventos da agência num só lugar.')
