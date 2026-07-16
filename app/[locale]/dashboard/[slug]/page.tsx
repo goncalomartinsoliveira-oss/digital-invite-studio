@@ -27,7 +27,7 @@ import SeatingModule from "@/components/dashboard/SeatingModule";
 import AccountModule from "@/components/dashboard/AccountModule";
 import MomentsModule from "@/components/dashboard/MomentsModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
-import { useBrand } from "@/components/site/BrandProvider";
+import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
@@ -430,6 +430,7 @@ export default function Dashboard() {
           </header>
 
           <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-32 scroll-smooth relative">
+            <EventBrandProvider brandId={formData.brand_id}>
             <div className="max-w-5xl mx-auto">
               {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />}
               {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />}
@@ -439,6 +440,7 @@ export default function Dashboard() {
               {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} dict={dictionaries[locale]?.MomentsModule || dictionaries.pt.MomentsModule} />}
               {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
             </div>
+            </EventBrandProvider>
           </main>
         </div>
 
