@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
@@ -73,6 +74,10 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
   const [isEditingTable, setIsEditingTable] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [copied, setCopied] = useState(false);
+  // Enquanto se arrasta um convidado, mostra um "fantasma" fora do fluxo normal
+  // (via portal) que segue o dedo/rato livremente, sem ficar cortado pelo
+  // "overflow" da caixa da lista de convidados por atribuir.
+  const [dragGhost, setDragGhost] = useState<{ id: string; name: string; x: number; y: number } | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   const TABLES_DB = "event_tables";
@@ -171,6 +176,7 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
   // browsers móveis não suportam. No fim do gesto, verifica sobre que mesa o
   // dedo/rato ficou (pela posição na página) e atribui o convidado a essa mesa.
   const handleGuestDragEnd = (guestId: string, info: PanInfo) => {
+    setDragGhost(null);
     if (!canEdit) return;
     const { x, y } = info.point;
     const tableEls = document.querySelectorAll<HTMLElement>('[data-table-id]');
@@ -403,8 +409,9 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
   if (loading) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-brand" size={40} /></div>;
 
   return (
+    <>
     <div className="space-y-6 animate-in fade-in duration-700 w-full pb-20 font-montserrat">
-      
+
       {/* 1. CARD QR CODE ISOLADO & EXPLICATIVO */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
@@ -510,8 +517,10 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
                         drag={canEdit}
                         dragSnapToOrigin
                         dragElastic={0.15}
-                        whileDrag={{ scale: 1.12, zIndex: 999, boxShadow: "0 12px 30px rgba(0,0,0,0.2)" }}
+                        dragMomentum={false}
+                        onDrag={(e, info) => setDragGhost({ id: g.id, name: g.name, x: info.point.x, y: info.point.y })}
                         onDragEnd={(e, info) => handleGuestDragEnd(g.id, info)}
+                        animate={{ opacity: dragGhost?.id === g.id ? 0.3 : 1 }}
                         className="relative bg-cream border border-gold-soft/30 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center gap-2 cursor-grab active:cursor-grabbing hover:shadow-md transition-all whitespace-nowrap touch-none"
                       >
                         {g.name} {g.category === 'child' && <span>👶</span>} {g.category === 'baby' && <span>🍼</span>}
@@ -616,5 +625,25 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
         </div>
       )}
     </div>
+
+    {/* Fantasma do convidado a ser arrastado — fora de qualquer "overflow"
+        que o cortasse ao sair da caixa de origem. */}
+    {typeof document !== "undefined" && dragGhost && createPortal(
+      <div
+        style={{
+          position: "fixed",
+          left: dragGhost.x,
+          top: dragGhost.y,
+          transform: "translate(-50%, -50%) scale(1.15)",
+          pointerEvents: "none",
+          zIndex: 9999,
+        }}
+        className="bg-brand text-white px-4 py-2.5 rounded-xl text-[11px] font-bold shadow-2xl whitespace-nowrap"
+      >
+        {dragGhost.name}
+      </div>,
+      document.body
+    )}
+    </>
   );
 }

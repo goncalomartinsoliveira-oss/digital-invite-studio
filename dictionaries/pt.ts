@@ -144,7 +144,6 @@ const pt = {
     "login": "Login",
     "startNow": "Começar Agora",
     "language": "Idioma",
-    "dashboard": "O Meu Painel",
     "goToDashboard": "Ir para o Painel"
   },
   "Footer": {

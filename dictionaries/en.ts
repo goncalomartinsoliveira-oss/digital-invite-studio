@@ -144,7 +144,6 @@ const en = {
     "login": "Login",
     "startNow": "Start Now",
     "language": "Language",
-    "dashboard": "My Dashboard",
     "goToDashboard": "Go to Dashboard"
   },
   "Footer": {

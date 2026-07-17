@@ -143,12 +143,14 @@ export default function Navbar({ brand }: { brand?: Brand }) {
               )}
             </div>
 
-            <Link
-              href={`/${locale}/${isLoggedIn ? "dashboard" : "login"}`}
-              className="text-[11px] font-semibold uppercase tracking-[0.25em] text-ink hover:text-brand transition-colors"
-            >
-              {isLoggedIn ? dict.dashboard : dict.login}
-            </Link>
+            {!isLoggedIn && (
+              <Link
+                href={`/${locale}/login`}
+                className="text-[11px] font-semibold uppercase tracking-[0.25em] text-ink hover:text-brand transition-colors"
+              >
+                {dict.login}
+              </Link>
+            )}
 
             <Link
               href={`/${locale}/${isLoggedIn ? "dashboard" : "pricing"}`}
@@ -219,7 +221,9 @@ export default function Navbar({ brand }: { brand?: Brand }) {
                 <ArrowLeft size={15} /> {mainSiteLabel}
               </a>
             )}
-            <Link href={`/${locale}/${isLoggedIn ? "dashboard" : "login"}`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-brand">{isLoggedIn ? dict.dashboard : dict.login}</Link>
+            {!isLoggedIn && (
+              <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-brand">{dict.login}</Link>
+            )}
             <Link href={`/${locale}/${isLoggedIn ? "dashboard" : "pricing"}`} onClick={() => setIsOpen(false)} className="block bg-brand text-gold-soft text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
               {isLoggedIn ? dict.goToDashboard : dict.startNow}
             </Link>
