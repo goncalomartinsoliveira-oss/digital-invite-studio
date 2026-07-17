@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 360 640" width="360" height="640">
+  <defs>
+    <radialGradient id="photoPlaceholderGrad" cx="50%" cy="20%" r="75%">
+      <stop offset="0%" stop-color="#cfc7bd" />
+      <stop offset="45%" stop-color="#b7ada1" />
+      <stop offset="100%" stop-color="#918a7d" />
+    </radialGradient>
+    <!-- Moldura em arco: topo em semicírculo (raio = metade da largura),
+         cantos inferiores levemente arredondados. -->
+    <clipPath id="photoClip">
+      <path d="M 96,112 A 156,156 0 0 1 408,112 L 408,456 A 8,8 0 0 1 400,464 L 104,464 A 8,8 0 0 1 96,456 Z" />
+    </clipPath>
+  </defs>
+
+  <rect x="0" y="0" width="360" height="640" fill="#FCFAF6" />
+
+  <!-- ZONA DA FOTO (id="photoSlot" = onde o sistema insere a foto do casal) -->
+  <g clip-path="url(#photoClip)">
+    <rect id="photoPlaceholder" x="96" y="-22" width="312" height="486" fill="url(#photoPlaceholderGrad)" />
+    <image id="photoSlot" x="96" y="-22" width="312" height="486" preserveAspectRatio="xMidYMid slice" />
+  </g>
+  <text id="photoEmptyLabel" x="252" y="180" text-anchor="middle"
+        font-family="Jost, sans-serif" font-size="10" letter-spacing="4" fill="rgba(255,255,255,0.85)">A VOSSA FOTO</text>
+
+  <!-- "SAVE the DATE" vertical, encostado à esquerda -->
+  <text text-anchor="middle" transform="rotate(-90 32 234)" font-family="Cormorant Garamond, serif" fill="#232020">
+    <tspan x="32" y="246" font-size="34" font-weight="300" letter-spacing="7.5">SAVE</tspan>
+    <tspan font-size="34" font-style="italic" font-weight="400" letter-spacing="1.5" dx="16"> the </tspan>
+    <tspan font-size="34" font-weight="300" letter-spacing="7.5" dx="16">DATE</tspan>
+  </text>
+
+  <!-- ZONA DO TEXTO (id="namesSlot" / id="metaSlot" = onde o sistema insere nomes/data/cidade) -->
+  <text id="namesSlot" x="180" y="565" text-anchor="middle" font-family="'Beloved', cursive" font-size="60" fill="#232020">Gonçalo &amp; Márcia</text>
+  <text id="metaSlot" x="180" y="600" text-anchor="middle" font-family="Jost, sans-serif" font-size="10.5" letter-spacing="2.7" fill="#8a8377">12.10.2026  |  LISBOA, PT</text>
+</svg>

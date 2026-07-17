@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { Download, ImagePlus, Loader2 } from "lucide-react";
+import { fillStdTemplate } from "@/lib/svgTemplate";
+import { DEFAULT_STD_TEMPLATE } from "@/lib/stdTemplates";
 
 interface SaveTheDateModuleDict {
   title: string;
@@ -39,6 +41,7 @@ export default function SaveTheDateModule({
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [svgMarkup, setSvgMarkup] = useState("");
   const cardRef = useRef<HTMLDivElement>(null);
 
   const dbContent = formData?.content || {};
@@ -56,6 +59,18 @@ export default function SaveTheDateModule({
   const meta = std.city ? `${dateStr}  |  ${std.city}` : dateStr;
 
   useEffect(() => { setIsMounted(true); }, []);
+
+  // Preenche a base (template SVG) com a foto e o texto do casal, sempre que
+  // algo muda. O resultado alimenta tanto a pré-visualização como a captura
+  // usada para gerar o PDF.
+  useEffect(() => {
+    let alive = true;
+    fillStdTemplate(DEFAULT_STD_TEMPLATE.svgUrl, { photoUrl: std.photo_url, names, meta, photoEmptyLabel: dict.photoEmpty })
+      .then(markup => { if (alive) setSvgMarkup(markup); })
+      .catch(err => console.error("Erro ao preparar o Save the Date:", err));
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [std.photo_url, names, meta]);
 
   // Autosave (mesmo padrão dos outros módulos)
   useEffect(() => {
@@ -158,67 +173,12 @@ export default function SaveTheDateModule({
       <div className="flex flex-col items-center gap-5 lg:sticky lg:top-6">
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">{dict.previewLabel}</span>
 
-        {/* Cartão (capturado para PDF) */}
+        {/* Cartão (capturado para PDF) — preenchido a partir da base (template) SVG */}
         <div
           ref={cardRef}
-          style={{
-            width: 360,
-            height: 640,
-            background: "#FCFAF6",
-            position: "relative",
-            overflow: "hidden",
-            boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
-          }}
-        >
-          {/* Foto em arco */}
-          <div
-            style={{
-              position: "absolute", top: -22, right: -48, width: 312, height: 486,
-              borderTopLeftRadius: 156, borderTopRightRadius: 156,
-              borderBottomLeftRadius: 8, borderBottomRightRadius: 8,
-              overflow: "hidden",
-              background: std.photo_url
-                ? undefined
-                : "radial-gradient(120% 80% at 50% 20%, #cfc7bd 0%, #b7ada1 45%, #918a7d 100%)",
-            }}
-          >
-            {std.photo_url ? (
-              <img
-                src={std.photo_url}
-                crossOrigin="anonymous"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                alt=""
-              />
-            ) : (
-              <div style={{
-                position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: "var(--font-jost)", fontSize: 10, letterSpacing: "0.4em", color: "rgba(255,255,255,0.85)",
-              }}>
-                {dict.photoEmpty}
-              </div>
-            )}
-          </div>
-
-          {/* SAVE the DATE vertical */}
-          <div style={{
-            position: "absolute", left: -78, top: 214, width: 220, textAlign: "center",
-            transform: "rotate(-90deg)", transformOrigin: "center",
-            fontFamily: "var(--font-cormorant)", color: "#232020", whiteSpace: "nowrap",
-          }}>
-            <span style={{ fontWeight: 300, fontSize: 34, letterSpacing: "0.22em", textTransform: "uppercase" }}>Save</span>
-            <span style={{ fontWeight: 400, fontStyle: "italic", fontSize: 34, letterSpacing: "0.04em", margin: "0 8px" }}>the</span>
-            <span style={{ fontWeight: 300, fontSize: 34, letterSpacing: "0.22em", textTransform: "uppercase" }}>Date</span>
-          </div>
-
-          {/* Nomes + data */}
-          <div style={{ position: "absolute", bottom: 44, left: 0, right: 0, textAlign: "center", padding: "0 20px" }}>
-            <p style={{ fontFamily: "'Beloved', cursive", fontSize: 60, color: "#232020", lineHeight: 1 }}>{names}</p>
-            <p style={{
-              fontFamily: "var(--font-jost)", fontSize: 10.5, fontWeight: 400, letterSpacing: "0.26em",
-              textTransform: "uppercase", color: "#8a8377", marginTop: 14,
-            }}>{meta}</p>
-          </div>
-        </div>
+          style={{ width: 360, height: 640, boxShadow: "0 20px 50px rgba(0,0,0,0.15)" }}
+          dangerouslySetInnerHTML={{ __html: svgMarkup }}
+        />
 
         <button
           onClick={handleDownload}
