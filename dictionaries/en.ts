@@ -143,7 +143,9 @@ const en = {
     "contact": "Contact",
     "login": "Login",
     "startNow": "Start Now",
-    "language": "Language"
+    "language": "Language",
+    "dashboard": "My Dashboard",
+    "goToDashboard": "Go to Dashboard"
   },
   "Footer": {
     "tagline": "The operating system for your wedding.",

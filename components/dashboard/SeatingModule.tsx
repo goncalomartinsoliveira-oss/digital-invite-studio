@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { 
   Plus, Trash2, UserMinus, Loader2, Map as MapIcon, List, Search, 
@@ -12,6 +12,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import jsPDF from "jspdf";
 import { toPng } from "html-to-image";
+import { loadImageForPdf, fitLogoBox } from "@/lib/pdfLogo";
 
 interface Table {
   id: string;
@@ -155,16 +156,31 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
     await supabase.from(TABLES_DB).update({ position_x: newX, position_y: newY }).eq("id", id);
   };
 
-  const handleDropGuestOnTable = async (e: React.DragEvent, tableId: string) => {
-    e.preventDefault();
+  const assignGuestToTable = async (guestId: string, tableId: string) => {
     if (!canEdit) return;
-    const guestId = e.dataTransfer.getData("guestId");
     const table = tables.find(t => t.id === tableId);
     const seatedCount = guests.filter(g => g.table_id === tableId).length;
     if (table && seatedCount < table.capacity) {
       setGuests(guests.map(g => g.id === guestId ? { ...g, table_id: tableId } : g));
       await supabase.from('guests').update({ table_id: tableId }).eq('id', guestId);
     } else { alert(dict.alerts.tableFull); }
+  };
+
+  // Arrastar um convidado para uma mesa: usa o gesto de arrastar do Framer Motion
+  // (funciona com rato E com toque) em vez do HTML5 Drag and Drop nativo, que os
+  // browsers móveis não suportam. No fim do gesto, verifica sobre que mesa o
+  // dedo/rato ficou (pela posição na página) e atribui o convidado a essa mesa.
+  const handleGuestDragEnd = (guestId: string, info: PanInfo) => {
+    if (!canEdit) return;
+    const { x, y } = info.point;
+    const tableEls = document.querySelectorAll<HTMLElement>('[data-table-id]');
+    for (const el of Array.from(tableEls)) {
+      const rect = el.getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        assignGuestToTable(guestId, el.dataset.tableId!);
+        break;
+      }
+    }
   };
 
   const handleUnseatGuest = async (guestId: string) => {
@@ -264,31 +280,20 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
       // --- PÁGINA 1: O MAPA VISUAL ---
       // 1. Cabeçalho Premium com Logo Mantendo Proporção (Sem Esticar)
       try {
-        const logoImg = new window.Image();
-        logoImg.src = brand.logoRaster;
-        
-        await new Promise((resolve, reject) => {
-          logoImg.onload = resolve;
-          logoImg.onerror = reject;
-        });
+        // Carregado via fetch→data URL (não via <img> + canvas) para evitar que
+        // logótipos de outra origem (Supabase Storage) fiquem "tainted" e
+        // desapareçam silenciosamente do PDF.
+        const { dataUrl, width, height, format } = await loadImageForPdf(brand.logoRaster);
+        const { width: logoWidth, height: logoHeight } = fitLogoBox(width, height);
 
-        // Calcula a altura correta com base na largura que queremos (ex: 40mm) para não esticar a imagem
-        // Ajusta a uma caixa (máx. 40mm largura × 16mm altura) mantendo a proporção,
-        // para que logótipos quadrados (parceiros) não fiquem enormes.
-        const logoRatio = logoImg.height / logoImg.width;
-        const maxLogoW = 40, maxLogoH = 16;
-        let logoWidth = maxLogoW;
-        let logoHeight = logoWidth * logoRatio;
-        if (logoHeight > maxLogoH) { logoHeight = maxLogoH; logoWidth = logoHeight / logoRatio; }
-        
-        pdf.addImage(logoImg, "PNG", 14, 8, logoWidth, logoHeight);
+        pdf.addImage(dataUrl, format, 14, 8, logoWidth, logoHeight);
         pdf.link(14, 8, logoWidth, logoHeight, { url: websiteUrl });
       } catch (e) {
-        // Fallback se a imagem não existir
+        // Fallback se a imagem não existir/carregar
         pdf.setFontSize(16);
         pdf.setTextColor(99, 1, 0);
         pdf.setFont("helvetica", "bold");
-        pdf.text("DIGITAL INVITE STUDIO", 14, 18);
+        pdf.text(brand.name.toUpperCase(), 14, 18);
         pdf.link(14, 10, 70, 10, { url: websiteUrl });
       }
 
@@ -499,7 +504,19 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
                 <div className="flex items-center justify-between gap-4"><h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2"><Users size={14} /> {dict.mapView.unseatedGuests} ({unassignedGuests.length})</h4><div className="relative w-64"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={12} /><input className="w-full bg-gray-50 border border-gray-100 rounded-full pl-8 pr-4 py-1.5 text-[10px] outline-none" placeholder={dict.mapView.searchPlaceholder} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></div></div>
                 <div className="max-h-32 overflow-y-auto pr-2 custom-scrollbar p-1">
                   <div className="flex flex-wrap gap-2">
-                    {unassignedGuests.map(g => (<div key={g.id} draggable={canEdit} onDragStart={(e) => { e.dataTransfer.setData("guestId", g.id); }} className="bg-cream border border-gold-soft/30 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center gap-2 cursor-grab active:cursor-grabbing hover:shadow-md transition-all whitespace-nowrap">{g.name} {g.category === 'child' && <span>👶</span>} {g.category === 'baby' && <span>🍼</span>}</div>))}
+                    {unassignedGuests.map(g => (
+                      <motion.div
+                        key={g.id}
+                        drag={canEdit}
+                        dragSnapToOrigin
+                        dragElastic={0.15}
+                        whileDrag={{ scale: 1.12, zIndex: 999, boxShadow: "0 12px 30px rgba(0,0,0,0.2)" }}
+                        onDragEnd={(e, info) => handleGuestDragEnd(g.id, info)}
+                        className="relative bg-cream border border-gold-soft/30 px-3 py-2 rounded-xl text-[10px] font-bold flex items-center gap-2 cursor-grab active:cursor-grabbing hover:shadow-md transition-all whitespace-nowrap touch-none"
+                      >
+                        {g.name} {g.category === 'child' && <span>👶</span>} {g.category === 'baby' && <span>🍼</span>}
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -529,7 +546,7 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
                 const isSelected = selectedTableId === table.id;
                 const tableDimensions = getDynamicTableSize(table.shape, table.capacity);
                 return (
-                  <motion.div key={table.id} drag={canEdit} dragMomentum={false} dragElastic={0} dragConstraints={containerRef} onDragEnd={(e, info) => handleDragEndTable(table.id, info, table.position_x, table.position_y, tableDimensions.width, tableDimensions.height)} onClick={(e) => { e.stopPropagation(); setSelectedTableId(table.id); setIsEditingTable(false); }} onDragOver={(e) => e.preventDefault()} onDrop={(e) => handleDropGuestOnTable(e, table.id)} style={{ position: 'absolute', top: 0, left: 0, width: tableDimensions.width, height: tableDimensions.height }} animate={{ x: table.position_x, y: table.position_y }} transition={{ type: "tween", duration: 0 }} className={`flex items-center justify-center transition-shadow ${isSelected ? 'z-50' : 'z-10'}`}>
+                  <motion.div key={table.id} data-table-id={table.id} drag={canEdit} dragMomentum={false} dragElastic={0} dragConstraints={containerRef} onDragEnd={(e, info) => handleDragEndTable(table.id, info, table.position_x, table.position_y, tableDimensions.width, tableDimensions.height)} onClick={(e) => { e.stopPropagation(); setSelectedTableId(table.id); setIsEditingTable(false); }} style={{ position: 'absolute', top: 0, left: 0, width: tableDimensions.width, height: tableDimensions.height }} animate={{ x: table.position_x, y: table.position_y }} transition={{ type: "tween", duration: 0 }} className={`flex items-center justify-center transition-shadow ${isSelected ? 'z-50' : 'z-10'}`}>
                     <div className="relative flex items-center justify-center" style={{ width: tableDimensions.width, height: tableDimensions.height }}>
                       {Array.from({ length: table.capacity }).map((_, i) => {
                         const guest = occupants[i];

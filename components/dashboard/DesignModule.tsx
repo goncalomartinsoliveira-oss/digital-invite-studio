@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 
 interface DesignModuleProps {
   formData: any;
@@ -20,7 +21,18 @@ const AVAILABLE_TEMPLATES = [
 ];
 
 export default function DesignModule({ formData, setFormData, handleSaveDesign, saving, canEdit, dict }: DesignModuleProps) {
-  
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
+
+  // Autosave (mesmo padrão dos outros módulos) — este era o único módulo que só
+  // gravava ao clicar "Aplicar Template", o que confundia quem editava aqui.
+  useEffect(() => {
+    if (!isMounted || !canEdit) return;
+    const timer = setTimeout(() => { handleSaveDesign(); }, 1500);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
+
   if (!formData) return null;
 
   return (

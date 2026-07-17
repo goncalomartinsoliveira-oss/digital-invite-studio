@@ -6,6 +6,7 @@ import { Trash2, Edit2, UserPlus, Users, FileText, Download, FileSpreadsheet, Up
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
+import { loadImageForPdf, fitLogoBox } from "@/lib/pdfLogo";
 
 interface Guest {
   id: string;
@@ -237,20 +238,15 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
 
     let contentY = 32;
     try {
-      const logoImg = new window.Image();
-      logoImg.src = brand.logoRaster;
-      await new Promise((resolve, reject) => { logoImg.onload = resolve; logoImg.onerror = reject; });
-      // Caixa máx. 40mm × 16mm, proporção mantida (logos quadrados de parceiros não ficam enormes).
-      const logoRatio = logoImg.height / logoImg.width;
-      let logoWidth = 40;
-      let logoHeight = logoWidth * logoRatio;
-      if (logoHeight > 16) { logoHeight = 16; logoWidth = logoHeight / logoRatio; }
-      doc.addImage(logoImg, "PNG", 14, 10, logoWidth, logoHeight);
+      // Carregado via fetch→data URL (evita canvas "tainted" com logos de outra origem).
+      const { dataUrl, width, height, format } = await loadImageForPdf(brand.logoRaster);
+      const { width: logoWidth, height: logoHeight } = fitLogoBox(width, height);
+      doc.addImage(dataUrl, format, 14, 10, logoWidth, logoHeight);
       doc.link(14, 10, logoWidth, logoHeight, { url: websiteUrl });
       contentY = 10 + logoHeight + 12;
     } catch {
       doc.setFontSize(16); doc.setTextColor(99, 1, 0); doc.setFont("helvetica", "bold");
-      doc.text("DIGITAL INVITE STUDIO", 14, 20);
+      doc.text(brand.name.toUpperCase(), 14, 20);
       doc.link(14, 14, 70, 8, { url: websiteUrl });
       doc.setFont("helvetica", "normal"); contentY = 35;
     }

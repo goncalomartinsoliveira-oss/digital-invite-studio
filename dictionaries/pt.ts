@@ -143,7 +143,9 @@ const pt = {
     "contact": "Contactos",
     "login": "Login",
     "startNow": "Começar Agora",
-    "language": "Idioma"
+    "language": "Idioma",
+    "dashboard": "O Meu Painel",
+    "goToDashboard": "Ir para o Painel"
   },
   "Footer": {
     "tagline": "O sistema operativo para o seu casamento.",

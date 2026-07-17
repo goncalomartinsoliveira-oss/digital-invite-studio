@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Globe, ArrowLeft } from "lucide-react";
+import { supabase } from "../../lib/supabase";
 
 import pt from '../../dictionaries/pt';
 import en from '../../dictionaries/en';
@@ -15,8 +16,20 @@ type Locale = typeof LOCALES[number];
 export default function Navbar({ brand }: { brand?: Brand }) {
   const [isOpen, setIsOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  // A sessão do Supabase já persiste entre páginas (guardada no browser);
+  // isto só faz o Navbar refletir esse estado, para não parecer que saiu
+  // sempre que visita uma página de marketing.
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setIsLoggedIn(!!session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   if (pathname.includes("/invite") || pathname.includes("/dashboard") || pathname.includes("/login")) {
     return null;
@@ -131,17 +144,17 @@ export default function Navbar({ brand }: { brand?: Brand }) {
             </div>
 
             <Link
-              href={`/${locale}/login`}
+              href={`/${locale}/${isLoggedIn ? "dashboard" : "login"}`}
               className="text-[11px] font-semibold uppercase tracking-[0.25em] text-ink hover:text-brand transition-colors"
             >
-              {dict.login}
+              {isLoggedIn ? dict.dashboard : dict.login}
             </Link>
 
             <Link
-              href={`/${locale}/pricing`}
+              href={`/${locale}/${isLoggedIn ? "dashboard" : "pricing"}`}
               className="bg-brand text-gold-soft border-2 border-brand px-10 py-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] hover:bg-transparent hover:text-brand transition-all duration-500 transform hover:-translate-y-0.5 shadow-lg active:scale-95"
             >
-              {dict.startNow}
+              {isLoggedIn ? dict.goToDashboard : dict.startNow}
             </Link>
           </div>
 
@@ -206,9 +219,9 @@ export default function Navbar({ brand }: { brand?: Brand }) {
                 <ArrowLeft size={15} /> {mainSiteLabel}
               </a>
             )}
-            <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-brand">{dict.login}</Link>
-            <Link href={`/${locale}/pricing`} onClick={() => setIsOpen(false)} className="block bg-brand text-gold-soft text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
-              {dict.startNow}
+            <Link href={`/${locale}/${isLoggedIn ? "dashboard" : "login"}`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-brand">{isLoggedIn ? dict.dashboard : dict.login}</Link>
+            <Link href={`/${locale}/${isLoggedIn ? "dashboard" : "pricing"}`} onClick={() => setIsOpen(false)} className="block bg-brand text-gold-soft text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
+              {isLoggedIn ? dict.goToDashboard : dict.startNow}
             </Link>
           </div>
         </div>
