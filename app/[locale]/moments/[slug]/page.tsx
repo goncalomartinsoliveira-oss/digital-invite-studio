@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useBrand } from "@/components/site/BrandProvider";
 import { resolveBrandById } from "@/lib/brands";
+import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import {
@@ -80,7 +81,7 @@ export default function GuestMomentsPage() {
 
   async function fetchInitialData() {
     try {
-      const { data: inv, error } = await supabase.from('invitations').select('id, bride_name, groom_name, profile_image_url, brand_id').eq('slug', slug).single();
+      const { data: inv, error } = await supabase.from('invitations').select('id, bride_name, groom_name, profile_image_url, brand_id, expires_at').eq('slug', slug).single();
       if (error) throw error;
       setInvitation(inv);
       setEventBrand(await resolveBrandById(supabase, (inv as any)?.brand_id));
@@ -197,6 +198,11 @@ export default function GuestMomentsPage() {
   const goPrev = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex - 1 + fotos.length) % fotos.length); };
 
   if (loading) return <div className="fixed inset-0 z-[100] bg-white flex items-center justify-center"><Loader2 className="animate-spin text-brand" size={32} /></div>;
+
+  if (invitation?.expires_at && new Date(invitation.expires_at) < new Date()) {
+    const expiredDict = dictionaries[currentLocale]?.EventExpired || dictionaries.pt.EventExpired;
+    return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
+  }
 
   return (
     <div className="fixed inset-0 z-[100] bg-white overflow-y-auto font-montserrat">

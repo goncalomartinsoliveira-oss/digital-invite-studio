@@ -216,6 +216,8 @@ const pt = {
   },
   "Dashboard": {
     "readOnly": "Apenas Leitura",
+    "expiredBadge": "Evento Expirado",
+    "expiredBanner": "Este evento expirou a {date} — o painel ficou em modo de leitura. Contacte-nos para renovar o acesso.",
     "saving": "A guardar...",
     "saved": "Guardado",
     "copyLink": "Copiar Link",
@@ -362,6 +364,11 @@ const pt = {
         "placeholder": "Documento PDF elegante com a planta da sala e o logotipo da marca"
       }
     }
+  },
+  "EventExpired": {
+    "title": "Este convite já não está disponível",
+    "desc": "O prazo deste evento terminou. Se é um dos noivos, pode continuar a consultar os dados no seu painel.",
+    "footerText": "Desenvolvido por"
   },
   "IsolatedGuestbookPage": {
     "subtitle": "Livro de Honra Digital",
@@ -648,7 +655,8 @@ const pt = {
       "person2Label": "Pessoa 2",
       "dateLabel": "Data do Grande Dia",
       "person1Placeholder": "Ex: Gonçalo",
-      "person2Placeholder": "Ex: Márcia"
+      "person2Placeholder": "Ex: Márcia",
+      "dateLockedNote": "Data bloqueada após a primeira compra — contacte-nos se precisar de a alterar."
     }
   },
   "SmartRsvp": {

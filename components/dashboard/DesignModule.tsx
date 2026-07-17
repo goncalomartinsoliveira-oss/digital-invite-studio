@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Lock } from "lucide-react";
 
 interface DesignModuleProps {
   formData: any;
@@ -10,7 +11,7 @@ interface DesignModuleProps {
   canEdit: boolean;
   dict: {
     templates: { title: string; subtitle: string; applyBtn: string };
-    identity: { title: string; subtitle: string; person1Label: string; person2Label: string; dateLabel: string; person1Placeholder: string; person2Placeholder: string };
+    identity: { title: string; subtitle: string; person1Label: string; person2Label: string; dateLabel: string; person1Placeholder: string; person2Placeholder: string; dateLockedNote: string };
   };
 }
 
@@ -34,6 +35,8 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
   }, [formData]);
 
   if (!formData) return null;
+
+  const dateLocked = !!formData.date_locked_at;
 
   return (
     <div className="space-y-8 pb-12 text-left animate-in fade-in duration-500 font-montserrat">
@@ -126,11 +129,16 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
               <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-2">{dict.identity.dateLabel}</label>
               <input
                 type="date"
-                disabled={!canEdit}
+                disabled={!canEdit || dateLocked}
                 className="w-full bg-transparent border-none text-brand font-bold focus:ring-0 p-0 text-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 value={formData.event_date ? formData.event_date.split('T')[0] : ''}
                 onChange={e => setFormData({...formData, event_date: e.target.value})}
               />
+              {dateLocked && (
+                <p className="flex items-center gap-1.5 text-[10px] text-gray-400 mt-2">
+                  <Lock size={10} /> {dict.identity.dateLockedNote}
+                </p>
+              )}
            </div>
         </div>
       </section>

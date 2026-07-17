@@ -216,6 +216,8 @@ const en = {
   },
   "Dashboard": {
     "readOnly": "Read Only",
+    "expiredBadge": "Event Expired",
+    "expiredBanner": "This event expired on {date} — the dashboard is now in read-only mode. Contact us to renew access.",
     "saving": "Saving...",
     "saved": "Saved",
     "copyLink": "Copy Link",
@@ -362,6 +364,11 @@ const en = {
         "placeholder": "Elegant PDF document with room layout and brand logo"
       }
     }
+  },
+  "EventExpired": {
+    "title": "This invitation is no longer available",
+    "desc": "This event's window has ended. If you're the couple, you can still view your data from your dashboard.",
+    "footerText": "Powered by"
   },
   "IsolatedGuestbookPage": {
     "subtitle": "Digital Guestbook",
@@ -648,7 +655,8 @@ const en = {
       "person2Label": "Person 2",
       "dateLabel": "The Big Day Date",
       "person1Placeholder": "e.g., Gonçalo",
-      "person2Placeholder": "e.g., Márcia"
+      "person2Placeholder": "e.g., Márcia",
+      "dateLockedNote": "Date locked after the first purchase — contact us if you need to change it."
     }
   },
   "SmartRsvp": {

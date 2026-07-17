@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useBrand } from "@/components/site/BrandProvider";
 import { resolveBrandById } from "@/lib/brands";
+import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
@@ -26,6 +27,7 @@ export default function LiveWallPage() {
   const currentLocale = (locale as 'en' | 'pt') || 'pt';
   const dict = dictionaries[currentLocale]?.LiveWallPage || dictionaries.pt.LiveWallPage;
 
+  const [invitation, setInvitation] = useState<any>(null);
   const [items, setItems] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -51,8 +53,9 @@ export default function LiveWallPage() {
   }, []);
 
   async function fetchInitialData() {
-    const { data: inv } = await supabase.from('invitations').select('id, brand_id').eq('slug', slug).single();
+    const { data: inv } = await supabase.from('invitations').select('id, brand_id, expires_at').eq('slug', slug).single();
     if (inv) {
+      setInvitation(inv);
       await fetchItems(inv.id);
       setEventBrand(await resolveBrandById(supabase, (inv as any)?.brand_id));
     }
@@ -117,6 +120,11 @@ export default function LiveWallPage() {
       }
     }
   };
+
+  if (invitation?.expires_at && new Date(invitation.expires_at) < new Date()) {
+    const expiredDict = dictionaries[currentLocale]?.EventExpired || dictionaries.pt.EventExpired;
+    return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
+  }
 
   if (loading) return (
     <div className="h-screen bg-[#111] flex flex-col items-center justify-center text-white font-montserrat">

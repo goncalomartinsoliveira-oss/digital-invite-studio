@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useBrand } from "@/components/site/BrandProvider";
 import { resolveBrandById } from "@/lib/brands";
+import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,7 +31,7 @@ export default function SeatingPlanGuestView() {
   const dict = dictionaries[locale]?.SeatingPublic || dictionaries.pt.SeatingPublic;
 
   const [loading, setLoading] = useState(true);
-  const [inviteData, setInviteData] = useState<{ groom_name: string; bride_name: string } | null>(null);
+  const [inviteData, setInviteData] = useState<{ groom_name: string; bride_name: string; expires_at?: string | null } | null>(null);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [tables, setTables] = useState<Record<string, string>>({}); 
   
@@ -42,7 +43,7 @@ export default function SeatingPlanGuestView() {
       // 1. Buscar dados do Casamento
       const { data: invite } = await supabase
         .from("invitations")
-        .select("id, groom_name, bride_name, brand_id")
+        .select("id, groom_name, bride_name, brand_id, expires_at")
         .eq("slug", params.slug)
         .single();
 
@@ -105,6 +106,11 @@ export default function SeatingPlanGuestView() {
         <p className="text-gray-500 font-montserrat text-sm">{dict.notFoundSub}</p>
       </div>
     );
+  }
+
+  if (inviteData.expires_at && new Date(inviteData.expires_at) < new Date()) {
+    const expiredDict = dictionaries[locale]?.EventExpired || dictionaries.pt.EventExpired;
+    return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
   }
 
   return (

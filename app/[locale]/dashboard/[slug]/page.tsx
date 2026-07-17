@@ -17,7 +17,8 @@ import {
   Mail,
   ChevronRight,
   ArrowLeft,
-  CalendarHeart
+  CalendarHeart,
+  AlertTriangle
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -188,7 +189,13 @@ export default function Dashboard() {
 
   const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'moments' || activeTab === 'account' || activeTab === 'savethedate';
 
-  const canEdit = userRole === "owner" || userRole === "editor";
+  // O bloqueio real (contra escrita) já é imposto pelo Supabase (RLS); isto só
+  // reflete esse estado na interface para os noivos perceberem porque ficou só-leitura.
+  const isExpired = formData.expires_at ? new Date(formData.expires_at) < new Date() : false;
+  const canEdit = (userRole === "owner" || userRole === "editor") && !isExpired;
+  const expiredDateLabel = isExpired
+    ? new Date(formData.expires_at).toLocaleDateString(locale === 'en' ? 'en-US' : 'pt-PT', { day: '2-digit', month: 'long', year: 'numeric' })
+    : "";
 
   // Separadores visíveis consoante a área selecionada no hub.
   const visibleTabs = group ? tabsConfig.filter(t => GROUP_TABS[group].includes(t.id)) : tabsConfig;
@@ -252,6 +259,12 @@ export default function Dashboard() {
 
         <main className="flex-1 px-6 py-14 sm:py-20">
           <div className="max-w-5xl mx-auto">
+            {isExpired && (
+              <div className="mb-10 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-2xl px-5 py-3.5 flex items-center gap-2.5">
+                <AlertTriangle size={16} className="shrink-0" />
+                <span>{dict.expiredBanner.replace("{date}", expiredDateLabel)}</span>
+              </div>
+            )}
             <div className="text-center mb-12 sm:mb-16">
               <h2 className="font-serif text-3xl sm:text-4xl text-ink">{dict.hubTitle}</h2>
               <p className="text-gray-400 text-sm mt-2">{dict.hubSubtitle}</p>
@@ -383,7 +396,11 @@ export default function Dashboard() {
                     : formData.slug}
                 </p>
               </div>
-              {!canEdit && (
+              {isExpired ? (
+                <span className="bg-amber-50 text-amber-600 border border-amber-100 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md hidden sm:block">
+                  {dict.expiredBadge}
+                </span>
+              ) : !canEdit && (
                 <span className="bg-blue-50 text-blue-500 border border-blue-100 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md hidden sm:block">
                   {dict.readOnly}
                 </span>
@@ -432,6 +449,12 @@ export default function Dashboard() {
           <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-32 scroll-smooth relative">
             <EventBrandProvider brandId={formData.brand_id}>
             <div className="max-w-5xl mx-auto">
+              {isExpired && (
+                <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-2xl px-5 py-3.5 flex items-center gap-2.5">
+                  <AlertTriangle size={16} className="shrink-0" />
+                  <span>{dict.expiredBanner.replace("{date}", expiredDateLabel)}</span>
+                </div>
+              )}
               {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />}
               {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />}
               {activeTab === 'savethedate' && <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />}

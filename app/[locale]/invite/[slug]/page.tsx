@@ -3,6 +3,7 @@ import LuxuryTemplate from "../../templates/luxury-01/page";
 import CollageTemplate from "../../templates/collage-01/page";
 import Minimal01Template from "../../templates/minimal-01/page";
 import { EventBrandProvider } from "../../../../components/site/BrandProvider";
+import EventExpiredScreen from "../../../../components/site/EventExpiredScreen";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis de recuo)
 import pt from "../../../../dictionaries/pt";
@@ -50,6 +51,12 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
         </div>
       </div>
     );
+  }
+
+  // 7b. Bloqueio total: passado o prazo (60 dias após o evento), o convite deixa de ficar acessível.
+  if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
+    const expiredDict = dictionaries[locale]?.EventExpired || dictionaries.pt.EventExpired;
+    return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} />;
   }
 
   // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO (com a marca do próprio evento)
