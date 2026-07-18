@@ -412,6 +412,10 @@ const pt = {
     "desc": "O prazo deste evento terminou. Se é um dos noivos, pode continuar a consultar os dados no seu painel.",
     "footerText": "Desenvolvido por"
   },
+  "ModuleUnavailable": {
+    "title": "Esta página ainda não está disponível",
+    "desc": "Este módulo ainda não foi ativado para este evento."
+  },
   "IsolatedGuestbookPage": {
     "subtitle": "Livro de Honra Digital",
     "privateBadge": "100% Privado",

@@ -412,6 +412,10 @@ const en = {
     "desc": "This event's window has ended. If you're the couple, you can still view your data from your dashboard.",
     "footerText": "Powered by"
   },
+  "ModuleUnavailable": {
+    "title": "This page isn't available yet",
+    "desc": "This module hasn't been activated for this event yet."
+  },
   "IsolatedGuestbookPage": {
     "subtitle": "Digital Guestbook",
     "privateBadge": "100% Private",

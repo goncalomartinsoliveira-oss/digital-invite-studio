@@ -31,7 +31,7 @@ export default function SeatingPlanGuestView() {
   const dict = dictionaries[locale]?.SeatingPublic || dictionaries.pt.SeatingPublic;
 
   const [loading, setLoading] = useState(true);
-  const [inviteData, setInviteData] = useState<{ groom_name: string; bride_name: string; expires_at?: string | null } | null>(null);
+  const [inviteData, setInviteData] = useState<{ groom_name: string; bride_name: string; expires_at?: string | null; unlocked_modules?: string[] | null } | null>(null);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [tables, setTables] = useState<Record<string, string>>({}); 
   
@@ -43,7 +43,7 @@ export default function SeatingPlanGuestView() {
       // 1. Buscar dados do Casamento
       const { data: invite } = await supabase
         .from("invitations")
-        .select("id, groom_name, bride_name, brand_id, expires_at")
+        .select("id, groom_name, bride_name, brand_id, expires_at, unlocked_modules")
         .eq("slug", params.slug)
         .single();
 
@@ -111,6 +111,12 @@ export default function SeatingPlanGuestView() {
   if (inviteData.expires_at && new Date(inviteData.expires_at) < new Date()) {
     const expiredDict = dictionaries[locale]?.EventExpired || dictionaries.pt.EventExpired;
     return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
+  }
+
+  if (!inviteData.unlocked_modules?.includes('guests_seating')) {
+    const unavailableDict = dictionaries[locale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
+    const footerText = (dictionaries[locale]?.EventExpired || dictionaries.pt.EventExpired).footerText;
+    return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} footerText={footerText} brandName={eventBrand?.name ?? brand.name} />;
   }
 
   return (

@@ -53,7 +53,7 @@ export default function LiveWallPage() {
   }, []);
 
   async function fetchInitialData() {
-    const { data: inv } = await supabase.from('invitations').select('id, brand_id, expires_at').eq('slug', slug).single();
+    const { data: inv } = await supabase.from('invitations').select('id, brand_id, expires_at, unlocked_modules').eq('slug', slug).single();
     if (inv) {
       setInvitation(inv);
       await fetchItems(inv.id);
@@ -124,6 +124,12 @@ export default function LiveWallPage() {
   if (invitation?.expires_at && new Date(invitation.expires_at) < new Date()) {
     const expiredDict = dictionaries[currentLocale]?.EventExpired || dictionaries.pt.EventExpired;
     return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
+  }
+
+  if (invitation && !invitation.unlocked_modules?.includes('photo_sharing')) {
+    const unavailableDict = dictionaries[currentLocale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
+    const footerText = (dictionaries[currentLocale]?.EventExpired || dictionaries.pt.EventExpired).footerText;
+    return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} footerText={footerText} brandName={eventBrand?.name ?? brand.name} />;
   }
 
   if (loading) return (

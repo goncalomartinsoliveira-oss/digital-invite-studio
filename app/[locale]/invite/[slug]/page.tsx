@@ -59,6 +59,12 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
     return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} />;
   }
 
+  // 7c. Bloqueio por módulo: o site do convite só existe depois de o módulo "invite" ser comprado.
+  if (!invite.unlocked_modules?.includes("invite")) {
+    const unavailableDict = dictionaries[locale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
+    return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} />;
+  }
+
   // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO (com a marca do próprio evento)
   return (
     <main>

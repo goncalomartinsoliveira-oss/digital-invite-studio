@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter, useParams } from "next/navigation";
 import { UserPlus, Trash2, ShieldCheck, Mail, Loader2, LogOut, Key, User, Package, Lock, Check } from "lucide-react";
-import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
+import { ALL_MODULE_IDS, expandWithDependencies, type ModuleId } from "@/lib/modules";
 
 interface AccountModuleProps {
   userEmail: string;
@@ -68,7 +68,11 @@ export default function AccountModule({ userEmail, invitationId, isSuperAdmin, d
 
   const toggleModule = async (moduleId: ModuleId) => {
     const isUnlocked = unlockedModules.includes(moduleId);
-    const next = isUnlocked ? unlockedModules.filter(m => m !== moduleId) : [...unlockedModules, moduleId];
+    // Ao ligar, expandir dependências (ex.: "invite" traz sempre "guests_seating"
+    // consigo, senão o RSVP fica quebrado). Ao desligar, só remove o próprio módulo.
+    const next = isUnlocked
+      ? unlockedModules.filter(m => m !== moduleId)
+      : expandWithDependencies([...unlockedModules as ModuleId[], moduleId]);
     setTogglingModule(moduleId);
     const { data, error } = await supabase
       .from("invitations")
