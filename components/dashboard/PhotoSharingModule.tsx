@@ -12,7 +12,7 @@ import JSZip from 'jszip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isModuleUnlocked } from '@/lib/modules';
 import { downloadQRAsPng, downloadQRAsSvg } from '@/lib/qrDownload';
-import { MODULE_PRICES_CENTS } from '@/lib/pricing';
+import { effectiveModulePriceCents, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from '@/lib/pricing';
 import { startModuleCheckout, formatPriceCents } from '@/lib/checkout';
 import LockedModuleNotice from './LockedModuleNotice';
 import { useBrand } from '@/components/site/BrandProvider';
@@ -38,10 +38,11 @@ interface PhotoSharingModuleProps {
   canEdit: boolean;
   unlockedModules?: string[];
   isSuperAdmin?: boolean;
+  overrides?: PricingOverrides;
   dict: PhotoSharingModuleDict;
 }
 
-export default function PhotoSharingModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, dict }: PhotoSharingModuleProps) {
+export default function PhotoSharingModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, overrides, dict }: PhotoSharingModuleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'pt';
   const brand = useBrand();
@@ -168,7 +169,7 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
         contactUrl={contactUrl}
         contactLabel={dict.locked.contactBtn}
         buyLabel={dict.locked.buyBtn}
-        priceLabel={formatPriceCents(MODULE_PRICES_CENTS.photo_sharing, locale)}
+        priceLabel={formatPriceCents(effectiveModulePriceCents('photo_sharing', overrides ?? EMPTY_PRICING_OVERRIDES), locale)}
         onBuy={handleBuy}
         buying={buying}
         couponToggleLabel={dict.locked.couponToggleLabel}

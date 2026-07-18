@@ -9,7 +9,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import JSZip from 'jszip';
 import { isModuleUnlocked } from '@/lib/modules';
 import { downloadQRAsPng, downloadQRAsSvg } from '@/lib/qrDownload';
-import { MODULE_PRICES_CENTS } from '@/lib/pricing';
+import { effectiveModulePriceCents, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from '@/lib/pricing';
 import { startModuleCheckout, formatPriceCents } from '@/lib/checkout';
 import LockedModuleNotice from './LockedModuleNotice';
 import { useBrand } from '@/components/site/BrandProvider';
@@ -38,10 +38,11 @@ interface GuestbookModuleProps {
   canEdit: boolean;
   unlockedModules?: string[];
   isSuperAdmin?: boolean;
+  overrides?: PricingOverrides;
   dict: GuestbookModuleDict;
 }
 
-export default function GuestbookModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, dict }: GuestbookModuleProps) {
+export default function GuestbookModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, overrides, dict }: GuestbookModuleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'pt';
   const brand = useBrand();
@@ -149,7 +150,7 @@ export default function GuestbookModule({ invitationId, slug, canEdit, unlockedM
         contactUrl={contactUrl}
         contactLabel={dict.locked.contactBtn}
         buyLabel={dict.locked.buyBtn}
-        priceLabel={formatPriceCents(MODULE_PRICES_CENTS.guestbook, locale)}
+        priceLabel={formatPriceCents(effectiveModulePriceCents('guestbook', overrides ?? EMPTY_PRICING_OVERRIDES), locale)}
         onBuy={handleBuy}
         buying={buying}
         couponToggleLabel={dict.locked.couponToggleLabel}

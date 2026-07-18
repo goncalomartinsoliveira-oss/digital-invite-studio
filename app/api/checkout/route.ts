@@ -3,7 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { ALL_MODULE_IDS, expandWithDependencies, type ModuleId } from "@/lib/modules";
-import { MODULE_PRICES_CENTS, getBundle } from "@/lib/pricing";
+import { getBundle, fetchPricingOverrides, effectiveModulePriceCents, effectiveBundlePriceCents } from "@/lib/pricing";
 import { isCouponValid, couponAppliesToOrder, applyCouponDiscount, MIN_CHECKOUT_TOTAL_CENTS, type Coupon } from "@/lib/coupons";
 
 const MODULE_NAMES: Record<ModuleId, string> = {
@@ -35,13 +35,17 @@ export async function POST(req: NextRequest) {
 
     const { data: invite, error } = await supabase
       .from("invitations")
-      .select("id, unlocked_modules")
+      .select("id, unlocked_modules, brand_id")
       .eq("id", invitationId)
       .single();
 
     if (error || !invite) {
       return NextResponse.json({ error: "Convite não encontrado." }, { status: 404 });
     }
+
+    // Preços diferenciados por parceiro/marca (lib/pricing.ts) — sem
+    // override para este brand_id, cai sempre no preço global.
+    const pricingOverrides = await fetchPricingOverrides(supabaseAdmin, invite.brand_id);
 
     const alreadyUnlocked: string[] = invite.unlocked_modules || [];
     let toPurchase: ModuleId[];
@@ -82,12 +86,12 @@ export async function POST(req: NextRequest) {
     let lineItems: { moduleId?: ModuleId; name: string; unitAmountCents: number }[];
     if (bundleUsed) {
       const bundle = getBundle(bundleUsed)!;
-      lineItems = [{ name: `Digital Invite Studio — ${bundle.id}`, unitAmountCents: bundle.priceCents }];
+      lineItems = [{ name: `Digital Invite Studio — ${bundle.id}`, unitAmountCents: effectiveBundlePriceCents(bundle, pricingOverrides) }];
     } else {
       lineItems = toPurchase.map(moduleId => ({
         moduleId,
         name: `Digital Invite Studio — ${MODULE_NAMES[moduleId]}`,
-        unitAmountCents: MODULE_PRICES_CENTS[moduleId],
+        unitAmountCents: effectiveModulePriceCents(moduleId, pricingOverrides),
       }));
     }
 

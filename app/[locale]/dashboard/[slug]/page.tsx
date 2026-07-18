@@ -38,7 +38,7 @@ import WelcomeTour from "@/components/dashboard/WelcomeTour";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
-import { MODULE_PRICES_CENTS } from "@/lib/pricing";
+import { fetchPricingOverrides, effectiveModulePriceCents, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from "@/lib/pricing";
 import { startModuleCheckout, formatPriceCents } from "@/lib/checkout";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
@@ -86,6 +86,7 @@ export default function Dashboard() {
   const [buyingModule, setBuyingModule] = useState<string | null>(null);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
+  const [pricingOverrides, setPricingOverrides] = useState<PricingOverrides>(EMPTY_PRICING_OVERRIDES);
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -153,6 +154,9 @@ export default function Dashboard() {
 
       // Marca do próprio evento → logo do parceiro no editor.
       setEventBrand(await resolveBrandById(supabase, invite.brand_id));
+      // Preços diferenciados por parceiro (lib/pricing.ts) — sem override
+      // para este brand_id, os ecrãs de compra usam sempre o preço global.
+      setPricingOverrides(await fetchPricingOverrides(supabase, invite.brand_id));
 
       const { data: gs } = await supabase.from("guests").select("*").eq("invitation_id", invite.id);
       setGuests(gs || []);
@@ -267,7 +271,7 @@ export default function Dashboard() {
         contactUrl={brand.contactUrl ?? `/${locale}/contact`}
         contactLabel={dict.moduleLockedContactBtn}
         buyLabel={dict.moduleBuyBtn}
-        priceLabel={moduleId ? formatPriceCents(MODULE_PRICES_CENTS[moduleId], locale) : undefined}
+        priceLabel={moduleId ? formatPriceCents(effectiveModulePriceCents(moduleId, pricingOverrides), locale) : undefined}
         onBuy={moduleId ? (couponCode) => handleBuyModule(moduleId, couponCode) : undefined}
         buying={buyingModule === moduleId}
         couponToggleLabel={dict.couponToggleLabel}
@@ -395,6 +399,7 @@ export default function Dashboard() {
               locale={locale}
               unlockedModules={unlockedModules}
               isSuperAdmin={isSuperAdmin}
+              overrides={pricingOverrides}
               moduleNames={moduleNamesDict}
               dict={dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers}
             />
@@ -577,6 +582,7 @@ export default function Dashboard() {
                   canEdit={canEdit}
                   unlockedModules={unlockedModules}
                   isSuperAdmin={isSuperAdmin}
+                  overrides={pricingOverrides}
                   dict={dictionaries[locale]?.PhotoSharingModule || dictionaries.pt.PhotoSharingModule}
                 />
               )}
@@ -587,6 +593,7 @@ export default function Dashboard() {
                   canEdit={canEdit}
                   unlockedModules={unlockedModules}
                   isSuperAdmin={isSuperAdmin}
+                  overrides={pricingOverrides}
                   dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />
               )}

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Check, Loader2, Sparkles, Tag } from "lucide-react";
-import { BUNDLES, bundleSavingsCents } from "@/lib/pricing";
+import { BUNDLES, effectiveBundlePriceCents, effectiveBundleSavingsCents, type PricingOverrides } from "@/lib/pricing";
 import { startBundleCheckout, formatPriceCents } from "@/lib/checkout";
 import type { ModuleId } from "@/lib/modules";
 
@@ -22,13 +22,14 @@ interface BundleOffersProps {
   unlockedModules: string[];
   isSuperAdmin: boolean;
   moduleNames: Record<ModuleId, string>;
+  overrides?: PricingOverrides;
   dict: BundleOffersDict;
 }
 
 // Mostra as bundles que ainda fazem sentido oferecer a este evento — uma
 // bundle desaparece assim que já tiver pelo menos um dos módulos incluídos,
 // para nunca sugerir cobrar a dobrar (o servidor também recusa essa compra).
-export default function BundleOffers({ invitationId, slug, locale, unlockedModules, isSuperAdmin, moduleNames, dict }: BundleOffersProps) {
+export default function BundleOffers({ invitationId, slug, locale, unlockedModules, isSuperAdmin, moduleNames, overrides, dict }: BundleOffersProps) {
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [couponVisibleFor, setCouponVisibleFor] = useState<string | null>(null);
   const [couponCodes, setCouponCodes] = useState<Record<string, string>>({});
@@ -57,7 +58,8 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {offers.map(bundle => {
           const meta = dict.bundles[bundle.id];
-          const savings = bundleSavingsCents(bundle);
+          const price = effectiveBundlePriceCents(bundle, overrides);
+          const savings = effectiveBundleSavingsCents(bundle, overrides);
           return (
             <div key={bundle.id} className="bg-white border border-gold-soft/60 rounded-3xl p-8 shadow-sm flex flex-col">
               <div className="flex items-center gap-2 text-brand mb-3">
@@ -73,7 +75,7 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
                 ))}
               </ul>
               <div className="flex items-end justify-between mb-5">
-                <span className="font-serif text-3xl text-brand">{formatPriceCents(bundle.priceCents, locale)}</span>
+                <span className="font-serif text-3xl text-brand">{formatPriceCents(price, locale)}</span>
                 {savings > 0 && (
                   <span className="text-[10px] font-bold uppercase tracking-widest text-green-600 bg-green-50 px-2.5 py-1 rounded-md">
                     {dict.savingsLabel} {formatPriceCents(savings, locale)}
