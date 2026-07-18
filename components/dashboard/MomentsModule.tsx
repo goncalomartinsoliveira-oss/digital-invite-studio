@@ -5,11 +5,14 @@ import { supabase } from '@/lib/supabase';
 import {
   Trash2, Download, ImageIcon, Play, Pause, Camera,
   FileArchive, Copy, X, Loader2, Globe,
-  Monitor, ChevronLeft, ChevronRight
+  Monitor, ChevronLeft, ChevronRight, Lock
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import JSZip from 'jszip';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isModuleUnlocked } from '@/lib/modules';
+import LockedModuleNotice from './LockedModuleNotice';
+import { useBrand } from '@/components/site/BrandProvider';
 
 interface MomentsModuleDict {
   cards: {
@@ -37,18 +40,29 @@ interface MomentsModuleDict {
   zipContent: {
     guestbookHeader: string; messagePrefix: string; authorPrefix: string; datePrefix: string;
   };
+  locked: {
+    photoTitle: string; photoMessage: string;
+    guestbookTitle: string; guestbookMessage: string;
+    contactBtn: string;
+  };
 }
 
 interface MomentsModuleProps {
   invitationId: string;
   slug: string;
   canEdit: boolean;
+  unlockedModules?: string[];
+  isSuperAdmin?: boolean;
   dict: MomentsModuleDict;
 }
 
-export default function MomentsModule({ invitationId, slug, canEdit, dict }: MomentsModuleProps) {
+export default function MomentsModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, dict }: MomentsModuleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'pt';
+  const brand = useBrand();
+  const contactUrl = brand.contactUrl ?? `/${locale}/contact`;
+  const photoSharingLocked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'photo_sharing');
+  const guestbookLocked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'guestbook');
 
   const [fotos, setFotos] = useState<any[]>([]);
   const [mensagens, setMensagens] = useState<any[]>([]);
@@ -334,12 +348,15 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
 
       {/* MAIN TABS */}
       <div className="flex bg-gray-100 p-1.5 rounded-2xl w-fit">
-        <button onClick={() => setTabAtiva('media')} className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'media' ? 'bg-white text-brand shadow-sm' : 'text-gray-400'}`}>{dict.tabs.gallery}</button>
-        <button onClick={() => setTabAtiva('guestbook')} className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'guestbook' ? 'bg-white text-brand shadow-sm' : 'text-gray-400'}`}>{dict.tabs.guestbook}</button>
+        <button onClick={() => setTabAtiva('media')} className={`flex items-center gap-1.5 px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'media' ? 'bg-white text-brand shadow-sm' : 'text-gray-400'}`}>{dict.tabs.gallery} {photoSharingLocked && <Lock size={10} className="opacity-60" />}</button>
+        <button onClick={() => setTabAtiva('guestbook')} className={`flex items-center gap-1.5 px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${tabAtiva === 'guestbook' ? 'bg-white text-brand shadow-sm' : 'text-gray-400'}`}>{dict.tabs.guestbook} {guestbookLocked && <Lock size={10} className="opacity-60" />}</button>
       </div>
 
       {/* MEDIA TAB */}
-      {tabAtiva === 'media' && (
+      {tabAtiva === 'media' && photoSharingLocked && (
+        <LockedModuleNotice title={dict.locked.photoTitle} message={dict.locked.photoMessage} contactUrl={contactUrl} contactLabel={dict.locked.contactBtn} />
+      )}
+      {tabAtiva === 'media' && !photoSharingLocked && (
         <section className="space-y-6">
           <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{dict.media.gridLabel}</span>
@@ -370,7 +387,10 @@ export default function MomentsModule({ invitationId, slug, canEdit, dict }: Mom
       )}
 
       {/* GUESTBOOK TAB */}
-      {tabAtiva === 'guestbook' && (
+      {tabAtiva === 'guestbook' && guestbookLocked && (
+        <LockedModuleNotice title={dict.locked.guestbookTitle} message={dict.locked.guestbookMessage} contactUrl={contactUrl} contactLabel={dict.locked.contactBtn} />
+      )}
+      {tabAtiva === 'guestbook' && !guestbookLocked && (
         <section className="space-y-6">
           <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm gap-2">
             <div className="flex gap-2">

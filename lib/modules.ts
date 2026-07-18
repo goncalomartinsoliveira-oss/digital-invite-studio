@@ -9,3 +9,18 @@ export const ALL_MODULE_IDS: ModuleId[] = [
   "photo_sharing",
   "guestbook",
 ];
+
+// A que módulo pertence cada separador do dashboard do evento. O separador
+// "moments" fica de fora — cobre dois módulos (photo_sharing + guestbook) em
+// sub-separadores internos, geridos pelo próprio MomentsModule.
+export const TAB_MODULE: Record<string, ModuleId> = {
+  design: "invite",
+  content: "invite",
+  savethedate: "save_the_date",
+  guests: "guests_seating",
+  seating: "guests_seating",
+};
+
+export function isModuleUnlocked(unlockedModules: string[] | null | undefined, moduleId: ModuleId): boolean {
+  return !!unlockedModules?.includes(moduleId);
+}

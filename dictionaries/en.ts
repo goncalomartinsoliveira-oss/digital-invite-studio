@@ -218,6 +218,10 @@ const en = {
     "readOnly": "Read Only",
     "expiredBadge": "Event Expired",
     "expiredBanner": "This event expired on {date} — the dashboard is now in read-only mode. Contact us to renew access.",
+    "moduleLockedTitle": "{module} is not active yet",
+    "moduleLockedMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
+    "moduleLockedContactBtn": "Contact Us",
+    "moduleLockedBadge": "Locked",
     "saving": "Saving...",
     "saved": "Saved",
     "copyLink": "Copy Link",
@@ -364,6 +368,13 @@ const en = {
         "placeholder": "Elegant PDF document with room layout and brand logo"
       }
     }
+  },
+  "ModuleNames": {
+    "save_the_date": "Save the Date",
+    "invite": "Wedding Invitation",
+    "guests_seating": "Guests & Seating",
+    "photo_sharing": "Photo Sharing & Live Wall",
+    "guestbook": "Guestbook"
   },
   "EventExpired": {
     "title": "This invitation is no longer available",
@@ -785,6 +796,13 @@ const en = {
       "messagePrefix": "Message",
       "authorPrefix": "Author",
       "datePrefix": "Date"
+    },
+    "locked": {
+      "photoTitle": "Photo Sharing & Live Wall is not active yet",
+      "photoMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "guestbookTitle": "Guestbook is not active yet",
+      "guestbookMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "contactBtn": "Contact Us"
     }
   },
   "SeatingModule": {

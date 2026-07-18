@@ -218,6 +218,10 @@ const pt = {
     "readOnly": "Apenas Leitura",
     "expiredBadge": "Evento Expirado",
     "expiredBanner": "Este evento expirou a {date} — o painel ficou em modo de leitura. Contacte-nos para renovar o acesso.",
+    "moduleLockedTitle": "{module} ainda não está ativo",
+    "moduleLockedMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+    "moduleLockedContactBtn": "Contactar",
+    "moduleLockedBadge": "Bloqueado",
     "saving": "A guardar...",
     "saved": "Guardado",
     "copyLink": "Copiar Link",
@@ -364,6 +368,13 @@ const pt = {
         "placeholder": "Documento PDF elegante com a planta da sala e o logotipo da marca"
       }
     }
+  },
+  "ModuleNames": {
+    "save_the_date": "Save the Date",
+    "invite": "Convite de Casamento",
+    "guests_seating": "Convidados & Mesas",
+    "photo_sharing": "Photo Sharing & Live Wall",
+    "guestbook": "Guestbook"
   },
   "EventExpired": {
     "title": "Este convite já não está disponível",
@@ -785,6 +796,13 @@ const pt = {
       "messagePrefix": "Mensagem",
       "authorPrefix": "Autor",
       "datePrefix": "Data"
+    },
+    "locked": {
+      "photoTitle": "Photo Sharing & Live Wall ainda não está ativo",
+      "photoMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "guestbookTitle": "Guestbook ainda não está ativo",
+      "guestbookMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "contactBtn": "Contactar"
     }
   },
   "SeatingModule": {

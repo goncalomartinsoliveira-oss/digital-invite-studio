@@ -18,7 +18,8 @@ import {
   ChevronRight,
   ArrowLeft,
   CalendarHeart,
-  AlertTriangle
+  AlertTriangle,
+  Lock
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -28,8 +29,10 @@ import SeatingModule from "@/components/dashboard/SeatingModule";
 import AccountModule from "@/components/dashboard/AccountModule";
 import MomentsModule from "@/components/dashboard/MomentsModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
+import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
+import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -199,6 +202,28 @@ export default function Dashboard() {
     ? new Date(formData.expires_at).toLocaleDateString(locale === 'en' ? 'en-US' : 'pt-PT', { day: '2-digit', month: 'long', year: 'numeric' })
     : "";
 
+  // Módulos: super-admin vê e edita sempre tudo; para todos os outros, um
+  // separador cujo módulo não esteja em unlocked_modules aparece bloqueado.
+  const unlockedModules: string[] = formData.unlocked_modules || [];
+  const isTabLocked = (tabId: DashboardTab) => {
+    const moduleId = TAB_MODULE[tabId];
+    if (!moduleId) return false;
+    return !isSuperAdmin && !isModuleUnlocked(unlockedModules, moduleId);
+  };
+  const moduleNamesDict = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
+  const lockedNotice = (tabId: DashboardTab) => {
+    const moduleId = TAB_MODULE[tabId];
+    const moduleName = moduleId ? moduleNamesDict[moduleId] : "";
+    return (
+      <LockedModuleNotice
+        title={dict.moduleLockedTitle.replace("{module}", moduleName)}
+        message={dict.moduleLockedMessage}
+        contactUrl={brand.contactUrl ?? `/${locale}/contact`}
+        contactLabel={dict.moduleLockedContactBtn}
+      />
+    );
+  };
+
   // Separadores visíveis consoante a área selecionada no hub.
   const visibleTabs = group ? tabsConfig.filter(t => GROUP_TABS[group].includes(t.id)) : tabsConfig;
 
@@ -221,6 +246,11 @@ export default function Dashboard() {
     { id: 'guests' as const, icon: <Users size={26} />, title: dict.groups.guests.title, desc: dict.groups.guests.desc },
     { id: 'moments' as const, icon: <Camera size={26} />, title: dict.groups.moments.title, desc: dict.groups.moments.desc },
   ];
+
+  // Uma área do hub aparece marcada como bloqueada só quando NENHUM dos
+  // separadores que contém tem o módulo correspondente ativo.
+  const isGroupFullyLocked = (groupId: Exclude<EventGroup, null | 'account'>) =>
+    GROUP_TABS[groupId].every(tabId => isTabLocked(tabId));
 
   // ── HUB: página-base com as áreas do evento ──────────────────────────
   if (!group) {
@@ -277,8 +307,13 @@ export default function Dashboard() {
                 <button
                   key={card.id}
                   onClick={() => openGroup(card.id)}
-                  className="group text-left bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-gold-soft hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                  className="group relative text-left bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-gold-soft hover:-translate-y-1 transition-all duration-300 flex flex-col"
                 >
+                  {isGroupFullyLocked(card.id) && (
+                    <span className="absolute top-6 right-6 flex items-center gap-1.5 bg-gray-50 text-gray-400 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">
+                      <Lock size={10} /> {dict.moduleLockedBadge}
+                    </span>
+                  )}
                   <div className="w-14 h-14 rounded-2xl bg-cream border border-gold-soft/70 flex items-center justify-center text-brand mb-6 group-hover:bg-brand group-hover:text-white transition-colors">
                     {card.icon}
                   </div>
@@ -359,7 +394,7 @@ export default function Dashboard() {
         <nav className="px-4 space-y-2">
           {visibleTabs.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${activeTab === tab.id ? 'bg-brand text-white shadow-lg shadow-brand/30' : 'text-gray-400 hover:bg-gray-50'}`}>
-              {tab.icon} {tab.label}
+              {tab.icon} {tab.label} {isTabLocked(tab.id) && <Lock size={11} className="ml-auto shrink-0 opacity-60" />}
             </button>
           ))}
         </nav>
@@ -457,12 +492,12 @@ export default function Dashboard() {
                   <span>{dict.expiredBanner.replace("{date}", expiredDateLabel)}</span>
                 </div>
               )}
-              {activeTab === 'design' && <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />}
-              {activeTab === 'content' && <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />}
-              {activeTab === 'savethedate' && <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />}
-              {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />}
-              {activeTab === 'seating' && <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />}
-              {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} dict={dictionaries[locale]?.MomentsModule || dictionaries.pt.MomentsModule} />}
+              {activeTab === 'design' && (isTabLocked('design') ? lockedNotice('design') : <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />)}
+              {activeTab === 'content' && (isTabLocked('content') ? lockedNotice('content') : <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />)}
+              {activeTab === 'savethedate' && (isTabLocked('savethedate') ? lockedNotice('savethedate') : <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />)}
+              {activeTab === 'guests' && (isTabLocked('guests') ? lockedNotice('guests') : <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />)}
+              {activeTab === 'seating' && (isTabLocked('seating') ? lockedNotice('seating') : <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />)}
+              {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} unlockedModules={unlockedModules} isSuperAdmin={isSuperAdmin} dict={dictionaries[locale]?.MomentsModule || dictionaries.pt.MomentsModule} />}
               {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
             </div>
             </EventBrandProvider>
@@ -510,8 +545,9 @@ export default function Dashboard() {
       {!showMobilePreview && (
         <nav className="xl:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-20 flex justify-around items-center z-[100] px-4 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
           {[...visibleTabs, { id: 'account', label: dict.accountLabel, icon: <UserCircle size={20} /> }].map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id as DashboardTab)} className={`flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'text-brand' : 'text-gray-300'}`}>
+            <button key={tab.id} onClick={() => setActiveTab(tab.id as DashboardTab)} className={`relative flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'text-brand' : 'text-gray-300'}`}>
               {tab.icon}
+              {isTabLocked(tab.id as DashboardTab) && <Lock size={9} className="absolute -top-1 -right-1 opacity-70" />}
               <span className="text-[10px] font-bold tracking-tight text-center leading-tight w-20">{tab.label}</span>
             </button>
           ))}
