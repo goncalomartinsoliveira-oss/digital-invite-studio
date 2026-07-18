@@ -210,12 +210,12 @@ export default function PricingPage() {
             <p className="text-gray-500 mb-8 leading-relaxed">
               {dict.b2b.desc}
             </p>
-            <a
-              href={`/${locale}/contact`}
+            <Link
+              href={`/${locale}/partners`}
               className="inline-block border-b-2 border-[#722F37] pb-1 text-[10px] font-bold uppercase tracking-widest text-gray-800 hover:text-[#722F37] transition-colors"
             >
               {dict.b2b.link}
-            </a>
+            </Link>
           </div>
         </motion.div>
 

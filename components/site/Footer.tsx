@@ -50,6 +50,7 @@ export default function Footer({ brand }: { brand?: Brand }) {
             <ul className="space-y-4">
               <li><Link href={`/${locale}/features`} className="text-sm text-gray-500 hover:text-brand">{dict.features}</Link></li>
               <li><Link href={`/${locale}/pricing`} className="text-sm text-gray-500 hover:text-brand">{dict.pricing}</Link></li>
+              <li><Link href={`/${locale}/partners`} className="text-sm text-gray-500 hover:text-brand">{dict.partners}</Link></li>
             </ul>
           </div>
           <div>

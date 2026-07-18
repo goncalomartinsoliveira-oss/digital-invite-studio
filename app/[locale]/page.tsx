@@ -381,7 +381,7 @@ export default function HomePage() {
             <p className="text-white/70 text-lg leading-relaxed max-w-xl">
               {dict.b2b.desc}
             </p>
-            <Link href={`/${locale}/pricing`}>
+            <Link href={`/${locale}/partners`}>
               <button className="mt-2 inline-flex items-center gap-3 bg-gold-soft text-brand px-8 py-4 text-[11px] uppercase tracking-[0.2em] font-bold rounded-full hover:bg-white transition-colors shadow-lg">
                 {dict.b2b.cta}
                 <ArrowRight size={14} />

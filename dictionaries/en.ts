@@ -151,6 +151,7 @@ const en = {
     "product": "Product",
     "features": "Features",
     "pricing": "Pricing",
+    "partners": "Agencies & Partners",
     "company": "Company",
     "contact": "Contact",
     "legal": "Legal",
@@ -1169,6 +1170,67 @@ const en = {
       "desc": "We offer special White Label solutions for Wedding Planners and Agencies. Use our technology with your own branding and benefit from wholesale pricing.",
       "link": "Consult B2B Conditions"
     }
+  },
+  "PartnersPage": {
+    "hero": {
+      "tag": "For agencies and wedding planners",
+      "title": "Bring Digital Invite Studio to your brand",
+      "desc": "Offer your clients digital invitations, smart RSVP, seating plans, photo sharing and guestbook, all under your agency's identity. Then manage every client's event from a single dashboard.",
+      "ctaPrimary": "Talk to our team",
+      "ctaSecondary": "See the available modules"
+    },
+    "modelsTitle": "Two partnership models",
+    "modelsSubtitle": "Choose whichever fits the size of your agency",
+    "models": {
+      "domain": {
+        "title": "Your Own Domain",
+        "subtitle": "Full White Label",
+        "desc": "The platform runs on your own domain, with your logo and colours on every page, including the ones your clients' guests see. Ideal for agencies who want to present this as their own product.",
+        "features": [
+          "Custom domain, for example invites.youragency.com",
+          "Your own visual identity across the whole product",
+          "Your brand also shows on guest-facing pages"
+        ]
+      },
+      "light": {
+        "title": "Lightweight Partner",
+        "subtitle": "Start without your own domain",
+        "desc": "No need for your own domain or a technical team. Your logo shows up on every event you manage, right inside the Digital Invite Studio platform. Immediate start.",
+        "features": [
+          "No setup costs or technical work",
+          "Your own logo on every event you create",
+          "Ideal for independent planners or growing agencies"
+        ]
+      }
+    },
+    "featuresTitle": "What you get as a partner",
+    "features": {
+      "dashboard": {
+        "title": "Centralised dashboard",
+        "desc": "See all your clients' events in one place: couple names, dates, confirmed guests and each project's status."
+      },
+      "team": {
+        "title": "Your own team access",
+        "desc": "Add your team with admin or editor roles, and control who manages each event."
+      },
+      "fullProduct": {
+        "title": "The full product included",
+        "desc": "Every event you create has access to every module: invitation, smart RSVP, seating plan, photo sharing and guestbook."
+      },
+      "branding": {
+        "title": "Your brand, everywhere",
+        "desc": "Dashboard, invitation, guestbook and gallery always show your logo, never ours."
+      }
+    },
+    "audienceTitle": "Who it's for",
+    "audience": [
+      "Independent planners who want to offer a premium experience without building their own technology",
+      "Growing agencies managing several weddings at once",
+      "Larger production companies and agencies that need to manage teams and many active events"
+    ],
+    "pricingTitle": "Favourable commercial terms",
+    "pricingDesc": "We work with special partner conditions, tailored to the number of events you manage. No hidden monthly fees and no fine print.",
+    "finalCta": "Talk to us"
   },
   "SeatingPublic": {
     "notFound": "Event not found",

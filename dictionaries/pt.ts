@@ -151,6 +151,7 @@ const pt = {
     "product": "Produto",
     "features": "Funcionalidades",
     "pricing": "Preços",
+    "partners": "Agências & Parceiros",
     "company": "Empresa",
     "contact": "Contactos",
     "legal": "Legal",
@@ -1169,6 +1170,67 @@ const pt = {
       "desc": "Oferecemos soluções especiais de White Label para Wedding Planners e Agências. Utilize a nossa tecnologia com a sua própria marca e beneficie de preços de revenda.",
       "link": "Consultar Condições B2B"
     }
+  },
+  "PartnersPage": {
+    "hero": {
+      "tag": "Para agências e wedding planners",
+      "title": "Leve a Digital Invite Studio para a sua marca",
+      "desc": "Ofereça aos seus clientes convites digitais, RSVP inteligente, plano de mesas, partilha de fotos e guestbook, tudo com a identidade da vossa agência. Depois, giram todos os eventos dos vossos clientes a partir de um único painel.",
+      "ctaPrimary": "Falar com a equipa",
+      "ctaSecondary": "Ver os módulos disponíveis"
+    },
+    "modelsTitle": "Dois modelos de parceria",
+    "modelsSubtitle": "Escolha o que melhor se adapta à dimensão da sua agência",
+    "models": {
+      "domain": {
+        "title": "Domínio Próprio",
+        "subtitle": "White Label completo",
+        "desc": "O sistema corre no vosso próprio domínio, com o vosso logótipo e cores em todas as páginas, incluindo as que os convidados dos vossos clientes veem. Ideal para agências que querem apresentar isto como um produto próprio.",
+        "features": [
+          "Domínio personalizado, por exemplo convites.suaagencia.com",
+          "Identidade visual própria em todo o produto",
+          "Presença de marca também nas páginas dos convidados"
+        ]
+      },
+      "light": {
+        "title": "Parceiro Leve",
+        "subtitle": "Comece sem domínio próprio",
+        "desc": "Sem necessidade de domínio próprio nem equipa técnica. O vosso logótipo aparece em todos os eventos que gerirem, dentro da própria plataforma Digital Invite Studio. Arranque imediato.",
+        "features": [
+          "Sem custos nem trabalho técnico de configuração",
+          "Logótipo próprio em cada evento que criar",
+          "Ideal para organizadores independentes ou agências em crescimento"
+        ]
+      }
+    },
+    "featuresTitle": "O que ganha como parceiro",
+    "features": {
+      "dashboard": {
+        "title": "Painel centralizado",
+        "desc": "Veja todos os eventos dos vossos clientes num único lugar: noivos, datas, convidados confirmados e estado de cada projeto."
+      },
+      "team": {
+        "title": "Equipa com acessos próprios",
+        "desc": "Adicione a vossa equipa com papéis de administrador ou editor, e controlem quem gere cada evento."
+      },
+      "fullProduct": {
+        "title": "Produto completo incluído",
+        "desc": "Cada evento criado tem acesso a todos os módulos: convite, RSVP inteligente, plano de mesas, photo sharing e guestbook."
+      },
+      "branding": {
+        "title": "A vossa marca em todo o lado",
+        "desc": "Painel, convite, guestbook e galeria mostram sempre o vosso logótipo, nunca o nosso."
+      }
+    },
+    "audienceTitle": "Para quem é",
+    "audience": [
+      "Organizadores independentes que querem oferecer uma experiência premium sem construir tecnologia própria",
+      "Agências em crescimento que gerem vários casamentos em simultâneo",
+      "Produtoras e agências maiores que precisam de gerir equipas e vários eventos ativos"
+    ],
+    "pricingTitle": "Condições comerciais vantajosas",
+    "pricingDesc": "Trabalhamos com condições especiais para parceiros, adaptadas ao número de eventos que gerem. Sem mensalidades escondidas nem letras pequenas.",
+    "finalCta": "Fale connosco"
   },
   "SeatingPublic": {
     "notFound": "Evento não encontrado",
