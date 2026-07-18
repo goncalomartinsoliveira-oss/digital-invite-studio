@@ -13,12 +13,14 @@ import {
   Camera,
   ArrowRight,
   CheckCircle2,
-  Quote,
   ChevronDown,
   LayoutGrid,
   Users,
   Zap,
-  HeadphonesIcon
+  HeadphonesIcon,
+  CreditCard,
+  ShieldCheck,
+  Layers
 } from 'lucide-react';
 
 import pt from '../../dictionaries/pt';
@@ -309,34 +311,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 6. TESTEMUNHOS ───────────────────────────────────────────── */}
+      {/* ── 6. PORQUE ESCOLHER-NOS ───────────────────────────────────── */}
       <section className="bg-gold-soft/20 py-32 px-6 md:px-20 border-y border-gold-soft/40">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20 space-y-4">
-            <h2 className="font-serif text-4xl md:text-5xl text-ink">{dict.testimonials.title}</h2>
-            <p className="text-gray-500 text-lg">{dict.testimonials.subtitle}</p>
+            <h2 className="font-serif text-4xl md:text-5xl text-ink">{dict.trust.title}</h2>
+            <p className="text-gray-500 text-lg">{dict.trust.subtitle}</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {(dict.testimonials.items as any[]).map((item: any, i: number) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12 }}
-                className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-lg transition-shadow flex flex-col gap-6"
-              >
-                <Quote size={28} className="text-brand/30 shrink-0" />
-                <p className="font-serif text-lg italic text-ink leading-relaxed flex-1">
-                  {item.quote}
-                </p>
-                <div className="border-t border-gray-100 pt-5">
-                  <p className="font-bold text-sm text-ink">{item.name}</p>
-                  <p className="text-[11px] text-gray-400 uppercase tracking-widest mt-0.5">{item.event}</p>
-                </div>
-              </motion.div>
-            ))}
+            {(dict.trust.items as any[]).map((item: any, i: number) => {
+              const Icon = [CreditCard, ShieldCheck, Layers][i] ?? Sparkles;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.12 }}
+                  className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-lg transition-shadow flex flex-col gap-5"
+                >
+                  <div className="w-12 h-12 rounded-2xl bg-brand/5 border border-gold-soft/60 flex items-center justify-center text-brand shrink-0">
+                    <Icon size={22} />
+                  </div>
+                  <h3 className="font-serif text-xl text-ink">{item.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

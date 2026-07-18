@@ -54,10 +54,10 @@ const en = {
     },
     "stats": {
       "items": [
-        { "value": "500+", "label": "Weddings Created" },
-        { "value": "12", "label": "Countries" },
-        { "value": "98%", "label": "Satisfaction" },
-        { "value": "4.9★", "label": "Average Rating" }
+        { "value": "5", "label": "Modules to Choose From" },
+        { "value": "60", "label": "Days of Access Included" },
+        { "value": "100%", "label": "Mobile-First" },
+        { "value": "1x", "label": "One-Time Payment" }
       ]
     },
     "templateShowcase": {
@@ -73,24 +73,21 @@ const en = {
         { "name": "Collage 01", "id": "collage-01", "desc": "Creative expression with contemporary photo collage." }
       ]
     },
-    "testimonials": {
-      "title": "What couples are saying",
-      "subtitle": "Real stories from couples who chose to transform their big day.",
+    "trust": {
+      "title": "Why choose Digital Invite Studio",
+      "subtitle": "Built to last from the first idea all the way to the memories after the big day.",
       "items": [
         {
-          "quote": "Our digital invitation was our guests' first 'wow' moment. We received messages saying they had never seen anything like it. Worth every penny.",
-          "name": "Ana & Ricardo",
-          "event": "Wedding in Lisbon, Sep. 2025"
+          "title": "One-time payment, no surprises",
+          "desc": "No hidden monthly fees. You pay once per event, and access is guaranteed for the whole agreed period."
         },
         {
-          "quote": "The seating plan tool literally saved us hours. We placed 180 guests at their tables in under 30 minutes. Incredible.",
-          "name": "Sofia & Joao",
-          "event": "Wedding in Porto, Jun. 2025"
+          "title": "Guest data, actually protected",
+          "desc": "Every piece of information is protected by strict access rules at the database level, not just how the site looks."
         },
         {
-          "quote": "As a wedding planner, I use the platform on all my projects. Clients are amazed and I gain efficiency. It's the best tool on the market.",
-          "name": "Margarida Costa",
-          "event": "Wedding Planner — 12 projects"
+          "title": "Everything in one place, start to finish",
+          "desc": "From the Save the Date to the wedding day and the memories afterwards, with no jumping between different tools."
         }
       ]
     },

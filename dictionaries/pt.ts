@@ -54,10 +54,10 @@ const pt = {
     },
     "stats": {
       "items": [
-        { "value": "500+", "label": "Casamentos Criados" },
-        { "value": "12", "label": "Países" },
-        { "value": "98%", "label": "Satisfação" },
-        { "value": "4.9★", "label": "Avaliação Média" }
+        { "value": "5", "label": "Módulos à Escolha" },
+        { "value": "60", "label": "Dias de Acesso Incluídos" },
+        { "value": "100%", "label": "Pensado para Telemóvel" },
+        { "value": "1x", "label": "Pagamento Único" }
       ]
     },
     "templateShowcase": {
@@ -73,24 +73,21 @@ const pt = {
         { "name": "Collage 01", "id": "collage-01", "desc": "Expressão criativa com colagem fotográfica contemporânea." }
       ]
     },
-    "testimonials": {
-      "title": "O que dizem os noivos",
-      "subtitle": "Histórias reais de casais que escolheram transformar o seu grande dia.",
+    "trust": {
+      "title": "Porque escolher a Digital Invite Studio",
+      "subtitle": "Feito para durar da primeira ideia até às memórias depois do grande dia.",
       "items": [
         {
-          "quote": "O nosso convite digital foi o primeiro 'wow' dos nossos convidados. Recebemos mensagens a dizer que nunca tinham visto nada assim. Valeu cada cêntimo.",
-          "name": "Ana & Ricardo",
-          "event": "Casamento em Lisboa, Set. 2025"
+          "title": "Pagamento único, sem surpresas",
+          "desc": "Sem mensalidades escondidas. Paga-se uma vez por evento, e o acesso fica garantido durante todo o período combinado."
         },
         {
-          "quote": "A ferramenta de seating plan poupou-nos literalmente horas. Arrastámos 180 convidados para as mesas em menos de 30 minutos. Incrível.",
-          "name": "Sofia & João",
-          "event": "Casamento no Porto, Jun. 2025"
+          "title": "Os dados dos convidados, protegidos",
+          "desc": "Todas as informações ficam protegidas por regras de acesso rigorosas na base de dados, não só na aparência do site."
         },
         {
-          "quote": "Como wedding planner, uso a plataforma em todos os meus projetos. Os clientes ficam rendidos e eu ganho eficiência. É a melhor ferramenta do mercado.",
-          "name": "Margarida Costa",
-          "event": "Wedding Planner — 12 projetos"
+          "title": "Tudo no mesmo sítio, do início ao fim",
+          "desc": "Do Save the Date ao dia do casamento e às memórias depois, sem andar a saltar entre ferramentas diferentes."
         }
       ]
     },
