@@ -68,6 +68,7 @@ export default function Dashboard() {
   const [iframeKey, setIframeKey] = useState(0);
 
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
 
@@ -102,6 +103,7 @@ export default function Dashboard() {
         .eq("user_email", email)
         .maybeSingle();
       const isSuper = !!sa;
+      setIsSuperAdmin(isSuper);
 
       // Acesso de agência: um membro da marca do evento pode geri-lo.
       let agencyRole: "owner" | "editor" | null = null;
@@ -461,7 +463,7 @@ export default function Dashboard() {
               {activeTab === 'guests' && <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />}
               {activeTab === 'seating' && <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />}
               {activeTab === 'moments' && <MomentsModule invitationId={formData.id} slug={params.slug as string} canEdit={canEdit} dict={dictionaries[locale]?.MomentsModule || dictionaries.pt.MomentsModule} />}
-              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
+              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
             </div>
             </EventBrandProvider>
           </main>

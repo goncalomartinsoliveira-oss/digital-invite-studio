@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter, useParams } from "next/navigation";
-import { UserPlus, Trash2, ShieldCheck, Mail, Loader2, LogOut, Key, User } from "lucide-react";
+import { UserPlus, Trash2, ShieldCheck, Mail, Loader2, LogOut, Key, User, Package, Lock, Check } from "lucide-react";
+import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
 
 interface AccountModuleProps {
   userEmail: string;
   invitationId: string;
+  isSuperAdmin?: boolean;
   dict: {
     profile: {
       title: string; subtitle: string; logoutBtn: string; emailLabel: string;
@@ -21,10 +23,15 @@ interface AccountModuleProps {
       badgeEditor: string; badgeViewer: string;
       alertSelfInvite: string; alertAddError: string; alertRemoveConfirm: string; alertPasswordError: string;
     };
+    modules: {
+      title: string; subtitle: string;
+      items: Record<ModuleId, string>;
+      lockedNote: string; unlockedNote: string; dateLockedSince: string;
+    };
   };
 }
 
-export default function AccountModule({ userEmail, invitationId, dict }: AccountModuleProps) {
+export default function AccountModule({ userEmail, invitationId, isSuperAdmin, dict }: AccountModuleProps) {
   const router = useRouter();
   const params = useParams();
 
@@ -36,9 +43,45 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
   const [savingPass, setSavingPass] = useState(false);
   const [newPassword, setNewPassword] = useState("");
 
+  const [unlockedModules, setUnlockedModules] = useState<string[]>([]);
+  const [dateLockedAt, setDateLockedAt] = useState<string | null>(null);
+  const [modulesLoading, setModulesLoading] = useState(true);
+  const [togglingModule, setTogglingModule] = useState<string | null>(null);
+
   useEffect(() => {
     fetchCollaborators();
-  }, [invitationId]);
+    if (isSuperAdmin) fetchModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invitationId, isSuperAdmin]);
+
+  async function fetchModules() {
+    setModulesLoading(true);
+    const { data } = await supabase
+      .from("invitations")
+      .select("unlocked_modules, date_locked_at")
+      .eq("id", invitationId)
+      .single();
+    setUnlockedModules(data?.unlocked_modules || []);
+    setDateLockedAt(data?.date_locked_at || null);
+    setModulesLoading(false);
+  }
+
+  const toggleModule = async (moduleId: ModuleId) => {
+    const isUnlocked = unlockedModules.includes(moduleId);
+    const next = isUnlocked ? unlockedModules.filter(m => m !== moduleId) : [...unlockedModules, moduleId];
+    setTogglingModule(moduleId);
+    const { data, error } = await supabase
+      .from("invitations")
+      .update({ unlocked_modules: next })
+      .eq("id", invitationId)
+      .select("unlocked_modules, date_locked_at")
+      .single();
+    if (!error && data) {
+      setUnlockedModules(data.unlocked_modules || []);
+      setDateLockedAt(data.date_locked_at || null);
+    }
+    setTogglingModule(null);
+  };
 
   async function fetchCollaborators() {
     setLoading(true);
@@ -176,6 +219,64 @@ export default function AccountModule({ userEmail, invitationId, dict }: Account
           <span className="bg-green-100 text-green-700 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">{dict.ownership.ownerBadge}</span>
         </div>
       </section>
+
+      {/* 02b. MÓDULOS (só super-admin) — marca manualmente quais os módulos comprados/oferecidos
+           para este evento. É esta lista que, assim que deixa de estar vazia, bloqueia a data
+           do evento (ver FASE C no Supabase) — antes de existir um sistema de pagamento real,
+           é também aqui que se simula uma venda ou se oferece/revoga acesso a um cliente. */}
+      {isSuperAdmin && (
+        <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-brand/5 rounded-2xl flex items-center justify-center text-brand">
+              <Package size={24} />
+            </div>
+            <div>
+              <h3 className="font-serif text-2xl text-ink">{dict.modules.title}</h3>
+              <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{dict.modules.subtitle}</p>
+            </div>
+          </div>
+
+          {modulesLoading ? (
+            <div className="flex justify-center py-4"><Loader2 className="animate-spin text-gray-200" /></div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {ALL_MODULE_IDS.map(moduleId => {
+                  const unlocked = unlockedModules.includes(moduleId);
+                  return (
+                    <button
+                      key={moduleId}
+                      onClick={() => toggleModule(moduleId)}
+                      disabled={togglingModule === moduleId}
+                      className={`flex items-center justify-between gap-3 p-5 rounded-2xl border text-left transition-all disabled:opacity-60 ${
+                        unlocked ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-100 hover:border-gray-200"
+                      }`}
+                    >
+                      <span className={`text-sm font-bold ${unlocked ? "text-green-700" : "text-gray-500"}`}>
+                        {dict.modules.items[moduleId]}
+                      </span>
+                      {togglingModule === moduleId ? (
+                        <Loader2 size={16} className="animate-spin text-gray-300 shrink-0" />
+                      ) : (
+                        <span className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${unlocked ? "bg-green-500 text-white" : "bg-white border border-gray-200 text-transparent"}`}>
+                          <Check size={14} />
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="flex items-center gap-1.5 text-[11px] text-gray-400 mt-6">
+                <Lock size={11} className="shrink-0" />
+                {dateLockedAt
+                  ? `${dict.modules.lockedNote} ${dict.modules.dateLockedSince} ${new Date(dateLockedAt).toLocaleDateString()}.`
+                  : dict.modules.unlockedNote}
+              </p>
+            </>
+          )}
+        </section>
+      )}
 
       {/* 03. COLABORADORES */}
       <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">

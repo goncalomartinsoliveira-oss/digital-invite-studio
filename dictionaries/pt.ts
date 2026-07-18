@@ -640,6 +640,20 @@ const pt = {
       "alertAddError": "Erro ao adicionar: ",
       "alertRemoveConfirm": "Remover o acesso deste utilizador?",
       "alertPasswordError": "Erro: "
+    },
+    "modules": {
+      "title": "Módulos do Evento",
+      "subtitle": "Apenas visível para super-admin",
+      "items": {
+        "save_the_date": "Save the Date",
+        "invite": "Convite de Casamento",
+        "guests_seating": "Convidados & Mesas",
+        "photo_sharing": "Photo Sharing & Live Wall",
+        "guestbook": "Guestbook"
+      },
+      "lockedNote": "A data do evento está bloqueada porque já tem pelo menos um módulo ativo.",
+      "unlockedNote": "Sem módulos ativos — a data do evento continua editável pelos noivos.",
+      "dateLockedSince": "Bloqueada desde"
     }
   },
   "DesignModule": {

@@ -640,6 +640,20 @@ const en = {
       "alertAddError": "Error adding: ",
       "alertRemoveConfirm": "Remove this user's access?",
       "alertPasswordError": "Error: "
+    },
+    "modules": {
+      "title": "Event Modules",
+      "subtitle": "Super-admin only",
+      "items": {
+        "save_the_date": "Save the Date",
+        "invite": "Wedding Invitation",
+        "guests_seating": "Guests & Seating",
+        "photo_sharing": "Photo Sharing & Live Wall",
+        "guestbook": "Guestbook"
+      },
+      "lockedNote": "The event date is locked because at least one module is already active.",
+      "unlockedNote": "No active modules — the event date is still editable by the couple.",
+      "dateLockedSince": "Locked since"
     }
   },
   "DesignModule": {
