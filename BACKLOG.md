@@ -4,8 +4,8 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 
 ## Antes de vender a sério
 - [x] Rever/substituir os depoimentos e números fictícios da homepage (testemunhos, "500+ Casamentos Criados", "12 Países", "98% Satisfação", etc.)
-- [ ] Rever o conteúdo de `/terms` e `/privacy` para refletir o modelo atual (módulos, pagamentos, expiração de 60 dias após o evento)
-- [ ] Definir e publicar uma política de reembolso/cancelamento
+- [x] Rever o conteúdo de `/terms` e `/privacy` para refletir o modelo atual (módulos, pagamentos, expiração de 60 dias após o evento) — rascunho técnico, recomenda-se revisão jurídica antes de assumir como vinculativo
+- [x] Definir e publicar uma política de reembolso/cancelamento (14 dias, caso a caso)
 - [ ] Passar o Stripe para modo real (chaves live + webhook live, confirmar Business Profile)
 
 ## Comunicação
