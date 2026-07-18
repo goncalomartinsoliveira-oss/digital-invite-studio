@@ -3,8 +3,9 @@ import React from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
-import { BUNDLES, bundleSavingsCents, cheapestModulePriceCents } from "@/lib/pricing";
+import { Check, CalendarHeart, Mail, Users, Camera, MessageSquareHeart } from "lucide-react";
+import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
+import { BUNDLES, MODULE_PRICES_CENTS, bundleSavingsCents } from "@/lib/pricing";
 import { formatPriceCents } from "@/lib/checkout";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás)
@@ -13,16 +14,25 @@ import en from "../../../dictionaries/en";
 
 const dictionaries = { pt, en };
 
+const MODULE_ICONS: Record<ModuleId, React.ReactNode> = {
+  save_the_date: <CalendarHeart size={22} />,
+  invite: <Mail size={22} />,
+  guests_seating: <Users size={22} />,
+  photo_sharing: <Camera size={22} />,
+  guestbook: <MessageSquareHeart size={22} />,
+};
+
 export default function PricingPage() {
   const params = useParams();
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
   const dict = dictionaries[locale]?.PricingPage || dictionaries.pt.PricingPage;
   const bundleDict = dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers;
   const moduleNames = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
+  const groupsDict = (dictionaries[locale]?.Dashboard || dictionaries.pt.Dashboard).groups;
 
-  // Os pacotes (nome, módulos e preços) vêm sempre de lib/pricing.ts — a
-  // mesma fonte usada no checkout real — para esta página nunca mostrar
-  // valores diferentes dos que são realmente cobrados.
+  // Os pacotes e os módulos (nome, descrição e preço) vêm sempre de
+  // lib/pricing.ts, a mesma fonte usada no checkout real, para esta
+  // página nunca mostrar valores diferentes dos que são realmente cobrados.
   const plans = BUNDLES.map(bundle => {
     const meta = (bundleDict.bundles as Record<string, { name: string; desc: string }>)[bundle.id];
     return {
@@ -35,6 +45,14 @@ export default function PricingPage() {
       highlight: bundle.id === "completo",
     };
   });
+
+  const modules = ALL_MODULE_IDS.map(id => ({
+    id,
+    icon: MODULE_ICONS[id],
+    name: (moduleNames as Record<string, string>)[id],
+    description: (groupsDict as Record<string, { title: string; desc: string }>)[id]?.desc || "",
+    price: formatPriceCents(MODULE_PRICES_CENTS[id], locale),
+  }));
 
   return (
     <div className="min-h-screen bg-cream pt-32 pb-20 px-6 font-sans">
@@ -57,6 +75,12 @@ export default function PricingPage() {
           >
             {dict.desc}
           </motion.p>
+        </div>
+
+        {/* Título da secção de pacotes */}
+        <div className="text-center mb-10">
+          <h2 className="font-serif text-2xl md:text-3xl text-ink">{dict.bundlesTitle}</h2>
+          <p className="text-gray-400 text-sm mt-2">{dict.bundlesSubtitle}</p>
         </div>
 
         {/* Grelha de Pacotes */}
@@ -122,15 +146,49 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Nota: compra à peça */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+        {/* Compra à peça */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center text-gray-500 text-sm mt-12 max-w-xl mx-auto"
+          className="mt-24"
         >
-          {dict.alaCarteDesc.replace("{price}", formatPriceCents(cheapestModulePriceCents(), locale))}
-        </motion.p>
+          <div className="text-center mb-10">
+            <h2 className="font-serif text-2xl md:text-3xl text-ink">{dict.alaCarteTitle}</h2>
+            <p className="text-gray-400 text-sm mt-2">{dict.alaCarteSubtitle}</p>
+          </div>
+
+          <div className="max-w-3xl mx-auto bg-white rounded-[2.5rem] border border-gray-100 shadow-sm divide-y divide-gray-100">
+            {modules.map(m => (
+              <div key={m.id} className="flex items-center gap-5 p-6 sm:p-7">
+                <div className="w-12 h-12 rounded-2xl bg-cream border border-gold-soft/60 flex items-center justify-center text-[#722F37] shrink-0">
+                  {m.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-serif text-lg text-gray-800">{m.name}</h4>
+                  <p className="text-gray-400 text-sm mt-0.5">{m.description}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="font-serif text-2xl text-[#722F37]">{m.price}</span>
+                  <p className="text-gray-300 text-[9px] uppercase tracking-widest font-bold">/evento</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-gray-400 text-xs mt-6 max-w-lg mx-auto">
+            {dict.alaCarteInviteNote}
+          </p>
+
+          <div className="text-center mt-10">
+            <Link
+              href={`/${locale}/dashboard`}
+              className="inline-block bg-white border border-gray-200 text-gray-800 px-8 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all"
+            >
+              {dict.startBtn}
+            </Link>
+          </div>
+        </motion.div>
 
         {/* Secção White Label / B2B */}
         <motion.div

@@ -399,11 +399,11 @@ const pt = {
       },
       "momentos": {
         "name": "Pacote Momentos",
-        "desc": "Photo Sharing, Live Wall e Guestbook — tudo para reviver o dia do evento."
+        "desc": "Photo Sharing, Live Wall e Guestbook, tudo para reviver o dia do evento."
       },
       "completo": {
         "name": "Pacote Completo",
-        "desc": "Todos os módulos, sem exceção — a experiência completa."
+        "desc": "Todos os módulos, sem exceção. A experiência completa."
       }
     }
   },
@@ -1154,11 +1154,15 @@ const pt = {
     "error": "Erro ao atualizar a password. O link pode ter expirado."
   },
   "PricingPage": {
-    "title": "Escolha o Pacote Perfeito",
-    "desc": "Pagamento único por evento. Sem subscrições mensais. Escolha os módulos que melhor se adaptam ao seu grande dia.",
+    "title": "Preços simples, sem surpresas",
+    "desc": "Pagamento único por evento, sem mensalidades e sem letras pequenas. Escolha um pacote com desconto ou monte a sua combinação perfeita módulo a módulo.",
     "bestseller": "Melhor Valor",
     "startBtn": "Começar Agora",
-    "alaCarteDesc": "Prefere só o que precisa? Também vendemos cada módulo em separado, a partir de {price} — escolha exatamente o que quer depois de criar o seu evento.",
+    "bundlesTitle": "Pacotes com desconto",
+    "bundlesSubtitle": "A forma mais simples e mais barata de ter tudo o que precisa",
+    "alaCarteTitle": "Ou monte o seu à medida",
+    "alaCarteSubtitle": "Compre só os módulos que realmente vai usar, um a um",
+    "alaCarteInviteNote": "O Convite de Casamento inclui sempre Convidados & Mesas, para o RSVP funcionar corretamente.",
     "b2b": {
       "title": "É Organizador de Eventos?",
       "desc": "Oferecemos soluções especiais de White Label para Wedding Planners e Agências. Utilize a nossa tecnologia com a sua própria marca e beneficie de preços de revenda.",

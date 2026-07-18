@@ -399,11 +399,11 @@ const en = {
       },
       "momentos": {
         "name": "Moments Bundle",
-        "desc": "Photo Sharing, Live Wall and Guestbook — everything to relive the big day."
+        "desc": "Photo Sharing, Live Wall and Guestbook, everything to relive the big day."
       },
       "completo": {
         "name": "Complete Bundle",
-        "desc": "Every module, no exceptions — the full experience."
+        "desc": "Every module, no exceptions. The full experience."
       }
     }
   },
@@ -1154,11 +1154,15 @@ const en = {
     "error": "Error updating the password. The link may have expired."
   },
   "PricingPage": {
-    "title": "Choose the Perfect Bundle",
-    "desc": "One-time payment per event. No monthly subscriptions. Choose the modules that best suit your big day.",
+    "title": "Simple pricing, no surprises",
+    "desc": "One-time payment per event, no monthly fees and no fine print. Choose a discounted bundle or build your own perfect combination module by module.",
     "bestseller": "Best Value",
     "startBtn": "Start Now",
-    "alaCarteDesc": "Prefer to buy only what you need? We also sell each module separately, starting at {price} — pick exactly what you want after creating your event.",
+    "bundlesTitle": "Discounted bundles",
+    "bundlesSubtitle": "The simplest, cheapest way to get everything you need",
+    "alaCarteTitle": "Or build your own",
+    "alaCarteSubtitle": "Buy only the modules you'll actually use, one by one",
+    "alaCarteInviteNote": "The Wedding Invitation always includes Guests & Seating, so RSVP works correctly.",
     "b2b": {
       "title": "Are you an Event Planner?",
       "desc": "We offer special White Label solutions for Wedding Planners and Agencies. Use our technology with your own branding and benefit from wholesale pricing.",
