@@ -220,6 +220,7 @@ const en = {
     "expiredBanner": "This event expired on {date} — the dashboard is now in read-only mode. Contact us to renew access.",
     "moduleLockedTitle": "{module} is not active yet",
     "moduleLockedMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
+    "moduleLockedInviteNote": "Also includes Guests & Seating, needed for RSVP to work.",
     "moduleLockedContactBtn": "Contact Us",
     "moduleLockedBadge": "Locked",
     "moduleBuyBtn": "Buy",

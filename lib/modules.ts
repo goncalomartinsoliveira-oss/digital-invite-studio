@@ -24,3 +24,20 @@ export const TAB_MODULE: Record<string, ModuleId> = {
 export function isModuleUnlocked(unlockedModules: string[] | null | undefined, moduleId: ModuleId): boolean {
   return !!unlockedModules?.includes(moduleId);
 }
+
+// O Smart RSVP do convite pesquisa e atualiza convidados já existentes em
+// "guests" — sem esse módulo, um convidado nunca se consegue confirmar.
+// Por isso "invite" nunca é vendido sozinho: comprá-lo desbloqueia sempre
+// "guests_seating" também, sem custo extra. Não é recíproco — dá para
+// vender gestão de convidados/mesas sem convite, como ferramenta interna.
+export const MODULE_DEPENDENCIES: Partial<Record<ModuleId, ModuleId[]>> = {
+  invite: ["guests_seating"],
+};
+
+export function expandWithDependencies(moduleIds: ModuleId[]): ModuleId[] {
+  const result = new Set<ModuleId>(moduleIds);
+  for (const m of moduleIds) {
+    (MODULE_DEPENDENCIES[m] || []).forEach(dep => result.add(dep));
+  }
+  return Array.from(result);
+}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
-import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
+import { ALL_MODULE_IDS, expandWithDependencies, type ModuleId } from "@/lib/modules";
 import { MODULE_PRICES_CENTS, getBundle } from "@/lib/pricing";
 
 const MODULE_NAMES: Record<ModuleId, string> = {
@@ -68,6 +68,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nada por comprar — módulos já desbloqueados." }, { status: 400 });
     }
 
+    // toPurchase é o que é cobrado (linhas do Stripe); toUnlock é o que
+    // realmente fica desbloqueado — inclui dependências gratuitas (ex.:
+    // comprar "invite" desbloqueia sempre "guests_seating" também, sem
+    // custo extra, porque o RSVP não funciona sem lista de convidados).
+    const toUnlock = expandWithDependencies(toPurchase).filter(m => !alreadyUnlocked.includes(m));
+
     const origin = req.headers.get("origin") || `https://${req.headers.get("host")}`;
 
     let lineItems;
@@ -99,7 +105,7 @@ export async function POST(req: NextRequest) {
       cancel_url: `${origin}/${locale}/dashboard/${slug}?checkout=cancelled`,
       metadata: {
         invitationId,
-        moduleIds: toPurchase.join(","),
+        moduleIds: toUnlock.join(","),
         bundleId: bundleUsed || "",
       },
     });

@@ -233,10 +233,16 @@ export default function Dashboard() {
   const lockedNotice = (tabId: DashboardTab) => {
     const moduleId = TAB_MODULE[tabId];
     const moduleName = moduleId ? moduleNamesDict[moduleId] : "";
+    // O RSVP do convite não funciona sem lista de convidados — por isso
+    // comprar "invite" desbloqueia sempre "guests_seating" também (ver
+    // lib/modules.ts). Deixar isso claro no ecrã de compra.
+    const message = moduleId === 'invite'
+      ? `${dict.moduleLockedMessage} ${dict.moduleLockedInviteNote}`
+      : dict.moduleLockedMessage;
     return (
       <LockedModuleNotice
         title={dict.moduleLockedTitle.replace("{module}", moduleName)}
-        message={dict.moduleLockedMessage}
+        message={message}
         contactUrl={brand.contactUrl ?? `/${locale}/contact`}
         contactLabel={dict.moduleLockedContactBtn}
         buyLabel={dict.moduleBuyBtn}

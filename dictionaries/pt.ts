@@ -220,6 +220,7 @@ const pt = {
     "expiredBanner": "Este evento expirou a {date} — o painel ficou em modo de leitura. Contacte-nos para renovar o acesso.",
     "moduleLockedTitle": "{module} ainda não está ativo",
     "moduleLockedMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+    "moduleLockedInviteNote": "Inclui também Convidados & Mesas, necessário para o RSVP funcionar.",
     "moduleLockedContactBtn": "Contactar",
     "moduleLockedBadge": "Bloqueado",
     "moduleBuyBtn": "Comprar",
