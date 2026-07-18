@@ -53,10 +53,11 @@ interface MomentsModuleProps {
   canEdit: boolean;
   unlockedModules?: string[];
   isSuperAdmin?: boolean;
+  initialTab?: 'media' | 'guestbook';
   dict: MomentsModuleDict;
 }
 
-export default function MomentsModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, dict }: MomentsModuleProps) {
+export default function MomentsModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, initialTab, dict }: MomentsModuleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'pt';
   const brand = useBrand();
@@ -67,7 +68,7 @@ export default function MomentsModule({ invitationId, slug, canEdit, unlockedMod
   const [fotos, setFotos] = useState<any[]>([]);
   const [mensagens, setMensagens] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tabAtiva, setTabAtiva] = useState<'media' | 'guestbook'>('media');
+  const [tabAtiva, setTabAtiva] = useState<'media' | 'guestbook'>(initialTab || 'media');
   const [subTabGuestbook, setSubTabGuestbook] = useState<'texto' | 'audio' | 'video'>('texto');
   const [downloadingZip, setDownloadingZip] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);

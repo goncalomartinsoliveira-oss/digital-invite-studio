@@ -246,17 +246,25 @@ const pt = {
     "backToGroups": "Áreas",
     "enterGroup": "Gerir",
     "groups": {
+      "save_the_date": {
+        "title": "Save the Date",
+        "desc": "Cartão descarregável para anunciar a data aos convidados"
+      },
       "invite": {
         "title": "Convite de casamento",
         "desc": "Modelo, identidade e conteúdo do convite"
       },
-      "guests": {
+      "guests_seating": {
         "title": "Convidados e mesas",
         "desc": "Lista de convidados, RSVP e plano de mesas"
       },
-      "moments": {
-        "title": "Momentos e Guestbook",
-        "desc": "Galeria de fotos e mensagens dos convidados"
+      "photo_sharing": {
+        "title": "Photo Sharing & Live Wall",
+        "desc": "Partilha de fotos e vídeos entre convidados"
+      },
+      "guestbook": {
+        "title": "Guestbook",
+        "desc": "Mensagens de texto, voz e vídeo dos convidados"
       }
     }
   },

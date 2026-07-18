@@ -246,17 +246,25 @@ const en = {
     "backToGroups": "Areas",
     "enterGroup": "Manage",
     "groups": {
+      "save_the_date": {
+        "title": "Save the Date",
+        "desc": "Downloadable card to announce the date to guests"
+      },
       "invite": {
         "title": "Wedding invitation",
         "desc": "Template, identity and invitation content"
       },
-      "guests": {
+      "guests_seating": {
         "title": "Guests & tables",
         "desc": "Guest list, RSVP and seating plan"
       },
-      "moments": {
-        "title": "Moments & Guestbook",
-        "desc": "Photo gallery and guest messages"
+      "photo_sharing": {
+        "title": "Photo Sharing & Live Wall",
+        "desc": "Photo and video sharing between guests"
+      },
+      "guestbook": {
+        "title": "Guestbook",
+        "desc": "Text, voice and video messages from guests"
       }
     }
   },
