@@ -222,6 +222,8 @@ const en = {
     "moduleLockedContactBtn": "Contact Us",
     "moduleLockedBadge": "Locked",
     "moduleBuyBtn": "Buy",
+    "couponToggleLabel": "I have a promo code",
+    "couponPlaceholder": "CODE",
     "saving": "Saving...",
     "saved": "Saved",
     "copyLink": "Copy Link",
@@ -479,6 +481,8 @@ const en = {
     "subtitle": "Buy several modules at once, cheaper than separately",
     "savingsLabel": "Save",
     "buyBtn": "Buy bundle",
+    "couponToggleLabel": "I have a promo code",
+    "couponPlaceholder": "CODE",
     "bundles": {
       "convite": {
         "name": "Invitation Bundle",

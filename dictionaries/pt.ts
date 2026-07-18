@@ -222,6 +222,8 @@ const pt = {
     "moduleLockedContactBtn": "Contactar",
     "moduleLockedBadge": "Bloqueado",
     "moduleBuyBtn": "Comprar",
+    "couponToggleLabel": "Tenho um código promocional",
+    "couponPlaceholder": "CÓDIGO",
     "saving": "A guardar...",
     "saved": "Guardado",
     "copyLink": "Copiar Link",
@@ -479,6 +481,8 @@ const pt = {
     "subtitle": "Compre vários módulos de uma vez, mais barato do que separado",
     "savingsLabel": "Poupa",
     "buyBtn": "Comprar pacote",
+    "couponToggleLabel": "Tenho um código promocional",
+    "couponPlaceholder": "CÓDIGO",
     "bundles": {
       "convite": {
         "name": "Pacote Convite",

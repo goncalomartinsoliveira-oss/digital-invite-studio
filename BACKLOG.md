@@ -16,7 +16,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [ ] Lidar com reembolsos no webhook (hoje só trata `checkout.session.completed`; um reembolso no Stripe não revoga o módulo)
 - [x] Página no dashboard para o casal ver o histórico das suas compras (a tabela `payments` já existe, falta a interface)
 - [ ] Preços diferenciados por parceiro/marca (hoje o checkout usa sempre a mesma tabela de preços global, `lib/pricing.ts`)
-- [ ] Sistema de cupões/códigos promocionais
+- [x] Sistema de cupões/códigos promocionais
 - [ ] Rever o desconto do "Pacote Convite" (ficou muito pequeno, ~5€, depois do preço do Convite subir para 79€)
 
 ## Produto

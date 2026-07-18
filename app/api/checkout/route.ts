@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { ALL_MODULE_IDS, expandWithDependencies, type ModuleId } from "@/lib/modules";
 import { MODULE_PRICES_CENTS, getBundle } from "@/lib/pricing";
+import { isCouponValid, couponAppliesToOrder, applyCouponDiscount, MIN_CHECKOUT_TOTAL_CENTS, type Coupon } from "@/lib/coupons";
 
 const MODULE_NAMES: Record<ModuleId, string> = {
   save_the_date: "Save the Date",
@@ -18,12 +20,13 @@ const MODULE_NAMES: Record<ModuleId, string> = {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { invitationId, slug, locale, moduleIds, bundleId } = body as {
+    const { invitationId, slug, locale, moduleIds, bundleId, couponCode } = body as {
       invitationId: string;
       slug: string;
       locale: string;
       moduleIds?: string[];
       bundleId?: string;
+      couponCode?: string;
     };
 
     if (!invitationId || !slug || !locale) {
@@ -76,37 +79,68 @@ export async function POST(req: NextRequest) {
 
     const origin = req.headers.get("origin") || `https://${req.headers.get("host")}`;
 
-    let lineItems;
+    let lineItems: { moduleId?: ModuleId; name: string; unitAmountCents: number }[];
     if (bundleUsed) {
       const bundle = getBundle(bundleUsed)!;
-      lineItems = [{
-        price_data: {
-          currency: "eur",
-          product_data: { name: `Digital Invite Studio — ${bundle.id}` },
-          unit_amount: bundle.priceCents,
-        },
-        quantity: 1,
-      }];
+      lineItems = [{ name: `Digital Invite Studio — ${bundle.id}`, unitAmountCents: bundle.priceCents }];
     } else {
       lineItems = toPurchase.map(moduleId => ({
-        price_data: {
-          currency: "eur",
-          product_data: { name: `Digital Invite Studio — ${MODULE_NAMES[moduleId]}` },
-          unit_amount: MODULE_PRICES_CENTS[moduleId],
-        },
-        quantity: 1,
+        moduleId,
+        name: `Digital Invite Studio — ${MODULE_NAMES[moduleId]}`,
+        unitAmountCents: MODULE_PRICES_CENTS[moduleId],
       }));
     }
 
+    // Cupões vivem só na tabela `coupons` (leitura restrita a super-admin
+    // via RLS), por isso a validação usa sempre o cliente service_role.
+    let appliedCoupon: Coupon | null = null;
+    if (couponCode && couponCode.trim()) {
+      const normalizedCode = couponCode.trim().toUpperCase();
+      const { data: couponRow, error: couponError } = await supabaseAdmin
+        .from("coupons")
+        .select("*")
+        .eq("code", normalizedCode)
+        .maybeSingle();
+
+      if (couponError) {
+        return NextResponse.json({ error: "Erro ao validar o cupão." }, { status: 500 });
+      }
+      const coupon = couponRow as Coupon | null;
+      if (!coupon || !isCouponValid(coupon) || !couponAppliesToOrder(coupon, { bundleId: bundleUsed, moduleIds: toPurchase })) {
+        return NextResponse.json({ error: "Cupão inválido, expirado ou não aplicável a esta compra." }, { status: 400 });
+      }
+      appliedCoupon = coupon;
+
+      const { amounts, totalCents } = applyCouponDiscount(
+        lineItems.map(li => ({ moduleId: li.moduleId, unitAmountCents: li.unitAmountCents })),
+        appliedCoupon
+      );
+      if (totalCents < MIN_CHECKOUT_TOTAL_CENTS) {
+        return NextResponse.json({ error: "O desconto deixaria o valor abaixo do mínimo permitido." }, { status: 400 });
+      }
+      lineItems = lineItems.map((li, idx) => ({ ...li, unitAmountCents: amounts[idx] }));
+    }
+
+    const stripeLineItems = lineItems.map(li => ({
+      price_data: {
+        currency: "eur",
+        product_data: { name: li.name },
+        unit_amount: li.unitAmountCents,
+      },
+      quantity: 1,
+    }));
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      line_items: lineItems,
+      line_items: stripeLineItems,
       success_url: `${origin}/${locale}/dashboard/${slug}?checkout=success`,
       cancel_url: `${origin}/${locale}/dashboard/${slug}?checkout=cancelled`,
       metadata: {
         invitationId,
         moduleIds: toUnlock.join(","),
         bundleId: bundleUsed || "",
+        couponCode: appliedCoupon?.code || "",
+        couponId: appliedCoupon?.id || "",
       },
     });
 

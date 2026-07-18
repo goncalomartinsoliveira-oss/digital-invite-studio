@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2 } from "lucide-react";
+import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
 import AdminManagementView from "@/components/dashboard/AdminManagementView";
 import MembersManagementView from "@/components/dashboard/MembersManagementView";
 import BrandsManagementView from "@/components/dashboard/BrandsManagementView";
+import CouponsManagementView from "@/components/dashboard/CouponsManagementView";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -37,7 +38,7 @@ export default function DashboardHub() {
   const [guestCounts, setGuestCounts] = useState<Record<string, { total: number; confirmed: number }>>({});
   const [dbBrands, setDbBrands] = useState<{ id: string; name: string }[]>([]);
   const [workingBrand, setWorkingBrand] = useState<WorkingBrand | null>(null);
-  const [viewMode, setViewMode] = useState<'events' | 'admin' | 'members' | 'brands'>('events');
+  const [viewMode, setViewMode] = useState<'events' | 'admin' | 'members' | 'brands' | 'coupons'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -211,6 +212,7 @@ export default function DashboardHub() {
   const manageableBrands = [...codeBrandList, ...dbBrands.filter(d => !BRANDS[d.id])];
   const canManageMembers = isSuperAdmin && brand.id === "dis";
   const canManageBrands = isSuperAdmin && brand.id === "dis";
+  const canManageCoupons = isSuperAdmin && brand.id === "dis";
 
   return (
     <div className="min-h-screen bg-cream font-montserrat flex flex-col">
@@ -265,6 +267,14 @@ export default function DashboardHub() {
                   <Building2 size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Brands' : 'Marcas'}</span>
                 </button>
               )}
+              {canManageCoupons && (
+                <button
+                  onClick={() => setViewMode('coupons')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'coupons' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+                >
+                  <Ticket size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Coupons' : 'Cupões'}</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -302,6 +312,8 @@ export default function DashboardHub() {
           />
         ) : viewMode === 'brands' && canManageBrands ? (
           <BrandsManagementView locale={locale} />
+        ) : viewMode === 'coupons' && canManageCoupons ? (
+          <CouponsManagementView locale={locale} />
         ) : (
         <>
         {/* SECÇÃO 1: OS MEUS PROJETOS */}

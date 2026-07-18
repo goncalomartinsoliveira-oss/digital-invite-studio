@@ -242,10 +242,10 @@ export default function Dashboard() {
   const bundleNamesDict = Object.fromEntries(
     Object.entries(bundleOffersDict.bundles as Record<string, { name: string; desc: string }>).map(([id, b]) => [id, b.name])
   );
-  const handleBuyModule = async (moduleId: string) => {
+  const handleBuyModule = async (moduleId: string, couponCode?: string) => {
     setBuyingModule(moduleId);
     try {
-      await startModuleCheckout({ invitationId: formData.id, slug: formData.slug, locale, moduleId });
+      await startModuleCheckout({ invitationId: formData.id, slug: formData.slug, locale, moduleId, couponCode });
     } catch (err: any) {
       alert(err.message || dict.moduleLockedMessage);
       setBuyingModule(null);
@@ -268,8 +268,10 @@ export default function Dashboard() {
         contactLabel={dict.moduleLockedContactBtn}
         buyLabel={dict.moduleBuyBtn}
         priceLabel={moduleId ? formatPriceCents(MODULE_PRICES_CENTS[moduleId], locale) : undefined}
-        onBuy={moduleId ? () => handleBuyModule(moduleId) : undefined}
+        onBuy={moduleId ? (couponCode) => handleBuyModule(moduleId, couponCode) : undefined}
         buying={buyingModule === moduleId}
+        couponToggleLabel={dict.couponToggleLabel}
+        couponPlaceholder={dict.couponPlaceholder}
       />
     );
   };

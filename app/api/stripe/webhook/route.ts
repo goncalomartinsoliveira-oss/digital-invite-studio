@@ -30,6 +30,8 @@ export async function POST(req: NextRequest) {
     .split(",")
     .filter(Boolean) as ModuleId[];
   const bundleId: string | null = session.metadata?.bundleId || null;
+  const couponCode: string | null = session.metadata?.couponCode || null;
+  const couponId: string | null = session.metadata?.couponId || null;
 
   console.log(`[stripe-webhook] session=${session.id} invitationId=${invitationId} moduleIds=${moduleIds.join(",")}`);
 
@@ -80,10 +82,34 @@ export async function POST(req: NextRequest) {
       currency: session.currency || "eur",
       status: "paid",
       customer_email: session.customer_details?.email || null,
+      coupon_code: couponCode,
       paid_at: new Date().toISOString(),
     });
 
     if (insertError) throw new Error(`insert payments falhou: ${insertError.message}`);
+
+    // Contagem de resgates do cupão — não crítico o suficiente para fazer
+    // falhar o webhook (a compra já ficou registada) por isso só regista o
+    // erro em log, não devolve 500.
+    if (couponId) {
+      const { data: couponRow, error: couponFetchError } = await supabaseAdmin
+        .from("coupons")
+        .select("times_redeemed")
+        .eq("id", couponId)
+        .maybeSingle();
+
+      if (couponFetchError || !couponRow) {
+        console.error(`[stripe-webhook] Não foi possível ler o cupão ${couponId} para incrementar resgates.`);
+      } else {
+        const { error: couponUpdateError } = await supabaseAdmin
+          .from("coupons")
+          .update({ times_redeemed: couponRow.times_redeemed + 1 })
+          .eq("id", couponId);
+        if (couponUpdateError) {
+          console.error(`[stripe-webhook] Falha ao incrementar resgates do cupão ${couponId}: ${couponUpdateError.message}`);
+        }
+      }
+    }
 
     console.log(`[stripe-webhook] Sucesso: invitation ${invitationId} desbloqueou [${moduleIds.join(", ")}]`);
   } catch (err: any) {

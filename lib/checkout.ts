@@ -5,6 +5,7 @@ export async function startModuleCheckout(params: {
   slug: string;
   locale: string;
   moduleId: string;
+  couponCode?: string;
 }) {
   const res = await fetch("/api/checkout", {
     method: "POST",
@@ -14,6 +15,7 @@ export async function startModuleCheckout(params: {
       slug: params.slug,
       locale: params.locale,
       moduleIds: [params.moduleId],
+      couponCode: params.couponCode,
     }),
   });
   const data = await res.json();
@@ -26,6 +28,7 @@ export async function startBundleCheckout(params: {
   slug: string;
   locale: string;
   bundleId: string;
+  couponCode?: string;
 }) {
   const res = await fetch("/api/checkout", {
     method: "POST",
@@ -35,6 +38,7 @@ export async function startBundleCheckout(params: {
       slug: params.slug,
       locale: params.locale,
       bundleId: params.bundleId,
+      couponCode: params.couponCode,
     }),
   });
   const data = await res.json();

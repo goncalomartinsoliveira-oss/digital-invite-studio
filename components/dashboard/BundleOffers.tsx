@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import { Check, Loader2, Sparkles, Tag } from "lucide-react";
 import { BUNDLES, bundleSavingsCents } from "@/lib/pricing";
 import { startBundleCheckout, formatPriceCents } from "@/lib/checkout";
 import type { ModuleId } from "@/lib/modules";
@@ -11,6 +11,8 @@ interface BundleOffersDict {
   savingsLabel: string;
   buyBtn: string;
   bundles: Record<string, { name: string; desc: string }>;
+  couponToggleLabel?: string;
+  couponPlaceholder?: string;
 }
 
 interface BundleOffersProps {
@@ -28,6 +30,8 @@ interface BundleOffersProps {
 // para nunca sugerir cobrar a dobrar (o servidor também recusa essa compra).
 export default function BundleOffers({ invitationId, slug, locale, unlockedModules, isSuperAdmin, moduleNames, dict }: BundleOffersProps) {
   const [buyingId, setBuyingId] = useState<string | null>(null);
+  const [couponVisibleFor, setCouponVisibleFor] = useState<string | null>(null);
+  const [couponCodes, setCouponCodes] = useState<Record<string, string>>({});
 
   if (isSuperAdmin) return null;
 
@@ -37,7 +41,7 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
   const handleBuy = async (bundleId: string) => {
     setBuyingId(bundleId);
     try {
-      await startBundleCheckout({ invitationId, slug, locale, bundleId });
+      await startBundleCheckout({ invitationId, slug, locale, bundleId, couponCode: couponCodes[bundleId]?.trim() || undefined });
     } catch (err: any) {
       alert(err.message || "Erro ao iniciar o pagamento.");
       setBuyingId(null);
@@ -84,6 +88,23 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
                 {buyingId === bundle.id ? <Loader2 size={15} className="animate-spin" /> : null}
                 {dict.buyBtn}
               </button>
+              {dict.couponToggleLabel && (
+                couponVisibleFor === bundle.id ? (
+                  <input
+                    value={couponCodes[bundle.id] || ""}
+                    onChange={e => setCouponCodes(prev => ({ ...prev, [bundle.id]: e.target.value.toUpperCase() }))}
+                    placeholder={dict.couponPlaceholder}
+                    className="mt-3 text-[11px] text-center border border-gray-200 rounded-full px-4 py-2 tracking-widest uppercase outline-none focus:border-brand w-full"
+                  />
+                ) : (
+                  <button
+                    onClick={() => setCouponVisibleFor(bundle.id)}
+                    className="mt-3 inline-flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 hover:text-brand transition-all"
+                  >
+                    <Tag size={11} /> {dict.couponToggleLabel}
+                  </button>
+                )
+              )}
             </div>
           );
         })}
