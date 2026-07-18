@@ -386,6 +386,22 @@ const pt = {
     "photo_sharing": "Photo Sharing & Live Wall",
     "guestbook": "Guestbook"
   },
+  "BundleOffers": {
+    "title": "Poupe com um pacote",
+    "subtitle": "Compre vários módulos de uma vez, mais barato do que separado",
+    "savingsLabel": "Poupa",
+    "buyBtn": "Comprar pacote",
+    "bundles": {
+      "essencial": {
+        "name": "Pacote Essencial",
+        "desc": "O convite e a gestão de convidados, tudo num só pacote."
+      },
+      "completo": {
+        "name": "Pacote Completo",
+        "desc": "Todos os módulos, sem exceção — a experiência completa."
+      }
+    }
+  },
   "EventExpired": {
     "title": "Este convite já não está disponível",
     "desc": "O prazo deste evento terminou. Se é um dos noivos, pode continuar a consultar os dados no seu painel.",

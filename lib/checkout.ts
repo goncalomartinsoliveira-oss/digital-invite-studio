@@ -21,6 +21,27 @@ export async function startModuleCheckout(params: {
   window.location.href = data.url;
 }
 
+export async function startBundleCheckout(params: {
+  invitationId: string;
+  slug: string;
+  locale: string;
+  bundleId: string;
+}) {
+  const res = await fetch("/api/checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      invitationId: params.invitationId,
+      slug: params.slug,
+      locale: params.locale,
+      bundleId: params.bundleId,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.url) throw new Error(data.error || "Erro ao iniciar o pagamento.");
+  window.location.href = data.url;
+}
+
 export function formatPriceCents(cents: number, locale: string = "pt"): string {
   return new Intl.NumberFormat(locale === "en" ? "en-IE" : "pt-PT", {
     style: "currency",

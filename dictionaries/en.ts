@@ -386,6 +386,22 @@ const en = {
     "photo_sharing": "Photo Sharing & Live Wall",
     "guestbook": "Guestbook"
   },
+  "BundleOffers": {
+    "title": "Save with a bundle",
+    "subtitle": "Buy several modules at once, cheaper than separately",
+    "savingsLabel": "Save",
+    "buyBtn": "Buy bundle",
+    "bundles": {
+      "essencial": {
+        "name": "Essentials Bundle",
+        "desc": "The invitation and guest management, all in one bundle."
+      },
+      "completo": {
+        "name": "Complete Bundle",
+        "desc": "Every module, no exceptions — the full experience."
+      }
+    }
+  },
   "EventExpired": {
     "title": "This invitation is no longer available",
     "desc": "This event's window has ended. If you're the couple, you can still view your data from your dashboard.",

@@ -32,6 +32,7 @@ import PhotoSharingModule from "@/components/dashboard/PhotoSharingModule";
 import GuestbookModule from "@/components/dashboard/GuestbookModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
+import BundleOffers from "@/components/dashboard/BundleOffers";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
@@ -349,6 +350,16 @@ export default function Dashboard() {
                 </button>
               ))}
             </div>
+
+            <BundleOffers
+              invitationId={formData.id}
+              slug={formData.slug}
+              locale={locale}
+              unlockedModules={unlockedModules}
+              isSuperAdmin={isSuperAdmin}
+              moduleNames={moduleNamesDict}
+              dict={dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers}
+            />
 
             <div className="mt-12 flex justify-center">
               <button

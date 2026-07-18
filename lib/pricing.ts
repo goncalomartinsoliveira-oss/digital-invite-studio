@@ -39,3 +39,13 @@ export function moduleFullPriceCents(moduleId: ModuleId): number {
 export function getBundle(bundleId: string): Bundle | undefined {
   return BUNDLES.find(b => b.id === bundleId);
 }
+
+// Soma do preço à peça dos módulos incluídos — usado só para mostrar a
+// poupança da bundle (nunca é o valor cobrado).
+export function bundleFullPriceCents(bundle: Bundle): number {
+  return bundle.moduleIds.reduce((sum, m) => sum + MODULE_PRICES_CENTS[m], 0);
+}
+
+export function bundleSavingsCents(bundle: Bundle): number {
+  return Math.max(0, bundleFullPriceCents(bundle) - bundle.priceCents);
+}

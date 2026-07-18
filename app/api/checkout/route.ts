@@ -47,7 +47,17 @@ export async function POST(req: NextRequest) {
     if (bundleId) {
       const bundle = getBundle(bundleId);
       if (!bundle) return NextResponse.json({ error: "Bundle inválida." }, { status: 400 });
-      toPurchase = bundle.moduleIds.filter(m => !alreadyUnlocked.includes(m));
+      // O preço da bundle é fixo para o conjunto completo — se já tiver
+      // algum dos módulos incluídos, comprá-la de novo cobrava a dobrar
+      // por esse módulo. Nesse caso, sugerir compra à peça dos que faltam.
+      const alreadyOwnsSome = bundle.moduleIds.some(m => alreadyUnlocked.includes(m));
+      if (alreadyOwnsSome) {
+        return NextResponse.json(
+          { error: "Já tem alguns dos módulos deste pacote — compre os que faltam à peça." },
+          { status: 400 }
+        );
+      }
+      toPurchase = bundle.moduleIds;
       bundleUsed = bundle.id;
     } else {
       const requested = (moduleIds || []).filter((m): m is ModuleId => ALL_MODULE_IDS.includes(m as ModuleId));
