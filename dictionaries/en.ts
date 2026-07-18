@@ -1192,59 +1192,66 @@ const en = {
   },
   "PrivacyPolicyPage": {
     "title": "Privacy Policy",
-    "lastUpdate": "Last update: May 8, 2026",
-    "intro": "Your privacy is fundamental to Digital Invite Studio. This Privacy Policy describes how we collect, use, process, and protect your personal information and that of your guests when using our platform.",
+    "lastUpdate": "Last update: July 18, 2026",
+    "intro": "Your privacy is fundamental to Digital Invite Studio. This Privacy Policy describes how we collect, use, process, and protect your personal data and that of your guests when using our platform.",
     "sections": {
       "s1_title": "1. Information We Collect",
       "s1_desc": "When using our services, we may collect the following information:",
       "s1_items": [
-        { "bold": "Account Data:", "text": " Name, email address, and billing details of organizers/couples." },
-        { "bold": "Guest Data:", "text": " Names, emails, phone numbers, and dietary restrictions entered into the RSVP system." },
-        { "bold": "Multimedia Content:", "text": " Photos, videos, and messages uploaded through the Guestbook and Live Wall features." }
+        { "bold": "Account Data:", "text": " name, email address, and password of organizers/couples." },
+        { "bold": "Payment Data:", "text": " payments are processed directly by Stripe; we do not store card numbers or bank details on our servers." },
+        { "bold": "Guest Data:", "text": " names, RSVP confirmation status, and dietary restrictions entered by the couple or by guests themselves." },
+        { "bold": "Multimedia Content:", "text": " photos, videos, and messages uploaded through the Photo Sharing and Guestbook modules." }
       ],
       "s2_title": "2. How We Use Your Data",
-      "s2_desc": "We use the information collected exclusively to provide and improve our services. We do not sell, rent, or share your personal data or guest list with third parties for marketing purposes.",
-      "s3_title": "3. Data Retention and Deletion",
-      "s3_prefix": "We understand that wedding data is temporary. Event websites, guest lists, and multimedia galleries are stored on our protected servers and are ",
-      "s3_bold": "automatically deleted 6 months after the event date",
-      "s3_suffix": ", unless you purchase the \"Lifetime Digital Archive\" package.",
-      "s4_title": "4. Data Subject Rights (GDPR)",
-      "s4_desc": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify, or request the complete deletion of your data at any time before the stipulated deadline. To exercise these rights, contact us through our support form.",
-      "s5_title": "5. Contact",
-      "s5_desc": "For any questions related to your privacy and data protection, please contact our team at "
-    }
+      "s2_desc": "We use the information collected exclusively to provide and improve our services, and to process payments for purchased modules. We do not sell, rent, or share your personal data or guest list with third parties for marketing purposes.",
+      "s3_title": "3. Data Retention and Blocking After the Event",
+      "s3_prefix": "Guest access to an event's modules is ",
+      "s3_bold": "fully blocked 60 days after the event date",
+      "s3_suffix": ". The couple keeps read-only access to their dashboard after that period. Stored data, including photos and messages, is not automatically deleted at this stage — you may request full deletion of your event's data at any time, through our Contact page.",
+      "s4_title": "4. Subprocessors and Data Hosting",
+      "s4_desc": "To provide the service, we rely on trusted providers that process data on our behalf: Supabase for the database, authentication, and file storage, Stripe for payment processing, and Vercel for hosting the website. All of them operate with recognised security guarantees and are used exclusively to run the platform.",
+      "s5_title": "5. Data Subject Rights (GDPR)",
+      "s5_desc": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify, or request the complete deletion of your data, or your guests' data, at any time. To exercise these rights, contact our team.",
+      "s6_title": "6. Contact",
+      "s6_desc": "For any questions related to your privacy and data protection, "
+    },
+    "contactLinkText": "contact our team"
   },
   "TermsPage": {
     "title": "Terms and Conditions",
-    "lastUpdate": "Last update: May 8, 2026",
-    "intro": "Welcome to Digital Invite Studio. By using our platform, you agree to the following terms. Please read them carefully.",
+    "lastUpdate": "Last update: July 18, 2026",
+    "intro": "Welcome to Digital Invite Studio. By creating an account or using our platform, you agree to the following terms. Please read them carefully.",
     "sections": {
       "s1_title": "1. Service Description",
-      "s1_desc": "Digital Invite Studio provides a SaaS (Software as a Service) platform for creating wedding websites, guest management (RSVP), table planning (Seating Plan), and multimedia content sharing (Live Wall and Guestbook).",
+      "s1_desc": "Digital Invite Studio provides five independent modules for organising weddings: Save the Date, Wedding Invitation (with smart RSVP), Guests & Seating, Photo Sharing & Live Wall, and Guestbook. Modules can be purchased individually or as discounted bundles, as available on the Pricing page.",
       "s2_title": "2. Payments and Refunds",
-      "s2_desc": "Access to premium features requires a one-time payment, according to the selected package:",
+      "s2_desc": "Access to each module is granted through a one-time payment, with no monthly fees, processed securely by Stripe:",
       "s2_items": [
         { "prefix": "", "bold": "", "text": "Prices are shown in Euros and include applicable legal taxes." },
-        { "prefix": "Due to the digital and personalized nature of the service, ", "bold": "no refunds are issued after the invitation is activated or published", "text": "." },
-        { "prefix": "", "bold": "", "text": "Users may test the tools for free before making a payment." }
+        { "prefix": "You may request a refund for a module up to ", "bold": "14 days after purchase", "text": ", through our Contact page. Requests are assessed case by case, considering in particular whether the module has already been actively used (for example, guests added, invitation published, or content uploaded)." },
+        { "prefix": "", "bold": "", "text": "Purchasing the \"Wedding Invitation\" module automatically unlocks the \"Guests & Seating\" module at no extra cost, as they are technically inseparable — smart RSVP depends on the guest list to work." }
       ],
       "s3_title": "3. User Responsibility",
-      "s3_desc": "The user is solely responsible for the content (texts, images, and videos) uploaded to the platform. Using the platform to share illegal, offensive content, or content that infringes third-party copyright is prohibited.",
+      "s3_desc": "The user is solely responsible for the content (texts, images, and videos) uploaded to the platform, including content uploaded by their guests through Photo Sharing and Guestbook. Using the platform to share illegal, offensive content, or content that infringes third-party copyright is prohibited.",
       "s4_title": "4. Limitation of Liability",
-      "s4_desc": "While we strive to guarantee 99.9% uptime, Digital Invite Studio cannot be held responsible for internet connection failures at the event venue, errors on guests' devices, or service interruptions beyond our technical control.",
+      "s4_desc": "While we strive to guarantee maximum service availability, Digital Invite Studio cannot be held responsible for internet connection failures at the event venue, errors on guests' devices, or service interruptions beyond our technical control.",
       "s5_title": "5. Intellectual Property",
-      "s5_desc": "All templates, code, design engines (such as the Seating Plan Editor), and visual elements of the platform are the exclusive property of Digital Invite Studio. Purchasing an event license grants the right to use, not to reproduce or resell the software.",
-      "s6_title": "6. Event Validity",
-      "s6_prefix": "Unless otherwise stated in a specific package, all event data (website, guest list, and photos) remains active until ",
-      "s6_bold": "6 months after the wedding date",
-      "s6_suffix": " entered in the system. After this period, data will be permanently deleted to ensure user privacy.",
-      "s7_title": "7. Applicable Law",
-      "s7_desc": "These terms are governed by Portuguese law. For the resolution of any dispute, the parties submit to the jurisdiction of the Lisbon district court."
+      "s5_desc": "All templates, code, design engines (such as the seating plan editor), and visual elements of the platform are the exclusive property of Digital Invite Studio. Purchasing a module grants the right to use it for that specific event, not to reproduce or resell the software.",
+      "s6_title": "6. Event Validity and Expiration",
+      "s6_prefix": "The event date is locked as soon as the first module is activated, to prevent misuse of the system. Guest access to all modules is ",
+      "s6_bold": "fully blocked 60 days after the event date",
+      "s6_suffix": ". The couple keeps read-only access to their dashboard after that period. Data is not automatically deleted at this stage; deletion of content such as photos and messages may be configured separately in the future.",
+      "s7_title": "7. Partners and White Label",
+      "s7_desc": "Some events are managed through partner agencies or wedding planners, under those partners' own branding (\"white label\"). In these cases, these Terms still apply in full between Digital Invite Studio and the end user, regardless of the branding visible in the service.",
+      "s8_title": "8. Applicable Law",
+      "s8_desc": "These terms are governed by Portuguese law. For the resolution of any dispute, the parties submit to the jurisdiction of the Lisbon district court."
     },
     "footerBox": {
       "title": "Questions?",
-      "text": "If you have any questions about these terms, please contact us at "
-    }
+      "text": "If you have any questions about these terms, "
+    },
+    "contactLinkText": "contact our team"
   },
   "ResetPasswordPage": {
     "successTitle": "Password Updated!",

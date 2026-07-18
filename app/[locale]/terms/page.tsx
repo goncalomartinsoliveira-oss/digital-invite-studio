@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 import pt from "../../../dictionaries/pt";
 import en from "../../../dictionaries/en";
@@ -63,13 +64,16 @@ export default function TermsAndConditionsPage() {
           <h2 className="text-2xl font-serif text-[#722F37] mt-12 mb-4">{s.s7_title}</h2>
           <p className="mb-8">{s.s7_desc}</p>
 
+          <h2 className="text-2xl font-serif text-[#722F37] mt-12 mb-4">{s.s8_title}</h2>
+          <p className="mb-8">{s.s8_desc}</p>
+
           <div className="mt-16 p-8 bg-gray-50 rounded-2xl border border-gray-100">
             <h3 className="font-serif text-xl text-gray-800 mb-2">{dict.footerBox.title}</h3>
             <p className="text-sm">
               {dict.footerBox.text}
-              <a href="mailto:legal@digitalinvite.studio" className="text-[#722F37] font-bold hover:underline">
-                legal@digitalinvite.studio
-              </a>.
+              <Link href={`/${locale}/contact`} className="text-[#722F37] font-bold hover:underline">
+                {dict.contactLinkText}
+              </Link>.
             </p>
           </div>
 

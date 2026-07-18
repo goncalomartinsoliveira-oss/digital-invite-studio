@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 import pt from "../../../dictionaries/pt";
 import en from "../../../dictionaries/en";
@@ -53,11 +54,14 @@ export default function PrivacyPolicyPage() {
           <p className="mb-8">{s.s4_desc}</p>
 
           <h2 className="text-2xl font-serif text-[#722F37] mt-12 mb-4">{s.s5_title}</h2>
+          <p className="mb-8">{s.s5_desc}</p>
+
+          <h2 className="text-2xl font-serif text-[#722F37] mt-12 mb-4">{s.s6_title}</h2>
           <p className="mb-8">
-            {s.s5_desc}
-            <a href="mailto:privacy@digitalinvite.studio" className="text-[#722F37] font-bold hover:underline">
-              privacy@digitalinvite.studio
-            </a>.
+            {s.s6_desc}
+            <Link href={`/${locale}/contact`} className="text-[#722F37] font-bold hover:underline">
+              {dict.contactLinkText}
+            </Link>.
           </p>
 
         </div>

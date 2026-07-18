@@ -1192,59 +1192,66 @@ const pt = {
   },
   "PrivacyPolicyPage": {
     "title": "Política de Privacidade",
-    "lastUpdate": "Última atualização: 8 de Maio de 2026",
-    "intro": "A sua privacidade é fundamental para o Digital Invite Studio. Esta Política de Privacidade descreve como recolhemos, usamos, processamos e protegemos as suas informações pessoais e as dos seus convidados ao utilizar a nossa plataforma.",
+    "lastUpdate": "Última atualização: 18 de julho de 2026",
+    "intro": "A sua privacidade é fundamental para a Digital Invite Studio. Esta Política de Privacidade descreve como recolhemos, usamos, processamos e protegemos os seus dados pessoais e os dos seus convidados ao utilizar a nossa plataforma.",
     "sections": {
       "s1_title": "1. Informações que Recolhemos",
       "s1_desc": "Ao utilizar os nossos serviços, podemos recolher as seguintes informações:",
       "s1_items": [
-        { "bold": "Dados de Conta:", "text": " Nome, endereço de email e dados de faturação dos organizadores/noivos." },
-        { "bold": "Dados de Convidados:", "text": " Nomes, emails, números de telefone e restrições alimentares inseridas no sistema de RSVP." },
-        { "bold": "Conteúdo Multimédia:", "text": " Fotografias, vídeos e mensagens carregadas através das funcionalidades de Guestbook e Live Wall." }
+        { "bold": "Dados de Conta:", "text": " nome, endereço de email e palavra-passe dos organizadores/noivos." },
+        { "bold": "Dados de Pagamento:", "text": " os pagamentos são processados diretamente pelo Stripe; não guardamos números de cartão nem dados bancários nos nossos servidores." },
+        { "bold": "Dados de Convidados:", "text": " nomes, estado de confirmação (RSVP) e restrições alimentares inseridas pelos noivos ou pelos próprios convidados." },
+        { "bold": "Conteúdo Multimédia:", "text": " fotografias, vídeos e mensagens carregadas através dos módulos Photo Sharing e Guestbook." }
       ],
       "s2_title": "2. Como Utilizamos os seus Dados",
-      "s2_desc": "Utilizamos as informações recolhidas exclusivamente para fornecer e melhorar os nossos serviços. Não vendemos, alugamos ou partilhamos os seus dados pessoais ou a sua lista de convidados com terceiros para fins de marketing.",
-      "s3_title": "3. Retenção e Eliminação de Dados",
-      "s3_prefix": "Entendemos que os dados de um casamento são temporários. Os sites de eventos, listas de convidados e galerias multimédia são armazenados nos nossos servidores protegidos e são ",
-      "s3_bold": "automaticamente eliminados 6 meses após a data do evento",
-      "s3_suffix": ", a menos que adquira o pacote de \"Arquivo Digital Vitalício\".",
-      "s4_title": "4. Direitos dos Titulares dos Dados (RGPD)",
-      "s4_desc": "De acordo com o Regulamento Geral sobre a Proteção de Dados (RGPD), tem o direito de aceder, retificar ou solicitar a eliminação total dos seus dados a qualquer momento antes do prazo estipulado. Para exercer estes direitos, contacte-nos através do nosso formulário de suporte.",
-      "s5_title": "5. Contacto",
-      "s5_desc": "Para qualquer questão relacionada com a sua privacidade e proteção de dados, por favor contacte a nossa equipa através de "
-    }
+      "s2_desc": "Utilizamos as informações recolhidas exclusivamente para fornecer e melhorar os nossos serviços, e para processar os pagamentos dos módulos adquiridos. Não vendemos, alugamos nem partilhamos os seus dados pessoais ou a lista de convidados com terceiros para fins de marketing.",
+      "s3_title": "3. Retenção e Bloqueio de Dados após o Evento",
+      "s3_prefix": "O acesso dos convidados aos módulos de um evento é ",
+      "s3_bold": "totalmente bloqueado 60 dias após a data do evento",
+      "s3_suffix": ". Os noivos mantêm acesso de consulta (só leitura) ao seu painel depois desse prazo. Os dados armazenados, incluindo fotografias e mensagens, não são eliminados automaticamente nesta fase — pode solicitar a eliminação total dos dados do seu evento a qualquer momento, através dos nossos Contactos.",
+      "s4_title": "4. Subcontratantes e Alojamento de Dados",
+      "s4_desc": "Para prestar o serviço, recorremos a fornecedores de confiança que processam dados em nosso nome: a Supabase para a base de dados, autenticação e armazenamento de ficheiros, a Stripe para o processamento de pagamentos, e a Vercel para o alojamento do site. Todos operam com garantias de segurança reconhecidas e são utilizados exclusivamente para viabilizar o funcionamento da plataforma.",
+      "s5_title": "5. Direitos dos Titulares dos Dados (RGPD)",
+      "s5_desc": "De acordo com o Regulamento Geral sobre a Proteção de Dados (RGPD), tem o direito de aceder, retificar ou solicitar a eliminação total dos seus dados, ou dos dados dos seus convidados, a qualquer momento. Para exercer estes direitos, contacte a nossa equipa.",
+      "s6_title": "6. Contacto",
+      "s6_desc": "Para qualquer questão relacionada com a sua privacidade e proteção de dados, "
+    },
+    "contactLinkText": "contacte a nossa equipa"
   },
   "TermsPage": {
     "title": "Termos e Condições",
-    "lastUpdate": "Última atualização: 8 de Maio de 2026",
-    "intro": "Bem-vindo ao Digital Invite Studio. Ao utilizar a nossa plataforma, concorda com os seguintes termos. Por favor, leia-os atentamente.",
+    "lastUpdate": "Última atualização: 18 de julho de 2026",
+    "intro": "Bem-vindo à Digital Invite Studio. Ao criar uma conta ou utilizar a nossa plataforma, concorda com os seguintes termos. Por favor, leia-os com atenção.",
     "sections": {
       "s1_title": "1. Objeto do Serviço",
-      "s1_desc": "O Digital Invite Studio fornece uma plataforma SaaS (Software as a Service) para a criação de websites de casamento, gestão de convidados (RSVP), planeamento de mesas (Seating Plan) e partilha de conteúdos multimédia (Live Wall e Guestbook).",
+      "s1_desc": "A Digital Invite Studio disponibiliza cinco módulos independentes para a organização de casamentos: Save the Date, Convite de Casamento (com RSVP inteligente), Convidados & Mesas, Photo Sharing & Live Wall, e Guestbook. Os módulos podem ser adquiridos individualmente ou em pacotes com desconto, conforme disponível na página de Preços.",
       "s2_title": "2. Pagamentos e Reembolsos",
-      "s2_desc": "O acesso às funcionalidades premium requer um pagamento único, de acordo com o pacote selecionado:",
+      "s2_desc": "O acesso a cada módulo é feito através de um pagamento único, sem mensalidades, processado de forma segura pelo Stripe:",
       "s2_items": [
         { "prefix": "", "bold": "", "text": "Os preços são apresentados em Euros e incluem as taxas legais em vigor." },
-        { "prefix": "Devido à natureza digital e personalizada do serviço, ", "bold": "não são efetuados reembolsos após a ativação ou publicação do convite", "text": "." },
-        { "prefix": "", "bold": "", "text": "O utilizador pode testar as ferramentas gratuitamente antes de efetuar o pagamento." }
+        { "prefix": "Pode solicitar o reembolso de um módulo até ", "bold": "14 dias após a compra", "text": ", através dos nossos Contactos. Os pedidos são avaliados caso a caso, considerando sobretudo se o módulo já foi ativamente utilizado (por exemplo, convidados adicionados, convite publicado, ou conteúdo carregado)." },
+        { "prefix": "", "bold": "", "text": "Comprar o módulo \"Convite de Casamento\" desbloqueia automaticamente o módulo \"Convidados & Mesas\", sem custo adicional, por serem tecnicamente inseparáveis — o RSVP inteligente depende da lista de convidados para funcionar." }
       ],
       "s3_title": "3. Responsabilidade do Utilizador",
-      "s3_desc": "O utilizador é o único responsável pelo conteúdo (textos, imagens e vídeos) carregado na plataforma. É proibido o uso da plataforma para partilha de conteúdo ilegal, ofensivo ou que viole direitos de autor de terceiros.",
+      "s3_desc": "O utilizador é o único responsável pelo conteúdo (textos, imagens e vídeos) carregado na plataforma, incluindo o conteúdo carregado pelos seus convidados através do Photo Sharing e do Guestbook. É proibido o uso da plataforma para partilha de conteúdo ilegal, ofensivo ou que viole direitos de autor de terceiros.",
       "s4_title": "4. Limitação de Responsabilidade",
-      "s4_desc": "Embora nos esforcemos para garantir 99.9% de disponibilidade, o Digital Invite Studio não pode ser responsabilizado por falhas de ligação à internet no local do evento, erros em dispositivos de convidados ou interrupções de serviço alheias ao nosso controlo técnico.",
+      "s4_desc": "Embora nos esforcemos para garantir a máxima disponibilidade do serviço, a Digital Invite Studio não pode ser responsabilizada por falhas de ligação à internet no local do evento, erros em dispositivos de convidados, ou interrupções de serviço alheias ao nosso controlo técnico.",
       "s5_title": "5. Propriedade Intelectual",
-      "s5_desc": "Todos os templates, códigos, motores de design (como o Seating Plan Editor) e elementos visuais da plataforma são propriedade exclusiva do Digital Invite Studio. A compra de uma licença de evento dá direito ao uso, não à reprodução ou revenda do software.",
-      "s6_title": "6. Validade do Evento",
-      "s6_prefix": "Salvo indicação em contrário num pacote específico, todos os dados do evento (website, lista de convidados e fotos) permanecem ativos até ",
-      "s6_bold": "6 meses após a data do casamento",
-      "s6_suffix": " inserida no sistema. Após este período, os dados serão eliminados permanentemente para garantir a privacidade dos utilizadores.",
-      "s7_title": "7. Lei Aplicável",
-      "s7_desc": "Estes termos são regidos pela lei portuguesa. Para a resolução de qualquer litígio, as partes submetem-se ao foro da comarca de Lisboa."
+      "s5_desc": "Todos os templates, código, motores de design (como o editor de plano de mesas) e elementos visuais da plataforma são propriedade exclusiva da Digital Invite Studio. A compra de um módulo dá direito ao seu uso para o evento em questão, não à reprodução ou revenda do software.",
+      "s6_title": "6. Validade e Expiração do Evento",
+      "s6_prefix": "A data do evento fica bloqueada assim que o primeiro módulo é ativado, para impedir o uso indevido do sistema. O acesso dos convidados a todos os módulos é ",
+      "s6_bold": "totalmente bloqueado 60 dias após a data do evento",
+      "s6_suffix": ". Os noivos mantêm acesso de consulta (só leitura) ao seu painel depois desse prazo. Os dados não são eliminados automaticamente nesta fase; a eliminação de conteúdos como fotografias e mensagens poderá vir a ser configurada separadamente no futuro.",
+      "s7_title": "7. Parceiros e Marca Branca",
+      "s7_desc": "Alguns eventos são geridos através de agências ou wedding planners parceiros, sob a marca desses parceiros (\"white label\"). Nestes casos, estes Termos continuam a aplicar-se integralmente entre a Digital Invite Studio e o utilizador final, independentemente da marca visível no serviço.",
+      "s8_title": "8. Lei Aplicável",
+      "s8_desc": "Estes termos são regidos pela lei portuguesa. Para a resolução de qualquer litígio, as partes submetem-se ao foro da comarca de Lisboa."
     },
     "footerBox": {
       "title": "Dúvidas?",
-      "text": "Se tiver alguma questão sobre estes termos, contacte-nos através de "
-    }
+      "text": "Se tiver alguma questão sobre estes termos, "
+    },
+    "contactLinkText": "contacte a nossa equipa"
   },
   "ResetPasswordPage": {
     "successTitle": "Password Atualizada!",
