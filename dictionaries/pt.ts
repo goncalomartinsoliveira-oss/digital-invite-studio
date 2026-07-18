@@ -335,49 +335,114 @@ const pt = {
       "badge": "Tudo num só lugar",
       "title1": "O sistema operativo para",
       "title2": "o seu casamento de luxo.",
-      "desc": "Desde o primeiro convite enviado até à última fotografia partilhada na pista de dança. Desenhámos cada ferramenta para eliminar o stress da organização e elevar a experiência dos seus convidados."
+      "desc": "Desde o primeiro anúncio da data até à última fotografia partilhada na pista de dança. Cinco módulos pensados para eliminar o stress da organização e elevar a experiência dos vossos convidados."
     },
     "discoverMore": "Descobrir mais",
-    "mockupPrefix": "[ Imagem/Mockup do Ecrã:",
     "cta": {
       "title": "Pronto para elevar o seu evento?",
       "btn": "Ver Pacotes e Preços"
-    },
-    "features": {
-      "website": {
-        "title": "Convites e Website Premium",
-        "desc": "A porta de entrada do seu evento. Crie uma primeira impressão inesquecível com tipografias elegantes e layouts modernos. Em vez do papel que se perde, ofereça um espaço digital imersivo que reflete a identidade visual do seu casamento.",
-        "placeholder": "Previsão do Website no Telemóvel com tipografia elegante"
+    }
+  },
+  "FeatureDetailPage": {
+    "backLink": "Voltar a Funcionalidades",
+    "includesTitle": "O que inclui",
+    "examplesTitle": "Na prática",
+    "otherFeaturesTitle": "Outras funcionalidades",
+    "ctaTitle": "Pronto para começar?",
+    "ctaPricing": "Ver Preços",
+    "ctaStart": "Começar Agora",
+    "modules": {
+      "save_the_date": {
+        "tag": "Antes do Grande Dia",
+        "title": "Anuncie a data com um cartão que os convidados vão querer guardar",
+        "summary": "Gere automaticamente um cartão descarregável com os nomes do casal, a foto e a data, pronto a partilhar em segundos.",
+        "desc": "Antes de tratarem do convite completo, avisem os vossos convidados com um Save the Date bonito e profissional. Basta preencherem os nomes, escolherem uma foto e a cidade: o sistema gera automaticamente um cartão em PDF, pronto para descarregar e partilhar por WhatsApp, email ou redes sociais.",
+        "includes": [
+          "Design profissional pronto a usar, sem necessidade de programas de edição",
+          "Nomes do casal com tipografia personalizada",
+          "Foto do casal com moldura em arco",
+          "Data e cidade do evento preenchidas automaticamente a partir dos dados do vosso evento",
+          "Download em PDF de alta qualidade, pronto para imprimir ou partilhar digitalmente"
+        ],
+        "examples": [
+          { "title": "Anúncio no grupo de família", "desc": "Descarregam o PDF e partilham no grupo de WhatsApp da família, minutos depois de terem a data fechada." },
+          { "title": "Publicação nas redes sociais", "desc": "Usam a imagem do Save the Date diretamente como publicação no Instagram, sem precisar de abrir outro programa." },
+          { "title": "Convite físico complementar", "desc": "Imprimem o cartão para entregar em mão aos convidados mais próximos, antes de enviarem o convite digital completo." }
+        ]
       },
-      "rsvp": {
-        "title": "Gestão Inteligente & RSVP",
-        "desc": "O cérebro da organização. Esqueça as folhas de cálculo e as mensagens perdidas. Os convidados confirmam presença, indicam restrições alimentares e a sua lista atualiza automaticamente em tempo real, segmentada por idade e origem.",
-        "placeholder": "Dashboard com Gráficos de Confirmação e Alergias"
+      "invite": {
+        "tag": "O Coração do Convite",
+        "title": "Um website de casamento completo, pronto em minutos",
+        "summary": "O vosso convite digital, com modelo profissional, conteúdo personalizado e RSVP inteligente integrado, tudo num único link.",
+        "desc": "É a base de tudo: um website de casamento elegante, responsivo e totalmente vosso. Escolham entre vários modelos de design, personalizem cores, textos e fotografias, e partilhem um único link com todos os convidados. Inclui sempre o módulo de Convidados & Mesas, porque o RSVP inteligente precisa de saber quem confirma.",
+        "includes": [
+          "Vários modelos de design à escolha, do clássico ao contemporâneo",
+          "Personalização completa de textos, fotografias e detalhes do evento",
+          "RSVP inteligente: o convidado procura o nome, confirma presença e indica restrições alimentares",
+          "Site totalmente responsivo, pensado primeiro para telemóvel",
+          "Atualizações em tempo real, visíveis instantaneamente por todos os convidados",
+          "Inclui sempre Convidados & Mesas, sem custo adicional"
+        ],
+        "examples": [
+          { "title": "Envio por WhatsApp", "desc": "Partilham um único link com todos os convidados. Cada um abre no telemóvel e vê o site em segundos, sem instalar nada." },
+          { "title": "Alteração de última hora", "desc": "O local da cerimónia muda de sala? Atualizam o texto no painel e todos os convidados veem a versão nova assim que voltam a abrir o link." },
+          { "title": "Confirmação em 30 segundos", "desc": "Um convidado escreve o nome, encontra-se na lista, confirma presença e assinala que é vegetariano, tudo sem sair do telemóvel." }
+        ]
       },
-      "seating": {
-        "title": "Seating Plan Interativo",
-        "desc": "Planear as mesas nunca foi tão visual. Um quadro digital onde pode desenhar a sala e arrastar os convidados diretamente para os lugares. A plataforma ajusta a geometria das mesas e bloqueia lugares excedentes automaticamente.",
-        "placeholder": "Interface Drag & Drop de arrastar convidados para as mesas redondas"
+      "guests_seating": {
+        "tag": "Organização",
+        "title": "A lista de convidados e o plano de mesas, sempre atualizados",
+        "summary": "Giram a lista de convidados, acompanham as confirmações em tempo real e desenham o plano de mesas por arrastar e largar.",
+        "desc": "Chega de folhas de cálculo. Adicionem os convidados, acompanhem quem já confirmou, quem falta responder e quem tem restrições alimentares, tudo num único painel. Depois, desenhem o plano de mesas visualmente, arrastando cada convidado para o lugar certo, e permitam que eles próprios encontrem a sua mesa no dia do evento.",
+        "includes": [
+          "Lista de convidados centralizada, com estado de confirmação em tempo real",
+          "Registo de restrições e preferências alimentares por convidado",
+          "Editor visual de plano de mesas por arrastar e largar, também funciona em telemóvel",
+          "Página pública onde cada convidado consulta a sua própria mesa",
+          "Exportação em PDF da lista de convidados e do plano de mesas, com o vosso logótipo"
+        ],
+        "examples": [
+          { "title": "Sincronização automática", "desc": "Um convidado confirma presença pelo convite e fica automaticamente disponível para atribuir a uma mesa, sem ser preciso adicioná-lo à mão." },
+          { "title": "Reorganização de última hora", "desc": "Dois convidados cancelam a três dias do casamento? Arrastam-nos para fora da mesa e reorganizam o resto em segundos." },
+          { "title": "O convidado encontra o seu lugar", "desc": "À entrada do casamento, o convidado escreve o nome numa página no telemóvel e descobre de imediato qual é a sua mesa." }
+        ]
       },
-      "qrcode": {
-        "title": "A Experiência no Dia (QR Code)",
-        "desc": "Elimine o engarrafamento à entrada da sala. Através de um QR Code elegante impresso no local, o convidado acede à planta digital no seu telemóvel, pesquisa o seu nome e encontra a sua mesa instantaneamente.",
-        "placeholder": "Mockup de um telemóvel a ler um QR Code num expositor floral"
-      },
-      "photosharing": {
-        "title": "Partilha de Fotos Colaborativa",
-        "desc": "Os fotógrafos captam o oficial, os seus convidados captam o espontâneo. Um álbum digital partilhado onde todos os presentes podem carregar fotos e vídeos em direto, acessível num único lugar para guardar para sempre.",
-        "placeholder": "Galeria estilo mural cheia de fotografias divertidas de convidados"
+      "photo_sharing": {
+        "tag": "O Dia do Evento",
+        "title": "Todas as fotos dos convidados, num álbum partilhado em tempo real",
+        "summary": "Os convidados carregam fotos e vídeos por QR code, e ainda podem ser exibidos ao vivo num ecrã durante a festa.",
+        "desc": "Durante a festa, cada convidado tira as suas próprias fotos com o telemóvel, muitas vezes momentos que o fotógrafo oficial nunca apanharia. Com um simples QR code, esses momentos ficam reunidos automaticamente num álbum digital só vosso, e podem até ser projetados ao vivo num ecrã, transformando a receção num verdadeiro mural de memórias.",
+        "includes": [
+          "QR code de acesso rápido, sem necessidade de aplicação",
+          "Upload direto de fotos e vídeos pelo telemóvel de cada convidado",
+          "Galeria pública organizada automaticamente",
+          "Modo Live Wall: slideshow em ecrã grande para a sala do evento",
+          "Download de todas as fotos em ZIP, num só clique",
+          "Moderação simples: apagar qualquer conteúdo indesejado"
+        ],
+        "examples": [
+          { "title": "Mural ao vivo na receção", "desc": "Ligam um portátil a uma televisão na sala e ativam o Live Wall: as fotos que os convidados vão tirando aparecem no ecrã minutos depois de serem carregadas." },
+          { "title": "Álbum sem esforço", "desc": "No dia seguinte, descarregam um ZIP com centenas de fotos e vídeos tirados por todos os convidados, sem ter de pedir a cada um individualmente." },
+          { "title": "Acesso instantâneo", "desc": "Basta apontar a câmara do telemóvel ao QR code numa mesa para começar a carregar fotos, sem instalar nada." }
+        ]
       },
       "guestbook": {
-        "title": "Livro de Honras Digital",
-        "desc": "Uma reinvenção emotiva do tradicional livro de assinaturas. Os convidados utilizam os seus telemóveis para deixar dedicatórias de texto, mensagens de voz e votos de felicidade. Um arquivo de amor que nunca se irá perder.",
-        "placeholder": "Ecrã com mensagens bonitas e notas de voz a tocar"
-      },
-      "reports": {
-        "title": "Exportações Premium para Staff",
-        "desc": "A comunicação com o Catering e o Wedding Planner tem de ser impecável. Exporte relatórios em PDF com qualidade de impressão, encabeçados pelo vosso logotipo, incluindo a planta exata da sala e listagem rigorosa por mesa.",
-        "placeholder": "Documento PDF elegante com a planta da sala e o logotipo da marca"
+        "tag": "Memórias",
+        "title": "Mensagens de voz, vídeo e texto que vão querer voltar a ouvir",
+        "summary": "Um livro de honra digital onde os convidados deixam mensagens em texto, áudio ou vídeo, guardadas só para o casal.",
+        "desc": "Substituam o tradicional livro de assinaturas por algo muito mais especial: convidem cada pessoa a deixar-vos uma mensagem, seja escrita, gravada em áudio ou em vídeo. Ao contrário da galeria de fotos, estas mensagens ficam privadas, visíveis só pelo casal, um verdadeiro tesouro para reviver depois do grande dia.",
+        "includes": [
+          "Mensagens em texto, áudio ou vídeo, à escolha do convidado",
+          "Acesso simples por QR code, sem necessidade de aplicação",
+          "Conteúdo sempre privado, visível apenas pelo casal",
+          "Organização automática por tipo de mensagem",
+          "Download de todas as mensagens em ZIP, incluindo um resumo em texto"
+        ],
+        "examples": [
+          { "title": "O discurso que não deu para fazer", "desc": "Um convidado mais tímido, que não quis discursar à frente de todos, grava um vídeo emotivo através do telemóvel, em privado." },
+          { "title": "Recordação para sempre", "desc": "Meses depois do casamento, o casal volta a ouvir os áudios e a ler as mensagens, como se estivesse de volta à festa." },
+          { "title": "Sem filas nem stress", "desc": "Em vez de uma fila para assinar um livro físico, os convidados deixam a sua mensagem quando quiserem, ao longo de toda a festa." }
+        ]
       }
     }
   },

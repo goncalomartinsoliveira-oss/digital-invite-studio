@@ -335,49 +335,114 @@ const en = {
       "badge": "All in one place",
       "title1": "The operating system for",
       "title2": "your luxury wedding.",
-      "desc": "From the first invitation sent to the last photo shared on the dance floor. We designed every tool to eliminate the stress of planning and elevate your guests' experience."
+      "desc": "From the first save the date sent to the last photo shared on the dance floor. Five modules designed to eliminate the stress of planning and elevate your guests' experience."
     },
     "discoverMore": "Discover more",
-    "mockupPrefix": "[ Screen Image/Mockup:",
     "cta": {
       "title": "Ready to elevate your event?",
       "btn": "View Packages & Pricing"
-    },
-    "features": {
-      "website": {
-        "title": "Premium Invitations & Website",
-        "desc": "The gateway to your event. Create an unforgettable first impression with elegant typography and modern layouts. Instead of paper that gets lost, offer an immersive digital space that reflects the visual identity of your wedding.",
-        "placeholder": "Website Preview on Phone with elegant typography"
+    }
+  },
+  "FeatureDetailPage": {
+    "backLink": "Back to Features",
+    "includesTitle": "What's included",
+    "examplesTitle": "In practice",
+    "otherFeaturesTitle": "Other features",
+    "ctaTitle": "Ready to get started?",
+    "ctaPricing": "View Pricing",
+    "ctaStart": "Start Now",
+    "modules": {
+      "save_the_date": {
+        "tag": "Before the Big Day",
+        "title": "Announce the date with a card your guests will want to keep",
+        "summary": "Automatically generates a downloadable card with the couple's names, photo and date, ready to share in seconds.",
+        "desc": "Before you sort out the full invitation, let your guests know the date with a beautiful, professional Save the Date. Just fill in the names, choose a photo and the city: the system automatically generates a PDF card, ready to download and share via WhatsApp, email or social media.",
+        "includes": [
+          "Professional design ready to use, no editing software needed",
+          "The couple's names with custom typography",
+          "Couple's photo with an arched frame",
+          "Event date and city filled in automatically from your event's details",
+          "High-quality PDF download, ready to print or share digitally"
+        ],
+        "examples": [
+          { "title": "Announcing it to family", "desc": "They download the PDF and share it in the family WhatsApp group, minutes after locking in the date." },
+          { "title": "A social media post", "desc": "They use the Save the Date image directly as an Instagram post, with no need to open any other software." },
+          { "title": "A physical keepsake", "desc": "They print the card to hand out to their closest guests, before sending the full digital invitation." }
+        ]
       },
-      "rsvp": {
-        "title": "Smart Management & RSVP",
-        "desc": "The brain of organization. Forget spreadsheets and lost messages. Guests confirm their attendance, indicate dietary restrictions, and your list updates automatically in real time, segmented by age and origin.",
-        "placeholder": "Dashboard with Confirmation and Allergy Charts"
+      "invite": {
+        "tag": "The Heart of the Invitation",
+        "title": "A complete wedding website, ready in minutes",
+        "summary": "Your digital invitation: a professional template, personalised content and built-in smart RSVP, all in a single link.",
+        "desc": "It's the foundation of everything: an elegant, responsive wedding website that's entirely yours. Choose from several design templates, customise colours, text and photos, and share a single link with every guest. Always includes the Guests & Seating module, because smart RSVP needs to know who's confirming.",
+        "includes": [
+          "Several design templates to choose from, from classic to contemporary",
+          "Full customisation of text, photos and event details",
+          "Smart RSVP: guests search their name, confirm attendance and note dietary restrictions",
+          "Fully responsive site, designed mobile-first",
+          "Real-time updates, instantly visible to every guest",
+          "Always includes Guests & Seating, at no extra cost"
+        ],
+        "examples": [
+          { "title": "Sent over WhatsApp", "desc": "They share a single link with every guest. Each one opens it on their phone and sees the site in seconds, with nothing to install." },
+          { "title": "A last-minute change", "desc": "The ceremony venue changes room? They update the text on the dashboard and every guest sees the new version the next time they open the link." },
+          { "title": "Confirming in 30 seconds", "desc": "A guest types their name, finds themselves on the list, confirms attendance and flags that they're vegetarian, all without leaving their phone." }
+        ]
       },
-      "seating": {
-        "title": "Interactive Seating Plan",
-        "desc": "Planning tables has never been so visual. A digital board where you can draw the room and drag guests directly to their seats. The platform automatically adjusts table geometry and blocks excess seats.",
-        "placeholder": "Drag & Drop interface for moving guests to round tables"
+      "guests_seating": {
+        "tag": "Organisation",
+        "title": "Your guest list and seating plan, always up to date",
+        "summary": "Manage your guest list, track confirmations in real time and design the seating plan by dragging and dropping.",
+        "desc": "No more spreadsheets. Add your guests, track who has confirmed, who still needs to respond and who has dietary restrictions, all in a single dashboard. Then design the seating plan visually, dragging each guest to the right seat, and let them find their own table on the day of the event.",
+        "includes": [
+          "Centralised guest list with real-time confirmation status",
+          "Dietary restrictions and preferences recorded per guest",
+          "Visual drag-and-drop seating plan editor, works on mobile too",
+          "A public page where each guest can look up their own table",
+          "PDF export of the guest list and seating plan, with your logo"
+        ],
+        "examples": [
+          { "title": "Automatic sync", "desc": "A guest confirms attendance through the invitation and automatically becomes available to assign to a table, no need to add them by hand." },
+          { "title": "Last-minute reshuffle", "desc": "Two guests cancel three days before the wedding? Drag them off the table and reorganise the rest in seconds." },
+          { "title": "Guests find their own seat", "desc": "At the wedding entrance, guests type their name on a page on their phone and instantly discover which table is theirs." }
+        ]
       },
-      "qrcode": {
-        "title": "The Day-of Experience (QR Code)",
-        "desc": "Eliminate the bottleneck at the room entrance. Through an elegant QR Code printed on-site, guests access the digital floor plan on their phone, search their name, and find their table instantly.",
-        "placeholder": "Mockup of a phone reading a QR Code on a floral display"
-      },
-      "photosharing": {
-        "title": "Collaborative Photo Sharing",
-        "desc": "Photographers capture the official moments; your guests capture the spontaneous ones. A shared digital album where all attendees can upload photos and videos in real time, accessible in one place to keep forever.",
-        "placeholder": "Wall-style gallery filled with fun guest photographs"
+      "photo_sharing": {
+        "tag": "The Day of the Event",
+        "title": "Every guest's photos, in one album shared in real time",
+        "summary": "Guests upload photos and videos via QR code, and they can even be displayed live on a screen during the party.",
+        "desc": "During the party, every guest takes their own photos with their phone, often catching moments the official photographer never would. With a simple QR code, those moments are automatically gathered into a digital album that's all yours, and can even be projected live on a screen, turning the reception into a true wall of memories.",
+        "includes": [
+          "Quick-access QR code, no app required",
+          "Direct photo and video upload from every guest's phone",
+          "Automatically organised public gallery",
+          "Live Wall mode: a big-screen slideshow for the event room",
+          "Download every photo as a ZIP, in one click",
+          "Simple moderation: delete any unwanted content"
+        ],
+        "examples": [
+          { "title": "A live wall at the reception", "desc": "They connect a laptop to a TV in the room and turn on Live Wall: the photos guests are taking appear on screen minutes after being uploaded." },
+          { "title": "An effortless album", "desc": "The next day, they download a ZIP with hundreds of photos and videos taken by every guest, without having to ask each one individually." },
+          { "title": "Instant access", "desc": "Guests just point their phone camera at the QR code on a table to start uploading photos, nothing to install." }
+        ]
       },
       "guestbook": {
-        "title": "Digital Guestbook",
-        "desc": "An emotional reinvention of the traditional signature book. Guests use their phones to leave text dedications, voice messages, and wishes of happiness. An archive of love that will never be lost.",
-        "placeholder": "Screen with beautiful messages and voice notes playing"
-      },
-      "reports": {
-        "title": "Premium Staff Exports",
-        "desc": "Communication with Catering and the Wedding Planner must be impeccable. Export print-quality PDF reports, headed with your logo, including the exact room layout and a meticulous listing by table.",
-        "placeholder": "Elegant PDF document with room layout and brand logo"
+        "tag": "Memories",
+        "title": "Voice, video and text messages you'll want to hear again",
+        "summary": "A digital guestbook where guests leave text, audio or video messages, kept private for the couple.",
+        "desc": "Replace the traditional signature book with something far more special: invite every guest to leave you a message, whether written, recorded as audio or filmed as video. Unlike the photo gallery, these messages stay private, visible only to the couple, a true treasure to revisit after the big day.",
+        "includes": [
+          "Text, audio or video messages, the guest's choice",
+          "Simple QR code access, no app required",
+          "Content always private, visible only to the couple",
+          "Automatically organised by message type",
+          "Download every message as a ZIP, including a text summary"
+        ],
+        "examples": [
+          { "title": "The speech they couldn't give", "desc": "A shyer guest, who didn't want to speak in front of everyone, records an emotional video on their phone, in private." },
+          { "title": "A keepsake forever", "desc": "Months after the wedding, the couple listens to the audios and reads the messages again, as if they were back at the party." },
+          { "title": "No queues, no stress", "desc": "Instead of a line to sign a physical book, guests leave their message whenever they like, throughout the whole party." }
+        ]
       }
     }
   },
