@@ -2,13 +2,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter, useParams } from "next/navigation";
-import { UserPlus, Trash2, ShieldCheck, Mail, Loader2, LogOut, Key, User, Package, Lock, Check } from "lucide-react";
+import { UserPlus, Trash2, ShieldCheck, Mail, Loader2, LogOut, Key, User, Package, Lock, Check, Receipt } from "lucide-react";
 import { ALL_MODULE_IDS, expandWithDependencies, type ModuleId } from "@/lib/modules";
+import { formatPriceCents } from "@/lib/checkout";
 
 interface AccountModuleProps {
   userEmail: string;
   invitationId: string;
   isSuperAdmin?: boolean;
+  moduleNames?: Record<string, string>;
+  bundleNames?: Record<string, string>;
   dict: {
     profile: {
       title: string; subtitle: string; logoutBtn: string; emailLabel: string;
@@ -28,12 +31,18 @@ interface AccountModuleProps {
       items: Record<ModuleId, string>;
       lockedNote: string; unlockedNote: string; dateLockedSince: string;
     };
+    history: {
+      title: string; subtitle: string; emptyState: string;
+      dateLabel: string; itemLabel: string; amountLabel: string; statusLabel: string;
+      status: { paid: string; pending: string; failed: string; refunded: string };
+    };
   };
 }
 
-export default function AccountModule({ userEmail, invitationId, isSuperAdmin, dict }: AccountModuleProps) {
+export default function AccountModule({ userEmail, invitationId, isSuperAdmin, moduleNames, bundleNames, dict }: AccountModuleProps) {
   const router = useRouter();
   const params = useParams();
+  const locale = (params?.locale as string) || "pt";
 
   const [collaboratorEmail, setCollaboratorEmail] = useState("");
   const [collaboratorRole, setCollaboratorRole] = useState("editor");
@@ -48,11 +57,26 @@ export default function AccountModule({ userEmail, invitationId, isSuperAdmin, d
   const [modulesLoading, setModulesLoading] = useState(true);
   const [togglingModule, setTogglingModule] = useState<string | null>(null);
 
+  const [payments, setPayments] = useState<any[]>([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(true);
+
   useEffect(() => {
     fetchCollaborators();
+    fetchPayments();
     if (isSuperAdmin) fetchModules();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invitationId, isSuperAdmin]);
+
+  async function fetchPayments() {
+    setPaymentsLoading(true);
+    const { data, error } = await supabase
+      .from("payments")
+      .select("*")
+      .eq("invitation_id", invitationId)
+      .order("created_at", { ascending: false });
+    if (!error) setPayments(data || []);
+    setPaymentsLoading(false);
+  }
 
   async function fetchModules() {
     setModulesLoading(true);
@@ -222,6 +246,58 @@ export default function AccountModule({ userEmail, invitationId, isSuperAdmin, d
           </div>
           <span className="bg-green-100 text-green-700 text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">{dict.ownership.ownerBadge}</span>
         </div>
+      </section>
+
+      {/* 02a. HISTÓRICO DE COMPRAS — visível para todos os que gerem o evento, não só super-admin. */}
+      <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 bg-brand/5 rounded-2xl flex items-center justify-center text-brand">
+            <Receipt size={24} />
+          </div>
+          <div>
+            <h3 className="font-serif text-2xl text-ink">{dict.history.title}</h3>
+            <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{dict.history.subtitle}</p>
+          </div>
+        </div>
+
+        {paymentsLoading ? (
+          <div className="flex justify-center py-4"><Loader2 className="animate-spin text-gray-200" /></div>
+        ) : payments.length === 0 ? (
+          <div className="text-center py-10 bg-gray-50 rounded-3xl border border-dashed border-gray-200 text-gray-400">
+            <p className="text-xs">{dict.history.emptyState}</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {payments.map((payment) => {
+              const itemLabel = payment.bundle_id
+                ? (bundleNames?.[payment.bundle_id] ?? payment.bundle_id)
+                : (payment.module_ids || []).map((m: string) => moduleNames?.[m] ?? m).join(", ");
+              const statusStyles: Record<string, string> = {
+                paid: "bg-green-50 text-green-700",
+                pending: "bg-amber-50 text-amber-600",
+                failed: "bg-red-50 text-red-600",
+                refunded: "bg-gray-100 text-gray-500",
+              };
+              const statusLabel = (dict.history.status as Record<string, string>)[payment.status] ?? payment.status;
+              return (
+                <div key={payment.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-ink truncate">{itemLabel}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1">
+                      {new Date(payment.paid_at || payment.created_at).toLocaleDateString(locale === "en" ? "en-IE" : "pt-PT", { day: "2-digit", month: "long", year: "numeric" })}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="font-serif text-lg text-brand">{formatPriceCents(payment.amount_cents, locale)}</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${statusStyles[payment.status] ?? "bg-gray-100 text-gray-500"}`}>
+                      {statusLabel}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* 02b. MÓDULOS (só super-admin) — marca manualmente quais os módulos comprados/oferecidos

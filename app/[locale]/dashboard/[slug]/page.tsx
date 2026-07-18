@@ -221,6 +221,10 @@ export default function Dashboard() {
     return !isSuperAdmin && !isModuleUnlocked(unlockedModules, moduleId);
   };
   const moduleNamesDict = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
+  const bundleOffersDict = dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers;
+  const bundleNamesDict = Object.fromEntries(
+    Object.entries(bundleOffersDict.bundles as Record<string, { name: string; desc: string }>).map(([id, b]) => [id, b.name])
+  );
   const handleBuyModule = async (moduleId: string) => {
     setBuyingModule(moduleId);
     try {
@@ -558,7 +562,7 @@ export default function Dashboard() {
                   dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />
               )}
-              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
+              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} moduleNames={moduleNamesDict} bundleNames={bundleNamesDict} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
             </div>
             </EventBrandProvider>
           </main>

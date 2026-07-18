@@ -766,6 +766,21 @@ const pt = {
       "lockedNote": "A data do evento está bloqueada porque já tem pelo menos um módulo ativo.",
       "unlockedNote": "Sem módulos ativos — a data do evento continua editável pelos noivos.",
       "dateLockedSince": "Bloqueada desde"
+    },
+    "history": {
+      "title": "Histórico de Compras",
+      "subtitle": "Todos os pagamentos feitos para este evento",
+      "emptyState": "Ainda não há compras registadas para este evento.",
+      "dateLabel": "Data",
+      "itemLabel": "Módulo(s)",
+      "amountLabel": "Valor",
+      "statusLabel": "Estado",
+      "status": {
+        "paid": "Pago",
+        "pending": "Pendente",
+        "failed": "Falhou",
+        "refunded": "Reembolsado"
+      }
     }
   },
   "DesignModule": {

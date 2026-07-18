@@ -766,6 +766,21 @@ const en = {
       "lockedNote": "The event date is locked because at least one module is already active.",
       "unlockedNote": "No active modules — the event date is still editable by the couple.",
       "dateLockedSince": "Locked since"
+    },
+    "history": {
+      "title": "Purchase History",
+      "subtitle": "Every payment made for this event",
+      "emptyState": "No purchases recorded for this event yet.",
+      "dateLabel": "Date",
+      "itemLabel": "Module(s)",
+      "amountLabel": "Amount",
+      "statusLabel": "Status",
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      }
     }
   },
   "DesignModule": {
