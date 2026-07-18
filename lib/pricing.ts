@@ -1,12 +1,14 @@
-import { ALL_MODULE_IDS, type ModuleId } from "./modules";
+import { ALL_MODULE_IDS, MODULE_DEPENDENCIES, type ModuleId } from "./modules";
 
 // ⚠️ PREÇOS — ajuste à vontade, é só isto que precisa de mudar. Tanto o
 // checkout real (Stripe) como a página pública de Pricing lêem estes
 // valores, por isso nunca ficam dessincronizados entre si.
-// Valores em cêntimos de euro (ex.: 5900 = 59,00€).
+// Valores em cêntimos de euro (ex.: 7900 = 79,00€).
+// "invite" já inclui "guests_seating" de borla (ver MODULE_DEPENDENCIES em
+// modules.ts), daí o preço refletir os dois módulos.
 export const MODULE_PRICES_CENTS: Record<ModuleId, number> = {
   save_the_date: 1500,
-  invite: 5900,
+  invite: 7900,
   guests_seating: 3900,
   photo_sharing: 3500,
   guestbook: 1900,
@@ -50,10 +52,18 @@ export function getBundle(bundleId: string): Bundle | undefined {
   return BUNDLES.find(b => b.id === bundleId);
 }
 
-// Soma do preço à peça dos módulos incluídos — usado só para mostrar a
-// poupança da bundle (nunca é o valor cobrado).
+// Soma do preço à peça dos módulos incluídos, usada só para mostrar a
+// poupança da bundle (nunca é o valor cobrado). Não conta módulos que já
+// vêm de borla por dependência de outro módulo do mesmo pacote (ex.: não
+// soma "guests_seating" outra vez se "invite" já o inclui), senão a
+// poupança apresentada ficaria artificialmente inflacionada.
 export function bundleFullPriceCents(bundle: Bundle): number {
-  return bundle.moduleIds.reduce((sum, m) => sum + MODULE_PRICES_CENTS[m], 0);
+  const impliedByOthers = new Set<ModuleId>();
+  bundle.moduleIds.forEach(m => {
+    (MODULE_DEPENDENCIES[m] || []).forEach(dep => impliedByOthers.add(dep));
+  });
+  const billableModules = bundle.moduleIds.filter(m => !impliedByOthers.has(m));
+  return billableModules.reduce((sum, m) => sum + MODULE_PRICES_CENTS[m], 0);
 }
 
 export function bundleSavingsCents(bundle: Bundle): number {

@@ -1162,6 +1162,7 @@ const en = {
     "bundlesSubtitle": "The simplest, cheapest way to get everything you need",
     "alaCarteTitle": "Or build your own",
     "alaCarteSubtitle": "Buy only the modules you'll actually use, one by one",
+    "includesLabel": "Includes",
     "alaCarteInviteNote": "The Wedding Invitation always includes Guests & Seating, so RSVP works correctly.",
     "b2b": {
       "title": "Are you an Event Planner?",

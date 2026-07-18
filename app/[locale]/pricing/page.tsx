@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check, CalendarHeart, Mail, Users, Camera, MessageSquareHeart } from "lucide-react";
-import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
+import { ALL_MODULE_IDS, MODULE_DEPENDENCIES, type ModuleId } from "@/lib/modules";
 import { BUNDLES, MODULE_PRICES_CENTS, bundleSavingsCents } from "@/lib/pricing";
 import { formatPriceCents } from "@/lib/checkout";
 
@@ -52,6 +52,7 @@ export default function PricingPage() {
     name: (moduleNames as Record<string, string>)[id],
     description: (groupsDict as Record<string, { title: string; desc: string }>)[id]?.desc || "",
     price: formatPriceCents(MODULE_PRICES_CENTS[id], locale),
+    includes: (MODULE_DEPENDENCIES[id] || []).map(dep => (moduleNames as Record<string, string>)[dep]),
   }));
 
   return (
@@ -165,7 +166,14 @@ export default function PricingPage() {
                   {m.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-serif text-lg text-gray-800">{m.name}</h4>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h4 className="font-serif text-lg text-gray-800">{m.name}</h4>
+                    {m.includes.length > 0 && (
+                      <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">
+                        <Check size={10} strokeWidth={4} /> {dict.includesLabel} {m.includes.join(", ")}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-gray-400 text-sm mt-0.5">{m.description}</p>
                 </div>
                 <div className="text-right shrink-0">

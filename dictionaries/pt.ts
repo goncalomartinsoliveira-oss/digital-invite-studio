@@ -1162,6 +1162,7 @@ const pt = {
     "bundlesSubtitle": "A forma mais simples e mais barata de ter tudo o que precisa",
     "alaCarteTitle": "Ou monte o seu à medida",
     "alaCarteSubtitle": "Compre só os módulos que realmente vai usar, um a um",
+    "includesLabel": "Inclui",
     "alaCarteInviteNote": "O Convite de Casamento inclui sempre Convidados & Mesas, para o RSVP funcionar corretamente.",
     "b2b": {
       "title": "É Organizador de Eventos?",
