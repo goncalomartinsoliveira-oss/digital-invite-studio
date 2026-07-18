@@ -247,6 +247,30 @@ const en = {
     },
     "hubTitle": "What would you like to manage?",
     "hubSubtitle": "Choose an area to get started",
+    "tour": {
+      "reopenBtn": "View welcome tour",
+      "skip": "Skip",
+      "next": "Next",
+      "start": "Let's get started",
+      "steps": [
+        {
+          "title": "Welcome to your dashboard",
+          "desc": "This is the command centre for your event. Let's quickly show you how everything works."
+        },
+        {
+          "title": "Everything organised into 5 areas",
+          "desc": "Save the Date, Invitation, Guests & Seating, Photo Sharing & Live Wall and Guestbook. Each card takes you straight to the right area."
+        },
+        {
+          "title": "Unlock at your own pace",
+          "desc": "Every event starts with no active modules. Buy them individually or as a discounted bundle, even from inside a locked area."
+        },
+        {
+          "title": "Share and manage it all here",
+          "desc": "Once you activate the Invitation, copy the link and share it with your guests. Under \"My Account\" you'll find your team and purchase history."
+        }
+      ]
+    },
     "backToGroups": "Areas",
     "enterGroup": "Manage",
     "groups": {

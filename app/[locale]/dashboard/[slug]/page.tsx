@@ -20,7 +20,8 @@ import {
   CalendarHeart,
   AlertTriangle,
   Lock,
-  MessageSquareHeart
+  MessageSquareHeart,
+  HelpCircle
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -33,6 +34,7 @@ import GuestbookModule from "@/components/dashboard/GuestbookModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import BundleOffers from "@/components/dashboard/BundleOffers";
+import WelcomeTour from "@/components/dashboard/WelcomeTour";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
@@ -74,7 +76,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
-  
+  const [showTour, setShowTour] = useState(false);
+
   const [copied, setCopied] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
 
@@ -154,9 +157,23 @@ export default function Dashboard() {
       const { data: gs } = await supabase.from("guests").select("*").eq("invitation_id", invite.id);
       setGuests(gs || []);
       setLoading(false);
+
+      // Tour de boas-vindas: mostra-se sozinho uma vez por evento, na
+      // primeira vez que o hub é aberto (guardado no browser, não na BD).
+      const tourKey = `dis_tour_seen_${params.slug}`;
+      if (typeof window !== "undefined" && !localStorage.getItem(tourKey)) {
+        setShowTour(true);
+      }
     }
     loadData();
   }, [params.slug, params.locale, router]);
+
+  const dismissTour = () => {
+    setShowTour(false);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`dis_tour_seen_${params.slug}`, "1");
+    }
+  };
 
   const handleSaveDesign = async () => {
     setSaving(true);
@@ -308,6 +325,13 @@ export default function Dashboard() {
 
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
+              onClick={() => setShowTour(true)}
+              aria-label={dict.tour?.reopenBtn}
+              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-white text-gray-400 border border-gray-200 hover:bg-gray-50 hover:text-brand transition-all"
+            >
+              <HelpCircle size={16} />
+            </button>
+            <button
               onClick={copyInviteLink}
               className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-4 sm:px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all active:scale-95"
             >
@@ -323,6 +347,8 @@ export default function Dashboard() {
             </button>
           </div>
         </header>
+
+        {showTour && dict.tour && <WelcomeTour dict={dict.tour} onClose={dismissTour} />}
 
         <main className="flex-1 px-6 py-14 sm:py-20">
           <div className="max-w-5xl mx-auto">

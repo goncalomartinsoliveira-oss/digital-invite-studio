@@ -247,6 +247,30 @@ const pt = {
     },
     "hubTitle": "O que quer gerir?",
     "hubSubtitle": "Escolha uma área para começar",
+    "tour": {
+      "reopenBtn": "Ver tour de boas-vindas",
+      "skip": "Saltar",
+      "next": "Seguinte",
+      "start": "Vamos começar",
+      "steps": [
+        {
+          "title": "Bem-vindo ao vosso painel",
+          "desc": "Este é o centro de comando do vosso evento. Vamos mostrar-vos rapidamente como tudo funciona."
+        },
+        {
+          "title": "Tudo organizado em 5 áreas",
+          "desc": "Save the Date, Convite, Convidados & Mesas, Photo Sharing & Live Wall e Guestbook. Cada cartão leva-vos direto à área certa."
+        },
+        {
+          "title": "Desbloqueiem ao vosso ritmo",
+          "desc": "Cada evento começa sem módulos ativos. Comprem à peça ou em pacote com desconto, mesmo a partir de uma área bloqueada."
+        },
+        {
+          "title": "Partilhem e giram tudo aqui",
+          "desc": "Depois de ativarem o Convite, copiem o link e partilhem com os convidados. Em \"Minha Conta\" encontram a vossa equipa e o histórico de compras."
+        }
+      ]
+    },
     "backToGroups": "Áreas",
     "enterGroup": "Gerir",
     "groups": {
