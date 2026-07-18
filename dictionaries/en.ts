@@ -239,7 +239,8 @@ const en = {
       "savethedate": "Save the Date",
       "guests": "List",
       "seating": "Tables",
-      "moments": "Moments & Guestbook"
+      "photosharing": "Photo Sharing",
+      "guestbook": "Guestbook"
     },
     "hubTitle": "What would you like to manage?",
     "hubSubtitle": "Choose an area to get started",
@@ -748,54 +749,69 @@ const en = {
       "messagePrefix": "Message"
     }
   },
-  "MomentsModule": {
-    "cards": {
-      "photoSharingTitle": "Public Photo Sharing Page",
-      "photoSharingSubtitle": "Share photos and videos between guests",
-      "guestbookTitle": "Guestbook Page",
-      "guestbookSubtitle": "Let your guests send you a special message in text, voice, or video",
-      "liveWallTitle": "Live Wall",
-      "liveWallSubtitle": "Slideshow displaying photos and videos uploaded by guests on the Public Photo Sharing Page",
-      "openDirect": "Open Direct",
-      "copyLink": "Copy Link",
-      "galleryLinkCopied": "Gallery link copied!",
-      "guestbookLinkCopied": "Guestbook link copied!",
-      "liveWallLinkCopied": "Live Wall link copied!"
+  "PhotoSharingModule": {
+    "gallery": {
+      "title": "Public Photo Sharing Page",
+      "subtitle": "Share photos and videos between guests",
+      "linkCopied": "Gallery link copied!"
     },
+    "liveWall": {
+      "title": "Live Wall",
+      "subtitle": "Slideshow displaying photos and videos uploaded by guests on the Public Photo Sharing Page",
+      "linkCopied": "Live Wall link copied!"
+    },
+    "openDirect": "Open Direct",
+    "copyLink": "Copy Link",
     "profile": {
       "title": "Content Management",
       "subtitle": "Customise the gallery profile photo and manage your files",
-      "publicShares": "Public Shares",
-      "guestbookMessages": "Guestbook Messages"
-    },
-    "tabs": {
-      "gallery": "Public Gallery",
-      "guestbook": "Private Guestbook"
+      "publicShares": "Public Shares"
     },
     "media": {
       "gridLabel": "Moments Grid",
       "zipBtn": "ZIP"
     },
-    "guestbook": {
-      "textTab": "Texts",
-      "audioTab": "Audios",
-      "videoTab": "Videos",
-      "zipTabBtn": "ZIP this tab",
-      "anonymousAuthor": "Anonymous",
-      "guestAuthor": "Guest",
-      "audioPrivate": "Private Audio",
-      "deleteConfirm": "Delete?"
-    },
     "lightbox": {
       "saveBtn": "Save"
     },
     "alerts": {
-      "noMessagesZip": "No messages to download in this tab.",
       "zipError": "ZIP Error",
-      "guestbookZipError": "Error generating Guestbook ZIP",
       "downloadError": "Error downloading individual file.",
       "deleteMediaConfirm": "Are you sure you want to permanently delete this file?",
-      "deleteServerError": "Error deleting on server: ",
+      "deleteServerError": "Error deleting on server: "
+    },
+    "locked": {
+      "title": "Photo Sharing & Live Wall is not active yet",
+      "message": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "contactBtn": "Contact Us"
+    }
+  },
+  "GuestbookModule": {
+    "card": {
+      "title": "Guestbook Page",
+      "subtitle": "Let your guests send you a special message in text, voice, or video",
+      "linkCopied": "Guestbook link copied!"
+    },
+    "openDirect": "Open Direct",
+    "copyLink": "Copy Link",
+    "profile": {
+      "title": "Guest Messages",
+      "subtitle": "Review and manage all received messages",
+      "messages": "Messages"
+    },
+    "tabs": {
+      "textTab": "Texts",
+      "audioTab": "Audios",
+      "videoTab": "Videos",
+      "zipTabBtn": "ZIP this tab"
+    },
+    "anonymousAuthor": "Anonymous",
+    "guestAuthor": "Guest",
+    "audioPrivate": "Private Audio",
+    "deleteConfirm": "Delete?",
+    "alerts": {
+      "noMessagesZip": "No messages to download in this tab.",
+      "guestbookZipError": "Error generating Guestbook ZIP",
       "deleteGuestbookConfirm": "Permanently delete this message?",
       "deleteGuestbookError": "Error deleting."
     },
@@ -806,10 +822,8 @@ const en = {
       "datePrefix": "Date"
     },
     "locked": {
-      "photoTitle": "Photo Sharing & Live Wall is not active yet",
-      "photoMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
-      "guestbookTitle": "Guestbook is not active yet",
-      "guestbookMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "title": "Guestbook is not active yet",
+      "message": "This module hasn't been activated for this event yet. Contact us to add it.",
       "contactBtn": "Contact Us"
     }
   },

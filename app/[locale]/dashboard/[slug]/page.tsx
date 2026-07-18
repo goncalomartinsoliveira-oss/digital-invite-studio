@@ -28,7 +28,8 @@ import GuestsModule from "@/components/dashboard/GuestsModule";
 import ContentModule from "@/components/dashboard/ContentModule";
 import SeatingModule from "@/components/dashboard/SeatingModule";
 import AccountModule from "@/components/dashboard/AccountModule";
-import MomentsModule from "@/components/dashboard/MomentsModule";
+import PhotoSharingModule from "@/components/dashboard/PhotoSharingModule";
+import GuestbookModule from "@/components/dashboard/GuestbookModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
@@ -44,20 +45,17 @@ const dictionaries = {
   en: en
 };
 
-type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'moments' | 'account';
+type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'photosharing' | 'guestbook' | 'account';
 // Áreas do hub: uma por módulo vendável (mesmos ids de lib/modules.ts), para
 // que o hub mostre claramente o que está desbloqueado/bloqueado por módulo.
-// "photo_sharing" e "guestbook" partilham o separador "moments" (que já os
-// trata como dois sub-separadores internos) — por isso abrem o mesmo
-// DashboardTab, só com o sub-separador inicial diferente.
 type EventGroup = 'save_the_date' | 'invite' | 'guests_seating' | 'photo_sharing' | 'guestbook' | 'account' | null;
 
 const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
   save_the_date: ['savethedate'],
   invite: ['design', 'content'],
   guests_seating: ['guests', 'seating'],
-  photo_sharing: ['moments'],
-  guestbook: ['moments'],
+  photo_sharing: ['photosharing'],
+  guestbook: ['guestbook'],
   account: [],
 };
 
@@ -196,10 +194,11 @@ export default function Dashboard() {
     { id: 'savethedate', label: dict.tabs.savethedate, icon: <CalendarHeart size={20} /> },
     { id: 'guests', label: dict.tabs.guests, icon: <Users size={20} /> },
     { id: 'seating', label: dict.tabs.seating, icon: <Grid size={20} /> },
-    { id: 'moments', label: dict.tabs.moments, icon: <Camera size={20} /> } 
+    { id: 'photosharing', label: dict.tabs.photosharing, icon: <Camera size={20} /> },
+    { id: 'guestbook', label: dict.tabs.guestbook, icon: <MessageSquareHeart size={20} /> }
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
-  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'moments' || activeTab === 'account' || activeTab === 'savethedate';
+  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate';
 
   // O bloqueio real (contra escrita) já é imposto pelo Supabase (RLS); isto só
   // reflete esse estado na interface para os noivos perceberem porque ficou só-leitura.
@@ -256,15 +255,10 @@ export default function Dashboard() {
     { id: 'guestbook' as const, icon: <MessageSquareHeart size={26} />, title: dict.groups.guestbook.title, desc: dict.groups.guestbook.desc },
   ];
 
-  // "photo_sharing"/"guestbook" partilham o separador "moments" — o bloqueio
-  // aí é por módulo específico, não pelo estado do separador em si. Nos
-  // restantes, todos os separadores do grupo mapeiam para o mesmo módulo.
-  const isGroupLocked = (groupId: Exclude<EventGroup, null | 'account'>) => {
-    if (isSuperAdmin) return false;
-    if (groupId === 'photo_sharing') return !isModuleUnlocked(unlockedModules, 'photo_sharing');
-    if (groupId === 'guestbook') return !isModuleUnlocked(unlockedModules, 'guestbook');
-    return isTabLocked(GROUP_TABS[groupId][0]);
-  };
+  // Cada grupo do hub mapeia para um único módulo (mesmo quando agrupa mais
+  // do que um separador, como "invite" = design+content), por isso basta
+  // verificar o bloqueio do seu primeiro separador.
+  const isGroupLocked = (groupId: Exclude<EventGroup, null | 'account'>) => isTabLocked(GROUP_TABS[groupId][0]);
 
   // ── HUB: página-base com as áreas do evento ──────────────────────────
   if (!group) {
@@ -511,16 +505,24 @@ export default function Dashboard() {
               {activeTab === 'savethedate' && (isTabLocked('savethedate') ? lockedNotice('savethedate') : <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />)}
               {activeTab === 'guests' && (isTabLocked('guests') ? lockedNotice('guests') : <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />)}
               {activeTab === 'seating' && (isTabLocked('seating') ? lockedNotice('seating') : <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />)}
-              {activeTab === 'moments' && (
-                <MomentsModule
-                  key={group === 'guestbook' ? 'moments-guestbook' : 'moments-media'}
-                  initialTab={group === 'guestbook' ? 'guestbook' : 'media'}
+              {activeTab === 'photosharing' && (
+                <PhotoSharingModule
                   invitationId={formData.id}
                   slug={params.slug as string}
                   canEdit={canEdit}
                   unlockedModules={unlockedModules}
                   isSuperAdmin={isSuperAdmin}
-                  dict={dictionaries[locale]?.MomentsModule || dictionaries.pt.MomentsModule}
+                  dict={dictionaries[locale]?.PhotoSharingModule || dictionaries.pt.PhotoSharingModule}
+                />
+              )}
+              {activeTab === 'guestbook' && (
+                <GuestbookModule
+                  invitationId={formData.id}
+                  slug={params.slug as string}
+                  canEdit={canEdit}
+                  unlockedModules={unlockedModules}
+                  isSuperAdmin={isSuperAdmin}
+                  dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />
               )}
               {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}

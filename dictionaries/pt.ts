@@ -239,7 +239,8 @@ const pt = {
       "savethedate": "Save the Date",
       "guests": "Lista",
       "seating": "Mesas",
-      "moments": "Momentos e Guestbook"
+      "photosharing": "Photo Sharing",
+      "guestbook": "Guestbook"
     },
     "hubTitle": "O que quer gerir?",
     "hubSubtitle": "Escolha uma área para começar",
@@ -748,54 +749,69 @@ const pt = {
       "messagePrefix": "Mensagem"
     }
   },
-  "MomentsModule": {
-    "cards": {
-      "photoSharingTitle": "Página Pública de Photo Sharing",
-      "photoSharingSubtitle": "Partilha de fotos e videos entre convidados",
-      "guestbookTitle": "Página de Guestbook",
-      "guestbookSubtitle": "Deixe que os seus convidados lhe enviem uma mensagem especial em texto, voz ou video",
-      "liveWallTitle": "Live Wall",
-      "liveWallSubtitle": "Slide onde são partilhadas as fotos e videos carregadas pelos convidados na Página Pública de Photo Sharing",
-      "openDirect": "Abrir Direto",
-      "copyLink": "Copiar Link",
-      "galleryLinkCopied": "Link da Galeria copiado!",
-      "guestbookLinkCopied": "Link do Guestbook copiado!",
-      "liveWallLinkCopied": "Link do Live Wall copiado!"
+  "PhotoSharingModule": {
+    "gallery": {
+      "title": "Página Pública de Photo Sharing",
+      "subtitle": "Partilha de fotos e videos entre convidados",
+      "linkCopied": "Link da Galeria copiado!"
     },
+    "liveWall": {
+      "title": "Live Wall",
+      "subtitle": "Slide onde são partilhadas as fotos e videos carregadas pelos convidados na Página Pública de Photo Sharing",
+      "linkCopied": "Link do Live Wall copiado!"
+    },
+    "openDirect": "Abrir Direto",
+    "copyLink": "Copiar Link",
     "profile": {
       "title": "Gestão de Conteúdos",
       "subtitle": "Personalize a foto de perfil das galerias e gira os ficheiros",
-      "publicShares": "Partilhas Públicas",
-      "guestbookMessages": "Mensagens Guestbook"
-    },
-    "tabs": {
-      "gallery": "Galeria Pública",
-      "guestbook": "Guestbook Privado"
+      "publicShares": "Partilhas Públicas"
     },
     "media": {
       "gridLabel": "Grelha de Momentos",
       "zipBtn": "ZIP"
     },
-    "guestbook": {
-      "textTab": "Textos",
-      "audioTab": "Áudios",
-      "videoTab": "Vídeos",
-      "zipTabBtn": "ZIP da aba",
-      "anonymousAuthor": "Anónimo",
-      "guestAuthor": "Convidado",
-      "audioPrivate": "Áudio Privado",
-      "deleteConfirm": "Apagar?"
-    },
     "lightbox": {
       "saveBtn": "Guardar"
     },
     "alerts": {
-      "noMessagesZip": "Não há mensagens para descarregar nesta aba.",
       "zipError": "Erro ZIP",
-      "guestbookZipError": "Erro ao gerar ZIP do Guestbook",
       "downloadError": "Erro ao baixar ficheiro individual.",
       "deleteMediaConfirm": "Tem a certeza que deseja apagar este ficheiro permanentemente?",
-      "deleteServerError": "Erro ao apagar no servidor: ",
+      "deleteServerError": "Erro ao apagar no servidor: "
+    },
+    "locked": {
+      "title": "Photo Sharing & Live Wall ainda não está ativo",
+      "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "contactBtn": "Contactar"
+    }
+  },
+  "GuestbookModule": {
+    "card": {
+      "title": "Página de Guestbook",
+      "subtitle": "Deixe que os seus convidados lhe enviem uma mensagem especial em texto, voz ou video",
+      "linkCopied": "Link do Guestbook copiado!"
+    },
+    "openDirect": "Abrir Direto",
+    "copyLink": "Copiar Link",
+    "profile": {
+      "title": "Mensagens dos Convidados",
+      "subtitle": "Reveja e faça a gestão de todas as mensagens recebidas",
+      "messages": "Mensagens"
+    },
+    "tabs": {
+      "textTab": "Textos",
+      "audioTab": "Áudios",
+      "videoTab": "Vídeos",
+      "zipTabBtn": "ZIP da aba"
+    },
+    "anonymousAuthor": "Anónimo",
+    "guestAuthor": "Convidado",
+    "audioPrivate": "Áudio Privado",
+    "deleteConfirm": "Apagar?",
+    "alerts": {
+      "noMessagesZip": "Não há mensagens para descarregar nesta aba.",
+      "guestbookZipError": "Erro ao gerar ZIP do Guestbook",
       "deleteGuestbookConfirm": "Apagar permanentemente esta mensagem?",
       "deleteGuestbookError": "Erro ao apagar."
     },
@@ -806,10 +822,8 @@ const pt = {
       "datePrefix": "Data"
     },
     "locked": {
-      "photoTitle": "Photo Sharing & Live Wall ainda não está ativo",
-      "photoMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
-      "guestbookTitle": "Guestbook ainda não está ativo",
-      "guestbookMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "title": "Guestbook ainda não está ativo",
+      "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
       "contactBtn": "Contactar"
     }
   },
