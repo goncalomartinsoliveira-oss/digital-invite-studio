@@ -392,9 +392,13 @@ const en = {
     "savingsLabel": "Save",
     "buyBtn": "Buy bundle",
     "bundles": {
-      "essencial": {
-        "name": "Essentials Bundle",
-        "desc": "The invitation and guest management, all in one bundle."
+      "convite": {
+        "name": "Invitation Bundle",
+        "desc": "Save the Date, wedding invitation and guest management with seating plan."
+      },
+      "momentos": {
+        "name": "Moments Bundle",
+        "desc": "Photo Sharing, Live Wall and Guestbook — everything to relive the big day."
       },
       "completo": {
         "name": "Complete Bundle",
@@ -1145,53 +1149,11 @@ const en = {
     "error": "Error updating the password. The link may have expired."
   },
   "PricingPage": {
-    "title": "Choose the Perfect Plan",
-    "desc": "One-time payment per event. No monthly subscriptions. Choose the experience that best suits your big day.",
-    "bestseller": "Most Popular",
-    "plans": {
-      "essential": {
-        "name": "Essential",
-        "price": "49€",
-        "desc": "The essentials to start your digital journey.",
-        "features": [
-          "Personalized Wedding Website",
-          "Base Invitation Templates",
-          "Smart RSVP",
-          "Guest List Management",
-          "Email Support",
-          "Discreet Watermark"
-        ],
-        "btn": "Start Now"
-      },
-      "premium": {
-        "name": "Premium",
-        "price": "119€",
-        "desc": "The complete solution for stress-free organization.",
-        "features": [
-          "Everything in Essential",
-          "Visual Seating Plan Editor",
-          "Sharing Page for Organizers",
-          "Digital Menu",
-          "Full Watermark Removal",
-          "Priority Support"
-        ],
-        "btn": "Choose Premium"
-      },
-      "luxury": {
-        "name": "Luxury Experience",
-        "price": "199€",
-        "desc": "The ultimate digital experience for your event day.",
-        "features": [
-          "Everything in Premium",
-          "Live Wall (Live Photos)",
-          "Digital Guestbook (Voice & Video)",
-          "Photo Sharing for Guests",
-          "Extra Cloud Storage (5GB)",
-          "Exclusive Website Templates"
-        ],
-        "btn": "Choose Luxury"
-      }
-    },
+    "title": "Choose the Perfect Bundle",
+    "desc": "One-time payment per event. No monthly subscriptions. Choose the modules that best suit your big day.",
+    "bestseller": "Best Value",
+    "startBtn": "Start Now",
+    "alaCarteDesc": "Prefer to buy only what you need? We also sell each module separately, starting at {price} — pick exactly what you want after creating your event.",
     "b2b": {
       "title": "Are you an Event Planner?",
       "desc": "We offer special White Label solutions for Wedding Planners and Agencies. Use our technology with your own branding and benefit from wholesale pricing.",

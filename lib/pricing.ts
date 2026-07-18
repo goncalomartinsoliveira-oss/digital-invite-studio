@@ -1,13 +1,15 @@
 import { ALL_MODULE_IDS, type ModuleId } from "./modules";
 
-// ⚠️ PREÇOS DE EXEMPLO — ajuste à vontade, é só isto que precisa de mudar.
-// Valores em cêntimos de euro (ex.: 3900 = 39,00€).
+// ⚠️ PREÇOS — ajuste à vontade, é só isto que precisa de mudar. Tanto o
+// checkout real (Stripe) como a página pública de Pricing lêem estes
+// valores, por isso nunca ficam dessincronizados entre si.
+// Valores em cêntimos de euro (ex.: 5900 = 59,00€).
 export const MODULE_PRICES_CENTS: Record<ModuleId, number> = {
-  save_the_date: 900,
-  invite: 3900,
-  guests_seating: 2900,
-  photo_sharing: 2500,
-  guestbook: 1500,
+  save_the_date: 1500,
+  invite: 5900,
+  guests_seating: 3900,
+  photo_sharing: 3500,
+  guestbook: 1900,
 };
 
 export type Bundle = {
@@ -17,18 +19,26 @@ export type Bundle = {
 };
 
 // Uma bundle é só um preset de módulos + preço fixo (mais barato que a soma
-// à peça). Os nomes/descrições ficam nos dicionários (dictionaries/pt.ts,
-// en.ts → chave "Pricing.bundles.<id>"), aqui só o "esqueleto" comercial.
+// à peça). Os nomes/descrições ficam nos dicionários
+// (dictionaries/pt.ts, en.ts → "BundleOffers.bundles.<id>"), aqui só o
+// "esqueleto" comercial. "convite" + "momentos" cobrem exatamente os
+// mesmos 5 módulos que "completo" — dá para vender às duas metades ou
+// tudo de uma vez.
 export const BUNDLES: Bundle[] = [
   {
-    id: "essencial",
-    moduleIds: ["invite", "guests_seating"],
-    priceCents: 5900,
+    id: "convite",
+    moduleIds: ["save_the_date", "invite", "guests_seating"],
+    priceCents: 8900,
+  },
+  {
+    id: "momentos",
+    moduleIds: ["photo_sharing", "guestbook"],
+    priceCents: 4400,
   },
   {
     id: "completo",
     moduleIds: ALL_MODULE_IDS,
-    priceCents: 8900,
+    priceCents: 11900,
   },
 ];
 
@@ -48,4 +58,8 @@ export function bundleFullPriceCents(bundle: Bundle): number {
 
 export function bundleSavingsCents(bundle: Bundle): number {
   return Math.max(0, bundleFullPriceCents(bundle) - bundle.priceCents);
+}
+
+export function cheapestModulePriceCents(): number {
+  return Math.min(...Object.values(MODULE_PRICES_CENTS));
 }

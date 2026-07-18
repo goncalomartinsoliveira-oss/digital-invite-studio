@@ -392,9 +392,13 @@ const pt = {
     "savingsLabel": "Poupa",
     "buyBtn": "Comprar pacote",
     "bundles": {
-      "essencial": {
-        "name": "Pacote Essencial",
-        "desc": "O convite e a gestão de convidados, tudo num só pacote."
+      "convite": {
+        "name": "Pacote Convite",
+        "desc": "Save the Date, convite de casamento e gestão de convidados com plano de mesas."
+      },
+      "momentos": {
+        "name": "Pacote Momentos",
+        "desc": "Photo Sharing, Live Wall e Guestbook — tudo para reviver o dia do evento."
       },
       "completo": {
         "name": "Pacote Completo",
@@ -1145,53 +1149,11 @@ const pt = {
     "error": "Erro ao atualizar a password. O link pode ter expirado."
   },
   "PricingPage": {
-    "title": "Escolha o Plano Perfeito",
-    "desc": "Pagamento único por evento. Sem subscrições mensais. Escolha a experiência que melhor se adapta ao seu grande dia.",
-    "bestseller": "Mais Escolhido",
-    "plans": {
-      "essential": {
-        "name": "Essencial",
-        "price": "49€",
-        "desc": "O essencial para começar a sua jornada digital.",
-        "features": [
-          "Website de Casamento Personalizado",
-          "Modelos de Convite Base",
-          "Smart RSVP (Confirmações)",
-          "Gestão de Lista de Convidados",
-          "Suporte via Email",
-          "Marca de água discreta"
-        ],
-        "btn": "Começar Agora"
-      },
-      "premium": {
-        "name": "Premium",
-        "price": "119€",
-        "desc": "A solução completa para uma organização sem stress.",
-        "features": [
-          "Tudo do Plano Essencial",
-          "Editor de Seating Plan Visual",
-          "Página de Partilha com Organizadores",
-          "Ementa Digital",
-          "Remoção total de marca de água",
-          "Prioridade no Suporte"
-        ],
-        "btn": "Escolher Premium"
-      },
-      "luxury": {
-        "name": "Experiência Luxo",
-        "price": "199€",
-        "desc": "A derradeira experiência digital para o dia do seu evento.",
-        "features": [
-          "Tudo do Plano Premium",
-          "Live Wall (Fotos em Direto)",
-          "Digital Guestbook (Voz e Vídeo)",
-          "Photo Sharing para Convidados",
-          "Armazenamento Cloud Extra (5GB)",
-          "Modelos de Website Exclusivos"
-        ],
-        "btn": "Escolher Luxo"
-      }
-    },
+    "title": "Escolha o Pacote Perfeito",
+    "desc": "Pagamento único por evento. Sem subscrições mensais. Escolha os módulos que melhor se adaptam ao seu grande dia.",
+    "bestseller": "Melhor Valor",
+    "startBtn": "Começar Agora",
+    "alaCarteDesc": "Prefere só o que precisa? Também vendemos cada módulo em separado, a partir de {price} — escolha exatamente o que quer depois de criar o seu evento.",
     "b2b": {
       "title": "É Organizador de Eventos?",
       "desc": "Oferecemos soluções especiais de White Label para Wedding Planners e Agências. Utilize a nossa tecnologia com a sua própria marca e beneficie de preços de revenda.",

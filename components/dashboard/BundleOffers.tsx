@@ -50,7 +50,7 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
         <h3 className="font-serif text-2xl text-ink">{dict.title}</h3>
         <p className="text-gray-400 text-sm mt-1">{dict.subtitle}</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {offers.map(bundle => {
           const meta = dict.bundles[bundle.id];
           const savings = bundleSavingsCents(bundle);
