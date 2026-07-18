@@ -21,7 +21,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 
 ## Produto
 - [ ] Forma de prolongar um evento além dos 60 dias (pagamento extra para estender o prazo)
-- [ ] Onboarding/tour guiado para contas novas
+- [x] Onboarding/tour guiado para contas novas
 
 ## Marketing / Crescimento
 - [ ] Melhorar SEO das páginas de marketing (meta tags, sitemap, etc.)
