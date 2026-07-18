@@ -35,6 +35,8 @@ import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
+import { MODULE_PRICES_CENTS } from "@/lib/pricing";
+import { startModuleCheckout, formatPriceCents } from "@/lib/checkout";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -77,6 +79,7 @@ export default function Dashboard() {
 
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [buyingModule, setBuyingModule] = useState<string | null>(null);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
 
@@ -217,6 +220,15 @@ export default function Dashboard() {
     return !isSuperAdmin && !isModuleUnlocked(unlockedModules, moduleId);
   };
   const moduleNamesDict = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
+  const handleBuyModule = async (moduleId: string) => {
+    setBuyingModule(moduleId);
+    try {
+      await startModuleCheckout({ invitationId: formData.id, slug: formData.slug, locale, moduleId });
+    } catch (err: any) {
+      alert(err.message || dict.moduleLockedMessage);
+      setBuyingModule(null);
+    }
+  };
   const lockedNotice = (tabId: DashboardTab) => {
     const moduleId = TAB_MODULE[tabId];
     const moduleName = moduleId ? moduleNamesDict[moduleId] : "";
@@ -226,6 +238,10 @@ export default function Dashboard() {
         message={dict.moduleLockedMessage}
         contactUrl={brand.contactUrl ?? `/${locale}/contact`}
         contactLabel={dict.moduleLockedContactBtn}
+        buyLabel={dict.moduleBuyBtn}
+        priceLabel={moduleId ? formatPriceCents(MODULE_PRICES_CENTS[moduleId], locale) : undefined}
+        onBuy={moduleId ? () => handleBuyModule(moduleId) : undefined}
+        buying={buyingModule === moduleId}
       />
     );
   };

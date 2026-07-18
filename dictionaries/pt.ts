@@ -222,6 +222,7 @@ const pt = {
     "moduleLockedMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
     "moduleLockedContactBtn": "Contactar",
     "moduleLockedBadge": "Bloqueado",
+    "moduleBuyBtn": "Comprar",
     "saving": "A guardar...",
     "saved": "Guardado",
     "copyLink": "Copiar Link",
@@ -783,7 +784,8 @@ const pt = {
     "locked": {
       "title": "Photo Sharing & Live Wall ainda não está ativo",
       "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
-      "contactBtn": "Contactar"
+      "contactBtn": "Contactar",
+      "buyBtn": "Comprar"
     }
   },
   "GuestbookModule": {
@@ -824,7 +826,8 @@ const pt = {
     "locked": {
       "title": "Guestbook ainda não está ativo",
       "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
-      "contactBtn": "Contactar"
+      "contactBtn": "Contactar",
+      "buyBtn": "Comprar"
     }
   },
   "SeatingModule": {

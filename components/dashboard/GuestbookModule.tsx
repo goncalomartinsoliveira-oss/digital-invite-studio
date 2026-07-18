@@ -9,6 +9,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import JSZip from 'jszip';
 import { isModuleUnlocked } from '@/lib/modules';
 import { downloadQRAsPng, downloadQRAsSvg } from '@/lib/qrDownload';
+import { MODULE_PRICES_CENTS } from '@/lib/pricing';
+import { startModuleCheckout, formatPriceCents } from '@/lib/checkout';
 import LockedModuleNotice from './LockedModuleNotice';
 import { useBrand } from '@/components/site/BrandProvider';
 
@@ -27,7 +29,7 @@ interface GuestbookModuleDict {
     deleteGuestbookConfirm: string; deleteGuestbookError: string;
   };
   zipContent: { guestbookHeader: string; messagePrefix: string; authorPrefix: string; datePrefix: string };
-  locked: { title: string; message: string; contactBtn: string };
+  locked: { title: string; message: string; contactBtn: string; buyBtn: string };
 }
 
 interface GuestbookModuleProps {
@@ -45,6 +47,17 @@ export default function GuestbookModule({ invitationId, slug, canEdit, unlockedM
   const brand = useBrand();
   const contactUrl = brand.contactUrl ?? `/${locale}/contact`;
   const locked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'guestbook');
+  const [buying, setBuying] = useState(false);
+
+  const handleBuy = async () => {
+    setBuying(true);
+    try {
+      await startModuleCheckout({ invitationId, slug, locale, moduleId: 'guestbook' });
+    } catch (err: any) {
+      alert(err.message || dict.locked.message);
+      setBuying(false);
+    }
+  };
 
   const [mensagens, setMensagens] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -129,7 +142,18 @@ export default function GuestbookModule({ invitationId, slug, canEdit, unlockedM
   };
 
   if (locked) {
-    return <LockedModuleNotice title={dict.locked.title} message={dict.locked.message} contactUrl={contactUrl} contactLabel={dict.locked.contactBtn} />;
+    return (
+      <LockedModuleNotice
+        title={dict.locked.title}
+        message={dict.locked.message}
+        contactUrl={contactUrl}
+        contactLabel={dict.locked.contactBtn}
+        buyLabel={dict.locked.buyBtn}
+        priceLabel={formatPriceCents(MODULE_PRICES_CENTS.guestbook, locale)}
+        onBuy={handleBuy}
+        buying={buying}
+      />
+    );
   }
 
   if (loading) return <div className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-brand" size={32} /></div>;

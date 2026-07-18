@@ -12,6 +12,8 @@ import JSZip from 'jszip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isModuleUnlocked } from '@/lib/modules';
 import { downloadQRAsPng, downloadQRAsSvg } from '@/lib/qrDownload';
+import { MODULE_PRICES_CENTS } from '@/lib/pricing';
+import { startModuleCheckout, formatPriceCents } from '@/lib/checkout';
 import LockedModuleNotice from './LockedModuleNotice';
 import { useBrand } from '@/components/site/BrandProvider';
 
@@ -27,7 +29,7 @@ interface PhotoSharingModuleDict {
     zipError: string; downloadError: string;
     deleteMediaConfirm: string; deleteServerError: string;
   };
-  locked: { title: string; message: string; contactBtn: string };
+  locked: { title: string; message: string; contactBtn: string; buyBtn: string };
 }
 
 interface PhotoSharingModuleProps {
@@ -45,6 +47,17 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
   const brand = useBrand();
   const contactUrl = brand.contactUrl ?? `/${locale}/contact`;
   const locked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'photo_sharing');
+  const [buying, setBuying] = useState(false);
+
+  const handleBuy = async () => {
+    setBuying(true);
+    try {
+      await startModuleCheckout({ invitationId, slug, locale, moduleId: 'photo_sharing' });
+    } catch (err: any) {
+      alert(err.message || dict.locked.message);
+      setBuying(false);
+    }
+  };
 
   const [fotos, setFotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -148,7 +161,18 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
   const goPrev = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex - 1 + fotos.length) % fotos.length); };
 
   if (locked) {
-    return <LockedModuleNotice title={dict.locked.title} message={dict.locked.message} contactUrl={contactUrl} contactLabel={dict.locked.contactBtn} />;
+    return (
+      <LockedModuleNotice
+        title={dict.locked.title}
+        message={dict.locked.message}
+        contactUrl={contactUrl}
+        contactLabel={dict.locked.contactBtn}
+        buyLabel={dict.locked.buyBtn}
+        priceLabel={formatPriceCents(MODULE_PRICES_CENTS.photo_sharing, locale)}
+        onBuy={handleBuy}
+        buying={buying}
+      />
+    );
   }
 
   if (loading) return <div className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-brand" size={32} /></div>;
