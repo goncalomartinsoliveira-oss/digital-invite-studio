@@ -916,7 +916,9 @@ const en = {
       "title": "Photo Sharing & Live Wall is not active yet",
       "message": "This module hasn't been activated for this event yet. Contact us to add it.",
       "contactBtn": "Contact Us",
-      "buyBtn": "Buy"
+      "buyBtn": "Buy",
+      "couponToggleLabel": "I have a promo code",
+      "couponPlaceholder": "CODE"
     }
   },
   "GuestbookModule": {
@@ -958,7 +960,9 @@ const en = {
       "title": "Guestbook is not active yet",
       "message": "This module hasn't been activated for this event yet. Contact us to add it.",
       "contactBtn": "Contact Us",
-      "buyBtn": "Buy"
+      "buyBtn": "Buy",
+      "couponToggleLabel": "I have a promo code",
+      "couponPlaceholder": "CODE"
     }
   },
   "SeatingModule": {

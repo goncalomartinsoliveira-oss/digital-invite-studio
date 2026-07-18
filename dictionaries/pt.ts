@@ -916,7 +916,9 @@ const pt = {
       "title": "Photo Sharing & Live Wall ainda não está ativo",
       "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
       "contactBtn": "Contactar",
-      "buyBtn": "Comprar"
+      "buyBtn": "Comprar",
+      "couponToggleLabel": "Tenho um código promocional",
+      "couponPlaceholder": "CÓDIGO"
     }
   },
   "GuestbookModule": {
@@ -958,7 +960,9 @@ const pt = {
       "title": "Guestbook ainda não está ativo",
       "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
       "contactBtn": "Contactar",
-      "buyBtn": "Comprar"
+      "buyBtn": "Comprar",
+      "couponToggleLabel": "Tenho um código promocional",
+      "couponPlaceholder": "CÓDIGO"
     }
   },
   "SeatingModule": {

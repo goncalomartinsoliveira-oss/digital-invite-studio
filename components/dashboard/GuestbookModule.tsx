@@ -29,7 +29,7 @@ interface GuestbookModuleDict {
     deleteGuestbookConfirm: string; deleteGuestbookError: string;
   };
   zipContent: { guestbookHeader: string; messagePrefix: string; authorPrefix: string; datePrefix: string };
-  locked: { title: string; message: string; contactBtn: string; buyBtn: string };
+  locked: { title: string; message: string; contactBtn: string; buyBtn: string; couponToggleLabel?: string; couponPlaceholder?: string };
 }
 
 interface GuestbookModuleProps {
@@ -49,10 +49,10 @@ export default function GuestbookModule({ invitationId, slug, canEdit, unlockedM
   const locked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'guestbook');
   const [buying, setBuying] = useState(false);
 
-  const handleBuy = async () => {
+  const handleBuy = async (couponCode?: string) => {
     setBuying(true);
     try {
-      await startModuleCheckout({ invitationId, slug, locale, moduleId: 'guestbook' });
+      await startModuleCheckout({ invitationId, slug, locale, moduleId: 'guestbook', couponCode });
     } catch (err: any) {
       alert(err.message || dict.locked.message);
       setBuying(false);
@@ -152,6 +152,8 @@ export default function GuestbookModule({ invitationId, slug, canEdit, unlockedM
         priceLabel={formatPriceCents(MODULE_PRICES_CENTS.guestbook, locale)}
         onBuy={handleBuy}
         buying={buying}
+        couponToggleLabel={dict.locked.couponToggleLabel}
+        couponPlaceholder={dict.locked.couponPlaceholder}
       />
     );
   }

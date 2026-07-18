@@ -29,7 +29,7 @@ interface PhotoSharingModuleDict {
     zipError: string; downloadError: string;
     deleteMediaConfirm: string; deleteServerError: string;
   };
-  locked: { title: string; message: string; contactBtn: string; buyBtn: string };
+  locked: { title: string; message: string; contactBtn: string; buyBtn: string; couponToggleLabel?: string; couponPlaceholder?: string };
 }
 
 interface PhotoSharingModuleProps {
@@ -49,10 +49,10 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
   const locked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'photo_sharing');
   const [buying, setBuying] = useState(false);
 
-  const handleBuy = async () => {
+  const handleBuy = async (couponCode?: string) => {
     setBuying(true);
     try {
-      await startModuleCheckout({ invitationId, slug, locale, moduleId: 'photo_sharing' });
+      await startModuleCheckout({ invitationId, slug, locale, moduleId: 'photo_sharing', couponCode });
     } catch (err: any) {
       alert(err.message || dict.locked.message);
       setBuying(false);
@@ -171,6 +171,8 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
         priceLabel={formatPriceCents(MODULE_PRICES_CENTS.photo_sharing, locale)}
         onBuy={handleBuy}
         buying={buying}
+        couponToggleLabel={dict.locked.couponToggleLabel}
+        couponPlaceholder={dict.locked.couponPlaceholder}
       />
     );
   }
