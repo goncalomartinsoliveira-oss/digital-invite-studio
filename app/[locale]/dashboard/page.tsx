@@ -120,12 +120,16 @@ export default function DashboardHub() {
       let sharedInvitesFound: any[] = [];
 
       if (collabs.data && collabs.data.length > 0) {
+        // Sem filtro de marca aqui: um convite de colaborador é uma permissão
+        // explícita a UM evento específico, não um acesso de portfólio — tem
+        // de aparecer mesmo que o colaborador esteja a navegar noutra marca
+        // (ex.: um convidado/cliente final que acede pelo domínio da DIS,
+        // convidado para um evento de um parceiro).
         const sharedIds = collabs.data.map(c => c.invitation_id);
         const { data: sharedData } = await supabase
           .from("invitations")
           .select("*")
-          .in("id", sharedIds)
-          .eq("brand_id", effBrandId);
+          .in("id", sharedIds);
 
         sharedInvitesFound = sharedData || [];
       }
