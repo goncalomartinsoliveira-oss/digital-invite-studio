@@ -125,9 +125,12 @@ export default function Dashboard() {
       const isSuper = !!sa;
       setIsSuperAdmin(isSuper);
 
-      // Acesso de agência: um membro da marca do evento pode geri-lo.
+      // Acesso de agência: um membro da marca do evento pode geri-lo — testado
+      // sempre, mesmo que também seja o "dono" da conta (ex.: o próprio
+      // parceiro que criou o evento em nome do casal fica como user_email,
+      // mas continua a ser staff da marca para efeitos de preços/checkout).
       let agencyRole: "owner" | "editor" | null = null;
-      if (!isOwner && !collab && !isSuper && invite.brand_id) {
+      if (!isSuper && invite.brand_id) {
         const { data: member } = await supabase
           .from("brand_members")
           .select("role")
