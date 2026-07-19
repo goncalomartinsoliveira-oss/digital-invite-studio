@@ -39,9 +39,12 @@ export default function Navbar({ brand }: { brand?: Brand }) {
   const locale = (segments[1] === 'en' || segments[1] === 'pt') ? segments[1] as Locale : 'pt';
   const dict = dictionaries[locale]?.Navbar || dictionaries.pt.Navbar;
 
+  const isDisBrand = !brand || brand.id === "dis";
+
   const navLinks = [
     { name: dict.features, href: `/${locale}/features`, external: false },
-    { name: dict.pricing, href: `/${locale}/pricing`, external: false },
+    // Preços é conteúdo da DIS — não faz sentido num domínio de parceiro.
+    ...(isDisBrand ? [{ name: dict.pricing, href: `/${locale}/pricing`, external: false }] : []),
     // Contacto: parceiros (com contactUrl) remetem para o seu próprio site
     { name: dict.contact, href: brand?.contactUrl ?? `/${locale}/contact`, external: !!brand?.contactUrl },
   ];
@@ -153,7 +156,7 @@ export default function Navbar({ brand }: { brand?: Brand }) {
             )}
 
             <Link
-              href={`/${locale}/${isLoggedIn ? "dashboard" : "pricing"}`}
+              href={`/${locale}/${isLoggedIn || !isDisBrand ? "dashboard" : "pricing"}`}
               className="bg-brand text-gold-soft border-2 border-brand px-10 py-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] hover:bg-transparent hover:text-brand transition-all duration-500 transform hover:-translate-y-0.5 shadow-lg active:scale-95"
             >
               {isLoggedIn ? dict.goToDashboard : dict.startNow}
@@ -224,7 +227,7 @@ export default function Navbar({ brand }: { brand?: Brand }) {
             {!isLoggedIn && (
               <Link href={`/${locale}/login`} onClick={() => setIsOpen(false)} className="block text-[13px] font-semibold uppercase tracking-[0.2em] text-brand">{dict.login}</Link>
             )}
-            <Link href={`/${locale}/${isLoggedIn ? "dashboard" : "pricing"}`} onClick={() => setIsOpen(false)} className="block bg-brand text-gold-soft text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
+            <Link href={`/${locale}/${isLoggedIn || !isDisBrand ? "dashboard" : "pricing"}`} onClick={() => setIsOpen(false)} className="block bg-brand text-gold-soft text-center py-5 text-[11px] font-semibold uppercase tracking-[0.2em] rounded-full shadow-md">
               {isLoggedIn ? dict.goToDashboard : dict.startNow}
             </Link>
           </div>

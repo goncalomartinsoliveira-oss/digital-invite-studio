@@ -1,11 +1,12 @@
 "use client";
-import React from "react";
-import { useParams } from "next/navigation";
+import React, { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Check, Globe, Sparkles, LayoutDashboard, Users, Package, Palette, Building2
+  ArrowRight, Check, Globe, Sparkles, LayoutDashboard, Users, Package, Palette, Building2, Loader2
 } from "lucide-react";
+import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás)
 import pt from "../../../dictionaries/pt";
@@ -15,8 +16,24 @@ const dictionaries = { pt, en };
 
 export default function PartnersPage() {
   const params = useParams();
+  const router = useRouter();
+  const brand = useBrand();
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
   const dict = dictionaries[locale]?.PartnersPage || dictionaries.pt.PartnersPage;
+
+  // Proposta B2B "torne-se parceiro DIS" não faz sentido num domínio que já
+  // é de um parceiro (marca própria).
+  useEffect(() => {
+    if (brand.id !== "dis") router.replace(`/${locale}`);
+  }, [brand.id, locale, router]);
+
+  if (brand.id !== "dis") {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Loader2 className="animate-spin text-brand" size={32} />
+      </div>
+    );
+  }
 
   const featureIcons = [LayoutDashboard, Users, Package, Palette];
   const featureKeys = ["dashboard", "team", "fullProduct", "branding"] as const;

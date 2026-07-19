@@ -1,12 +1,13 @@
 "use client";
-import React from "react";
-import { useParams } from "next/navigation";
+import React, { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Check, CalendarHeart, Mail, Users, Camera, MessageSquareHeart } from "lucide-react";
+import { Check, CalendarHeart, Mail, Users, Camera, MessageSquareHeart, Loader2 } from "lucide-react";
 import { ALL_MODULE_IDS, MODULE_DEPENDENCIES, type ModuleId } from "@/lib/modules";
 import { BUNDLES, MODULE_PRICES_CENTS, bundleSavingsCents } from "@/lib/pricing";
 import { formatPriceCents } from "@/lib/checkout";
+import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás)
 import pt from "../../../dictionaries/pt";
@@ -24,8 +25,24 @@ const MODULE_ICONS: Record<ModuleId, React.ReactNode> = {
 
 export default function PricingPage() {
   const params = useParams();
+  const router = useRouter();
+  const brand = useBrand();
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
   const dict = dictionaries[locale]?.PricingPage || dictionaries.pt.PricingPage;
+
+  // Preços e o pitch de white label são coisa da DIS — num domínio de
+  // parceiro (marca própria), esta página não faz sentido nenhum.
+  useEffect(() => {
+    if (brand.id !== "dis") router.replace(`/${locale}`);
+  }, [brand.id, locale, router]);
+
+  if (brand.id !== "dis") {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Loader2 className="animate-spin text-brand" size={32} />
+      </div>
+    );
+  }
   const bundleDict = dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers;
   const moduleNames = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
   const groupsDict = (dictionaries[locale]?.Dashboard || dictionaries.pt.Dashboard).groups;
