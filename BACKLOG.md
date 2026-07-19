@@ -30,6 +30,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 ## Marketing / Crescimento
 - [ ] Melhorar SEO das páginas de marketing (meta tags, sitemap, etc.)
 - [ ] Configurar Google Analytics e Google Search Console
+- [ ] Sistema de marketing de afiliados para parcerias com associações de wedding planners — decidir entre sistema próprio (reaproveitar a lógica de cupões: código + % de comissão, sem portal nem pagamentos automáticos) ou ferramenta externa (ex.: Rewardful, FirstPromoter — feitas para checkout Stripe, dão portal ao afiliado e pagamento automático via PayPal, mas têm custo mensal)
 
 ## Operacional / QA
 - [x] Confirmar consistência entre `www.` e domínio sem `www` em todos os links internos (já apanhámos um erro 307 no webhook por causa disto) — auditado; só havia 2 links fixos ao domínio (nos PDFs exportados de convidados/mesas), corrigidos para `www.` diretamente. O resto (checkout, partilha, QR codes) já usa sempre o domínio real de onde o pedido vem, nunca fixo
