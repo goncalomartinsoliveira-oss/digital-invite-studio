@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatPriceCents } from "@/lib/checkout";
-import { Wallet, TrendingUp, Users, Building2, Loader2, CalendarClock, ChevronRight, X, ExternalLink, Mail, Lock } from "lucide-react";
+import { Wallet, TrendingUp, Users, Building2, Loader2, CalendarClock, ChevronRight, X, ExternalLink, Mail, Lock, Search } from "lucide-react";
 import type { ModuleId } from "@/lib/modules";
 
 interface PartnerRow {
@@ -75,6 +75,8 @@ export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent 
     purchases: en ? "Purchases" : "Compras",
     open: en ? "Open" : "Abrir",
     noEvents: en ? "No accounts for this partner yet." : "Ainda não há contas para este parceiro.",
+    noResults: en ? "No accounts match your search." : "Nenhuma conta corresponde à pesquisa.",
+    searchPh: en ? "Search by couple, slug or email..." : "Pesquisar por casal, slug ou email...",
     totalRow: en ? "Total" : "Total",
     noModules: en ? "none" : "nenhum",
   };
@@ -83,6 +85,7 @@ export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -119,6 +122,20 @@ export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent 
       .filter(ev => ev.brandId === selectedPartnerId)
       .sort((a, b) => b.revenueCents - a.revenueCents);
   }, [data, selectedPartnerId]);
+
+  const filteredEvents = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return selectedEvents;
+    return selectedEvents.filter(ev => {
+      const haystack = [ev.groomName, ev.brideName, ev.slug, ev.userEmail].filter(Boolean).join(" ").toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [selectedEvents, search]);
+
+  const selectPartner = (id: string) => {
+    setSelectedPartnerId(prev => (prev === id ? null : id));
+    setSearch("");
+  };
 
   const kpiCard = (icon: React.ReactNode, label: string, value: string) => (
     <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center gap-4">
@@ -172,7 +189,7 @@ export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent 
                   {data.partners.map(p => (
                     <tr
                       key={p.id}
-                      onClick={() => setSelectedPartnerId(prev => (prev === p.id ? null : p.id))}
+                      onClick={() => selectPartner(p.id)}
                       className={`border-b border-gray-50 last:border-0 cursor-pointer transition-colors ${selectedPartnerId === p.id ? "bg-brand/5" : "hover:bg-cream/40"}`}
                     >
                       <td className="px-6 py-4 text-sm font-semibold text-ink">{p.name}</td>
@@ -192,15 +209,30 @@ export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent 
 
           {selectedPartner && (
             <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
-              <div className="px-6 py-4 border-b border-gray-100 bg-cream/50 flex items-center justify-between">
-                <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.accountsOf} {selectedPartner.name}</span>
-                <button onClick={() => setSelectedPartnerId(null)} className="text-gray-300 hover:text-red-500 transition-colors inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest">
-                  <X size={13} /> {t.close}
-                </button>
+              <div className="px-6 py-4 border-b border-gray-100 bg-cream/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400 shrink-0">{t.accountsOf} {selectedPartner.name}</span>
+                <div className="flex items-center gap-3">
+                  {selectedEvents.length > 0 && (
+                    <div className="relative">
+                      <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
+                      <input
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder={t.searchPh}
+                        className="pl-8 pr-3 py-2 text-[12px] border border-gray-200 rounded-full outline-none focus:border-brand w-56 sm:w-64"
+                      />
+                    </div>
+                  )}
+                  <button onClick={() => setSelectedPartnerId(null)} className="text-gray-300 hover:text-red-500 transition-colors inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest shrink-0">
+                    <X size={13} /> {t.close}
+                  </button>
+                </div>
               </div>
 
               {selectedEvents.length === 0 ? (
                 <div className="p-10 text-center text-sm text-gray-400">{t.noEvents}</div>
+              ) : filteredEvents.length === 0 ? (
+                <div className="p-10 text-center text-sm text-gray-400">{t.noResults}</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[820px]">
@@ -216,7 +248,7 @@ export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent 
                       </tr>
                     </thead>
                     <tbody>
-                      {selectedEvents.map(ev => (
+                      {filteredEvents.map(ev => (
                         <tr key={ev.id} className="border-b border-gray-50 last:border-0 hover:bg-cream/40 transition-colors">
                           <td className="px-6 py-4">
                             <p className="font-serif text-base text-ink leading-tight">
@@ -257,7 +289,7 @@ export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent 
                       <tr className="bg-cream/30">
                         <td colSpan={5} className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-right">{t.totalRow}</td>
                         <td className="px-6 py-3 text-sm font-serif text-brand text-right">
-                          {formatPriceCents(selectedEvents.reduce((s, ev) => s + ev.revenueCents, 0), locale)}
+                          {formatPriceCents(filteredEvents.reduce((s, ev) => s + ev.revenueCents, 0), locale)}
                         </td>
                         <td></td>
                       </tr>
