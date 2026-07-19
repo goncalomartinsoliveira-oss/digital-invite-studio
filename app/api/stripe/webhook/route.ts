@@ -161,7 +161,7 @@ async function handleChargeRefunded(charge: any) {
 
     const { error: statusUpdateError } = await supabaseAdmin
       .from("payments")
-      .update({ status: newStatus, refunded_at: new Date().toISOString() })
+      .update({ status: newStatus, refunded_at: new Date().toISOString(), amount_refunded_cents: charge.amount_refunded })
       .eq("id", payment.id);
     if (statusUpdateError) throw new Error(`update payments falhou: ${statusUpdateError.message}`);
 

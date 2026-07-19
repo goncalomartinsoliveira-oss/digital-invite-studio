@@ -6,11 +6,12 @@ interface AdminManagementViewProps {
   events: any[];                                   // eventos no âmbito (marca ou todas)
   guestCounts: Record<string, { total: number; confirmed: number }>;
   showBrand: boolean;                              // mostrar coluna de marca (super-admin)
+  brands?: { id: string; name: string }[];          // marcas conhecidas (código + BD), para resolver o nome
   locale: string;
   onOpen: (slug: string) => void;
 }
 
-export default function AdminManagementView({ events, guestCounts, showBrand, locale, onOpen }: AdminManagementViewProps) {
+export default function AdminManagementView({ events, guestCounts, showBrand, brands, locale, onOpen }: AdminManagementViewProps) {
   const en = locale === "en";
   const t = {
     title: en ? "Event management" : "Gestão de eventos",
@@ -18,6 +19,7 @@ export default function AdminManagementView({ events, guestCounts, showBrand, lo
     couple: en ? "Couple" : "Casal",
     brand: en ? "Brand" : "Marca",
     date: en ? "Event date" : "Data do evento",
+    registered: en ? "Registered" : "Registado em",
     status: en ? "Status" : "Estado",
     guests: en ? "Guests" : "Convidados",
     confirmed: en ? "Confirmed" : "Confirmados",
@@ -43,7 +45,8 @@ export default function AdminManagementView({ events, guestCounts, showBrand, lo
       ? { label: t.upcoming, cls: "bg-green-50 text-green-700 border border-green-100" }
       : { label: t.past, cls: "bg-gray-100 text-gray-500" };
   };
-  const brandName = (id?: string) => (id && BRANDS[id]?.name) || id || "—";
+  const brandLookup = new Map((brands || []).map(b => [b.id, b.name]));
+  const brandName = (id?: string) => (id && (brandLookup.get(id) || BRANDS[id]?.name)) || id || "—";
 
   // Ordenar: com data mais próxima primeiro; sem data no fim.
   const sorted = [...events].sort((a, b) => {
@@ -64,12 +67,13 @@ export default function AdminManagementView({ events, guestCounts, showBrand, lo
       ) : (
         <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[640px]">
+            <table className="w-full text-left border-collapse min-w-[780px]">
               <thead>
                 <tr className="border-b border-gray-100 bg-cream/50">
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.couple}</th>
                   {showBrand && <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.brand}</th>}
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.date}</th>
+                  <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.registered}</th>
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.status}</th>
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-center">{t.guests}</th>
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-center">{t.confirmed}</th>
@@ -94,6 +98,7 @@ export default function AdminManagementView({ events, guestCounts, showBrand, lo
                         </td>
                       )}
                       <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{fmtDate(ev.event_date)}</td>
+                      <td className="px-6 py-4 text-[11px] text-gray-400 whitespace-nowrap">{fmtDate(ev.created_at)}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-block text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${st.cls}`}>{st.label}</span>
                       </td>
