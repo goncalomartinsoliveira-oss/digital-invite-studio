@@ -271,7 +271,8 @@ export default function SeatingModule({ invitationId, canEdit, dict }: SeatingMo
     if (!containerRef.current) return;
     setIsExporting(true);
     
-    const websiteUrl = "https://digitalinvitestudio.com"; // O seu site
+    // www, não apex — o apex faz 307 para aqui, e um link direto poupa esse salto.
+    const websiteUrl = "https://www.digitalinvitestudio.com";
 
     try {
       const dataUrl = await toPng(containerRef.current, { 

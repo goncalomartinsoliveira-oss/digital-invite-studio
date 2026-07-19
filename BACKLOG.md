@@ -32,7 +32,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [ ] Configurar Google Analytics e Google Search Console
 
 ## Operacional / QA
-- [ ] Confirmar consistência entre `www.` e domínio sem `www` em todos os links internos (já apanhámos um erro 307 no webhook por causa disto)
+- [x] Confirmar consistência entre `www.` e domínio sem `www` em todos os links internos (já apanhámos um erro 307 no webhook por causa disto) — auditado; só havia 2 links fixos ao domínio (nos PDFs exportados de convidados/mesas), corrigidos para `www.` diretamente. O resto (checkout, partilha, QR codes) já usa sempre o domínio real de onde o pedido vem, nunca fixo
 - [ ] Teste de fumo ponta-a-ponta com uma conta 100% nova, antes de abrir a clientes reais
 
 ## Deixado para mais tarde (decisão já tomada, sem urgência)

@@ -239,7 +239,8 @@ export default function GuestsModule({ guests, setGuests, invitationId, slug, gr
 
   const exportToPDF = async (type: 'confirmed' | 'confirmed_pending' | 'all') => {
     const doc = new jsPDF();
-    const websiteUrl = "https://digitalinvitestudio.com";
+    // www, não apex — o apex faz 307 para aqui, e um link direto poupa esse salto.
+    const websiteUrl = "https://www.digitalinvitestudio.com";
     const p = dict.pdf;
 
     let list = regularGuests;
