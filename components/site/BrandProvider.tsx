@@ -41,7 +41,7 @@ export function EventBrandProvider({
     (async () => {
       const b = await resolveBrandById(supabase, brandId);
       if (!alive) return;
-      setBrand(b ? { ...domain, id: b.id, name: b.name, logo: b.logo, logoRaster: b.logoRaster, logoAlt: b.name } : domain);
+      setBrand(b ? { ...domain, id: b.id, name: b.name, logo: b.logo, logoRaster: b.logoRaster, logoAlt: b.name, contactUrl: b.contactUrl } : domain);
     })();
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -21,6 +21,7 @@ interface BundleOffersProps {
   locale: string;
   unlockedModules: string[];
   isSuperAdmin: boolean;
+  isPartnerBrand?: boolean;
   moduleNames: Record<ModuleId, string>;
   overrides?: PricingOverrides;
   dict: BundleOffersDict;
@@ -29,12 +30,14 @@ interface BundleOffersProps {
 // Mostra as bundles que ainda fazem sentido oferecer a este evento — uma
 // bundle desaparece assim que já tiver pelo menos um dos módulos incluídos,
 // para nunca sugerir cobrar a dobrar (o servidor também recusa essa compra).
-export default function BundleOffers({ invitationId, slug, locale, unlockedModules, isSuperAdmin, moduleNames, overrides, dict }: BundleOffersProps) {
+// Eventos de parceiros não têm checkout self-service (ver dashboard/[slug]),
+// por isso nem faz sentido mostrar preços/poupanças aqui.
+export default function BundleOffers({ invitationId, slug, locale, unlockedModules, isSuperAdmin, isPartnerBrand, moduleNames, overrides, dict }: BundleOffersProps) {
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [couponVisibleFor, setCouponVisibleFor] = useState<string | null>(null);
   const [couponCodes, setCouponCodes] = useState<Record<string, string>>({});
 
-  if (isSuperAdmin) return null;
+  if (isSuperAdmin || isPartnerBrand) return null;
 
   const offers = BUNDLES.filter(b => !b.moduleIds.some(m => unlockedModules.includes(m)));
   if (offers.length === 0) return null;

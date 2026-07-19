@@ -218,6 +218,7 @@ const pt = {
     "expiredBanner": "Este evento expirou a {date} — o painel ficou em modo de leitura. Contacte-nos para renovar o acesso.",
     "moduleLockedTitle": "{module} ainda não está ativo",
     "moduleLockedMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+    "moduleLockedMessagePartner": "Este módulo ainda não foi ativado para este evento. Contacte o seu parceiro para o ativar.",
     "moduleLockedInviteNote": "Inclui também Convidados & Mesas, necessário para o RSVP funcionar.",
     "moduleLockedContactBtn": "Contactar",
     "moduleLockedBadge": "Bloqueado",
@@ -790,7 +791,8 @@ const pt = {
       },
       "lockedNote": "A data do evento está bloqueada porque já tem pelo menos um módulo ativo.",
       "unlockedNote": "Sem módulos ativos — a data do evento continua editável pelos noivos.",
-      "dateLockedSince": "Bloqueada desde"
+      "dateLockedSince": "Bloqueada desde",
+      "paymentPrompt": "Valor pago (€) — deixe em branco para não registar na receita:"
     },
     "history": {
       "title": "Histórico de Compras",
@@ -916,6 +918,7 @@ const pt = {
     "locked": {
       "title": "Photo Sharing & Live Wall ainda não está ativo",
       "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "messagePartner": "Este módulo ainda não foi ativado para este evento. Contacte o seu parceiro para o ativar.",
       "contactBtn": "Contactar",
       "buyBtn": "Comprar",
       "couponToggleLabel": "Tenho um código promocional",
@@ -960,6 +963,7 @@ const pt = {
     "locked": {
       "title": "Guestbook ainda não está ativo",
       "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "messagePartner": "Este módulo ainda não foi ativado para este evento. Contacte o seu parceiro para o ativar.",
       "contactBtn": "Contactar",
       "buyBtn": "Comprar",
       "couponToggleLabel": "Tenho um código promocional",

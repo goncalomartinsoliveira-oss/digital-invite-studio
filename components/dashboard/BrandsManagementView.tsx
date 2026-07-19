@@ -2,13 +2,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { BRANDS } from "@/lib/brands";
-import { Plus, Trash2, Loader2, ImagePlus, Building2 } from "lucide-react";
+import { Plus, Trash2, Loader2, ImagePlus, Building2, Save, Mail } from "lucide-react";
 
 interface BrandRow {
   id: string;
   name: string;
   logo_url: string | null;
   domain: string | null;
+  contact_url: string | null;
 }
 
 export default function BrandsManagementView({ locale }: { locale: string }) {
@@ -24,6 +25,9 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     logoHint: en ? "No logo? Their events show the Digital Invite Studio logo." : "Sem logótipo, os eventos mostram o logótipo da Digital Invite Studio.",
     upload: en ? "Upload logo" : "Carregar logótipo",
     uploading: en ? "Uploading..." : "A carregar...",
+    contactLbl: en ? "Contact (email or link, optional)" : "Contacto (email ou link, opcional)",
+    contactPh: en ? "e.g. mailto:ola@parceiro.pt or https://wa.me/..." : "Ex.: mailto:ola@parceiro.pt ou https://wa.me/...",
+    contactHint: en ? "Shown to their couples instead of prices — this partner sells modules directly, not through our checkout." : "Mostrado aos casais deste parceiro em vez de preços — este parceiro vende os módulos diretamente, não passa pelo nosso checkout.",
     create: en ? "Create partner" : "Criar parceiro",
     existing: en ? "Partners" : "Parceiros",
     none: en ? "No partners yet." : "Ainda não há parceiros.",
@@ -32,6 +36,8 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     slugTaken: en ? "That identifier is already in use." : "Esse identificador já está em uso.",
     changeLogo: en ? "Change logo" : "Trocar logótipo",
     removeConfirm: en ? "Remove this partner? Existing events keep their brand tag." : "Remover este parceiro? Os eventos existentes mantêm a marca.",
+    saveContact: en ? "Save" : "Guardar",
+    noContact: en ? "no contact set" : "sem contacto definido",
   };
 
   const [rows, setRows] = useState<BrandRow[]>([]);
@@ -40,16 +46,21 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
+  const [contactUrl, setContactUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [msg, setMsg] = useState("");
+  const [contactDrafts, setContactDrafts] = useState<Record<string, string>>({});
+  const [savingContactId, setSavingContactId] = useState<string | null>(null);
 
   const slugify = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("brands").select("id, name, logo_url, domain").order("created_at", { ascending: true });
-    setRows((data as BrandRow[]) || []);
+    const { data } = await supabase.from("brands").select("id, name, logo_url, domain, contact_url").order("created_at", { ascending: true });
+    const loaded = (data as BrandRow[]) || [];
+    setRows(loaded);
+    setContactDrafts(Object.fromEntries(loaded.map(r => [r.id, r.contact_url || ""])));
     setLoading(false);
   }, []);
   useEffect(() => { load(); }, [load]);
@@ -74,14 +85,21 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     if (!name.trim() || !slug) return;
     if (BRANDS[slug]) { setMsg(t.slugTaken); return; }
     setCreating(true);
-    const { error } = await supabase.from("brands").insert([{ id: slug, name: name.trim(), logo_url: logoUrl || null }]);
+    const { error } = await supabase.from("brands").insert([{ id: slug, name: name.trim(), logo_url: logoUrl || null, contact_url: contactUrl.trim() || null }]);
     if (error) {
       setMsg(error.code === "23505" ? t.slugTaken : error.message);
     } else {
-      setName(""); setSlug(""); setSlugTouched(false); setLogoUrl("");
+      setName(""); setSlug(""); setSlugTouched(false); setLogoUrl(""); setContactUrl("");
       await load();
     }
     setCreating(false);
+  };
+
+  const saveContact = async (id: string) => {
+    setSavingContactId(id);
+    await supabase.from("brands").update({ contact_url: (contactDrafts[id] || "").trim() || null }).eq("id", id);
+    await load();
+    setSavingContactId(null);
   };
 
   const changeLogo = async (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,6 +160,12 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
           </div>
         </div>
 
+        <div className="mt-5">
+          <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-2 block">{t.contactLbl}</label>
+          <input className={inputCls} value={contactUrl} onChange={e => setContactUrl(e.target.value)} placeholder={t.contactPh} />
+          <p className="text-[10px] text-gray-400 mt-2">{t.contactHint}</p>
+        </div>
+
         {msg && <p className="text-[11px] text-red-500 mt-4">{msg}</p>}
 
         <button onClick={createBrand} disabled={creating || !name.trim() || !slug} className="mt-6 inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-brand-dark transition-all disabled:opacity-50">
@@ -161,7 +185,7 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
         ) : (
           <ul className="divide-y divide-gray-50">
             {rows.map(r => (
-              <li key={r.id} className="px-6 py-4 flex items-center justify-between gap-4">
+              <li key={r.id} className="px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="w-16 h-11 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
                     {r.logo_url ? <img src={r.logo_url} className="max-w-full max-h-full object-contain" alt="" /> : <Building2 size={16} className="text-gray-300" />}
@@ -171,7 +195,23 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
                     <p className="text-[10px] text-gray-400">{r.id}{r.domain ? ` · ${r.domain}` : ""}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex flex-wrap items-center gap-3 shrink-0">
+                  <div className="relative">
+                    <Mail size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
+                    <input
+                      value={contactDrafts[r.id] ?? ""}
+                      onChange={e => setContactDrafts(prev => ({ ...prev, [r.id]: e.target.value }))}
+                      placeholder={t.noContact}
+                      className="pl-8 pr-3 py-2 text-[11px] border border-gray-200 rounded-full outline-none focus:border-brand w-56"
+                    />
+                  </div>
+                  <button
+                    onClick={() => saveContact(r.id)}
+                    disabled={savingContactId === r.id}
+                    className="inline-flex items-center gap-1.5 bg-brand/5 text-brand px-3 py-2 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-brand/10 transition-all disabled:opacity-50"
+                  >
+                    {savingContactId === r.id ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />} {t.saveContact}
+                  </button>
                   <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand cursor-pointer transition-colors">
                     {t.changeLogo}
                     <input type="file" accept="image/*" className="hidden" onChange={e => changeLogo(r.id, e)} />

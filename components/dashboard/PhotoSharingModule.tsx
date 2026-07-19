@@ -29,7 +29,7 @@ interface PhotoSharingModuleDict {
     zipError: string; downloadError: string;
     deleteMediaConfirm: string; deleteServerError: string;
   };
-  locked: { title: string; message: string; contactBtn: string; buyBtn: string; couponToggleLabel?: string; couponPlaceholder?: string };
+  locked: { title: string; message: string; messagePartner?: string; contactBtn: string; buyBtn: string; couponToggleLabel?: string; couponPlaceholder?: string };
 }
 
 interface PhotoSharingModuleProps {
@@ -38,11 +38,12 @@ interface PhotoSharingModuleProps {
   canEdit: boolean;
   unlockedModules?: string[];
   isSuperAdmin?: boolean;
+  isPartnerBrand?: boolean;
   overrides?: PricingOverrides;
   dict: PhotoSharingModuleDict;
 }
 
-export default function PhotoSharingModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, overrides, dict }: PhotoSharingModuleProps) {
+export default function PhotoSharingModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, isPartnerBrand, overrides, dict }: PhotoSharingModuleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'pt';
   const brand = useBrand();
@@ -165,15 +166,15 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
     return (
       <LockedModuleNotice
         title={dict.locked.title}
-        message={dict.locked.message}
+        message={isPartnerBrand ? (dict.locked.messagePartner || dict.locked.message) : dict.locked.message}
         contactUrl={contactUrl}
         contactLabel={dict.locked.contactBtn}
-        buyLabel={dict.locked.buyBtn}
-        priceLabel={formatPriceCents(effectiveModulePriceCents('photo_sharing', overrides ?? EMPTY_PRICING_OVERRIDES), locale)}
-        onBuy={handleBuy}
+        buyLabel={isPartnerBrand ? undefined : dict.locked.buyBtn}
+        priceLabel={isPartnerBrand ? undefined : formatPriceCents(effectiveModulePriceCents('photo_sharing', overrides ?? EMPTY_PRICING_OVERRIDES), locale)}
+        onBuy={isPartnerBrand ? undefined : handleBuy}
         buying={buying}
-        couponToggleLabel={dict.locked.couponToggleLabel}
-        couponPlaceholder={dict.locked.couponPlaceholder}
+        couponToggleLabel={isPartnerBrand ? undefined : dict.locked.couponToggleLabel}
+        couponPlaceholder={isPartnerBrand ? undefined : dict.locked.couponPlaceholder}
       />
     );
   }

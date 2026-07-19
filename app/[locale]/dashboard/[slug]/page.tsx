@@ -246,6 +246,13 @@ export default function Dashboard() {
   const bundleNamesDict = Object.fromEntries(
     Object.entries(bundleOffersDict.bundles as Record<string, { name: string; desc: string }>).map(([id, b]) => [id, b.name])
   );
+
+  // Eventos de parceiros (white-label ou leves) não passam pelo nosso
+  // checkout — o parceiro paga-nos diretamente e o super-admin desbloqueia
+  // à mão. Por isso o casal nunca vê preços nem botão de compra, só um
+  // contacto (o do próprio parceiro, nunca o da DIS).
+  const isPartnerBrand = !!formData.brand_id && formData.brand_id !== "dis";
+  const partnerContactUrl = eventBrand?.contactUrl ?? brand.contactUrl ?? `/${locale}/contact`;
   const handleBuyModule = async (moduleId: string, couponCode?: string) => {
     setBuyingModule(moduleId);
     try {
@@ -261,21 +268,22 @@ export default function Dashboard() {
     // O RSVP do convite não funciona sem lista de convidados — por isso
     // comprar "invite" desbloqueia sempre "guests_seating" também (ver
     // lib/modules.ts). Deixar isso claro no ecrã de compra.
+    const baseMessage = isPartnerBrand ? dict.moduleLockedMessagePartner : dict.moduleLockedMessage;
     const message = moduleId === 'invite'
-      ? `${dict.moduleLockedMessage} ${dict.moduleLockedInviteNote}`
-      : dict.moduleLockedMessage;
+      ? `${baseMessage} ${dict.moduleLockedInviteNote}`
+      : baseMessage;
     return (
       <LockedModuleNotice
         title={dict.moduleLockedTitle.replace("{module}", moduleName)}
         message={message}
-        contactUrl={brand.contactUrl ?? `/${locale}/contact`}
+        contactUrl={isPartnerBrand ? partnerContactUrl : (brand.contactUrl ?? `/${locale}/contact`)}
         contactLabel={dict.moduleLockedContactBtn}
-        buyLabel={dict.moduleBuyBtn}
-        priceLabel={moduleId ? formatPriceCents(effectiveModulePriceCents(moduleId, pricingOverrides), locale) : undefined}
-        onBuy={moduleId ? (couponCode) => handleBuyModule(moduleId, couponCode) : undefined}
+        buyLabel={isPartnerBrand ? undefined : dict.moduleBuyBtn}
+        priceLabel={!isPartnerBrand && moduleId ? formatPriceCents(effectiveModulePriceCents(moduleId, pricingOverrides), locale) : undefined}
+        onBuy={!isPartnerBrand && moduleId ? (couponCode) => handleBuyModule(moduleId, couponCode) : undefined}
         buying={buyingModule === moduleId}
-        couponToggleLabel={dict.couponToggleLabel}
-        couponPlaceholder={dict.couponPlaceholder}
+        couponToggleLabel={isPartnerBrand ? undefined : dict.couponToggleLabel}
+        couponPlaceholder={isPartnerBrand ? undefined : dict.couponPlaceholder}
       />
     );
   };
@@ -399,6 +407,7 @@ export default function Dashboard() {
               locale={locale}
               unlockedModules={unlockedModules}
               isSuperAdmin={isSuperAdmin}
+              isPartnerBrand={isPartnerBrand}
               overrides={pricingOverrides}
               moduleNames={moduleNamesDict}
               dict={dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers}
@@ -582,6 +591,7 @@ export default function Dashboard() {
                   canEdit={canEdit}
                   unlockedModules={unlockedModules}
                   isSuperAdmin={isSuperAdmin}
+                  isPartnerBrand={isPartnerBrand}
                   overrides={pricingOverrides}
                   dict={dictionaries[locale]?.PhotoSharingModule || dictionaries.pt.PhotoSharingModule}
                 />
@@ -593,6 +603,7 @@ export default function Dashboard() {
                   canEdit={canEdit}
                   unlockedModules={unlockedModules}
                   isSuperAdmin={isSuperAdmin}
+                  isPartnerBrand={isPartnerBrand}
                   overrides={pricingOverrides}
                   dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />

@@ -218,6 +218,7 @@ const en = {
     "expiredBanner": "This event expired on {date} — the dashboard is now in read-only mode. Contact us to renew access.",
     "moduleLockedTitle": "{module} is not active yet",
     "moduleLockedMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
+    "moduleLockedMessagePartner": "This module hasn't been activated for this event yet. Contact your partner to activate it.",
     "moduleLockedInviteNote": "Also includes Guests & Seating, needed for RSVP to work.",
     "moduleLockedContactBtn": "Contact Us",
     "moduleLockedBadge": "Locked",
@@ -790,7 +791,8 @@ const en = {
       },
       "lockedNote": "The event date is locked because at least one module is already active.",
       "unlockedNote": "No active modules — the event date is still editable by the couple.",
-      "dateLockedSince": "Locked since"
+      "dateLockedSince": "Locked since",
+      "paymentPrompt": "Amount paid (€) — leave blank to not record any revenue:"
     },
     "history": {
       "title": "Purchase History",
@@ -916,6 +918,7 @@ const en = {
     "locked": {
       "title": "Photo Sharing & Live Wall is not active yet",
       "message": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "messagePartner": "This module hasn't been activated for this event yet. Contact your partner to activate it.",
       "contactBtn": "Contact Us",
       "buyBtn": "Buy",
       "couponToggleLabel": "I have a promo code",
@@ -960,6 +963,7 @@ const en = {
     "locked": {
       "title": "Guestbook is not active yet",
       "message": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "messagePartner": "This module hasn't been activated for this event yet. Contact your partner to activate it.",
       "contactBtn": "Contact Us",
       "buyBtn": "Buy",
       "couponToggleLabel": "I have a promo code",

@@ -45,18 +45,20 @@ export const BRANDS: Record<string, Brand> = {
 export const DEFAULT_BRAND = BRANDS.dis;
 
 // ── Marca "de trabalho" (parceiros leves, sem domínio) ────────────────
-// Resolve a info (nome + logo) de uma marca por id, do registry OU da BD.
-export type WorkingBrand = { id: string; name: string; logo: string; logoRaster: string };
+// Resolve a info (nome + logo + contacto) de uma marca por id, do registry
+// OU da BD. O contactUrl é o que diferencia um evento de parceiro de um
+// evento direto da DIS nos ecrãs de compra (ver dashboard/[slug]).
+export type WorkingBrand = { id: string; name: string; logo: string; logoRaster: string; contactUrl?: string };
 
 export async function resolveBrandById(sb: any, id?: string): Promise<WorkingBrand | null> {
   if (!id || id === "dis") return null; // 'dis' é o default — sem override
   if (BRANDS[id]) {
     const b = BRANDS[id];
-    return { id: b.id, name: b.name, logo: b.logo, logoRaster: b.logoRaster };
+    return { id: b.id, name: b.name, logo: b.logo, logoRaster: b.logoRaster, contactUrl: b.contactUrl };
   }
-  const { data } = await sb.from("brands").select("id, name, logo_url").eq("id", id).maybeSingle();
+  const { data } = await sb.from("brands").select("id, name, logo_url, contact_url").eq("id", id).maybeSingle();
   if (!data) return null;
-  return { id: data.id, name: data.name, logo: data.logo_url || "/logo-dis.svg", logoRaster: data.logo_url || "/logo-dis.png" };
+  return { id: data.id, name: data.name, logo: data.logo_url || "/logo-dis.svg", logoRaster: data.logo_url || "/logo-dis.png", contactUrl: data.contact_url || undefined };
 }
 
 // A marca do parceiro a que o utilizador pertence (usada no domínio DIS para

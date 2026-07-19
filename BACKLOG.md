@@ -18,6 +18,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [x] Preços diferenciados por parceiro/marca (hoje o checkout usa sempre a mesma tabela de preços global, `lib/pricing.ts`)
 - [x] Sistema de cupões/códigos promocionais
 - [x] Rever o desconto do "Pacote Convite" (ficou muito pequeno, ~5€, depois do preço do Convite subir para 79€) — baixado de 89€ para 75€ (poupança de 19€, ~20%)
+- [x] Checkout self-service desligado para eventos de parceiros — casal só vê "contacte o seu parceiro", sem preços; desbloqueio continua manual (super-admin), com opção de registar o valor pago pelo parceiro para a receita ficar correta no painel "Negócio"
 
 ## Produto
 - [ ] Forma de prolongar um evento além dos 60 dias (pagamento extra para estender o prazo)

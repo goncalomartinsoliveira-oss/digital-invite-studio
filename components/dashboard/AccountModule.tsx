@@ -30,6 +30,7 @@ interface AccountModuleProps {
       title: string; subtitle: string;
       items: Record<ModuleId, string>;
       lockedNote: string; unlockedNote: string; dateLockedSince: string;
+      paymentPrompt: string;
     };
     history: {
       title: string; subtitle: string; emptyState: string;
@@ -97,6 +98,7 @@ export default function AccountModule({ userEmail, invitationId, isSuperAdmin, m
     const next = isUnlocked
       ? unlockedModules.filter(m => m !== moduleId)
       : expandWithDependencies([...unlockedModules as ModuleId[], moduleId]);
+    const newlyUnlocked = next.filter(m => !unlockedModules.includes(m));
     setTogglingModule(moduleId);
     const { data, error } = await supabase
       .from("invitations")
@@ -109,6 +111,30 @@ export default function AccountModule({ userEmail, invitationId, isSuperAdmin, m
       setDateLockedAt(data.date_locked_at || null);
     }
     setTogglingModule(null);
+
+    // Desbloqueio manual (parceiro pagou-nos por fora, ou oferta) — registar
+    // opcionalmente o valor para a receita continuar correta no painel
+    // "Negócio". Deixar em branco não regista nada, só desbloqueia.
+    if (!error && !isUnlocked && newlyUnlocked.length > 0) {
+      const raw = window.prompt(dict.modules.paymentPrompt, "");
+      const amount = raw ? Number(raw.replace(",", ".")) : 0;
+      if (amount > 0) {
+        await supabase.from("payments").insert({
+          invitation_id: invitationId,
+          stripe_session_id: `manual_${crypto.randomUUID()}`,
+          stripe_payment_intent: null,
+          module_ids: newlyUnlocked,
+          bundle_id: null,
+          amount_cents: Math.round(amount * 100),
+          currency: "eur",
+          status: "paid",
+          customer_email: null,
+          coupon_code: null,
+          paid_at: new Date().toISOString(),
+        });
+        fetchPayments();
+      }
+    }
   };
 
   async function fetchCollaborators() {
