@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatPriceCents } from "@/lib/checkout";
-import { Wallet, TrendingUp, Users, Building2, Loader2, CalendarClock } from "lucide-react";
+import { Wallet, TrendingUp, Users, Building2, Loader2, CalendarClock, ChevronRight, X, ExternalLink, Mail, Lock } from "lucide-react";
+import type { ModuleId } from "@/lib/modules";
 
 interface PartnerRow {
   id: string;
@@ -10,6 +11,21 @@ interface PartnerRow {
   events: number;
   active: number;
   revenueCents: number;
+  lastPaymentAt: string | null;
+}
+
+interface EventRow {
+  id: string;
+  slug: string;
+  groomName: string | null;
+  brideName: string | null;
+  userEmail: string | null;
+  brandId: string;
+  createdAt: string | null;
+  eventDate: string | null;
+  unlockedModules: string[];
+  revenueCents: number;
+  paymentsCount: number;
   lastPaymentAt: string | null;
 }
 
@@ -22,9 +38,16 @@ interface Overview {
     totalPartners: number;
   };
   partners: PartnerRow[];
+  events: EventRow[];
 }
 
-export default function BusinessOverviewView({ locale }: { locale: string }) {
+interface BusinessOverviewViewProps {
+  locale: string;
+  moduleNames?: Record<ModuleId, string>;
+  onOpenEvent?: (slug: string) => void;
+}
+
+export default function BusinessOverviewView({ locale, moduleNames, onOpenEvent }: BusinessOverviewViewProps) {
   const en = locale === "en";
   const t = {
     title: en ? "Business overview" : "Visão de negócio",
@@ -35,6 +58,7 @@ export default function BusinessOverviewView({ locale }: { locale: string }) {
     activeEvents: en ? "Active accounts" : "Contas ativas",
     totalPartners: en ? "Partners" : "Parceiros",
     partnersTitle: en ? "Revenue by partner" : "Receita por parceiro",
+    partnersHint: en ? "Click a partner to see its accounts." : "Clique num parceiro para ver as suas contas.",
     partner: en ? "Partner" : "Parceiro",
     events: en ? "Events" : "Eventos",
     active: en ? "Active" : "Ativos",
@@ -42,11 +66,23 @@ export default function BusinessOverviewView({ locale }: { locale: string }) {
     lastPayment: en ? "Last payment" : "Último pagamento",
     never: en ? "never" : "nunca",
     loadError: en ? "Could not load business data." : "Não foi possível carregar os dados de negócio.",
+    accountsOf: en ? "Accounts —" : "Contas —",
+    close: en ? "Close" : "Fechar",
+    account: en ? "Account" : "Conta",
+    email: en ? "Email" : "Email",
+    registered: en ? "Registered" : "Registado",
+    modules: en ? "Modules" : "Módulos",
+    purchases: en ? "Purchases" : "Compras",
+    open: en ? "Open" : "Abrir",
+    noEvents: en ? "No accounts for this partner yet." : "Ainda não há contas para este parceiro.",
+    totalRow: en ? "Total" : "Total",
+    noModules: en ? "none" : "nenhum",
   };
 
   const [data, setData] = useState<Overview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -75,6 +111,14 @@ export default function BusinessOverviewView({ locale }: { locale: string }) {
     if (isNaN(dt.getTime())) return t.never;
     return dt.toLocaleDateString(en ? "en-US" : "pt-PT", { day: "2-digit", month: "short", year: "numeric" });
   };
+
+  const selectedPartner = data?.partners.find(p => p.id === selectedPartnerId) || null;
+  const selectedEvents = useMemo(() => {
+    if (!data || !selectedPartnerId) return [];
+    return data.events
+      .filter(ev => ev.brandId === selectedPartnerId)
+      .sort((a, b) => b.revenueCents - a.revenueCents);
+  }, [data, selectedPartnerId]);
 
   const kpiCard = (icon: React.ReactNode, label: string, value: string) => (
     <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center gap-4">
@@ -107,9 +151,10 @@ export default function BusinessOverviewView({ locale }: { locale: string }) {
             {kpiCard(<Building2 size={20} />, t.totalPartners, String(data.kpis.totalPartners))}
           </div>
 
-          <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
-            <div className="px-6 py-4 border-b border-gray-100 bg-cream/50">
+          <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm mb-8">
+            <div className="px-6 py-4 border-b border-gray-100 bg-cream/50 flex items-center justify-between">
               <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.partnersTitle}</span>
+              <span className="text-[10px] text-gray-300">{t.partnersHint}</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[640px]">
@@ -120,22 +165,108 @@ export default function BusinessOverviewView({ locale }: { locale: string }) {
                     <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-center">{t.active}</th>
                     <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-right">{t.revenue}</th>
                     <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-right">{t.lastPayment}</th>
+                    <th className="px-6 py-3"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.partners.map(p => (
-                    <tr key={p.id} className="border-b border-gray-50 last:border-0 hover:bg-cream/40 transition-colors">
+                    <tr
+                      key={p.id}
+                      onClick={() => setSelectedPartnerId(prev => (prev === p.id ? null : p.id))}
+                      className={`border-b border-gray-50 last:border-0 cursor-pointer transition-colors ${selectedPartnerId === p.id ? "bg-brand/5" : "hover:bg-cream/40"}`}
+                    >
                       <td className="px-6 py-4 text-sm font-semibold text-ink">{p.name}</td>
                       <td className="px-6 py-4 text-sm text-gray-600 text-center">{p.events}</td>
                       <td className="px-6 py-4 text-sm text-gray-600 text-center">{p.active}</td>
                       <td className="px-6 py-4 text-sm font-serif text-brand text-right">{formatPriceCents(p.revenueCents, locale)}</td>
                       <td className="px-6 py-4 text-[11px] text-gray-400 text-right whitespace-nowrap">{fmtDate(p.lastPaymentAt)}</td>
+                      <td className="px-6 py-4 text-right">
+                        <ChevronRight size={14} className={`text-gray-300 transition-transform ${selectedPartnerId === p.id ? "rotate-90" : ""}`} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
+
+          {selectedPartner && (
+            <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
+              <div className="px-6 py-4 border-b border-gray-100 bg-cream/50 flex items-center justify-between">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.accountsOf} {selectedPartner.name}</span>
+                <button onClick={() => setSelectedPartnerId(null)} className="text-gray-300 hover:text-red-500 transition-colors inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest">
+                  <X size={13} /> {t.close}
+                </button>
+              </div>
+
+              {selectedEvents.length === 0 ? (
+                <div className="p-10 text-center text-sm text-gray-400">{t.noEvents}</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-[820px]">
+                    <thead>
+                      <tr className="border-b border-gray-100 bg-cream/30">
+                        <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.account}</th>
+                        <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.email}</th>
+                        <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.registered}</th>
+                        <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.modules}</th>
+                        <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-center">{t.purchases}</th>
+                        <th className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-right">{t.revenue}</th>
+                        <th className="px-6 py-3"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedEvents.map(ev => (
+                        <tr key={ev.id} className="border-b border-gray-50 last:border-0 hover:bg-cream/40 transition-colors">
+                          <td className="px-6 py-4">
+                            <p className="font-serif text-base text-ink leading-tight">
+                              {ev.groomName && ev.brideName ? `${ev.groomName} & ${ev.brideName}` : ev.slug}
+                            </p>
+                            <p className="text-[10px] text-gray-400">{ev.slug}</p>
+                          </td>
+                          <td className="px-6 py-4 text-[12px] text-gray-500">
+                            <span className="inline-flex items-center gap-1.5"><Mail size={12} className="text-gray-300" /> {ev.userEmail || "—"}</span>
+                          </td>
+                          <td className="px-6 py-4 text-[11px] text-gray-400 whitespace-nowrap">{fmtDate(ev.createdAt)}</td>
+                          <td className="px-6 py-4">
+                            {ev.unlockedModules.length === 0 ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] text-gray-300"><Lock size={10} /> {t.noModules}</span>
+                            ) : (
+                              <div className="flex flex-wrap gap-1 max-w-[220px]">
+                                {ev.unlockedModules.map(m => (
+                                  <span key={m} className="text-[9px] font-bold uppercase tracking-wide bg-brand/5 text-brand px-2 py-0.5 rounded-md">
+                                    {moduleNames?.[m as ModuleId] || m}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600 text-center">{ev.paymentsCount}</td>
+                          <td className="px-6 py-4 text-sm font-serif text-brand text-right">{formatPriceCents(ev.revenueCents, locale)}</td>
+                          <td className="px-6 py-4 text-right">
+                            {onOpenEvent && (
+                              <button onClick={() => onOpenEvent(ev.slug)} className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-brand hover:gap-2.5 transition-all">
+                                {t.open} <ExternalLink size={12} />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-cream/30">
+                        <td colSpan={5} className="px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-right">{t.totalRow}</td>
+                        <td className="px-6 py-3 text-sm font-serif text-brand text-right">
+                          {formatPriceCents(selectedEvents.reduce((s, ev) => s + ev.revenueCents, 0), locale)}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
         </>
       ) : null}
     </div>

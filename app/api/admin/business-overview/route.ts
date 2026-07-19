@@ -25,7 +25,9 @@ export async function GET(req: NextRequest) {
 
   const [{ data: invitations, error: invError }, { data: payments, error: payError }, { data: dbBrands, error: brandsError }] =
     await Promise.all([
-      supabaseAdmin.from("invitations").select("id, brand_id, unlocked_modules, created_at"),
+      supabaseAdmin
+        .from("invitations")
+        .select("id, slug, brand_id, unlocked_modules, created_at, event_date, groom_name, bride_name, user_email"),
       supabaseAdmin.from("payments").select("invitation_id, amount_cents, amount_refunded_cents, status, paid_at, created_at"),
       supabaseAdmin.from("brands").select("id, name"),
     ]);
@@ -52,13 +54,23 @@ export async function GET(req: NextRequest) {
   let monthRevenueCents = 0;
   const revenueByBrand: Record<string, number> = {};
   const lastPaymentByBrand: Record<string, string> = {};
+  const revenueByInvitation: Record<string, number> = {};
+  const paymentsCountByInvitation: Record<string, number> = {};
+  const lastPaymentByInvitation: Record<string, string> = {};
 
   (payments || []).forEach((p: any) => {
+    paymentsCountByInvitation[p.invitation_id] = (paymentsCountByInvitation[p.invitation_id] || 0) + 1;
+    const paidAt = p.paid_at || p.created_at;
+    if (paidAt && (!lastPaymentByInvitation[p.invitation_id] || new Date(paidAt) > new Date(lastPaymentByInvitation[p.invitation_id]))) {
+      lastPaymentByInvitation[p.invitation_id] = paidAt;
+    }
+
     const net = (p.amount_cents || 0) - (p.amount_refunded_cents || 0);
     if (net <= 0) return;
     totalRevenueCents += net;
-    const paidAt = p.paid_at || p.created_at;
     if (paidAt && new Date(paidAt) >= monthStart) monthRevenueCents += net;
+
+    revenueByInvitation[p.invitation_id] = (revenueByInvitation[p.invitation_id] || 0) + net;
 
     const bId = invBrandMap[p.invitation_id] || "dis";
     revenueByBrand[bId] = (revenueByBrand[bId] || 0) + net;
@@ -87,8 +99,24 @@ export async function GET(req: NextRequest) {
   const activeEvents = (invitations || []).filter((inv: any) => (inv.unlocked_modules || []).length > 0).length;
   const totalPartners = partners.filter(p => p.id !== "dis").length;
 
+  const events = (invitations || []).map((inv: any) => ({
+    id: inv.id,
+    slug: inv.slug,
+    groomName: inv.groom_name,
+    brideName: inv.bride_name,
+    userEmail: inv.user_email,
+    brandId: inv.brand_id || "dis",
+    createdAt: inv.created_at,
+    eventDate: inv.event_date,
+    unlockedModules: inv.unlocked_modules || [],
+    revenueCents: revenueByInvitation[inv.id] || 0,
+    paymentsCount: paymentsCountByInvitation[inv.id] || 0,
+    lastPaymentAt: lastPaymentByInvitation[inv.id] || null,
+  }));
+
   return NextResponse.json({
     kpis: { totalRevenueCents, monthRevenueCents, totalEvents, activeEvents, totalPartners },
     partners,
+    events,
   });
 }

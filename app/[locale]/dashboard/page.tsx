@@ -343,7 +343,11 @@ export default function DashboardHub() {
         ) : viewMode === 'pricing' && canManagePricing ? (
           <BrandPricingView brands={manageableBrands} moduleNames={moduleNamesDict} bundleNames={bundleNamesDict} locale={locale} />
         ) : viewMode === 'business' && canViewBusiness ? (
-          <BusinessOverviewView locale={locale} />
+          <BusinessOverviewView
+            locale={locale}
+            moduleNames={moduleNamesDict}
+            onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+          />
         ) : (
         <>
         {/* SECÇÃO 1: OS MEUS PROJETOS */}
