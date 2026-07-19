@@ -34,7 +34,7 @@ interface AccountModuleProps {
     history: {
       title: string; subtitle: string; emptyState: string;
       dateLabel: string; itemLabel: string; amountLabel: string; statusLabel: string;
-      status: { paid: string; pending: string; failed: string; refunded: string };
+      status: { paid: string; pending: string; failed: string; refunded: string; partially_refunded: string };
     };
   };
 }
@@ -277,6 +277,7 @@ export default function AccountModule({ userEmail, invitationId, isSuperAdmin, m
                 pending: "bg-amber-50 text-amber-600",
                 failed: "bg-red-50 text-red-600",
                 refunded: "bg-gray-100 text-gray-500",
+                partially_refunded: "bg-gray-100 text-gray-500",
               };
               const statusLabel = (dict.history.status as Record<string, string>)[payment.status] ?? payment.status;
               return (

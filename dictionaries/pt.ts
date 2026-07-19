@@ -804,7 +804,8 @@ const pt = {
         "paid": "Pago",
         "pending": "Pendente",
         "failed": "Falhou",
-        "refunded": "Reembolsado"
+        "refunded": "Reembolsado",
+        "partially_refunded": "Reembolsado parcialmente"
       }
     }
   },

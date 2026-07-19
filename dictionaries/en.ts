@@ -804,7 +804,8 @@ const en = {
         "paid": "Paid",
         "pending": "Pending",
         "failed": "Failed",
-        "refunded": "Refunded"
+        "refunded": "Refunded",
+        "partially_refunded": "Partially refunded"
       }
     }
   },

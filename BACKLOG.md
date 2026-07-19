@@ -13,7 +13,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [ ] Emails de confirmação de compra (recibo automático depois de um pagamento)
 
 ## Pagamentos
-- [ ] Lidar com reembolsos no webhook (hoje só trata `checkout.session.completed`; um reembolso no Stripe não revoga o módulo)
+- [x] Lidar com reembolsos no webhook (hoje só trata `checkout.session.completed`; um reembolso no Stripe não revoga o módulo)
 - [x] Página no dashboard para o casal ver o histórico das suas compras (a tabela `payments` já existe, falta a interface)
 - [x] Preços diferenciados por parceiro/marca (hoje o checkout usa sempre a mesma tabela de preços global, `lib/pricing.ts`)
 - [x] Sistema de cupões/códigos promocionais

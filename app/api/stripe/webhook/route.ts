@@ -20,11 +20,17 @@ export async function POST(req: NextRequest) {
 
   console.log(`[stripe-webhook] Evento recebido: ${event.type} (${event.id})`);
 
-  if (event.type !== "checkout.session.completed") {
-    return NextResponse.json({ received: true });
+  if (event.type === "checkout.session.completed") {
+    return handleCheckoutCompleted(event.data.object as any);
+  }
+  if (event.type === "charge.refunded") {
+    return handleChargeRefunded(event.data.object as any);
   }
 
-  const session = event.data.object as any;
+  return NextResponse.json({ received: true });
+}
+
+async function handleCheckoutCompleted(session: any) {
   const invitationId: string | undefined = session.metadata?.invitationId;
   const moduleIds: ModuleId[] = (session.metadata?.moduleIds || "")
     .split(",")
@@ -117,6 +123,96 @@ export async function POST(req: NextRequest) {
     // mais tarde — melhor do que perder silenciosamente uma compra paga.
     console.error("[stripe-webhook] Erro a aplicar a compra:", err.message);
     return NextResponse.json({ error: "Erro ao processar o pagamento." }, { status: 500 });
+  }
+
+  return NextResponse.json({ received: true });
+}
+
+// Um reembolso no Stripe (total ou parcial) chega aqui como "charge.refunded".
+// Só um reembolso TOTAL revoga módulos automaticamente — um parcial é
+// ambíguo (não dá para saber qual módulo, de vários, está a ser devolvido),
+// por isso fica só registado para o super-admin tratar à mão.
+async function handleChargeRefunded(charge: any) {
+  const paymentIntentId: string | undefined = charge.payment_intent || undefined;
+  if (!paymentIntentId) {
+    console.error(`[stripe-webhook] charge.refunded sem payment_intent (charge ${charge.id}) — nada a aplicar.`);
+    return NextResponse.json({ received: true });
+  }
+
+  try {
+    const { data: payment, error: paymentError } = await supabaseAdmin
+      .from("payments")
+      .select("*")
+      .eq("stripe_payment_intent", paymentIntentId)
+      .maybeSingle();
+
+    if (paymentError) throw new Error(`select payments falhou: ${paymentError.message}`);
+    if (!payment) {
+      console.log(`[stripe-webhook] Reembolso ${charge.id} não corresponde a nenhum pagamento nosso (payment_intent ${paymentIntentId}) — ignorado.`);
+      return NextResponse.json({ received: true });
+    }
+    if (payment.status === "refunded") {
+      console.log(`[stripe-webhook] Pagamento ${payment.id} já estava marcado como reembolsado, a ignorar.`);
+      return NextResponse.json({ received: true });
+    }
+
+    const isFullRefund = charge.amount_refunded >= charge.amount;
+    const newStatus = isFullRefund ? "refunded" : "partially_refunded";
+
+    const { error: statusUpdateError } = await supabaseAdmin
+      .from("payments")
+      .update({ status: newStatus, refunded_at: new Date().toISOString() })
+      .eq("id", payment.id);
+    if (statusUpdateError) throw new Error(`update payments falhou: ${statusUpdateError.message}`);
+
+    if (!isFullRefund) {
+      console.log(`[stripe-webhook] Reembolso parcial no pagamento ${payment.id} — módulos mantidos, requer revisão manual.`);
+      return NextResponse.json({ received: true });
+    }
+
+    const refundedModuleIds: string[] = payment.module_ids || [];
+    if (refundedModuleIds.length === 0) {
+      return NextResponse.json({ received: true });
+    }
+
+    // Só revoga um módulo se nenhum OUTRO pagamento pago (não reembolsado)
+    // da mesma invitation também o incluir — evita revogar um módulo que
+    // continua legitimamente coberto por outra compra.
+    const { data: otherPayments, error: otherError } = await supabaseAdmin
+      .from("payments")
+      .select("module_ids, status")
+      .eq("invitation_id", payment.invitation_id)
+      .neq("id", payment.id);
+    if (otherError) throw new Error(`select payments (outros) falhou: ${otherError.message}`);
+
+    const stillCovered = new Set<string>();
+    (otherPayments || []).forEach((p: any) => {
+      if (p.status === "paid") (p.module_ids || []).forEach((m: string) => stillCovered.add(m));
+    });
+    const toRevoke = refundedModuleIds.filter(m => !stillCovered.has(m));
+
+    if (toRevoke.length > 0) {
+      const { data: invite, error: inviteError } = await supabaseAdmin
+        .from("invitations")
+        .select("unlocked_modules")
+        .eq("id", payment.invitation_id)
+        .single();
+      if (inviteError) throw new Error(`select invitations falhou: ${inviteError.message}`);
+
+      const current: string[] = invite?.unlocked_modules || [];
+      const updated = current.filter(m => !toRevoke.includes(m));
+
+      const { error: revokeError } = await supabaseAdmin
+        .from("invitations")
+        .update({ unlocked_modules: updated })
+        .eq("id", payment.invitation_id);
+      if (revokeError) throw new Error(`update invitations (revogar) falhou: ${revokeError.message}`);
+    }
+
+    console.log(`[stripe-webhook] Reembolso total no pagamento ${payment.id}: revogados [${toRevoke.join(", ")}]`);
+  } catch (err: any) {
+    console.error("[stripe-webhook] Erro a processar reembolso:", err.message);
+    return NextResponse.json({ error: "Erro ao processar o reembolso." }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });
