@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { BRANDS } from "@/lib/brands";
 
@@ -10,9 +11,18 @@ export async function GET(req: NextRequest) {
   const token = authHeader.replace(/^Bearer\s+/i, "");
   if (!token) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
-  const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
+  // Validar o token do utilizador com a anon key (não a service_role) — é o
+  // padrão suportado pelo Supabase para confirmar quem está por trás de um
+  // pedido; os dados privilegiados só são lidos depois, via supabaseAdmin.
+  const authClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  );
+  const { data: userData, error: userError } = await authClient.auth.getUser();
   const email = userData?.user?.email;
   if (userError || !email) {
+    console.error("[business-overview] Falha a validar sessão:", userError?.message);
     return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
   }
 
