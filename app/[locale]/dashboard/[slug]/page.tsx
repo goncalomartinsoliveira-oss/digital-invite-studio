@@ -83,6 +83,10 @@ export default function Dashboard() {
 
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  // true quando quem está a ver é staff do próprio parceiro (brand_members
+  // da marca do evento) — ao contrário do casal, este vê preços e compra
+  // normalmente, à sua tabela de preços (ver "Preços" na gestão de marcas).
+  const [isAgencyStaff, setIsAgencyStaff] = useState(false);
   const [buyingModule, setBuyingModule] = useState<string | null>(null);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
@@ -132,6 +136,7 @@ export default function Dashboard() {
           .maybeSingle();
         if (member) agencyRole = member.role === "admin" ? "owner" : "editor";
       }
+      setIsAgencyStaff(!!agencyRole);
 
       if (!isOwner && !collab && !agencyRole && !isSuper) {
         console.error("Acesso Negado.");
@@ -247,11 +252,11 @@ export default function Dashboard() {
     Object.entries(bundleOffersDict.bundles as Record<string, { name: string; desc: string }>).map(([id, b]) => [id, b.name])
   );
 
-  // Eventos de parceiros (white-label ou leves) não passam pelo nosso
-  // checkout — o parceiro paga-nos diretamente e o super-admin desbloqueia
-  // à mão. Por isso o casal nunca vê preços nem botão de compra, só um
-  // contacto (o do próprio parceiro, nunca o da DIS).
-  const isPartnerBrand = !!formData.brand_id && formData.brand_id !== "dis";
+  // O casal nunca vê preços nem compra em eventos de parceiros — só um
+  // contacto (o do próprio parceiro, nunca o da DIS). O staff do parceiro
+  // (agência) é diferente: esse continua a comprar normalmente, à tabela de
+  // preços própria desse parceiro (ver "Preços" na gestão de marcas).
+  const isPartnerBrand = !!formData.brand_id && formData.brand_id !== "dis" && !isAgencyStaff;
   const partnerContactUrl = eventBrand?.contactUrl ?? brand.contactUrl ?? `/${locale}/contact`;
   const handleBuyModule = async (moduleId: string, couponCode?: string) => {
     setBuyingModule(moduleId);
