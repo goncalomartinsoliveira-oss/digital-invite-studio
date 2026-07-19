@@ -1020,6 +1020,15 @@ const en = {
     }
   },
   "GuestsModule": {
+    "rsvpQr": {
+      "title": "RSVP QR Code",
+      "description": "A page just for guests to confirm attendance — perfect for printing on a physical invitation, even without a wedding website. Works whenever the Guests & Seating module is active.",
+      "downloadPng": "PNG",
+      "downloadSvg": "SVG",
+      "openBtn": "Open",
+      "copied": "Copied!",
+      "copyLink": "Copy Link"
+    },
     "stats": {
       "rsvpSummary": "RSVP Summary",
       "totalForecast": "Total Expected",
@@ -1363,6 +1372,11 @@ const en = {
     "yourTableIs": "Your table is",
     "tableNotDefined": "Table not assigned",
     "searchAnother": "Search another name"
+  },
+  "RsvpPublic": {
+    "notFound": "Event not found",
+    "notFoundSub": "Please check that your link or QR Code is correct.",
+    "welcome": "RSVP"
   }
 };
 

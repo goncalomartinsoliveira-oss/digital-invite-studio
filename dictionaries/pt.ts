@@ -1020,6 +1020,15 @@ const pt = {
     }
   },
   "GuestsModule": {
+    "rsvpQr": {
+      "title": "QR Code de Confirmação de Presença",
+      "description": "Uma página só para os convidados confirmarem presença — ideal para imprimir no convite físico, mesmo sem site de casamento. Funciona sempre que o módulo Convidados & Mesas estiver ativo.",
+      "downloadPng": "PNG",
+      "downloadSvg": "SVG",
+      "openBtn": "Abrir",
+      "copied": "Copiado!",
+      "copyLink": "Copiar Link"
+    },
     "stats": {
       "rsvpSummary": "Resumo RSVP",
       "totalForecast": "Total Previsto",
@@ -1363,6 +1372,11 @@ const pt = {
     "yourTableIs": "A sua mesa é a",
     "tableNotDefined": "Mesa não definida",
     "searchAnother": "Pesquisar outro nome"
+  },
+  "RsvpPublic": {
+    "notFound": "Evento não encontrado",
+    "notFoundSub": "Verifique se o link ou o QR Code estão corretos.",
+    "welcome": "Confirmação de presença"
   }
 };
 

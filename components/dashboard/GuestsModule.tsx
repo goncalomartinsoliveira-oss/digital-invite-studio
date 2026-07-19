@@ -1,12 +1,15 @@
 "use client";
 import { useState, useMemo, useRef, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { useBrand } from "@/components/site/BrandProvider";
 import { supabase } from "@/lib/supabase";
-import { Trash2, Edit2, UserPlus, Users, FileText, Download, FileSpreadsheet, Upload, Loader2, ChevronDown, CheckCircle2, X } from "lucide-react";
+import { Trash2, Edit2, UserPlus, Users, FileText, Download, FileSpreadsheet, Upload, Loader2, ChevronDown, CheckCircle2, X, QrCode, ExternalLink, Copy, Check } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { loadImageForPdf, fitLogoBox } from "@/lib/pdfLogo";
+import { downloadQRAsPng, downloadQRAsSvg } from "@/lib/qrDownload";
 
 interface Guest {
   id: string;
@@ -21,6 +24,10 @@ interface Guest {
 }
 
 interface GuestsModuleDict {
+  rsvpQr: {
+    title: string; description: string; downloadPng: string; downloadSvg: string;
+    openBtn: string; copied: string; copyLink: string;
+  };
   stats: {
     rsvpSummary: string; totalForecast: string; totalNote: string;
     confirmed: string; pending: string; declined: string;
@@ -94,6 +101,7 @@ interface GuestsModuleProps {
   guests: Guest[];
   setGuests: (guests: Guest[]) => void;
   invitationId: string;
+  slug: string;
   groomName: string;
   brideName: string;
   canEdit: boolean;
@@ -108,8 +116,12 @@ const suggestGender = (name: string) => {
   return 'masculino';
 };
 
-export default function GuestsModule({ guests, setGuests, invitationId, groomName, brideName, canEdit, dict }: GuestsModuleProps) {
+export default function GuestsModule({ guests, setGuests, invitationId, slug, groomName, brideName, canEdit, dict }: GuestsModuleProps) {
   const brand = useBrand();
+  const params = useParams();
+  const locale = (params?.locale as string) || "pt";
+  const rsvpUrl = typeof window !== "undefined" ? `${window.location.origin}/${locale}/rsvp/${slug}` : "";
+  const [rsvpLinkCopied, setRsvpLinkCopied] = useState(false);
   const [groupTag, setGroupTag] = useState("");
   const [newMembers, setNewMembers] = useState([{ name: "", category: "adult", gender: "masculino", side: "comum", dietary_notes: "", notes: "" }]);
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
@@ -452,6 +464,39 @@ export default function GuestsModule({ guests, setGuests, invitationId, groomNam
 
   return (
     <div className="space-y-10 max-w-6xl mx-auto pb-20 px-4 md:px-0 font-montserrat">
+
+      {/* QR CODE DE CONFIRMAÇÃO DE PRESENÇA — para convites físicos */}
+      <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
+        <div className="bg-cream p-4 rounded-3xl border border-gold-soft/50 shadow-inner">
+          <QRCodeSVG id="qr-rsvp" value={rsvpUrl} size={140} />
+        </div>
+        <div className="flex-1 text-center md:text-left space-y-4">
+          <div>
+            <div className="flex items-center justify-center md:justify-start gap-2 text-brand mb-1">
+              <QrCode size={18} />
+              <h3 className="font-serif text-2xl">{dict.rsvpQr.title}</h3>
+            </div>
+            <p className="text-xs text-gray-500 leading-relaxed">{dict.rsvpQr.description}</p>
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+            <button onClick={() => downloadQRAsPng("qr-rsvp", `QR-RSVP-${slug}`)} className="bg-ink text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all">
+              <Download size={14} /> {dict.rsvpQr.downloadPng}
+            </button>
+            <button onClick={() => downloadQRAsSvg("qr-rsvp", `QR-RSVP-${slug}`)} className="bg-white text-gray-600 border border-gray-200 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">
+              {dict.rsvpQr.downloadSvg}
+            </button>
+            <button onClick={() => window.open(rsvpUrl, "_blank")} className="bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-gray-200 transition-all">
+              <ExternalLink size={14} /> {dict.rsvpQr.openBtn}
+            </button>
+            <button
+              onClick={() => { navigator.clipboard.writeText(rsvpUrl); setRsvpLinkCopied(true); setTimeout(() => setRsvpLinkCopied(false), 2000); }}
+              className="bg-brand/5 text-brand px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-brand/10 transition-all"
+            >
+              {rsvpLinkCopied ? <Check size={14} /> : <Copy size={14} />} {rsvpLinkCopied ? dict.rsvpQr.copied : dict.rsvpQr.copyLink}
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* STATS PANEL */}
       <div className="flex flex-col">
