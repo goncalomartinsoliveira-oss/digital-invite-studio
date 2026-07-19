@@ -15,12 +15,13 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
   const en = locale === "en";
   const t = {
     title: en ? "Partner brands" : "Marcas de parceiros",
-    subtitle: en ? "Onboard a partner: name + logo. No domain needed." : "Registe um parceiro: nome + logótipo. Sem domínio necessário.",
+    subtitle: en ? "Onboard a partner: name + optional logo. No domain needed." : "Registe um parceiro: nome + logótipo opcional. Sem domínio necessário.",
     createTitle: en ? "New partner" : "Novo parceiro",
     nameLbl: en ? "Name" : "Nome",
     namePh: en ? "e.g. Flores & Aliança" : "Ex.: Flores & Aliança",
     slugLbl: en ? "Identifier (slug)" : "Identificador (slug)",
-    logoLbl: en ? "Logo (PNG)" : "Logótipo (PNG)",
+    logoLbl: en ? "Logo (PNG, optional)" : "Logótipo (PNG, opcional)",
+    logoHint: en ? "No logo? Their events show the Digital Invite Studio logo." : "Sem logótipo, os eventos mostram o logótipo da Digital Invite Studio.",
     upload: en ? "Upload logo" : "Carregar logótipo",
     uploading: en ? "Uploading..." : "A carregar...",
     create: en ? "Create partner" : "Criar parceiro",
@@ -29,7 +30,6 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     remove: en ? "Remove" : "Remover",
     codeManaged: en ? "domain brand" : "marca com domínio",
     slugTaken: en ? "That identifier is already in use." : "Esse identificador já está em uso.",
-    needLogo: en ? "Please upload a logo first." : "Carregue primeiro um logótipo.",
     changeLogo: en ? "Change logo" : "Trocar logótipo",
     removeConfirm: en ? "Remove this partner? Existing events keep their brand tag." : "Remover este parceiro? Os eventos existentes mantêm a marca.",
   };
@@ -72,10 +72,9 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
   const createBrand = async () => {
     setMsg("");
     if (!name.trim() || !slug) return;
-    if (!logoUrl) { setMsg(t.needLogo); return; }
     if (BRANDS[slug]) { setMsg(t.slugTaken); return; }
     setCreating(true);
-    const { error } = await supabase.from("brands").insert([{ id: slug, name: name.trim(), logo_url: logoUrl }]);
+    const { error } = await supabase.from("brands").insert([{ id: slug, name: name.trim(), logo_url: logoUrl || null }]);
     if (error) {
       setMsg(error.code === "23505" ? t.slugTaken : error.message);
     } else {
@@ -132,11 +131,14 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
             <div className="w-24 h-16 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
               {logoUrl ? <img src={logoUrl} className="max-w-full max-h-full object-contain" alt="" /> : <ImagePlus size={20} className="text-gray-300" />}
             </div>
-            <label className="inline-flex items-center gap-2 cursor-pointer bg-gray-900 text-white px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-all">
-              {uploading ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
-              {uploading ? t.uploading : t.upload}
-              <input type="file" accept="image/*" className="hidden" onChange={uploadLogo} disabled={uploading} />
-            </label>
+            <div>
+              <label className="inline-flex items-center gap-2 cursor-pointer bg-gray-900 text-white px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-all">
+                {uploading ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
+                {uploading ? t.uploading : t.upload}
+                <input type="file" accept="image/*" className="hidden" onChange={uploadLogo} disabled={uploading} />
+              </label>
+              <p className="text-[10px] text-gray-400 mt-2">{t.logoHint}</p>
+            </div>
           </div>
         </div>
 
