@@ -30,7 +30,7 @@ export const BUNDLES: Bundle[] = [
   {
     id: "convite",
     moduleIds: ["save_the_date", "invite", "guests_seating"],
-    priceCents: 8900,
+    priceCents: 7500,
   },
   {
     id: "momentos",

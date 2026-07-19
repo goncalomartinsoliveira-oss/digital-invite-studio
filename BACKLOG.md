@@ -17,7 +17,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [x] Página no dashboard para o casal ver o histórico das suas compras (a tabela `payments` já existe, falta a interface)
 - [x] Preços diferenciados por parceiro/marca (hoje o checkout usa sempre a mesma tabela de preços global, `lib/pricing.ts`)
 - [x] Sistema de cupões/códigos promocionais
-- [ ] Rever o desconto do "Pacote Convite" (ficou muito pequeno, ~5€, depois do preço do Convite subir para 79€)
+- [x] Rever o desconto do "Pacote Convite" (ficou muito pequeno, ~5€, depois do preço do Convite subir para 79€) — baixado de 89€ para 75€ (poupança de 19€, ~20%)
 
 ## Produto
 - [ ] Forma de prolongar um evento além dos 60 dias (pagamento extra para estender o prazo)
