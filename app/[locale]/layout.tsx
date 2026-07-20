@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost, Pinyon_Script } from "next/font/google";
 import { headers, cookies } from "next/headers";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "../globals.css";
 
 // Usando caminhos relativos exatos para evitar o erro de "Module not found"
@@ -32,6 +33,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const h = await headers();
   const c = await cookies();
   const brand = resolveBrand(h.get("host") ?? "", c.get("brand")?.value);
+  // Search Console/Analytics são só da DIS — não faz sentido verificar ou
+  // medir o tráfego de um domínio de parceiro como se fosse nosso.
+  const isDis = brand.id === "dis";
   return {
     title: brand.id === "dis" ? "Digital Invite Studio | Luxury Invitations" : brand.name,
     description: brand.tagline,
@@ -44,6 +48,9 @@ export async function generateMetadata(): Promise<Metadata> {
           ],
           apple: "/apple-touch-icon.png",
         },
+    verification: isDis && process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : undefined,
   };
 }
 
@@ -76,6 +83,9 @@ export default async function RootLayout({
           <Footer brand={brand} />
 
         </BrandProvider>
+        {brand.id === "dis" && process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
       </body>
     </html>
   );
