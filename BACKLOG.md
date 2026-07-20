@@ -28,9 +28,19 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [x] QR code/link de RSVP standalone (`/rsvp/[slug]`) para convites físicos, independente do módulo Convite
 
 ## Marketing / Crescimento
-- [ ] Melhorar SEO das páginas de marketing (meta tags, sitemap, etc.)
+- [ ] Melhorar SEO das páginas de marketing — hoje não existe nenhum: sem `sitemap.xml`, sem `metadataBase`, sem meta description por página (confirmado no código, não é só "margem para melhorar")
 - [ ] Configurar Google Analytics e Google Search Console
 - [ ] Sistema de marketing de afiliados para parcerias com associações de wedding planners — decidir entre sistema próprio (reaproveitar a lógica de cupões: código + % de comissão, sem portal nem pagamentos automáticos) ou ferramenta externa (ex.: Rewardful, FirstPromoter — feitas para checkout Stripe, dão portal ao afiliado e pagamento automático via PayPal, mas têm custo mensal)
+
+## Posicionamento & copy (feedback externo, jul/2026)
+Prioridade alta — barato, é copy, não código:
+- [ ] Reposicionar a homepage: comunicar a plataforma toda (site + RSVP + convidados/mesas + fotos + guestbook + canal para wedding planners), não só "convites digitais" — sem prometer funcionalidades que não existem (nada de "sistema operativo do casamento" com orçamento/fornecedores/itinerário, isso não está construído)
+- [ ] Storytelling "antes/depois" na homepage — de "100 mensagens, Excel, PDFs espalhados" para "um link, tudo organizado"
+- [ ] Antes de dar destaque tipo "galeria" aos templates (ver `/deixado para mais tarde`), garantir que há templates suficientes para não parecer pobre — hoje só há 4 de convite e 2 de Save the Date
+
+Para depois do lançamento — direção certa, mas timing errado agora:
+- [ ] Funis de marketing separados para casais vs. wedding planners (landing page, copy e CTA próprios cada um — já existe o início disto com `/partners`); vídeos e produção mais pesada ficam para quando já houver tração real
+- [ ] Expandir SEO com dezenas de páginas de conteúdo direcionadas a termos específicos (Wedding RSVP, Wedding Seating Chart, Wedding Guest List, Digital Wedding Invitation, etc.) + um centro de recursos/blog — começar por 10–15 páginas bem feitas nos termos mais próximos dos módulos reais, não "centenas" de uma vez (risco de conteúdo fraco penalizado pelo Google)
 
 ## Operacional / QA
 - [x] Confirmar consistência entre `www.` e domínio sem `www` em todos os links internos (já apanhámos um erro 307 no webhook por causa disto) — auditado; só havia 2 links fixos ao domínio (nos PDFs exportados de convidados/mesas), corrigidos para `www.` diretamente. O resto (checkout, partilha, QR codes) já usa sempre o domínio real de onde o pedido vem, nunca fixo
