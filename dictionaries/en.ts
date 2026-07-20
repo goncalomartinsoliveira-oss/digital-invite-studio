@@ -113,7 +113,7 @@ const en = {
         },
         {
           "q": "Is the platform suitable for wedding planners?",
-          "a": "Absolutely. We have a specific plan for professionals that allows managing multiple projects, with simplified billing and advanced tools."
+          "a": "Absolutely. Partners and agencies get a dashboard with their whole event portfolio, pricing tailored to them, and the option to resell under their own brand."
         },
         {
           "q": "How does RSVP work?",
@@ -127,7 +127,7 @@ const en = {
       "desc": "Manage multiple projects in one place. Impress clients with a premium product. Save hours of operational work on every wedding.",
       "features": [
         "Multi-project dashboard",
-        "Simplified billing",
+        "Your own brand (white label)",
         "Advanced management tools",
         "Priority support"
       ],

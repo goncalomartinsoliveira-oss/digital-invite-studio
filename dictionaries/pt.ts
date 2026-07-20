@@ -113,7 +113,7 @@ const pt = {
         },
         {
           "q": "A plataforma é adequada para wedding planners?",
-          "a": "Absolutamente. Temos um plano específico para profissionais que permite gerir múltiplos projetos, com faturação simplificada e ferramentas avançadas."
+          "a": "Absolutamente. Parceiros e agências têm um painel com o portfólio de todos os seus eventos, preços à sua medida e a possibilidade de revender com marca própria."
         },
         {
           "q": "Como funciona o RSVP?",
@@ -127,7 +127,7 @@ const pt = {
       "desc": "Gira múltiplos projetos num só lugar. Impressiona os clientes com um produto premium. Poupe horas de trabalho operacional em cada casamento.",
       "features": [
         "Painel multi-projeto",
-        "Faturação simplificada",
+        "Marca própria (white label)",
         "Ferramentas avançadas de gestão",
         "Suporte prioritário"
       ],
