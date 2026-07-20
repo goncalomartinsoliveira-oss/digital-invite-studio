@@ -6,7 +6,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [x] Rever/substituir os depoimentos e números fictícios da homepage (testemunhos, "500+ Casamentos Criados", "12 Países", "98% Satisfação", etc.)
 - [x] Rever o conteúdo de `/terms` e `/privacy` para refletir o modelo atual (módulos, pagamentos, expiração de 60 dias após o evento) — rascunho técnico, recomenda-se revisão jurídica antes de assumir como vinculativo
 - [x] Definir e publicar uma política de reembolso/cancelamento (14 dias, caso a caso)
-- [ ] Passar o Stripe para modo real (chaves live + webhook live, confirmar Business Profile)
+- [x] Passar o Stripe para modo real (chaves live + webhook live, confirmar Business Profile) — testado com compra real (Save the Date) + reembolso, tudo a funcionar (desbloqueio, email de confirmação, histórico, revogação por reembolso)
 
 ## Comunicação
 - [x] Configurar um email profissional para a empresa — hello@digitalinvitestudio.com, via Zoho Mail
@@ -44,7 +44,7 @@ Para depois do lançamento — direção certa, mas timing errado agora:
 
 ## Operacional / QA
 - [x] Confirmar consistência entre `www.` e domínio sem `www` em todos os links internos (já apanhámos um erro 307 no webhook por causa disto) — auditado; só havia 2 links fixos ao domínio (nos PDFs exportados de convidados/mesas), corrigidos para `www.` diretamente. O resto (checkout, partilha, QR codes) já usa sempre o domínio real de onde o pedido vem, nunca fixo
-- [ ] Teste de fumo ponta-a-ponta com uma conta 100% nova, antes de abrir a clientes reais
+- [ ] Teste de fumo ponta-a-ponta com uma conta 100% nova, antes de abrir a clientes reais — o fluxo de pagamento (checkout, desbloqueio, email, reembolso) já foi validado em modo real; falta o resto (registo, criação de evento, páginas de convidados)
 
 ## Deixado para mais tarde (decisão já tomada, sem urgência)
 - [ ] Novos templates de Save the Date
