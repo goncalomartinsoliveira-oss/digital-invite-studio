@@ -1,7 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { resend, CONTACT_FROM } from "@/lib/resend";
 import type { ModuleId } from "@/lib/modules";
+
+const MODULE_NAMES: Record<ModuleId, string> = {
+  save_the_date: "Save the Date",
+  invite: "Convite de Casamento",
+  guests_seating: "Convidados & Mesas",
+  photo_sharing: "Photo Sharing & Live Wall",
+  guestbook: "Guestbook",
+};
+
+const BUNDLE_NAMES: Record<string, string> = {
+  convite: "Pacote Convite",
+  momentos: "Pacote Momentos",
+  completo: "Pacote Completo",
+};
 
 // Ponto de confiança único: só aqui (código de servidor, com a service_role
 // key) é que unlocked_modules é escrito a partir de um pagamento. O corpo
@@ -38,6 +53,7 @@ async function handleCheckoutCompleted(session: any) {
   const bundleId: string | null = session.metadata?.bundleId || null;
   const couponCode: string | null = session.metadata?.couponCode || null;
   const couponId: string | null = session.metadata?.couponId || null;
+  const locale: string = session.metadata?.locale === "en" ? "en" : "pt";
 
   console.log(`[stripe-webhook] session=${session.id} invitationId=${invitationId} moduleIds=${moduleIds.join(",")}`);
 
@@ -62,7 +78,7 @@ async function handleCheckoutCompleted(session: any) {
 
     const { data: invite, error: inviteError } = await supabaseAdmin
       .from("invitations")
-      .select("unlocked_modules")
+      .select("unlocked_modules, slug, groom_name, bride_name")
       .eq("id", invitationId)
       .single();
 
@@ -114,6 +130,45 @@ async function handleCheckoutCompleted(session: any) {
         if (couponUpdateError) {
           console.error(`[stripe-webhook] Falha ao incrementar resgates do cupão ${couponId}: ${couponUpdateError.message}`);
         }
+      }
+    }
+
+    // Email de confirmação de compra — como o resgate de cupão, não é
+    // crítico o suficiente para fazer o webhook falhar (a compra e o
+    // desbloqueio já ficaram feitos); só regista o erro em log.
+    const customerEmail: string | undefined = session.customer_details?.email || undefined;
+    if (customerEmail) {
+      try {
+        const itemLabel = bundleId
+          ? (BUNDLE_NAMES[bundleId] || bundleId)
+          : moduleIds.map(m => MODULE_NAMES[m] || m).join(", ");
+        const coupleName = invite?.groom_name && invite?.bride_name
+          ? `${invite.groom_name} & ${invite.bride_name}`
+          : invite?.slug || "";
+        const dashboardUrl = invite?.slug
+          ? `https://www.digitalinvitestudio.com/${locale}/dashboard/${invite.slug}`
+          : "https://www.digitalinvitestudio.com";
+        const amountLabel = new Intl.NumberFormat(locale === "en" ? "en-IE" : "pt-PT", {
+          style: "currency",
+          currency: (session.currency || "eur").toUpperCase(),
+        }).format((session.amount_total || 0) / 100);
+
+        const subject = locale === "en" ? "Purchase confirmed — Digital Invite Studio" : "Compra confirmada — Digital Invite Studio";
+        const html = locale === "en"
+          ? `<p>Hi,</p><p>We've received your payment for <strong>${coupleName}</strong>. Here's your receipt:</p><ul><li><strong>Item:</strong> ${itemLabel}</li><li><strong>Amount:</strong> ${amountLabel}</li></ul><p><a href="${dashboardUrl}">Open your dashboard</a></p><p>Thank you!<br/>Digital Invite Studio</p>`
+          : `<p>Olá,</p><p>Recebemos o seu pagamento para <strong>${coupleName}</strong>. Aqui fica o seu recibo:</p><ul><li><strong>Item:</strong> ${itemLabel}</li><li><strong>Valor:</strong> ${amountLabel}</li></ul><p><a href="${dashboardUrl}">Abrir o seu painel</a></p><p>Obrigado!<br/>Digital Invite Studio</p>`;
+
+        const { error: emailError } = await resend.emails.send({
+          from: CONTACT_FROM,
+          to: customerEmail,
+          subject,
+          html,
+        });
+        if (emailError) {
+          console.error(`[stripe-webhook] Falha ao enviar email de confirmação: ${emailError.message}`);
+        }
+      } catch (emailErr: any) {
+        console.error("[stripe-webhook] Erro ao enviar email de confirmação:", emailErr.message);
       }
     }
 

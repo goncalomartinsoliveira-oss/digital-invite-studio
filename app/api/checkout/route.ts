@@ -145,6 +145,7 @@ export async function POST(req: NextRequest) {
         bundleId: bundleUsed || "",
         couponCode: appliedCoupon?.code || "",
         couponId: appliedCoupon?.id || "",
+        locale,
       },
     });
 

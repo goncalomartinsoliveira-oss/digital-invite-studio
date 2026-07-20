@@ -10,7 +10,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 
 ## Comunicação
 - [ ] Configurar um email profissional para a empresa
-- [ ] Emails de confirmação de compra (recibo automático depois de um pagamento)
+- [x] Emails de confirmação de compra (recibo automático depois de um pagamento) — via Resend, disparado no webhook do Stripe
 
 ## Pagamentos
 - [x] Lidar com reembolsos no webhook (hoje só trata `checkout.session.completed`; um reembolso no Stripe não revoga o módulo)
