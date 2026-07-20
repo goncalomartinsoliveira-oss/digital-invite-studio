@@ -35,7 +35,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 ## Posicionamento & copy (feedback externo, jul/2026)
 Prioridade alta — barato, é copy, não código:
 - [x] Reposicionar a homepage: comunicar a plataforma toda (site + RSVP + convidados/mesas + fotos + guestbook + canal para wedding planners), não só "convites digitais" — hero reescrito (tag, título e descrição) com o "antes/depois" (conversas dispersas e Excel → tudo num só lugar), sem prometer nada que não existe
-- [ ] Storytelling "antes/depois" na homepage — de "100 mensagens, Excel, PDFs espalhados" para "um link, tudo organizado"
+- [x] Storytelling "antes/depois" na homepage — secção nova com 5 pares (mensagens dispersas → um link, perguntas repetidas → RSVP, Excel → painel único, fotos espalhadas → galeria automática, recados perdidos → Guestbook)
 - [ ] Antes de dar destaque tipo "galeria" aos templates (ver `/deixado para mais tarde`), garantir que há templates suficientes para não parecer pobre — hoje só há 4 de convite e 2 de Save the Date
 
 Para depois do lançamento — direção certa, mas timing errado agora:
