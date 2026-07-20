@@ -52,3 +52,5 @@ Para depois do lançamento — direção certa, mas timing errado agora:
 - [ ] Save the Date em PDF vetorial (fase 2 — hoje é uma captura raster via html2canvas, a 3x, já com boa qualidade)
 - [ ] Eliminação de dados pesados (fotos/guestbook) depois da expiração — a configurar no futuro
 - [ ] Fechar mais a RLS das tabelas de convidados ao nível da linha (mover operações sensíveis para funções RPC)
+- [ ] Um único link "hub" com todas as ferramentas ativas do evento (photo sharing, guestbook, seating plan, etc.) para os noivos partilharem um só link em vez de vários
+- [ ] Menu digital (módulo novo)

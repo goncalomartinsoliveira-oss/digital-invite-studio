@@ -167,23 +167,23 @@ export default function GuestbookModule({ invitationId, slug, canEdit, unlockedM
       <audio ref={audioRef} onEnded={() => setPlayingAudio(null)} />
 
       {/* CARTÃO DE ACESSO RÁPIDO */}
-      <div className="max-w-md">
-        <section className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center text-center">
-          <div className="bg-cream p-4 rounded-3xl border border-gold-soft/50 mb-4">
-            <QRCodeSVG id="qr-guestbook" value={urlGuestbook} size={110} />
+      <section className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
+        <div className="bg-cream p-4 rounded-3xl border border-gold-soft/50 shrink-0">
+          <QRCodeSVG id="qr-guestbook" value={urlGuestbook} size={110} />
+        </div>
+        <div className="flex-1 text-center md:text-left space-y-4 w-full">
+          <div>
+            <h4 className="font-bold text-brand text-xs uppercase tracking-widest mb-1">{dict.card.title}</h4>
+            <p className="text-[9px] text-gray-400 uppercase font-bold">{dict.card.subtitle}</p>
           </div>
-          <h4 className="font-bold text-brand text-xs uppercase tracking-widest mb-1">{dict.card.title}</h4>
-          <p className="text-[9px] text-gray-400 uppercase font-bold mb-6">{dict.card.subtitle}</p>
-          <div className="w-full flex gap-2 mb-2">
-            <button onClick={() => downloadQRAsSvg('qr-guestbook', `QR-Guestbook-${slug}`)} className="flex-1 py-2 bg-gray-50 rounded-xl text-[9px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-100 transition-all border border-gray-100">SVG</button>
-            <button onClick={() => downloadQRAsPng('qr-guestbook', `QR-Guestbook-${slug}`)} className="flex-1 py-2 bg-gray-50 rounded-xl text-[9px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-100 transition-all border border-gray-100">PNG</button>
+          <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+            <button onClick={() => downloadQRAsSvg('qr-guestbook', `QR-Guestbook-${slug}`)} className="bg-white text-gray-600 border border-gray-200 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">SVG</button>
+            <button onClick={() => downloadQRAsPng('qr-guestbook', `QR-Guestbook-${slug}`)} className="bg-white text-gray-600 border border-gray-200 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">PNG</button>
+            <button onClick={() => window.open(urlGuestbook, '_blank')} className="bg-ink text-gold-soft px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all shadow-sm"><Globe size={14} /> {dict.openDirect}</button>
+            <button onClick={() => { navigator.clipboard.writeText(urlGuestbook); alert(dict.card.linkCopied); }} className="bg-brand/5 text-brand px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-brand/10 transition-all"><Copy size={14} /> {dict.copyLink}</button>
           </div>
-          <div className="w-full flex gap-2">
-            <button onClick={() => window.open(urlGuestbook, '_blank')} className="flex-1 bg-ink text-gold-soft py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-black transition-all shadow-sm"><Globe size={14} /> {dict.openDirect}</button>
-            <button onClick={() => { navigator.clipboard.writeText(urlGuestbook); alert(dict.card.linkCopied); }} className="flex-1 bg-white border border-gray-200 text-gray-600 py-3 rounded-xl text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1 hover:bg-gray-50 transition-all"><Copy size={14} /> {dict.copyLink}</button>
-          </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
       {/* PERFIL & ESTATÍSTICAS */}
       <section className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-center">
