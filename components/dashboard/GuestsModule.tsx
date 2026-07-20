@@ -746,7 +746,7 @@ export default function GuestsModule({ guests, setGuests, invitationId, slug, gr
           <div className={`bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-lg ${!canEdit ? 'opacity-70 pointer-events-none' : ''}`}>
             <h3 className="font-serif text-2xl text-brand mb-6 border-b border-gray-50 pb-4 italic">{dict.form.title}</h3>
             <form onSubmit={handleSaveGroup} className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {newMembers.map((m, i) => (
                   <div key={i} className="p-5 bg-gray-50 rounded-2xl border border-gray-100 relative space-y-4">
                     {newMembers.length > 1 && (
