@@ -7,10 +7,10 @@ const en = {
   },
   "HomePage": {
     "hero": {
-      "tag": "The Complete Wedding Platform",
-      "title1": "Your wedding,",
-      "title2": "all in one place.",
-      "desc": "Website, digital invitation, RSVP, seating plan, live shared photos and guest messages — no more scattered chats, spreadsheets or lost lists. Elegant, and all together.",
+      "tag": "The Platform for Your Guests",
+      "title1": "One place.",
+      "title2": "Everything your guests need.",
+      "desc": "Wedding website and digital invitation, Save the Date, RSVP, seating plan, live shared photos and guest messages — all included, with no more scattered chats or spreadsheets.",
       "btn1": "View Plans",
       "btn2": "Discover Features",
       "floatingBadge": "RSVP Delivered",

@@ -7,10 +7,10 @@ const pt = {
   },
   "HomePage": {
     "hero": {
-      "tag": "A Plataforma Completa do Casamento",
-      "title1": "O seu casamento,",
-      "title2": "tudo num só lugar.",
-      "desc": "Website, convite digital, confirmações de presença, plano de mesas, fotos partilhadas ao vivo e mensagens dos convidados — sem dezenas de conversas dispersas, listas soltas ou folhas de Excel. Tudo elegante, tudo junto.",
+      "tag": "A Plataforma dos Seus Convidados",
+      "title1": "Um só lugar.",
+      "title2": "Tudo o que os convidados precisam.",
+      "desc": "Site e convite digital, Save the Date, confirmações de presença (RSVP), plano de mesas, fotos partilhadas ao vivo e mensagens dos convidados — tudo incluído, sem dezenas de conversas dispersas ou folhas de Excel.",
       "btn1": "Ver Planos",
       "btn2": "Descobrir Funcionalidades",
       "floatingBadge": "RSVP Entregue",
