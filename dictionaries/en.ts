@@ -7,11 +7,11 @@ const en = {
   },
   "HomePage": {
     "hero": {
-      "tag": "The New Era of Invitations",
-      "title1": "Your wedding deserves",
-      "title2": "more than just paper.",
-      "desc": "We create premium wedding websites and digital invitations that tell your story, dazzle your guests, and simplify the entire organization of your big day.",
-      "btn1": "View Collection",
+      "tag": "The Complete Wedding Platform",
+      "title1": "Your wedding,",
+      "title2": "all in one place.",
+      "desc": "Website, digital invitation, RSVP, seating plan, live shared photos and guest messages — no more scattered chats, spreadsheets or lost lists. Elegant, and all together.",
+      "btn1": "View Plans",
       "btn2": "Discover Features",
       "floatingBadge": "RSVP Delivered",
       "floatingText": "Marta has confirmed!"
