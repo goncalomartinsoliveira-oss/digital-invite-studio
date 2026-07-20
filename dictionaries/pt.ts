@@ -183,7 +183,14 @@ const pt = {
       ],
       "labelMessage": "Mensagem",
       "placeholderMessage": "Como podemos ajudar?",
-      "btnSubmit": "Enviar Mensagem"
+      "btnSubmit": "Enviar Mensagem",
+      "btnSending": "A enviar...",
+      "errorMessage": "Não foi possível enviar a mensagem. Tente novamente ou escreva para hello@digitalinvitestudio.com."
+    },
+    "sent": {
+      "title": "Mensagem enviada!",
+      "message": "Obrigado pelo contacto — respondemos o mais rápido possível.",
+      "newMessageBtn": "Enviar outra mensagem"
     }
   },
   "CookiesPolicyPage": {
