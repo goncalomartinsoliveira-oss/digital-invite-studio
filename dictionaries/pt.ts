@@ -16,6 +16,20 @@ const pt = {
       "floatingBadge": "RSVP Entregue",
       "floatingText": "A Marta confirmou!"
     },
+    "story": {
+      "tag": "O antes e o depois",
+      "title1": "De dezenas de mensagens",
+      "title2": "a um único link elegante.",
+      "beforeLabel": "Sem organização centralizada",
+      "afterLabel": "Com a Digital Invite Studio",
+      "rows": [
+        { "before": "Dezenas de mensagens de WhatsApp com os convidados", "after": "Um único link com o convite e todas as informações" },
+        { "before": "As mesmas perguntas repetidas: morada, hora, dress code", "after": "Convidados confirmam presença sozinhos, sem perguntas repetidas" },
+        { "before": "Uma folha de Excel para a lista de convidados, outra para as mesas", "after": "Lista de convidados e plano de mesas sempre atualizados, no mesmo painel" },
+        { "before": "Fotos espalhadas por grupos e telemóveis diferentes", "after": "Fotos dos convidados a chegar automaticamente à galeria partilhada" },
+        { "before": "Recados e votos perdidos em conversas soltas", "after": "Mensagens e votos guardados num só lugar, o Guestbook" }
+      ]
+    },
     "core": {
       "promo": "[ Imagem Promocional: Mockup de 2 telemóveis a mostrar o design incrível do convite digital ]",
       "title1": "Um convite que os convidados",

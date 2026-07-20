@@ -20,7 +20,9 @@ import {
   HeadphonesIcon,
   CreditCard,
   ShieldCheck,
-  Layers
+  Layers,
+  X,
+  Check
 } from 'lucide-react';
 
 import pt from '../../dictionaries/pt';
@@ -119,6 +121,59 @@ export default function HomePage() {
               >
                 <span className="font-serif text-4xl md:text-5xl text-brand italic">{item.value}</span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{item.label}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 2b. ANTES / DEPOIS ───────────────────────────────────────── */}
+      <section className="py-32 px-6 md:px-20 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16 space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-soft/30 border border-gold-soft text-[10px] font-bold uppercase tracking-widest text-brand">
+              <Sparkles size={14} />
+              <span>{dict.story.tag}</span>
+            </div>
+            <h2 className="font-serif text-4xl md:text-5xl text-ink leading-tight">
+              {dict.story.title1} <br className="hidden md:block" />
+              <span className="italic text-brand">{dict.story.title2}</span>
+            </h2>
+          </div>
+
+          <div className="hidden md:grid grid-cols-[1fr_auto_1fr] gap-x-8 mb-6">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 text-center">{dict.story.beforeLabel}</span>
+            <span></span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-brand text-center">{dict.story.afterLabel}</span>
+          </div>
+
+          <div className="space-y-4">
+            {(dict.story.rows as { before: string; after: string }[]).map((row, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 md:gap-8 items-stretch"
+              >
+                <div className="flex items-center gap-4 bg-gray-50 rounded-2xl px-6 py-5 border border-gray-100">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center shrink-0">
+                    <X size={16} />
+                  </div>
+                  <p className="text-sm text-gray-500">{row.before}</p>
+                </div>
+
+                <div className="hidden md:flex items-center justify-center">
+                  <ArrowRight size={20} className="text-gold" />
+                </div>
+
+                <div className="flex items-center gap-4 bg-cream rounded-2xl px-6 py-5 border border-gold-soft/60">
+                  <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0">
+                    <Check size={16} />
+                  </div>
+                  <p className="text-sm text-ink font-medium">{row.after}</p>
+                </div>
               </motion.div>
             ))}
           </div>

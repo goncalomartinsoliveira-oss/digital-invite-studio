@@ -16,6 +16,20 @@ const en = {
       "floatingBadge": "RSVP Delivered",
       "floatingText": "Marta has confirmed!"
     },
+    "story": {
+      "tag": "The before and after",
+      "title1": "From dozens of messages",
+      "title2": "to one elegant link.",
+      "beforeLabel": "Without central organization",
+      "afterLabel": "With Digital Invite Studio",
+      "rows": [
+        { "before": "Dozens of WhatsApp messages with guests", "after": "One link with the invitation and every detail" },
+        { "before": "The same questions, again and again: address, time, dress code", "after": "Guests confirm attendance themselves, no repeated questions" },
+        { "before": "A spreadsheet for the guest list, another for the seating plan", "after": "Guest list and seating plan always up to date, in the same dashboard" },
+        { "before": "Photos scattered across different group chats and phones", "after": "Guest photos arriving automatically in the shared gallery" },
+        { "before": "Messages and wishes lost in scattered conversations", "after": "Messages and wishes kept in one place, the Guestbook" }
+      ]
+    },
     "core": {
       "promo": "[ Promotional Image: Mockup of 2 smartphones showing the incredible digital invite design ]",
       "title1": "An invitation your guests",
