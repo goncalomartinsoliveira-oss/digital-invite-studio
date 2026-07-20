@@ -22,7 +22,6 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [x] `/pricing` e `/partners` escondidas (redirecionam para a home) em domínios de parceiros white label — esse conteúdo é só da DIS
 
 ## Produto
-- [ ] Forma de prolongar um evento além dos 60 dias (pagamento extra para estender o prazo)
 - [x] Onboarding/tour guiado para contas novas
 - [x] Painel "Negócio" para super-admin: receita total/mensal, contas ativas e receita por parceiro
 - [x] QR code/link de RSVP standalone (`/rsvp/[slug]`) para convites físicos, independente do módulo Convite
@@ -47,6 +46,7 @@ Para depois do lançamento — direção certa, mas timing errado agora:
 - [ ] Teste de fumo ponta-a-ponta com uma conta 100% nova, antes de abrir a clientes reais — o fluxo de pagamento (checkout, desbloqueio, email, reembolso) já foi validado em modo real; falta o resto (registo, criação de evento, páginas de convidados)
 
 ## Deixado para mais tarde (decisão já tomada, sem urgência)
+- [ ] Forma de prolongar um evento além dos 60 dias (pagamento extra para estender o prazo) — a aguardar uso real: ainda não há noção do volume/capacidade do sistema para decidir se vale a pena guardar dados por mais tempo
 - [ ] Novos templates de Save the Date
 - [ ] Novos templates para os websites de casamento (convite)
 - [ ] Save the Date em PDF vetorial (fase 2 — hoje é uma captura raster via html2canvas, a 3x, já com boa qualidade)
