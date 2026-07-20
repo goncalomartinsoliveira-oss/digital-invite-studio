@@ -469,7 +469,30 @@ const pt = {
           { "title": "Mural ao vivo na receção", "desc": "Ligam um portátil a uma televisão na sala e ativam o Live Wall: as fotos que os convidados vão tirando aparecem no ecrã minutos depois de serem carregadas." },
           { "title": "Álbum sem esforço", "desc": "No dia seguinte, descarregam um ZIP com centenas de fotos e vídeos tirados por todos os convidados, sem ter de pedir a cada um individualmente." },
           { "title": "Acesso instantâneo", "desc": "Basta apontar a câmara do telemóvel ao QR code numa mesa para começar a carregar fotos, sem instalar nada." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Passo a passo",
+          "title": "Do painel de gestão à festa, em quatro passos",
+          "steps": [
+            {
+              "title": "Configuram o acesso em minutos",
+              "desc": "No vosso painel, escolhem a foto de perfil da galeria e ficam logo com um QR code gerado automaticamente, pronto a descarregar e imprimir, ou com um link direto para partilhar como preferirem."
+            },
+            {
+              "title": "Um cartão à disposição dos convidados",
+              "desc": "Colocam o QR code numa mesa, no bar, ou onde fizer sentido no evento. Qualquer convidado aponta a câmara do telemóvel e entra na galeria em segundos, sem instalar nada."
+            },
+            {
+              "title": "Os convidados exploram e carregam fotos",
+              "desc": "Cada convidado vê as fotos que já foram partilhadas e carrega as suas próprias, diretamente do telemóvel, ao longo de toda a festa."
+            },
+            {
+              "title": "Tudo em ecrã grande, em tempo real",
+              "desc": "Ativam o modo Live Wall numa TV ou painel LED na sala, e as fotos vão aparecendo em slideshow à medida que chegam, transformando a receção num mural ao vivo."
+            }
+          ],
+          "outro": "Depois do grande dia, o painel de gestão fica com tudo: revêm as fotos, apagam o que não interessa, e descarregam tudo num único ZIP, para guardar para sempre."
+        }
       },
       "guestbook": {
         "tag": "Memórias",

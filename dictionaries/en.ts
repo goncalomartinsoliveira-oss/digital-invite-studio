@@ -469,7 +469,30 @@ const en = {
           { "title": "A live wall at the reception", "desc": "They connect a laptop to a TV in the room and turn on Live Wall: the photos guests are taking appear on screen minutes after being uploaded." },
           { "title": "An effortless album", "desc": "The next day, they download a ZIP with hundreds of photos and videos taken by every guest, without having to ask each one individually." },
           { "title": "Instant access", "desc": "Guests just point their phone camera at the QR code on a table to start uploading photos, nothing to install." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Step by step",
+          "title": "From the dashboard to the party, in four steps",
+          "steps": [
+            {
+              "title": "Set it up in minutes",
+              "desc": "In your dashboard, you pick the gallery's profile photo and instantly get an automatically generated QR code, ready to download and print, or a direct link to share however you like."
+            },
+            {
+              "title": "A card ready for guests",
+              "desc": "Place the QR code on a table, at the bar, or wherever makes sense at the event. Any guest points their phone camera at it and is in the gallery within seconds, nothing to install."
+            },
+            {
+              "title": "Guests browse and upload photos",
+              "desc": "Each guest sees the photos already shared and uploads their own, straight from their phone, throughout the whole party."
+            },
+            {
+              "title": "Everything on the big screen, in real time",
+              "desc": "Turn on Live Wall mode on a TV or LED panel in the room, and photos appear in a slideshow as they come in, turning the reception into a live wall of memories."
+            }
+          ],
+          "outro": "After the big day, the dashboard keeps it all: review the photos, delete what you don't want, and download everything as a single ZIP, to keep forever."
+        }
       },
       "guestbook": {
         "tag": "Memories",
