@@ -10,7 +10,7 @@ const en = {
       "tag": "The Platform for Your Guests",
       "title1": "One place.",
       "title2": "Everything your guests need.",
-      "desc": "Wedding website and digital invitation, Save the Date, RSVP, seating plan, live shared photos and guest messages — all included, with no more scattered chats or spreadsheets.",
+      "desc": "Wedding website and digital invitation, Save the Date, RSVP, seating plan, live shared photos and guest messages. All included, with no more scattered chats or spreadsheets.",
       "btn1": "View Plans",
       "btn2": "Discover Features",
       "floatingBadge": "RSVP Delivered",
