@@ -29,16 +29,31 @@ const pinyon = Pinyon_Script({
   variable: "--font-pinyon",
 });
 
-export async function generateMetadata(): Promise<Metadata> {
+const HOME_SEO = {
+  pt: {
+    title: "Digital Invite Studio | Convite Digital, RSVP, Convidados, Mesas e Fotos",
+    description: "A plataforma que os vossos convidados vão usar do início ao fim: convite digital, RSVP inteligente, lista de convidados e plano de mesas, partilha de fotos e guestbook, tudo num único link.",
+  },
+  en: {
+    title: "Digital Invite Studio | Digital Invitation, RSVP, Guests, Seating & Photos",
+    description: "The platform your guests will actually use, start to finish: digital invitation, smart RSVP, guest list and seating chart, photo sharing and guestbook, all in one link.",
+  },
+};
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
   const h = await headers();
   const c = await cookies();
   const brand = resolveBrand(h.get("host") ?? "", c.get("brand")?.value);
   // Search Console/Analytics são só da DIS — não faz sentido verificar ou
   // medir o tráfego de um domínio de parceiro como se fosse nosso.
   const isDis = brand.id === "dis";
+  const seo = HOME_SEO[locale === "pt" ? "pt" : "en"];
+  const host = h.get("host") || "www.digitalinvitestudio.com";
   return {
-    title: brand.id === "dis" ? "Digital Invite Studio | Luxury Invitations" : brand.name,
-    description: brand.tagline,
+    metadataBase: new URL(`https://${host}`),
+    title: isDis ? seo.title : brand.name,
+    description: isDis ? seo.description : brand.tagline,
     icons: brand.favicon
       ? { icon: brand.favicon, apple: brand.favicon }
       : {

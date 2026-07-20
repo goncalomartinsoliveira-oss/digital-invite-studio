@@ -27,7 +27,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [x] QR code/link de RSVP standalone (`/rsvp/[slug]`) para convites físicos, independente do módulo Convite
 
 ## Marketing / Crescimento
-- [ ] Melhorar SEO das páginas de marketing — hoje não existe nenhum: sem `sitemap.xml`, sem `metadataBase`, sem meta description por página (confirmado no código, não é só "margem para melhorar")
+- [x] Melhorar SEO das páginas de marketing — `sitemap.xml` e `robots.txt` dinâmicos (adaptados ao domínio, PT+EN, com as páginas privadas/dashboard bloqueadas), `metadataBase`, e título+descrição próprios por página (home, preços, parceiros, contacto, termos, privacidade, cookies, e cada uma das 5 páginas de funcionalidades)
 - [x] Configurar Google Analytics e Google Search Console
 - [ ] Sistema de marketing de afiliados para parcerias com associações de wedding planners — decidir entre sistema próprio (reaproveitar a lógica de cupões: código + % de comissão, sem portal nem pagamentos automáticos) ou ferramenta externa (ex.: Rewardful, FirstPromoter — feitas para checkout Stripe, dão portal ao afiliado e pagamento automático via PayPal, mas têm custo mensal)
 
