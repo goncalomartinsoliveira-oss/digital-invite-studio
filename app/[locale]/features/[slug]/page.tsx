@@ -107,7 +107,18 @@ export default function FeatureDetailPage() {
                   >
                     <div className="rounded-[2rem] overflow-hidden border border-gray-100 shadow-md aspect-[4/3] bg-cream">
                       {src && (
-                        <img src={src} alt={step.title} className="w-full h-full object-cover" />
+                        <img
+                          src={src}
+                          alt={step.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Enquanto não houver versão EN de uma imagem, mostra a PT em vez de partida.
+                            if (img?.perLocale && locale !== "pt") {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = `/features/${slug}/${img.file}-pt.jpg`;
+                            }
+                          }}
+                        />
                       )}
                     </div>
                     <div>
