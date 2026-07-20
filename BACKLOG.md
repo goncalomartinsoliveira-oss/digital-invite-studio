@@ -9,7 +9,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [ ] Passar o Stripe para modo real (chaves live + webhook live, confirmar Business Profile)
 
 ## Comunicação
-- [ ] Configurar um email profissional para a empresa
+- [x] Configurar um email profissional para a empresa — hello@digitalinvitestudio.com, via Zoho Mail
 - [x] Emails de confirmação de compra (recibo automático depois de um pagamento) — via Resend, disparado no webhook do Stripe
 
 ## Pagamentos
@@ -29,7 +29,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 
 ## Marketing / Crescimento
 - [ ] Melhorar SEO das páginas de marketing — hoje não existe nenhum: sem `sitemap.xml`, sem `metadataBase`, sem meta description por página (confirmado no código, não é só "margem para melhorar")
-- [ ] Configurar Google Analytics e Google Search Console
+- [x] Configurar Google Analytics e Google Search Console
 - [ ] Sistema de marketing de afiliados para parcerias com associações de wedding planners — decidir entre sistema próprio (reaproveitar a lógica de cupões: código + % de comissão, sem portal nem pagamentos automáticos) ou ferramenta externa (ex.: Rewardful, FirstPromoter — feitas para checkout Stripe, dão portal ao afiliado e pagamento automático via PayPal, mas têm custo mensal)
 
 ## Posicionamento & copy (feedback externo, jul/2026)
