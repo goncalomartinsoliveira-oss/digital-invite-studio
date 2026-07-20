@@ -26,6 +26,18 @@ const MODULE_ICONS: Record<ModuleId, React.ReactNode> = {
   guestbook: <MessageSquareHeart size={26} />,
 };
 
+// Imagens do "como funciona": algumas variam por idioma (mostram texto do
+// interface, ex.: um print do painel ou de um telemóvel), outras são a
+// mesma para PT/EN (ex.: uma foto do QR code numa mesa do evento).
+const HOW_IT_WORKS_IMAGES: Partial<Record<ModuleId, { file: string; perLocale: boolean }[]>> = {
+  photo_sharing: [
+    { file: "01-dashboard", perLocale: true },
+    { file: "02-qr-evento", perLocale: false },
+    { file: "03-mobile-galeria", perLocale: true },
+    { file: "04-live-wall", perLocale: true },
+  ],
+};
+
 export default function FeatureDetailPage() {
   const params = useParams();
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -39,6 +51,7 @@ export default function FeatureDetailPage() {
   const m = (dict.modules as Record<string, {
     tag: string; title: string; summary: string; desc: string;
     includes: string[]; examples: { title: string; desc: string }[];
+    howItWorks?: { tag: string; title: string; steps: { title: string; desc: string }[]; outro?: string };
   }>)[moduleId];
 
   const otherModules = ALL_MODULE_IDS.filter(id => id !== moduleId);
@@ -71,6 +84,51 @@ export default function FeatureDetailPage() {
             {m.desc}
           </p>
         </motion.div>
+
+        {/* COMO FUNCIONA, PASSO A PASSO (com imagens) */}
+        {m.howItWorks && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-24"
+          >
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-soft mb-3">{m.howItWorks.tag}</p>
+            <h2 className="font-serif text-2xl md:text-3xl text-[#722F37] mb-14 max-w-2xl">{m.howItWorks.title}</h2>
+
+            <div className="space-y-16">
+              {m.howItWorks.steps.map((step, i) => {
+                const img = HOW_IT_WORKS_IMAGES[moduleId]?.[i];
+                const src = img ? `/features/${slug}/${img.file}${img.perLocale ? `-${locale}` : ""}.jpg` : null;
+                return (
+                  <div
+                    key={step.title}
+                    className={`grid md:grid-cols-2 gap-8 md:gap-14 items-center ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}
+                  >
+                    <div className="rounded-[2rem] overflow-hidden border border-gray-100 shadow-md aspect-[4/3] bg-cream">
+                      {src && (
+                        <img src={src} alt={step.title} className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <div>
+                      <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[#722F37] text-white font-serif text-sm mb-5">
+                        {i + 1}
+                      </span>
+                      <h3 className="font-serif text-xl md:text-2xl text-gray-900 mb-3">{step.title}</h3>
+                      <p className="text-gray-500 leading-relaxed">{step.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {m.howItWorks.outro && (
+              <p className="text-gray-500 leading-relaxed mt-14 max-w-2xl mx-auto text-center italic">
+                {m.howItWorks.outro}
+              </p>
+            )}
+          </motion.div>
+        )}
 
         {/* O QUE INCLUI */}
         <motion.div
