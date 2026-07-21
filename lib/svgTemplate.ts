@@ -12,6 +12,10 @@ export type StdTemplateData = {
   groomName?: string;
   date?: string;
   city?: string;
+  // Foto de um casal genérico, só para a pré-visualização (nunca usada no
+  // PDF descarregado) parecer um cartão real antes de terem carregado a
+  // vossa própria foto.
+  fallbackPhotoUrl?: string;
 };
 
 const XLINK_NS = "http://www.w3.org/1999/xlink";
@@ -58,6 +62,11 @@ export async function fillStdTemplate(svgUrl: string, data: StdTemplateData): Pr
     const { dataUrl } = await loadImageForPdf(data.photoUrl);
     imageEl.setAttribute("href", dataUrl);
     imageEl.setAttributeNS(XLINK_NS, "href", dataUrl);
+    placeholderEl?.setAttribute("opacity", "0");
+    emptyLabelEl?.setAttribute("opacity", "0");
+  } else if (data.fallbackPhotoUrl && imageEl) {
+    imageEl.setAttribute("href", data.fallbackPhotoUrl);
+    imageEl.setAttributeNS(XLINK_NS, "href", data.fallbackPhotoUrl);
     placeholderEl?.setAttribute("opacity", "0");
     emptyLabelEl?.setAttribute("opacity", "0");
   } else {

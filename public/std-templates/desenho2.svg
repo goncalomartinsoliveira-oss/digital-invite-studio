@@ -74,8 +74,9 @@
     <text
        class="cls-18"
        id="brideNameSlot"
-       x="20.53961"
+       x="44.976521"
        y="106.47231"
+       text-anchor="middle"
        style="font-size:10.2261px;font-family:var(--font-cinzel-std), 'Cinzel', serif;fill:#211915;stroke-width:0.264583"
        inkscape:label="nome-noiva"><tspan
          class="cls-28"
@@ -116,8 +117,9 @@
     <text
        class="cls-18"
        id="groomNameSlot"
-       x="14.364935"
+       x="44.976521"
        y="129.90907"
+       text-anchor="middle"
        style="font-size:10.2261px;font-family:var(--font-cinzel-std), 'Cinzel', serif;fill:#211915;stroke-width:0.264583"
        inkscape:label="nome-noivo"><tspan
          class="cls-9"

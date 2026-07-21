@@ -10,6 +10,10 @@ import { STD_TEMPLATES, DEFAULT_STD_TEMPLATE } from "@/lib/stdTemplates";
 // exposta como variável CSS, referenciada diretamente no SVG do template.
 const cinzelStd = Cinzel({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-cinzel-std" });
 
+// Foto genérica só para as miniaturas do carrossel de modelos parecerem um
+// cartão real antes de terem foto própria. Nunca é usada no PDF descarregado.
+const CAROUSEL_FALLBACK_PHOTO = "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800";
+
 interface SaveTheDateModuleDict {
   title: string;
   subtitle: string;
@@ -68,15 +72,17 @@ export default function SaveTheDateModule({
 
   useEffect(() => { setIsMounted(true); }, []);
 
-  // Preenche cada template base (SVG) com a foto e o texto do casal, sempre
-  // que algo muda — todos de uma vez, para o carrossel mostrar cada modelo
-  // já com os dados reais, não só uma miniatura genérica.
+  // Preenche cada template base (SVG) com o texto do casal, sempre que algo
+  // muda — todos de uma vez, para o carrossel mostrar cada modelo já com os
+  // dados reais. Usa uma foto genérica enquanto não há foto própria, só
+  // para o carrossel parecer um cartão real (nunca é usada no PDF).
   useEffect(() => {
     let alive = true;
     Promise.all(
       STD_TEMPLATES.map(t =>
         fillStdTemplate(t.svgUrl, {
           photoUrl: std.photo_url,
+          fallbackPhotoUrl: CAROUSEL_FALLBACK_PHOTO,
           names, meta,
           brideName: bride, groomName: groom, date: dateStr, city: std.city || "",
           photoEmptyLabel: dict.photoEmpty,
@@ -89,7 +95,23 @@ export default function SaveTheDateModule({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [std.photo_url, names, meta, bride, groom, dateStr, std.city]);
 
-  const activeMarkup = templatePreviews.find(p => p.id === activeTemplate.id)?.markup || "";
+  // Pré-visualização principal / fonte do PDF descarregado — sem foto
+  // genérica: mostra "A VOSSA FOTO" até carregarem a foto real, para o PDF
+  // nunca sair com a foto de outra pessoa por engano.
+  const [activeMarkup, setActiveMarkup] = useState("");
+  useEffect(() => {
+    let alive = true;
+    fillStdTemplate(activeTemplate.svgUrl, {
+      photoUrl: std.photo_url,
+      names, meta,
+      brideName: bride, groomName: groom, date: dateStr, city: std.city || "",
+      photoEmptyLabel: dict.photoEmpty,
+    })
+      .then(markup => { if (alive) setActiveMarkup(markup); })
+      .catch(err => console.error("Erro ao preparar o Save the Date:", err));
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [std.photo_url, names, meta, activeTemplate.svgUrl, bride, groom, dateStr, std.city]);
 
   const selectTemplateRelative = (dir: number) => {
     const idx = STD_TEMPLATES.findIndex(t => t.id === activeTemplate.id);
@@ -258,10 +280,15 @@ export default function SaveTheDateModule({
       <div className="flex flex-col items-center gap-5 lg:sticky lg:top-6">
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">{dict.previewLabel}</span>
 
-        {/* Cartão (capturado para PDF) — preenchido a partir da base (template) SVG */}
+        {/* Cartão (capturado para PDF) — preenchido a partir da base (template) SVG.
+            340×640 é o tamanho real de todos os templates (viewBox), e o
+            [&>svg] força o SVG injetado a preencher a caixa toda, sem
+            deixar margens em branco caso um template futuro use outro
+            tamanho. */}
         <div
           ref={cardRef}
-          style={{ width: 360, height: 640, boxShadow: "0 20px 50px rgba(0,0,0,0.15)" }}
+          className="[&>svg]:w-full [&>svg]:h-full [&>svg]:block"
+          style={{ width: 340, height: 640, boxShadow: "0 20px 50px rgba(0,0,0,0.15)" }}
           dangerouslySetInnerHTML={{ __html: activeMarkup }}
         />
 
