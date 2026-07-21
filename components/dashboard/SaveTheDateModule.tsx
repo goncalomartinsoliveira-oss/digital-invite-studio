@@ -212,10 +212,14 @@ export default function SaveTheDateModule({
                     style={{ marginLeft: -8, marginRight: -8 }}
                   >
                     {/* Sem moldura de telemóvel: o próprio cartão já tem a sua margem/borda,
-                        e a proporção 340/640 evita distorcer a arte. */}
-                    <div className="rounded-[0.5rem] overflow-hidden shadow-lg aspect-[340/640] bg-white [&>svg]:w-full [&>svg]:h-full [&>svg]:block">
-                      {preview && <div dangerouslySetInnerHTML={{ __html: preview.markup }} />}
-                    </div>
+                        e a proporção 340/640 evita distorcer a arte. O SVG tem de ser filho
+                        direto para o [&>svg] resultar — daí não haver aqui uma div extra. */}
+                    {preview && (
+                      <div
+                        className="rounded-[0.5rem] overflow-hidden shadow-lg aspect-[340/640] bg-white [&>svg]:w-full [&>svg]:h-full [&>svg]:block"
+                        dangerouslySetInnerHTML={{ __html: preview.markup }}
+                      />
+                    )}
                     <p className={`text-center mt-2 uppercase tracking-wide truncate ${isActive ? "text-[9px] text-brand font-bold" : "text-[8px] text-gray-400"}`}>
                       {t.name}
                     </p>
