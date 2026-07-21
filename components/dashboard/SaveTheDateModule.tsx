@@ -207,21 +207,14 @@ export default function SaveTheDateModule({
                     type="button"
                     onClick={() => setStd({ template_id: t.id })}
                     className={`shrink-0 transition-all duration-300 ease-out ${
-                      isActive ? "w-28 opacity-100 scale-100 z-10" : "w-16 opacity-40 scale-90"
+                      isActive ? "w-32 opacity-100 scale-100 z-10" : "w-20 opacity-40 scale-90"
                     }`}
                     style={{ marginLeft: -8, marginRight: -8 }}
                   >
-                    <div
-                      className={`rounded-[1.1rem] border-[5px] overflow-hidden aspect-[9/19] shadow-lg bg-black transition-colors ${
-                        isActive ? "border-ink" : "border-gray-300"
-                      }`}
-                    >
-                      {preview && (
-                        <div
-                          className="w-full h-full [&>svg]:w-full [&>svg]:h-full"
-                          dangerouslySetInnerHTML={{ __html: preview.markup }}
-                        />
-                      )}
+                    {/* Sem moldura de telemóvel: o próprio cartão já tem a sua margem/borda,
+                        e a proporção 340/640 evita distorcer a arte. */}
+                    <div className="rounded-[0.5rem] overflow-hidden shadow-lg aspect-[340/640] bg-white [&>svg]:w-full [&>svg]:h-full [&>svg]:block">
+                      {preview && <div dangerouslySetInnerHTML={{ __html: preview.markup }} />}
                     </div>
                     <p className={`text-center mt-2 uppercase tracking-wide truncate ${isActive ? "text-[9px] text-brand font-bold" : "text-[8px] text-gray-400"}`}>
                       {t.name}

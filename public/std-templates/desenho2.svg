@@ -38,8 +38,6 @@
     <clipPath
        clipPathUnits="userSpaceOnUse"
        id="clipPath1">
-      <g
-         id="g2">
         <circle
            class="cls-1"
            cx="44.976521"
@@ -47,7 +45,6 @@
            r="32.379707"
            id="circle2"
            style="stroke-width:0.264583" />
-      </g>
     </clipPath>
   </defs>
   <g
@@ -164,8 +161,9 @@
     <text
        class="cls-13"
        id="dateSlot"
-       x="31.39493"
+       x="44.976521"
        y="143.1517"
+       text-anchor="middle"
        style="font-size:6.86766px;font-family:'Cormorant Garamond', serif;fill:#211915;stroke-width:0.325481"
        inkscape:label="data"><tspan
          x="31.39493"
@@ -175,9 +173,10 @@
     <text
        class="cls-19"
        id="citySlot"
-       x="32.417027"
+       x="44.976521"
        y="156.60287"
-       style="font-size:7.62265px;font-family:Jost, sans-serif;fill:#211915;stroke-width:0.264583"><tspan
+       text-anchor="middle"
+       style="font-size:6px;font-family:Jost, sans-serif;fill:#211915;stroke-width:0.264583"><tspan
          x="32.417027"
          y="156.60287"
          id="tspan41"
