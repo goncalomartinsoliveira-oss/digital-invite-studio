@@ -76,7 +76,7 @@
        id="brideNameSlot"
        x="20.53961"
        y="106.47231"
-       style="font-size:10.2261px;font-family:'Beloved', cursive;fill:#211915;stroke-width:0.264583"
+       style="font-size:10.2261px;font-family:var(--font-cinzel-std), 'Cinzel', serif;fill:#211915;stroke-width:0.264583"
        inkscape:label="nome-noiva"><tspan
          class="cls-28"
          x="20.53961"
@@ -118,7 +118,7 @@
        id="groomNameSlot"
        x="14.364935"
        y="129.90907"
-       style="font-size:10.2261px;font-family:'Beloved', cursive;fill:#211915;stroke-width:0.264583"
+       style="font-size:10.2261px;font-family:var(--font-cinzel-std), 'Cinzel', serif;fill:#211915;stroke-width:0.264583"
        inkscape:label="nome-noivo"><tspan
          class="cls-9"
          x="14.364935"

@@ -1,9 +1,14 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { Cinzel } from "next/font/google";
 import { supabase } from "@/lib/supabase";
-import { Download, ImagePlus, Loader2 } from "lucide-react";
+import { Download, ImagePlus, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { fillStdTemplate } from "@/lib/svgTemplate";
 import { STD_TEMPLATES, DEFAULT_STD_TEMPLATE } from "@/lib/stdTemplates";
+
+// Só usada no template "Moldura Preta" (nomes do casal); carregada aqui e
+// exposta como variável CSS, referenciada diretamente no SVG do template.
+const cinzelStd = Cinzel({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-cinzel-std" });
 
 interface SaveTheDateModuleDict {
   title: string;
@@ -42,7 +47,7 @@ export default function SaveTheDateModule({
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [svgMarkup, setSvgMarkup] = useState("");
+  const [templatePreviews, setTemplatePreviews] = useState<{ id: string; name: string; markup: string }[]>([]);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const dbContent = formData?.content || {};
@@ -63,22 +68,34 @@ export default function SaveTheDateModule({
 
   useEffect(() => { setIsMounted(true); }, []);
 
-  // Preenche a base (template SVG) com a foto e o texto do casal, sempre que
-  // algo muda. O resultado alimenta tanto a pré-visualização como a captura
-  // usada para gerar o PDF.
+  // Preenche cada template base (SVG) com a foto e o texto do casal, sempre
+  // que algo muda — todos de uma vez, para o carrossel mostrar cada modelo
+  // já com os dados reais, não só uma miniatura genérica.
   useEffect(() => {
     let alive = true;
-    fillStdTemplate(activeTemplate.svgUrl, {
-      photoUrl: std.photo_url,
-      names, meta,
-      brideName: bride, groomName: groom, date: dateStr, city: std.city || "",
-      photoEmptyLabel: dict.photoEmpty,
-    })
-      .then(markup => { if (alive) setSvgMarkup(markup); })
+    Promise.all(
+      STD_TEMPLATES.map(t =>
+        fillStdTemplate(t.svgUrl, {
+          photoUrl: std.photo_url,
+          names, meta,
+          brideName: bride, groomName: groom, date: dateStr, city: std.city || "",
+          photoEmptyLabel: dict.photoEmpty,
+        }).then(markup => ({ id: t.id, name: t.name, markup }))
+      )
+    )
+      .then(results => { if (alive) setTemplatePreviews(results); })
       .catch(err => console.error("Erro ao preparar o Save the Date:", err));
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [std.photo_url, names, meta, activeTemplate.svgUrl, bride, groom, dateStr, std.city]);
+  }, [std.photo_url, names, meta, bride, groom, dateStr, std.city]);
+
+  const activeMarkup = templatePreviews.find(p => p.id === activeTemplate.id)?.markup || "";
+
+  const selectTemplateRelative = (dir: number) => {
+    const idx = STD_TEMPLATES.findIndex(t => t.id === activeTemplate.id);
+    const next = STD_TEMPLATES[(idx + dir + STD_TEMPLATES.length) % STD_TEMPLATES.length];
+    setStd({ template_id: next.id });
+  };
 
   // Autosave (mesmo padrão dos outros módulos)
   useEffect(() => {
@@ -136,31 +153,70 @@ export default function SaveTheDateModule({
   const inputClass = "w-full bg-transparent border-0 border-b border-gray-300 focus:ring-0 focus:border-brand text-sm text-ink font-semibold px-0 py-3 transition-colors placeholder-gray-300";
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 lg:gap-16 items-start">
+    <div className={`${cinzelStd.variable} grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 lg:gap-16 items-start`}>
 
       {/* ── Controlos ── */}
       <div className={!canEdit ? "opacity-70 pointer-events-none" : ""}>
         <h2 className="font-serif text-3xl text-ink">{dict.title}</h2>
         <p className="text-gray-400 text-sm mt-1 mb-10">{dict.subtitle}</p>
 
-        {/* Modelo */}
+        {/* Modelo — carrossel tipo telemóvel: o escolhido fica ao centro, os
+            outros ficam parcialmente visíveis dos lados, com setas para
+            navegar ou um clique direto num dos lados para o escolher. */}
         <div className="mb-10">
           <label className={labelClass}>{dict.templateLabel}</label>
-          <div className="flex flex-wrap gap-3">
-            {STD_TEMPLATES.map(t => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setStd({ template_id: t.id })}
-                className={`px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-widest border transition-all ${
-                  activeTemplate.id === t.id
-                    ? "bg-brand text-white border-brand"
-                    : "bg-white text-gray-500 border-gray-200 hover:border-brand"
-                }`}
-              >
-                {t.name}
-              </button>
-            ))}
+          <div className="relative flex items-center justify-center gap-0 py-4 select-none">
+            <button
+              type="button"
+              onClick={() => selectTemplateRelative(-1)}
+              className="absolute left-0 z-20 w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-brand hover:border-brand transition-all"
+              aria-label="Modelo anterior"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            <div className="flex items-center justify-center overflow-hidden w-full px-10">
+              {STD_TEMPLATES.map(t => {
+                const isActive = t.id === activeTemplate.id;
+                const preview = templatePreviews.find(p => p.id === t.id);
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setStd({ template_id: t.id })}
+                    className={`shrink-0 transition-all duration-300 ease-out ${
+                      isActive ? "w-28 opacity-100 scale-100 z-10" : "w-16 opacity-40 scale-90"
+                    }`}
+                    style={{ marginLeft: -8, marginRight: -8 }}
+                  >
+                    <div
+                      className={`rounded-[1.1rem] border-[5px] overflow-hidden aspect-[9/19] shadow-lg bg-black transition-colors ${
+                        isActive ? "border-ink" : "border-gray-300"
+                      }`}
+                    >
+                      {preview && (
+                        <div
+                          className="w-full h-full [&>svg]:w-full [&>svg]:h-full"
+                          dangerouslySetInnerHTML={{ __html: preview.markup }}
+                        />
+                      )}
+                    </div>
+                    <p className={`text-center mt-2 uppercase tracking-wide truncate ${isActive ? "text-[9px] text-brand font-bold" : "text-[8px] text-gray-400"}`}>
+                      {t.name}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => selectTemplateRelative(1)}
+              className="absolute right-0 z-20 w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-brand hover:border-brand transition-all"
+              aria-label="Próximo modelo"
+            >
+              <ChevronRight size={16} />
+            </button>
           </div>
         </div>
 
@@ -206,7 +262,7 @@ export default function SaveTheDateModule({
         <div
           ref={cardRef}
           style={{ width: 360, height: 640, boxShadow: "0 20px 50px rgba(0,0,0,0.15)" }}
-          dangerouslySetInnerHTML={{ __html: svgMarkup }}
+          dangerouslySetInnerHTML={{ __html: activeMarkup }}
         />
 
         <button
