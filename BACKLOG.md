@@ -11,6 +11,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 ## Comunicação
 - [x] Configurar um email profissional para a empresa — hello@digitalinvitestudio.com, via Zoho Mail
 - [x] Emails de confirmação de compra (recibo automático depois de um pagamento) — via Resend, disparado no webhook do Stripe
+- [ ] Número de WhatsApp Business a sério para atendimento ao cliente (o que está em `/contact` hoje é um placeholder fictício, `+351 912 345 678`, nem é link clicável) — começar por ser respondido manualmente; atendimento automático por IA (WhatsApp Business API + Claude API) fica para mais tarde, quando houver volume que o justifique
 
 ## Pagamentos
 - [x] Lidar com reembolsos no webhook (hoje só trata `checkout.session.completed`; um reembolso no Stripe não revoga o módulo)
