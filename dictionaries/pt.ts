@@ -510,7 +510,30 @@ const pt = {
           { "title": "O discurso que não deu para fazer", "desc": "Um convidado mais tímido, que não quis discursar à frente de todos, grava um vídeo emotivo através do telemóvel, em privado." },
           { "title": "Recordação para sempre", "desc": "Meses depois do casamento, o casal volta a ouvir os áudios e a ler as mensagens, como se estivesse de volta à festa." },
           { "title": "Sem filas nem stress", "desc": "Em vez de uma fila para assinar um livro físico, os convidados deixam a sua mensagem quando quiserem, ao longo de toda a festa." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Passo a passo",
+          "title": "Do painel de gestão a um tesouro para sempre, em quatro passos",
+          "steps": [
+            {
+              "title": "Configuram o acesso em minutos",
+              "desc": "No vosso painel, ativam o Guestbook e ficam logo com um QR code gerado automaticamente, pronto a descarregar e imprimir, ou com um link direto para partilhar como preferirem."
+            },
+            {
+              "title": "Um cartão à disposição dos convidados",
+              "desc": "Colocam o QR code numa mesa, no bar, ou onde fizer sentido no evento. Qualquer convidado aponta a câmara do telemóvel e entra no Guestbook em segundos, sem instalar nada."
+            },
+            {
+              "title": "Os convidados deixam a sua mensagem",
+              "desc": "Cada convidado escreve, grava um áudio ou filma um pequeno vídeo, à vontade e sem pressa, ao longo de toda a festa. Ao contrário da galeria de fotos, tudo o que é deixado aqui fica privado, visível só pelo casal."
+            },
+            {
+              "title": "Um tesouro para reviver quando quiserem",
+              "desc": "Depois do grande dia, sentam-se com calma e revêem juntos cada mensagem, texto, áudio ou vídeo, tantas vezes quantas quiserem."
+            }
+          ],
+          "outro": "Podem descarregar tudo num único ZIP, com um resumo em texto incluído, para guardar para sempre."
+        }
       }
     }
   },

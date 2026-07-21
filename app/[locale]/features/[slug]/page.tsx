@@ -36,6 +36,12 @@ const HOW_IT_WORKS_IMAGES: Partial<Record<ModuleId, { file: string; perLocale: b
     { file: "03-mobile-galeria", perLocale: true },
     { file: "04-live-wall", perLocale: true },
   ],
+  guestbook: [
+    { file: "01-dashboard", perLocale: true },
+    { file: "02-qr-evento", perLocale: false },
+    { file: "03-convidado-mensagem", perLocale: false },
+    { file: "04-casal-em-casa", perLocale: false },
+  ],
 };
 
 export default function FeatureDetailPage() {
@@ -105,18 +111,20 @@ export default function FeatureDetailPage() {
                     key={step.title}
                     className={`grid md:grid-cols-2 gap-8 md:gap-14 items-center ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}
                   >
-                    <div className="rounded-[2rem] overflow-hidden border border-gray-100 shadow-md aspect-[4/3] bg-cream">
+                    <div className="relative rounded-[2rem] overflow-hidden border border-gray-100 shadow-md aspect-[4/3] bg-cream flex items-center justify-center text-[#722F37]/20">
+                      {MODULE_ICONS[moduleId]}
                       {src && (
                         <img
                           src={src}
                           alt={step.title}
-                          className="w-full h-full object-cover"
+                          className="absolute inset-0 w-full h-full object-cover"
                           onError={(e) => {
-                            // Enquanto não houver versão EN de uma imagem, mostra a PT em vez de partida.
-                            if (img?.perLocale && locale !== "pt") {
-                              e.currentTarget.onerror = null;
+                            // Enquanto não houver versão EN de uma imagem, tenta a PT antes de desistir.
+                            if (img?.perLocale && locale !== "pt" && !e.currentTarget.src.endsWith("-pt.jpg")) {
                               e.currentTarget.src = `/features/${slug}/${img.file}-pt.jpg`;
+                              return;
                             }
+                            e.currentTarget.style.display = "none";
                           }}
                         />
                       )}

@@ -510,7 +510,30 @@ const en = {
           { "title": "The speech they couldn't give", "desc": "A shyer guest, who didn't want to speak in front of everyone, records an emotional video on their phone, in private." },
           { "title": "A keepsake forever", "desc": "Months after the wedding, the couple listens to the audios and reads the messages again, as if they were back at the party." },
           { "title": "No queues, no stress", "desc": "Instead of a line to sign a physical book, guests leave their message whenever they like, throughout the whole party." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Step by step",
+          "title": "From the dashboard to a keepsake forever, in four steps",
+          "steps": [
+            {
+              "title": "Set it up in minutes",
+              "desc": "In your dashboard, you turn on the Guestbook and instantly get an automatically generated QR code, ready to download and print, or a direct link to share however you like."
+            },
+            {
+              "title": "A card ready for guests",
+              "desc": "Place the QR code on a table, at the bar, or wherever makes sense at the event. Any guest points their phone camera at it and is in the Guestbook within seconds, nothing to install."
+            },
+            {
+              "title": "Guests leave their message",
+              "desc": "Each guest writes, records an audio, or films a short video, at their own pace, throughout the whole party. Unlike the photo gallery, everything left here stays private, visible only to the couple."
+            },
+            {
+              "title": "A keepsake to revisit whenever you like",
+              "desc": "After the big day, sit down together and go through every message, text, audio or video, as many times as you want."
+            }
+          ],
+          "outro": "You can download it all as a single ZIP, including a text summary, to keep forever."
+        }
       }
     }
   },

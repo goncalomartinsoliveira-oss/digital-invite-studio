@@ -35,10 +35,12 @@ const MODULE_VISUAL_ICONS: Record<ModuleId, React.ReactNode> = {
 };
 
 // Módulos com uma foto real que já explica o conceito à primeira vista,
-// em vez do painel genérico ícone+chips.
-const MODULE_CONCEPT_IMAGES: Partial<Record<ModuleId, string>> = {
-  photo_sharing: "/features/photo-sharing-e-live-wall/00-concept.jpg",
-  guests_seating: "/features/convidados-e-mesas/00-concept.jpg",
+// em vez do painel genérico ícone+chips. `perLocale` quando a foto mostra
+// texto de interface que muda consoante o idioma (ex.: ecrã do telemóvel).
+const MODULE_CONCEPT_IMAGES: Partial<Record<ModuleId, { file: string; perLocale: boolean }>> = {
+  photo_sharing: { file: "/features/photo-sharing-e-live-wall/00-concept", perLocale: false },
+  guests_seating: { file: "/features/convidados-e-mesas/00-concept", perLocale: false },
+  guestbook: { file: "/features/guestbook/00-concept", perLocale: true },
 };
 
 export default function FeaturesPage() {
@@ -59,7 +61,10 @@ export default function FeaturesPage() {
       chips: m.includes.slice(0, 3),
       icon: MODULE_ICONS[id],
       visualIcon: MODULE_VISUAL_ICONS[id],
-      conceptImage: MODULE_CONCEPT_IMAGES[id],
+      conceptImageConfig: MODULE_CONCEPT_IMAGES[id],
+      conceptImage: MODULE_CONCEPT_IMAGES[id]
+        ? `${MODULE_CONCEPT_IMAGES[id]!.file}${MODULE_CONCEPT_IMAGES[id]!.perLocale ? `-${locale}` : ""}.jpg`
+        : null,
       reversed: index % 2 === 1,
       link: `/${locale}/features/${FEATURE_SLUGS[id]}`
     };
@@ -135,29 +140,40 @@ export default function FeaturesPage() {
               </div>
             </div>
 
-            {/* Painel visual */}
+            {/* Painel visual — o genérico fica sempre por baixo; se houver
+                foto real e ela carregar, cobre o genérico por cima. Se a
+                foto ainda não existir (ou falhar), fica só o genérico. */}
             <div className="flex-1 w-full">
-              {feature.conceptImage ? (
-                <div className="relative aspect-[4/3] rounded-[2.5rem] border-2 border-white shadow-2xl overflow-hidden">
-                  <img src={feature.conceptImage} alt={feature.title} className="w-full h-full object-cover" />
+              <div className="relative aspect-[4/3] rounded-[2.5rem] bg-gradient-to-tr from-[#722F37]/10 via-cream to-white border-2 border-white shadow-2xl overflow-hidden flex flex-col items-center justify-center gap-6 p-8">
+                <div className="text-[#722F37]/25">
+                  {feature.visualIcon}
                 </div>
-              ) : (
-                <div className="relative aspect-[4/3] rounded-[2.5rem] bg-gradient-to-tr from-[#722F37]/10 via-cream to-white border-2 border-white shadow-2xl overflow-hidden flex flex-col items-center justify-center gap-6 p-8">
-                  <div className="text-[#722F37]/25">
-                    {feature.visualIcon}
-                  </div>
-                  <div className="flex flex-col gap-2 w-full max-w-xs">
-                    {feature.chips.map((chip) => (
-                      <div key={chip} className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
-                        <div className="w-4 h-4 rounded-full bg-[#722F37]/10 text-[#722F37] flex items-center justify-center shrink-0">
-                          <Check size={9} strokeWidth={4} />
-                        </div>
-                        <span className="text-[11px] text-gray-600 font-medium truncate">{chip}</span>
+                <div className="flex flex-col gap-2 w-full max-w-xs">
+                  {feature.chips.map((chip) => (
+                    <div key={chip} className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+                      <div className="w-4 h-4 rounded-full bg-[#722F37]/10 text-[#722F37] flex items-center justify-center shrink-0">
+                        <Check size={9} strokeWidth={4} />
                       </div>
-                    ))}
-                  </div>
+                      <span className="text-[11px] text-gray-600 font-medium truncate">{chip}</span>
+                    </div>
+                  ))}
                 </div>
-              )}
+                {feature.conceptImage && (
+                  <img
+                    src={feature.conceptImage}
+                    alt={feature.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={(e) => {
+                      // Enquanto não houver versão EN, tenta a PT antes de desistir e mostrar o genérico.
+                      if (feature.conceptImageConfig?.perLocale && locale !== "pt" && !e.currentTarget.src.endsWith("-pt.jpg")) {
+                        e.currentTarget.src = `${feature.conceptImageConfig.file}-pt.jpg`;
+                        return;
+                      }
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </motion.div>
         ))}
