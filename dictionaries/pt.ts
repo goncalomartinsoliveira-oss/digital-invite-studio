@@ -331,7 +331,8 @@ const pt = {
     "downloadBtn": "Descarregar PDF",
     "generating": "A gerar...",
     "previewLabel": "Pré-visualização",
-    "photoEmpty": "A VOSSA FOTO"
+    "photoEmpty": "A VOSSA FOTO",
+    "templateLabel": "Modelo"
   },
   "NovoConvitePage": {
     "backBtn": "Voltar ao Hub",

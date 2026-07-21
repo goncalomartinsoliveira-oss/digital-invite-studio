@@ -331,7 +331,8 @@ const en = {
     "downloadBtn": "Download PDF",
     "generating": "Generating...",
     "previewLabel": "Preview",
-    "photoEmpty": "YOUR PHOTO"
+    "photoEmpty": "YOUR PHOTO",
+    "templateLabel": "Template"
   },
   "NovoConvitePage": {
     "backBtn": "Back to Hub",

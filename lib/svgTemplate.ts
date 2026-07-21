@@ -5,6 +5,13 @@ export type StdTemplateData = {
   names: string;
   meta: string;
   photoEmptyLabel?: string;
+  // Alguns templates têm o nome da noiva e do noivo em linhas separadas
+  // (em vez de "Noivo & Noiva" numa única linha), e/ou a data e a cidade
+  // em zonas distintas. Opcionais: só usados pelos templates que os têm.
+  brideName?: string;
+  groomName?: string;
+  date?: string;
+  city?: string;
 };
 
 const XLINK_NS = "http://www.w3.org/1999/xlink";
@@ -26,6 +33,18 @@ export async function fillStdTemplate(svgUrl: string, data: StdTemplateData): Pr
 
   const metaEl = svg.querySelector("#metaSlot");
   if (metaEl) metaEl.textContent = data.meta;
+
+  const brideEl = svg.querySelector("#brideNameSlot");
+  if (brideEl && data.brideName) brideEl.textContent = data.brideName.toUpperCase();
+
+  const groomEl = svg.querySelector("#groomNameSlot");
+  if (groomEl && data.groomName) groomEl.textContent = data.groomName.toUpperCase();
+
+  const dateEl = svg.querySelector("#dateSlot");
+  if (dateEl && data.date) dateEl.textContent = data.date;
+
+  const cityEl = svg.querySelector("#citySlot");
+  if (cityEl && data.city) cityEl.textContent = data.city.toUpperCase();
 
   const imageEl = svg.querySelector("#photoSlot");
   const placeholderEl = svg.querySelector("#photoPlaceholder");

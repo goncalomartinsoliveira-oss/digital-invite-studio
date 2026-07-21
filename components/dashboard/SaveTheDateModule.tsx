@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { Download, ImagePlus, Loader2 } from "lucide-react";
 import { fillStdTemplate } from "@/lib/svgTemplate";
-import { DEFAULT_STD_TEMPLATE } from "@/lib/stdTemplates";
+import { STD_TEMPLATES, DEFAULT_STD_TEMPLATE } from "@/lib/stdTemplates";
 
 interface SaveTheDateModuleDict {
   title: string;
@@ -20,6 +20,7 @@ interface SaveTheDateModuleDict {
   generating: string;
   previewLabel: string;
   photoEmpty: string;
+  templateLabel: string;
 }
 
 interface SaveTheDateModuleProps {
@@ -58,6 +59,8 @@ export default function SaveTheDateModule({
     : "";
   const meta = std.city ? `${dateStr}  |  ${std.city}` : dateStr;
 
+  const activeTemplate = STD_TEMPLATES.find(t => t.id === std.template_id) || DEFAULT_STD_TEMPLATE;
+
   useEffect(() => { setIsMounted(true); }, []);
 
   // Preenche a base (template SVG) com a foto e o texto do casal, sempre que
@@ -65,12 +68,17 @@ export default function SaveTheDateModule({
   // usada para gerar o PDF.
   useEffect(() => {
     let alive = true;
-    fillStdTemplate(DEFAULT_STD_TEMPLATE.svgUrl, { photoUrl: std.photo_url, names, meta, photoEmptyLabel: dict.photoEmpty })
+    fillStdTemplate(activeTemplate.svgUrl, {
+      photoUrl: std.photo_url,
+      names, meta,
+      brideName: bride, groomName: groom, date: dateStr, city: std.city || "",
+      photoEmptyLabel: dict.photoEmpty,
+    })
       .then(markup => { if (alive) setSvgMarkup(markup); })
       .catch(err => console.error("Erro ao preparar o Save the Date:", err));
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [std.photo_url, names, meta]);
+  }, [std.photo_url, names, meta, activeTemplate.svgUrl, bride, groom, dateStr, std.city]);
 
   // Autosave (mesmo padrão dos outros módulos)
   useEffect(() => {
@@ -134,6 +142,27 @@ export default function SaveTheDateModule({
       <div className={!canEdit ? "opacity-70 pointer-events-none" : ""}>
         <h2 className="font-serif text-3xl text-ink">{dict.title}</h2>
         <p className="text-gray-400 text-sm mt-1 mb-10">{dict.subtitle}</p>
+
+        {/* Modelo */}
+        <div className="mb-10">
+          <label className={labelClass}>{dict.templateLabel}</label>
+          <div className="flex flex-wrap gap-3">
+            {STD_TEMPLATES.map(t => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setStd({ template_id: t.id })}
+                className={`px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-widest border transition-all ${
+                  activeTemplate.id === t.id
+                    ? "bg-brand text-white border-brand"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-brand"
+                }`}
+              >
+                {t.name}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Foto */}
         <div className="mb-10">
