@@ -38,6 +38,7 @@ const MODULE_VISUAL_ICONS: Record<ModuleId, React.ReactNode> = {
 // em vez do painel genérico ícone+chips.
 const MODULE_CONCEPT_IMAGES: Partial<Record<ModuleId, string>> = {
   photo_sharing: "/features/photo-sharing-e-live-wall/00-concept.jpg",
+  guests_seating: "/features/convidados-e-mesas/00-concept.jpg",
 };
 
 export default function FeaturesPage() {
