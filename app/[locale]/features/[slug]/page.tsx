@@ -42,6 +42,24 @@ const HOW_IT_WORKS_IMAGES: Partial<Record<ModuleId, { file: string; perLocale: b
     { file: "03-convidado-mensagem", perLocale: false },
     { file: "04-casal-em-casa", perLocale: false },
   ],
+  save_the_date: [
+    { file: "01-dashboard", perLocale: true },
+    { file: "02-cartao-gerado", perLocale: true },
+    { file: "03-partilhar", perLocale: false },
+    { file: "04-recebido", perLocale: false },
+  ],
+  invite: [
+    { file: "01-dashboard", perLocale: true },
+    { file: "02-website", perLocale: true },
+    { file: "03-partilhar", perLocale: false },
+    { file: "04-rsvp", perLocale: true },
+  ],
+  guests_seating: [
+    { file: "01-dashboard", perLocale: true },
+    { file: "02-mesas", perLocale: true },
+    { file: "03-rsvp-sincroniza", perLocale: true },
+    { file: "04-encontra-mesa", perLocale: true },
+  ],
 };
 
 export default function FeatureDetailPage() {

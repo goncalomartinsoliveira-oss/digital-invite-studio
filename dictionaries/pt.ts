@@ -413,7 +413,30 @@ const pt = {
           { "title": "Anúncio no grupo de família", "desc": "Descarregam o PDF e partilham no grupo de WhatsApp da família, minutos depois de terem a data fechada." },
           { "title": "Publicação nas redes sociais", "desc": "Usam a imagem do Save the Date diretamente como publicação no Instagram, sem precisar de abrir outro programa." },
           { "title": "Convite físico complementar", "desc": "Imprimem o cartão para entregar em mão aos convidados mais próximos, antes de enviarem o convite digital completo." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Passo a passo",
+          "title": "Da ideia ao anúncio partilhado, em quatro passos",
+          "steps": [
+            {
+              "title": "Preenchem os dados em minutos",
+              "desc": "No vosso painel, escrevem os nomes, escolhem uma foto e indicam a cidade do casamento. Não é preciso desenhar nada."
+            },
+            {
+              "title": "O sistema gera o cartão sozinho",
+              "desc": "Em segundos, fica pronto um cartão profissional com os vossos nomes, foto e data, no estilo da Digital Invite Studio."
+            },
+            {
+              "title": "Descarregam e partilham onde quiserem",
+              "desc": "Um PDF em alta qualidade, pronto a enviar por WhatsApp, publicar no Instagram ou imprimir para entregar em mão."
+            },
+            {
+              "title": "Chega a quem interessa, em minutos",
+              "desc": "Família e amigos recebem o anúncio quase em tempo real, muito antes do convite completo estar pronto."
+            }
+          ],
+          "outro": "Quando o convite estiver pronto, basta enviar o link novo — o Save the Date já fez o trabalho de aquecer a expectativa."
+        }
       },
       "invite": {
         "tag": "O Coração do Convite",
@@ -432,7 +455,30 @@ const pt = {
           { "title": "Envio por WhatsApp", "desc": "Partilham um único link com todos os convidados. Cada um abre no telemóvel e vê o site em segundos, sem instalar nada." },
           { "title": "Alteração de última hora", "desc": "O local da cerimónia muda de sala? Atualizam o texto no painel e todos os convidados veem a versão nova assim que voltam a abrir o link." },
           { "title": "Confirmação em 30 segundos", "desc": "Um convidado escreve o nome, encontra-se na lista, confirma presença e assinala que é vegetariano, tudo sem sair do telemóvel." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Passo a passo",
+          "title": "Do modelo em branco ao convite partilhado, em quatro passos",
+          "steps": [
+            {
+              "title": "Escolhem o modelo e personalizam",
+              "desc": "Selecionam um dos modelos disponíveis e ajustam cores, textos, fotografias e todos os detalhes do evento, direto no painel."
+            },
+            {
+              "title": "Fica pronto num único link",
+              "desc": "O vosso website de casamento fica online, responsivo e elegante, pronto a abrir em qualquer telemóvel ou computador."
+            },
+            {
+              "title": "Partilham com todos os convidados",
+              "desc": "Um único link, enviado por WhatsApp, email ou onde preferirem. Cada convidado abre e vê o site em segundos, sem instalar nada."
+            },
+            {
+              "title": "Os convidados confirmam presença em segundos",
+              "desc": "Encontram o seu nome, confirmam presença e indicam restrições alimentares, tudo sem sair do telemóvel — o RSVP inteligente já vem incluído."
+            }
+          ],
+          "outro": "Qualquer alteração de última hora fica visível para todos assim que voltam a abrir o link, sem reenviar nada."
+        }
       },
       "guests_seating": {
         "tag": "Organização",
@@ -450,7 +496,30 @@ const pt = {
           { "title": "Sincronização automática", "desc": "Um convidado confirma presença pelo convite e fica automaticamente disponível para atribuir a uma mesa, sem ser preciso adicioná-lo à mão." },
           { "title": "Reorganização de última hora", "desc": "Dois convidados cancelam a três dias do casamento? Arrastam-nos para fora da mesa e reorganizam o resto em segundos." },
           { "title": "O convidado encontra o seu lugar", "desc": "À entrada do casamento, o convidado escreve o nome numa página no telemóvel e descobre de imediato qual é a sua mesa." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Passo a passo",
+          "title": "Da lista ao plano de mesas, sempre em sincronia",
+          "steps": [
+            {
+              "title": "A lista fica sempre atualizada sozinha",
+              "desc": "Adicionam os convidados uma vez, e o painel mostra em tempo real quem confirmou, quem falta responder e quem tem restrições alimentares."
+            },
+            {
+              "title": "Desenham o plano de mesas por arrastar e largar",
+              "desc": "Organizam cada convidado na mesa certa visualmente, num editor que funciona tão bem no computador como no telemóvel."
+            },
+            {
+              "title": "Cada confirmação atualiza tudo sozinha",
+              "desc": "Quando um convidado confirma presença pelo convite, fica logo disponível para atribuir a uma mesa, sem copiar nada à mão."
+            },
+            {
+              "title": "No dia do evento, encontram a sua mesa sozinhos",
+              "desc": "Cada convidado escreve o nome numa página no telemóvel e descobre de imediato qual é a sua mesa, sem filas nem perguntas."
+            }
+          ],
+          "outro": "No fim, exportam a lista e o plano de mesas em PDF, já com o vosso logótipo, prontos a imprimir."
+        }
       },
       "photo_sharing": {
         "tag": "O Dia do Evento",

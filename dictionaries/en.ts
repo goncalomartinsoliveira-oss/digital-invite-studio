@@ -413,7 +413,30 @@ const en = {
           { "title": "Announcing it to family", "desc": "They download the PDF and share it in the family WhatsApp group, minutes after locking in the date." },
           { "title": "A social media post", "desc": "They use the Save the Date image directly as an Instagram post, with no need to open any other software." },
           { "title": "A physical keepsake", "desc": "They print the card to hand out to their closest guests, before sending the full digital invitation." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Step by step",
+          "title": "From idea to shared announcement, in four steps",
+          "steps": [
+            {
+              "title": "Fill in the details in minutes",
+              "desc": "In your dashboard, you write the names, pick a photo and add the wedding city. No design skills needed."
+            },
+            {
+              "title": "The system generates the card by itself",
+              "desc": "Within seconds, a professional card is ready with your names, photo and date, in the Digital Invite Studio style."
+            },
+            {
+              "title": "Download and share however you like",
+              "desc": "A high-quality PDF, ready to send via WhatsApp, post on Instagram, or print to hand out in person."
+            },
+            {
+              "title": "Reaches the people who matter, in minutes",
+              "desc": "Family and friends get the announcement almost instantly, well before the full invitation is ready."
+            }
+          ],
+          "outro": "Once the invitation is ready, just send the new link — the Save the Date already did the work of building anticipation."
+        }
       },
       "invite": {
         "tag": "The Heart of the Invitation",
@@ -432,7 +455,30 @@ const en = {
           { "title": "Sent over WhatsApp", "desc": "They share a single link with every guest. Each one opens it on their phone and sees the site in seconds, with nothing to install." },
           { "title": "A last-minute change", "desc": "The ceremony venue changes room? They update the text on the dashboard and every guest sees the new version the next time they open the link." },
           { "title": "Confirming in 30 seconds", "desc": "A guest types their name, finds themselves on the list, confirms attendance and flags that they're vegetarian, all without leaving their phone." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Step by step",
+          "title": "From blank template to shared invitation, in four steps",
+          "steps": [
+            {
+              "title": "Choose a template and personalize it",
+              "desc": "Pick one of the available templates and adjust colors, text, photos and every event detail, right in the dashboard."
+            },
+            {
+              "title": "It's ready as a single link",
+              "desc": "Your wedding website goes live, responsive and elegant, ready to open on any phone or computer."
+            },
+            {
+              "title": "Share it with every guest",
+              "desc": "One single link, sent via WhatsApp, email or however you prefer. Each guest opens it and sees the site in seconds, nothing to install."
+            },
+            {
+              "title": "Guests confirm attendance in seconds",
+              "desc": "They find their name, confirm attendance and note any dietary restrictions, all without leaving their phone — smart RSVP comes built in."
+            }
+          ],
+          "outro": "Any last-minute change is visible to everyone the next time they open the link, no need to resend anything."
+        }
       },
       "guests_seating": {
         "tag": "Organisation",
@@ -450,7 +496,30 @@ const en = {
           { "title": "Automatic sync", "desc": "A guest confirms attendance through the invitation and automatically becomes available to assign to a table, no need to add them by hand." },
           { "title": "Last-minute reshuffle", "desc": "Two guests cancel three days before the wedding? Drag them off the table and reorganise the rest in seconds." },
           { "title": "Guests find their own seat", "desc": "At the wedding entrance, guests type their name on a page on their phone and instantly discover which table is theirs." }
-        ]
+        ],
+        "howItWorks": {
+          "tag": "Step by step",
+          "title": "From the guest list to the seating chart, always in sync",
+          "steps": [
+            {
+              "title": "The list stays up to date on its own",
+              "desc": "Add each guest once, and the dashboard shows in real time who's confirmed, who's still to respond, and who has dietary restrictions."
+            },
+            {
+              "title": "Drag and drop your seating chart",
+              "desc": "Place each guest at the right table visually, in an editor that works just as well on a laptop as on a phone."
+            },
+            {
+              "title": "Every RSVP updates everything automatically",
+              "desc": "When a guest confirms through the invitation, they're instantly available to assign to a table, nothing to copy by hand."
+            },
+            {
+              "title": "On the day, guests find their own table",
+              "desc": "Each guest types their name on a page on their phone and instantly discovers which table is theirs, no queues, no questions."
+            }
+          ],
+          "outro": "At the end, export the guest list and seating chart as a PDF, already branded with your logo, ready to print."
+        }
       },
       "photo_sharing": {
         "tag": "The Day of the Event",

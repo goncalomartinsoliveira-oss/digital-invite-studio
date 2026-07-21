@@ -41,6 +41,8 @@ const MODULE_CONCEPT_IMAGES: Partial<Record<ModuleId, { file: string; perLocale:
   photo_sharing: { file: "/features/photo-sharing-e-live-wall/00-concept", perLocale: false },
   guests_seating: { file: "/features/convidados-e-mesas/00-concept", perLocale: false },
   guestbook: { file: "/features/guestbook/00-concept", perLocale: true },
+  save_the_date: { file: "/features/save-the-date/00-concept", perLocale: true },
+  invite: { file: "/features/convite-de-casamento/00-concept", perLocale: true },
 };
 
 export default function FeaturesPage() {
