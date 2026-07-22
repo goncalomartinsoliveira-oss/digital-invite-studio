@@ -332,7 +332,11 @@ const pt = {
     "generating": "A gerar...",
     "previewLabel": "Pré-visualização",
     "photoEmpty": "A VOSSA FOTO",
-    "templateLabel": "Modelo"
+    "templateLabel": "Modelo",
+    "repositionBtn": "Ajustar enquadramento",
+    "closeReposition": "Fechar",
+    "repositionHint": "Arraste a foto para reposicionar e use o cursor para ampliar.",
+    "resetPosition": "Repor centrado"
   },
   "NovoConvitePage": {
     "backBtn": "Voltar ao Hub",

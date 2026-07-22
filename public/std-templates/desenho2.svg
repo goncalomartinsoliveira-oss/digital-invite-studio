@@ -67,7 +67,7 @@
        height="162.35097"
        id="rect25"
        style="fill:#fefefe;stroke:#211915;stroke-width:0.264583;stroke-miterlimit:10" />
-    <circle id="photoPlaceholder" cx="44.976521" cy="62.514439" r="32.379707" style="fill:#d8d3cc" /><text id="photoEmptyLabel" x="44.976521" y="63.5" text-anchor="middle" font-family="Jost, sans-serif" font-size="3.2" letter-spacing="0.5" fill="#ffffff">A VOSSA FOTO</text><image width="132.56418" height="198.56978" id="photoSlot" x="-6.2124176" y="-21.411394" clip-path="url(#clipPath1)" />
+    <circle id="photoPlaceholder" cx="44.976521" cy="62.514439" r="32.379707" style="fill:#d8d3cc" /><text id="photoEmptyLabel" x="44.976521" y="63.5" text-anchor="middle" font-family="Jost, sans-serif" font-size="3.2" letter-spacing="0.5" fill="#ffffff">A VOSSA FOTO</text><image width="64.759414" height="64.759414" id="photoSlot" x="12.596814" y="30.134732" preserveAspectRatio="xMidYMid slice" clip-path="url(#clipPath1)" />
     <text
        class="cls-18"
        id="brideNameSlot"

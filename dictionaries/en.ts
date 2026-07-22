@@ -332,7 +332,11 @@ const en = {
     "generating": "Generating...",
     "previewLabel": "Preview",
     "photoEmpty": "YOUR PHOTO",
-    "templateLabel": "Template"
+    "templateLabel": "Template",
+    "repositionBtn": "Adjust framing",
+    "closeReposition": "Close",
+    "repositionHint": "Drag the photo to reposition it, and use the slider to zoom.",
+    "resetPosition": "Reset to centre"
   },
   "NovoConvitePage": {
     "backBtn": "Back to Hub",

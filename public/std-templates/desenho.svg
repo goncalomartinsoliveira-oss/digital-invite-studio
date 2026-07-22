@@ -61,7 +61,7 @@
          inkscape:label="photoPlaceholder" /><image
          width="88.991798"
          height="115.13313"
-         preserveAspectRatio="none"
+         preserveAspectRatio="xMidYMid slice"
          style="display:inline;image-rendering:optimizeQuality"
          xlink:href=""
          id="photoSlot"

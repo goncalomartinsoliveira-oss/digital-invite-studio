@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Download, ImagePlus, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { fillStdTemplate } from "@/lib/svgTemplate";
 import { STD_TEMPLATES, DEFAULT_STD_TEMPLATE } from "@/lib/stdTemplates";
+import { loadImageForPdf } from "@/lib/pdfLogo";
 
 // Só usada no template "Moldura Preta" (nomes do casal); carregada aqui e
 // exposta como variável CSS, referenciada diretamente no SVG do template.
@@ -30,6 +31,35 @@ interface SaveTheDateModuleDict {
   previewLabel: string;
   photoEmpty: string;
   templateLabel: string;
+  repositionBtn: string;
+  closeReposition: string;
+  repositionHint: string;
+  resetPosition: string;
+}
+
+type PhotoPosition = { x: number; y: number; zoom: number };
+const DEFAULT_PHOTO_POSITION: PhotoPosition = { x: 0, y: 0, zoom: 1 };
+
+// Mesma matemática usada em `lib/svgTemplate.ts` (applyPhotoFraming), mas em
+// píxeis do controlo de arrastar — garante que o que se vê aqui corresponde
+// ao que sai no cartão.
+function computeFramedRect(containerW: number, containerH: number, naturalW: number, naturalH: number, pos: PhotoPosition) {
+  const coverScale = Math.max(containerW / naturalW, containerH / naturalH);
+  const scale = coverScale * Math.max(1, pos.zoom);
+  const renderW = naturalW * scale;
+  const renderH = naturalH * scale;
+  const slackX = renderW - containerW;
+  const slackY = renderH - containerH;
+  const px = Math.max(-50, Math.min(50, pos.x)) / 100;
+  const py = Math.max(-50, Math.min(50, pos.y)) / 100;
+  return {
+    width: renderW,
+    height: renderH,
+    left: -slackX / 2 - px * slackX,
+    top: -slackY / 2 - py * slackY,
+    slackX,
+    slackY,
+  };
 }
 
 interface SaveTheDateModuleProps {
@@ -53,6 +83,9 @@ export default function SaveTheDateModule({
   const [isMounted, setIsMounted] = useState(false);
   const [templatePreviews, setTemplatePreviews] = useState<{ id: string; name: string; markup: string }[]>([]);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [repositioning, setRepositioning] = useState(false);
+  const [dragPos, setDragPos] = useState<PhotoPosition>(DEFAULT_PHOTO_POSITION);
+  const dragState = useRef<{ pointerId: number; startX: number; startY: number; startPos: PhotoPosition } | null>(null);
 
   const dbContent = formData?.content || {};
   const content = dbContent.content || {};
@@ -72,17 +105,38 @@ export default function SaveTheDateModule({
 
   useEffect(() => { setIsMounted(true); }, []);
 
+  // Converte a foto carregada para data URL uma única vez por foto (não uma
+  // vez por template): antes, cada um dos 5 preenchimentos (4 do carrossel +
+  // 1 da pré-visualização) voltava a fazer fetch + FileReader da mesma
+  // imagem, o que tornava o módulo lento sempre que qualquer campo mudava.
+  // Guarda também o tamanho real da foto — necessário para o enquadramento.
+  const [photoAsset, setPhotoAsset] = useState<{ dataUrl: string; width: number; height: number } | null>(null);
+  useEffect(() => {
+    let alive = true;
+    if (!std.photo_url) { setPhotoAsset(null); return; }
+    loadImageForPdf(std.photo_url)
+      .then(({ dataUrl, width, height }) => { if (alive) setPhotoAsset({ dataUrl, width, height }); })
+      .catch(err => console.error("Erro ao carregar a foto:", err));
+    return () => { alive = false; };
+  }, [std.photo_url]);
+  const photoDataUrl = photoAsset?.dataUrl;
+  const photoPosition: PhotoPosition = std.photo_position || DEFAULT_PHOTO_POSITION;
+
   // Preenche cada template base (SVG) com o texto do casal, sempre que algo
   // muda — todos de uma vez, para o carrossel mostrar cada modelo já com os
   // dados reais. Usa uma foto genérica enquanto não há foto própria, só
   // para o carrossel parecer um cartão real (nunca é usada no PDF).
   useEffect(() => {
     let alive = true;
+    if (std.photo_url && !photoDataUrl) return; // espera a conversão única da foto
     Promise.all(
       STD_TEMPLATES.map(t =>
         fillStdTemplate(t.svgUrl, {
-          photoUrl: std.photo_url,
+          photoDataUrl,
           fallbackPhotoUrl: CAROUSEL_FALLBACK_PHOTO,
+          photoBox: t.photoBox,
+          photoNaturalSize: photoAsset ? { width: photoAsset.width, height: photoAsset.height } : undefined,
+          photoPosition,
           names, meta,
           brideName: bride, groomName: groom, date: dateStr, city: std.city || "",
           photoEmptyLabel: dict.photoEmpty,
@@ -93,7 +147,7 @@ export default function SaveTheDateModule({
       .catch(err => console.error("Erro ao preparar o Save the Date:", err));
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [std.photo_url, names, meta, bride, groom, dateStr, std.city]);
+  }, [photoDataUrl, photoAsset, photoPosition, std.photo_url, names, meta, bride, groom, dateStr, std.city]);
 
   // Pré-visualização principal / fonte do PDF descarregado — sem foto
   // genérica: mostra "A VOSSA FOTO" até carregarem a foto real, para o PDF
@@ -101,8 +155,12 @@ export default function SaveTheDateModule({
   const [activeMarkup, setActiveMarkup] = useState("");
   useEffect(() => {
     let alive = true;
+    if (std.photo_url && !photoDataUrl) return; // espera a conversão única da foto
     fillStdTemplate(activeTemplate.svgUrl, {
-      photoUrl: std.photo_url,
+      photoDataUrl,
+      photoBox: activeTemplate.photoBox,
+      photoNaturalSize: photoAsset ? { width: photoAsset.width, height: photoAsset.height } : undefined,
+      photoPosition,
       names, meta,
       brideName: bride, groomName: groom, date: dateStr, city: std.city || "",
       photoEmptyLabel: dict.photoEmpty,
@@ -111,7 +169,7 @@ export default function SaveTheDateModule({
       .catch(err => console.error("Erro ao preparar o Save the Date:", err));
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [std.photo_url, names, meta, activeTemplate.svgUrl, bride, groom, dateStr, std.city]);
+  }, [photoDataUrl, photoAsset, photoPosition, std.photo_url, names, meta, activeTemplate.svgUrl, bride, groom, dateStr, std.city]);
 
   const selectTemplateRelative = (dir: number) => {
     const idx = STD_TEMPLATES.findIndex(t => t.id === activeTemplate.id);
@@ -135,13 +193,80 @@ export default function SaveTheDateModule({
     });
   };
 
+  // Reposicionar/ampliar a foto dentro da moldura do modelo escolhido.
+  // Arrastar só atualiza o estado local (o painel responde de imediato);
+  // só grava no evento (o que dispara o novo preenchimento dos SVGs e o
+  // autosave) ao largar — evita recalcular tudo a cada píxel arrastado.
+  const REPOSITION_FRAME_W = 220;
+  const repositionBox = activeTemplate.photoBox;
+  const repositionFrameH = repositionBox ? Math.round(REPOSITION_FRAME_W * (repositionBox.height / repositionBox.width)) : REPOSITION_FRAME_W;
+
+  const openReposition = () => {
+    setDragPos(photoPosition);
+    setRepositioning(true);
+  };
+
+  const commitPosition = (pos: PhotoPosition) => {
+    setDragPos(pos);
+    setStd({ photo_position: pos });
+  };
+
+  const onFramePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!photoAsset) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragState.current = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, startPos: dragPos };
+  };
+  const onFramePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const ds = dragState.current;
+    if (!ds || ds.pointerId !== e.pointerId || !photoAsset) return;
+    const rect = computeFramedRect(REPOSITION_FRAME_W, repositionFrameH, photoAsset.width, photoAsset.height, ds.startPos);
+    const dx = e.clientX - ds.startX;
+    const dy = e.clientY - ds.startY;
+    const nextX = rect.slackX > 0 ? ds.startPos.x - (dx / rect.slackX) * 100 : 0;
+    const nextY = rect.slackY > 0 ? ds.startPos.y - (dy / rect.slackY) * 100 : 0;
+    setDragPos({ ...ds.startPos, x: Math.max(-50, Math.min(50, nextX)), y: Math.max(-50, Math.min(50, nextY)) });
+  };
+  const onFramePointerUp = () => {
+    if (!dragState.current) return;
+    dragState.current = null;
+    setStd({ photo_position: dragPos });
+  };
+
+  // Fotos tiradas diretamente do telemóvel vêm muitas vezes com vários MB
+  // (4000×3000+) — sem isto, o upload demorava muito mais do que o
+  // necessário, já que o cartão nunca mostra a foto acima de ~1600px.
+  const compressImage = (file: File): Promise<File | Blob> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.src = e.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 1600;
+          let width = img.width;
+          let height = img.height;
+          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext("2d")?.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => resolve(blob || file), "image/jpeg", 0.85);
+        };
+        img.onerror = () => resolve(file);
+      };
+      reader.onerror = () => resolve(file);
+    });
+  };
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!canEdit) return;
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const fileName = `std-${formData.slug}-${Date.now()}.${file.name.split(".").pop()}`;
-    const { error } = await supabase.storage.from("invites").upload(fileName, file);
+    const processed = await compressImage(file);
+    const fileName = `std-${formData.slug}-${Date.now()}.jpg`;
+    const { error } = await supabase.storage.from("invites").upload(fileName, processed);
     if (!error) {
       const { data: { publicUrl } } = supabase.storage.from("invites").getPublicUrl(fileName);
       setStd({ photo_url: publicUrl });
@@ -263,8 +388,66 @@ export default function SaveTheDateModule({
                 <input type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={!canEdit || uploading} />
               </label>
               <p className="text-[11px] text-gray-400 mt-2 max-w-xs">{dict.photoHint}</p>
+              {std.photo_url && repositionBox && (
+                <button
+                  type="button"
+                  onClick={() => (repositioning ? setRepositioning(false) : openReposition())}
+                  className="mt-3 text-[10px] font-bold uppercase tracking-widest text-brand hover:text-brand-dark transition-colors"
+                >
+                  {repositioning ? dict.closeReposition : dict.repositionBtn}
+                </button>
+              )}
             </div>
           </div>
+
+          {/* Arrastar/ampliar a foto dentro da moldura do modelo escolhido —
+              a mesma matemática de enquadramento usada no cartão real, para
+              o que se vê aqui corresponder exatamente ao resultado final. */}
+          {repositioning && photoAsset && repositionBox && (
+            <div className="mt-5 flex flex-col items-center gap-3 bg-cream/60 border border-gray-100 rounded-2xl p-5">
+              <p className="text-[11px] text-gray-400 text-center max-w-[220px]">{dict.repositionHint}</p>
+              <div
+                onPointerDown={onFramePointerDown}
+                onPointerMove={onFramePointerMove}
+                onPointerUp={onFramePointerUp}
+                onPointerCancel={onFramePointerUp}
+                style={{ width: REPOSITION_FRAME_W, height: repositionFrameH, touchAction: "none" }}
+                className="relative overflow-hidden rounded-2xl border-2 border-white shadow-md cursor-grab active:cursor-grabbing bg-gray-100"
+              >
+                {(() => {
+                  const rect = computeFramedRect(REPOSITION_FRAME_W, repositionFrameH, photoAsset.width, photoAsset.height, dragPos);
+                  return (
+                    <img
+                      src={photoAsset.dataUrl}
+                      draggable={false}
+                      alt=""
+                      style={{ position: "absolute", left: rect.left, top: rect.top, width: rect.width, height: rect.height, maxWidth: "none" }}
+                    />
+                  );
+                })()}
+              </div>
+              <div className="flex items-center gap-3 w-full max-w-[220px]">
+                <span className="text-[11px] text-gray-400">−</span>
+                <input
+                  type="range"
+                  min={100}
+                  max={250}
+                  step={1}
+                  value={Math.round(dragPos.zoom * 100)}
+                  onChange={e => commitPosition({ ...dragPos, zoom: Number(e.target.value) / 100 })}
+                  className="w-full accent-brand"
+                />
+                <span className="text-[11px] text-gray-400">+</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => commitPosition(DEFAULT_PHOTO_POSITION)}
+                className="text-[10px] uppercase tracking-widest text-gray-400 hover:text-brand transition-colors"
+              >
+                {dict.resetPosition}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Cidade / Local */}
