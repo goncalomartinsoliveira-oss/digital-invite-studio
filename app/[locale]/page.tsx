@@ -15,7 +15,6 @@ import {
   CheckCircle2,
   ChevronDown,
   LayoutGrid,
-  Users,
   Zap,
   HeadphonesIcon,
   CreditCard,
@@ -28,6 +27,16 @@ import {
 import pt from '../../dictionaries/pt';
 import en from '../../dictionaries/en';
 const dictionaries = { pt, en };
+
+// Etiqueta editorial sobre os títulos: versaletes espaçados entre dois traços
+// finos, em vez de "pills" com ícones (que davam um ar genérico à página).
+const Eyebrow = ({ children, dark = false, align = "center" }: { children: React.ReactNode; dark?: boolean; align?: "center" | "left" }) => (
+  <div className={`flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.35em] ${dark ? 'text-gold-soft/90' : 'text-brand/90'} ${align === 'center' ? 'justify-center' : 'justify-center lg:justify-start'}`}>
+    <span className={`h-px w-8 shrink-0 ${dark ? 'bg-gold-soft/40' : 'bg-gold/60'}`}></span>
+    <span>{children}</span>
+    <span className={`h-px w-8 shrink-0 ${dark ? 'bg-gold-soft/40' : 'bg-gold/60'}`}></span>
+  </div>
+);
 
 export default function HomePage() {
   const params = useParams();
@@ -48,10 +57,7 @@ export default function HomePage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="w-full lg:w-1/2 space-y-10 z-10 text-center lg:text-left"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-soft/30 border border-gold-soft text-[10px] font-bold uppercase tracking-widest text-brand shadow-sm mx-auto lg:mx-0">
-              <Sparkles size={14} />
-              <span>{dict.hero.tag}</span>
-            </div>
+            <Eyebrow align="left">{dict.hero.tag}</Eyebrow>
 
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.1] text-ink tracking-tight">
               {dict.hero.title1} <br className="hidden md:block"/>
@@ -86,7 +92,8 @@ export default function HomePage() {
             <div className="relative w-[300px] md:w-[400px] h-[450px] md:h-[550px]">
               <div className="absolute inset-0 bg-gold-soft rounded-[2.5rem] rotate-[-4deg] scale-105 opacity-50"></div>
               <div className="absolute inset-0 bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 flex items-center justify-center p-2">
-                <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80')] bg-cover bg-center rounded-[1.5rem] opacity-90 grayscale-[10%]"></div>
+                {/* Foto real do produto em uso (convidada a ver a galeria do evento) — imagem local, sem stock externo */}
+                <div className="w-full h-full bg-[url('/features/photo-sharing-e-live-wall/03-mobile-galeria-pt.jpg')] bg-cover bg-center rounded-[1.5rem]"></div>
               </div>
               <motion.div
                 animate={{ y: [0, -10, 0] }}
@@ -130,11 +137,8 @@ export default function HomePage() {
       {/* ── 2b. ANTES / DEPOIS ───────────────────────────────────────── */}
       <section className="py-32 px-6 md:px-20 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-soft/30 border border-gold-soft text-[10px] font-bold uppercase tracking-widest text-brand">
-              <Sparkles size={14} />
-              <span>{dict.story.tag}</span>
-            </div>
+          <div className="text-center mb-16 space-y-5">
+            <Eyebrow>{dict.story.tag}</Eyebrow>
             <h2 className="font-serif text-4xl md:text-5xl text-ink leading-tight">
               {dict.story.title1} <br className="hidden md:block" />
               <span className="italic text-brand">{dict.story.title2}</span>
@@ -183,11 +187,8 @@ export default function HomePage() {
       {/* ── 3. TEMPLATE SHOWCASE ─────────────────────────────────────── */}
       <section className="py-32 px-6 md:px-20 bg-ink text-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-soft/10 border border-gold-soft/20 text-[10px] font-bold uppercase tracking-widest text-gold-soft">
-              <Sparkles size={12} />
-              <span>{dict.templateShowcase.tag}</span>
-            </div>
+          <div className="text-center mb-16 space-y-5">
+            <Eyebrow dark>{dict.templateShowcase.tag}</Eyebrow>
             <h2 className="font-serif text-4xl md:text-5xl text-gold-soft leading-tight">
               {dict.templateShowcase.title1} <span className="italic text-gold">{dict.templateShowcase.title2}</span>
             </h2>
@@ -204,27 +205,17 @@ export default function HomePage() {
                 transition={{ delay: i * 0.12 }}
                 className="group relative bg-cream/5 border border-gold-soft/10 rounded-[2rem] overflow-hidden hover:border-gold/40 transition-all duration-500"
               >
-                {/* Template preview mockup */}
-                <div className="relative h-80 overflow-hidden flex items-center justify-center bg-gradient-to-br from-[#2D4A3E]/40 to-[#1a2f27]/60">
-                  <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=60')] bg-cover bg-center"></div>
-                  {/* Phone frame */}
-                  <div className="relative z-10 w-28 h-52 bg-white rounded-[1.5rem] shadow-2xl border-4 border-white/20 overflow-hidden flex flex-col">
-                    <div className="h-2 bg-gray-200 flex items-center justify-center">
-                      <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
-                    </div>
-                    <div className="flex-1 bg-gradient-to-b from-[#2D4A3E] to-[#1a2f27] flex flex-col items-center justify-center p-2 gap-1">
-                      <div className="w-6 h-6 bg-gold/40 rounded-full"></div>
-                      <div className="w-16 h-1 bg-gold-soft/40 rounded-full"></div>
-                      <div className="w-12 h-1 bg-gold-soft/20 rounded-full"></div>
-                      <div className="w-16 h-1 bg-gold-soft/20 rounded-full mt-1"></div>
-                      <div className="w-10 h-1 bg-gold/30 rounded-full mt-2"></div>
-                    </div>
+                {/* Pré-visualização real do template (screenshot da página do convite) */}
+                <div className="relative h-80 overflow-hidden flex items-start justify-center pt-8 bg-gradient-to-b from-white/[0.03] to-transparent">
+                  <div className="relative z-10 w-40 rounded-[1.6rem] shadow-2xl border-[5px] border-white/15 overflow-hidden bg-ink transition-transform duration-500 group-hover:-translate-y-2">
+                    <img
+                      src={`/home/tpl-${tpl.id}.jpg`}
+                      alt={tpl.name}
+                      className="w-full h-auto block"
+                      loading="lazy"
+                    />
                   </div>
-                  {i === 0 && (
-                    <div className="absolute top-4 right-4 bg-gold text-ink text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-                      Novo
-                    </div>
-                  )}
+                  <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-ink to-transparent z-20 pointer-events-none"></div>
                 </div>
                 <div className="p-6 space-y-3">
                   <h3 className="font-bold text-white text-sm uppercase tracking-widest">{tpl.name}</h3>
@@ -259,40 +250,22 @@ export default function HomePage() {
             viewport={{ once: true, margin: "-100px" }}
             className="w-full lg:w-1/2 relative"
           >
-            {/* Visual: stacked phone mockups */}
+            {/* Visual: convites reais (screenshots dos templates) em telemóveis sobrepostos,
+                com um pequeno cartão RSVP como apontamento no canto inferior (sem tapar os nomes) */}
             <div className="relative flex items-center justify-center h-[500px]">
-              <div className="absolute w-52 h-96 bg-[#2D4A3E] rounded-[2rem] shadow-2xl rotate-[-8deg] translate-x-[-60px] border-4 border-white/10 overflow-hidden">
-                <div className="h-full bg-gradient-to-b from-[#2D4A3E] to-[#1a2f27] flex flex-col items-center pt-10 gap-3 p-4">
-                  <div className="w-16 h-16 bg-gold/20 rounded-full"></div>
-                  <div className="w-24 h-1.5 bg-gold-soft/40 rounded-full"></div>
-                  <div className="w-20 h-1 bg-gold-soft/20 rounded-full"></div>
-                  <div className="w-28 h-px bg-gold-soft/10 rounded-full mt-3"></div>
-                  <div className="w-full space-y-2 mt-3">
-                    {[1,2,3].map(j => (
-                      <div key={j} className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gold/20 rounded-full shrink-0"></div>
-                        <div className="w-full h-1 bg-gold-soft/15 rounded-full"></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="absolute w-44 rounded-[2rem] shadow-2xl rotate-[-8deg] -translate-x-[105px] border-4 border-white/40 overflow-hidden bg-ink">
+                <img src="/home/tpl-luxury-01.jpg" alt="" className="w-full h-auto block opacity-90" loading="lazy" />
               </div>
-              <div className="relative z-10 w-56 h-[420px] bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden">
-                <div className="h-full bg-[url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80')] bg-cover bg-center"></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2D4A3E]/80 via-transparent to-transparent flex flex-col justify-end p-5">
-                  <p className="text-gold-soft font-serif text-lg italic">Isabella & William</p>
-                  <p className="text-gold-soft/70 text-[10px] uppercase tracking-widest mt-1">12 Set. 2026 · Lisboa</p>
-                </div>
+              <div className="relative z-10 w-56 rounded-[2rem] shadow-2xl border-4 border-white overflow-hidden bg-ink">
+                <img src="/home/tpl-minimal-01.jpg" alt="" className="w-full h-auto block" loading="lazy" />
               </div>
-              <div className="absolute w-44 h-80 bg-gold-soft rounded-[2rem] shadow-xl rotate-[6deg] translate-x-[60px] border-4 border-white/20 overflow-hidden">
-                <div className="h-full flex flex-col items-center justify-center gap-3 p-4">
-                  <div className="w-20 h-20 bg-brand/10 rounded-full flex items-center justify-center">
-                    <CheckCircle2 size={32} className="text-brand/40" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-ink text-[10px] font-bold uppercase tracking-widest opacity-50">RSVP</p>
-                    <p className="font-serif text-ink text-sm italic mt-1">186 confirmados</p>
-                  </div>
+              <div className="absolute z-20 bottom-10 right-0 md:right-6 lg:right-0 xl:right-6 bg-white p-5 rounded-3xl shadow-2xl border border-gray-50 flex items-center gap-4 rotate-[3deg]">
+                <div className="w-11 h-11 bg-green-50 text-green-600 rounded-full flex items-center justify-center shrink-0">
+                  <CheckCircle2 size={22} />
+                </div>
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">RSVP</p>
+                  <p className="font-serif text-base text-ink italic">186 confirmados</p>
                 </div>
               </div>
             </div>
@@ -428,10 +401,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="flex-1 text-center lg:text-left space-y-6"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold uppercase tracking-widest text-gold-soft">
-              <Users size={12} />
-              <span>{dict.b2b.tag}</span>
-            </div>
+            <Eyebrow dark align="left">{dict.b2b.tag}</Eyebrow>
             <h2 className="font-serif text-3xl md:text-4xl text-white leading-tight">
               {dict.b2b.title}
             </h2>

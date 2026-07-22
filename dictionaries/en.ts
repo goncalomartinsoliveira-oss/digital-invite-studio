@@ -78,7 +78,7 @@ const en = {
       "tag": "Premium Templates",
       "title1": "Designs crafted by",
       "title2": "editorial artists.",
-      "desc": "Every template is developed with obsessive attention to detail — thoughtful typography, harmonious palettes, and smart sections that adapt to your unique story.",
+      "desc": "Every template is developed with obsessive attention to detail: thoughtful typography, harmonious palettes, and smart sections that adapt to your unique story.",
       "previewBtn": "See Preview",
       "useBtn": "Use This Template",
       "templates": [

@@ -78,7 +78,7 @@ const pt = {
       "tag": "Templates Premium",
       "title1": "Designs criados por",
       "title2": "artistas editoriais.",
-      "desc": "Cada template é desenvolvido com atenção obsessiva ao detalhe — tipografia cuidada, paletas harmoniosas e secções inteligentes que se adaptam à vossa história.",
+      "desc": "Cada template é desenvolvido com atenção obsessiva ao detalhe: tipografia cuidada, paletas harmoniosas e secções inteligentes que se adaptam à vossa história.",
       "previewBtn": "Ver Pré-visualização",
       "useBtn": "Usar Este Template",
       "templates": [
