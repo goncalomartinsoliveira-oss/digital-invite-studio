@@ -987,6 +987,11 @@ const pt = {
       "person1Placeholder": "Ex: Gonçalo",
       "person2Placeholder": "Ex: Márcia",
       "dateLockedNote": "Data bloqueada após a primeira compra — contacte-nos se precisar de a alterar."
+    },
+    "theme": {
+      "title": "Cor de Destaque",
+      "subtitle": "Personalize a cor usada nos detalhes deste modelo",
+      "customLabel": "Personalizada"
     }
   },
   "SmartRsvp": {

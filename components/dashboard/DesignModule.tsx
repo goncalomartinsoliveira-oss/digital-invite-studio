@@ -12,6 +12,7 @@ interface DesignModuleProps {
   dict: {
     templates: { title: string; subtitle: string; applyBtn: string };
     identity: { title: string; subtitle: string; person1Label: string; person2Label: string; dateLabel: string; person1Placeholder: string; person2Placeholder: string; dateLockedNote: string };
+    theme: { title: string; subtitle: string; customLabel: string };
   };
 }
 
@@ -19,9 +20,24 @@ const AVAILABLE_TEMPLATES = [
   { id: 'luxury-01', name: 'Classic Luxury', preview: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400' },
   { id: 'minimal-01', name: 'Modern Minimal', preview: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=400' },
   { id: 'collage-01', name: 'Editorial Collage', preview: '/collage-01/envelope-closed.png' },
-  { id: 'classic-01', name: 'Clássico', preview: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400' },
-  { id: 'noir-01', name: 'Editorial Noir', preview: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&sat=-100' },
-  { id: 'arch-01', name: 'Romântico', preview: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400' },
+  { id: 'classic-01', name: 'Clássico', preview: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400', supportsTheme: true },
+  { id: 'noir-01', name: 'Editorial Noir', preview: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&sat=-100', supportsTheme: true },
+  { id: 'arch-01', name: 'Romântico', preview: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400', supportsTheme: true },
+];
+
+// Cor de destaque: só os modelos com `supportsTheme` usam um único token de
+// cor em todos os detalhes (títulos, linhas, botões) — por isso só nesses
+// faz sentido dar a escolher. Os restantes têm cores fixas espalhadas pelo
+// desenho e trocar uma única variável não teria efeito visível em todos.
+const ACCENT_PRESETS = [
+  { hex: "#B8945A", name: "Dourado" },
+  { hex: "#630100", name: "Bordô" },
+  { hex: "#6B7B5E", name: "Verde Sálvia" },
+  { hex: "#6B85A3", name: "Azul Poeira" },
+  { hex: "#C9A0A0", name: "Rosa Antigo" },
+  { hex: "#BF6E4E", name: "Terracota" },
+  { hex: "#5C6B78", name: "Cinza-Azulado" },
+  { hex: "#1A1A1A", name: "Preto" },
 ];
 
 export default function DesignModule({ formData, setFormData, handleSaveDesign, saving, canEdit, dict }: DesignModuleProps) {
@@ -40,10 +56,18 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
   if (!formData) return null;
 
   const dateLocked = !!formData.date_locked_at;
+  const dbContent = formData.content || {};
+  const activeTemplate = AVAILABLE_TEMPLATES.find(t => t.id === formData.template_id);
+  const accent = dbContent.theme?.accent || "";
+
+  const setAccent = (hex: string) => {
+    if (!canEdit) return;
+    setFormData({ ...formData, content: { ...dbContent, theme: { ...dbContent.theme, accent: hex } } });
+  };
 
   return (
     <div className="space-y-8 pb-12 text-left animate-in fade-in duration-500 font-montserrat">
-      
+
       {/* 01. TEMPLATES DO CONVITE */}
       <section className="bg-white p-8 rounded-[2.5rem] shadow-md border border-gray-100">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -99,6 +123,41 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
           ))}
         </div>
       </section>
+
+      {/* 01b. COR DE DESTAQUE — só nos modelos que suportam personalização de cor */}
+      {activeTemplate?.supportsTheme && (
+        <section className="bg-white p-8 rounded-[2.5rem] shadow-md border border-gray-100">
+          <div className="mb-8">
+            <h3 className="font-serif text-3xl text-brand">{dict.theme.title}</h3>
+            <p className="text-xs text-gray-400 uppercase tracking-widest mt-2 font-bold">{dict.theme.subtitle}</p>
+          </div>
+
+          <div className={`flex flex-wrap items-center gap-4 ${!canEdit ? 'pointer-events-none opacity-80' : ''}`}>
+            {ACCENT_PRESETS.map(p => (
+              <button
+                key={p.hex}
+                type="button"
+                title={p.name}
+                onClick={() => setAccent(p.hex)}
+                className={`w-12 h-12 rounded-full shadow-sm border-2 transition-all hover:scale-110 ${
+                  accent.toLowerCase() === p.hex.toLowerCase() ? 'border-brand ring-2 ring-brand/30' : 'border-white ring-1 ring-gray-200'
+                }`}
+                style={{ background: p.hex }}
+              />
+            ))}
+
+            <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-sm border-2 border-white ring-1 ring-gray-200 hover:scale-110 transition-all flex items-center justify-center bg-[conic-gradient(red,yellow,lime,aqua,blue,magenta,red)]">
+              <input
+                type="color"
+                value={accent || "#B8945A"}
+                onChange={e => setAccent(e.target.value)}
+                title={dict.theme.customLabel}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 cursor-pointer border-none p-0 outline-none opacity-0"
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 02. IDENTIDADE & DATA */}
       <section className="bg-white p-8 rounded-[2.5rem] shadow-md border border-gray-100">

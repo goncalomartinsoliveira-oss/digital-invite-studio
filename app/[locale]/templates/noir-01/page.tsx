@@ -11,22 +11,13 @@ import SmartRsvp from "../../../../components/invite/SmartRsvp";
 const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000";
 const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=2000&auto=format&fit=crop";
 
-const T = {
+// Cores base do modelo — o casal pode substituir `accent` no painel
+// (Design → Cor de Destaque); as restantes mantêm-se fixas para preservar a
+// identidade do desenho.
+const BASE_T = {
   bg: "#0f0e0d", heading: "#ffffff", text: "rgba(255,255,255,0.75)", muted: "rgba(255,255,255,0.45)",
   faint: "rgba(255,255,255,0.18)", accent: "#C6A467", surface: "rgba(255,255,255,0.035)", border: "rgba(255,255,255,0.14)",
 };
-
-function EditorialTitle({ eyebrow, children }: { eyebrow?: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-12 text-center">
-      {eyebrow && <p className="text-[10px] tracking-[0.5em] uppercase mb-4" style={{ color: T.accent }}>{eyebrow}</p>}
-      <h2 className="font-serif text-3xl md:text-5xl uppercase tracking-[0.12em] font-light" style={{ color: T.heading }}>
-        {children}
-      </h2>
-      <div className="h-px w-full mt-7" style={{ background: T.border }} />
-    </div>
-  );
-}
 
 function imgClass(i: number, total: number) {
   if (total === 1) return "col-span-2 h-80";
@@ -62,8 +53,8 @@ function Countdown({ date }: { date: string }) {
     <div className="flex justify-center gap-6 mt-8">
       {([["dias", diff.days], ["horas", diff.hours], ["min", diff.minutes], ["seg", diff.seconds]] as const).map(([l, v]) => (
         <div key={l} className="text-center">
-          <p className="text-3xl md:text-4xl font-light" style={{ color: T.heading }}>{String(v).padStart(2, "0")}</p>
-          <p className="text-[10px] tracking-[0.25em] uppercase mt-0.5" style={{ color: T.muted }}>{l}</p>
+          <p className="text-3xl md:text-4xl font-light" style={{ color: BASE_T.heading }}>{String(v).padStart(2, "0")}</p>
+          <p className="text-[10px] tracking-[0.25em] uppercase mt-0.5" style={{ color: BASE_T.muted }}>{l}</p>
         </div>
       ))}
     </div>
@@ -74,6 +65,19 @@ export default function Noir01Template({ data }: { data?: any; params?: any }) {
   const dbContent = data?.content || {};
   const visibility = dbContent.sections_visibility || {};
   const content = dbContent.content || {};
+  const T = { ...BASE_T, accent: dbContent.theme?.accent || BASE_T.accent };
+
+  function EditorialTitle({ eyebrow, children }: { eyebrow?: string; children: React.ReactNode }) {
+    return (
+      <div className="mb-12 text-center">
+        {eyebrow && <p className="text-[10px] tracking-[0.5em] uppercase mb-4" style={{ color: T.accent }}>{eyebrow}</p>}
+        <h2 className="font-serif text-3xl md:text-5xl uppercase tracking-[0.12em] font-light" style={{ color: T.heading }}>
+          {children}
+        </h2>
+        <div className="h-px w-full mt-7" style={{ background: T.border }} />
+      </div>
+    );
+  }
 
   const [detailTab, setDetailTab] = useState<"ceremony" | "reception">(
     content.event?.ceremony?.active !== false ? "ceremony" : "reception"

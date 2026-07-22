@@ -987,6 +987,11 @@ const en = {
       "person1Placeholder": "e.g., Gonçalo",
       "person2Placeholder": "e.g., Márcia",
       "dateLockedNote": "Date locked after the first purchase — contact us if you need to change it."
+    },
+    "theme": {
+      "title": "Accent Colour",
+      "subtitle": "Customise the colour used in this template's details",
+      "customLabel": "Custom"
     }
   },
   "SmartRsvp": {

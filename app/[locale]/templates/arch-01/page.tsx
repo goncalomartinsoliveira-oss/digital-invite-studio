@@ -10,7 +10,10 @@ import SmartRsvp from "../../../../components/invite/SmartRsvp";
 const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000";
 const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=2000&auto=format&fit=crop";
 
-const T = {
+// Cores base do modelo — o casal pode substituir `accent` no painel
+// (Design → Cor de Destaque); as restantes mantêm-se fixas para preservar a
+// identidade do desenho.
+const BASE_T = {
   bg: "#FDFBF7", heading: "#3E2E22", text: "#4A3F35", muted: "#8C7B6B",
   accent: "#B8945A", surface: "#F4EFE6", border: "#3e3226",
 };
@@ -29,26 +32,10 @@ function CurvedText({ text }: { text: string }) {
   return (
     <svg viewBox="0 0 280 150" className="w-64 h-auto mx-auto" aria-hidden>
       <path id="arch-curve" d="M 20,138 A 120,120 0 0 1 260,138" fill="none" />
-      <text fill={T.heading} className="font-serif" fontSize="13.5" letterSpacing="2">
+      <text fill={BASE_T.heading} className="font-serif" fontSize="13.5" letterSpacing="2">
         <textPath href="#arch-curve" startOffset="50%" textAnchor="middle">{text.toUpperCase()}</textPath>
       </text>
     </svg>
-  );
-}
-
-function Diamond({ className = "", size = 8 }: { className?: string; size?: number }) {
-  return <span className={`inline-block rotate-45 align-middle ${className}`} style={{ width: size, height: size, border: `1px solid ${T.accent}` }} />;
-}
-
-function SectionHead({ eyebrow, children }: { eyebrow?: string; children: React.ReactNode }) {
-  return (
-    <div className="text-center mb-12">
-      <div className="mb-4"><Diamond /></div>
-      {eyebrow && <p className="text-[10px] tracking-[0.4em] uppercase mb-3" style={{ color: T.muted }}>{eyebrow}</p>}
-      <h2 className="font-serif text-[34px] md:text-[44px] italic font-light leading-tight" style={{ color: T.heading }}>
-        {children}
-      </h2>
-    </div>
   );
 }
 
@@ -78,8 +65,8 @@ function Countdown({ date }: { date: string }) {
     <div className="flex justify-center gap-6 mt-8">
       {([["dias", diff.days], ["horas", diff.hours], ["min", diff.minutes], ["seg", diff.seconds]] as const).map(([l, v]) => (
         <div key={l} className="text-center">
-          <p className="text-3xl md:text-4xl font-light font-serif" style={{ color: T.heading }}>{String(v).padStart(2, "0")}</p>
-          <p className="text-[10px] tracking-[0.25em] uppercase mt-0.5" style={{ color: T.muted }}>{l}</p>
+          <p className="text-3xl md:text-4xl font-light font-serif" style={{ color: BASE_T.heading }}>{String(v).padStart(2, "0")}</p>
+          <p className="text-[10px] tracking-[0.25em] uppercase mt-0.5" style={{ color: BASE_T.muted }}>{l}</p>
         </div>
       ))}
     </div>
@@ -90,6 +77,23 @@ export default function ArchTemplate({ data }: { data: any; params?: any }) {
   const dbContent = data?.content || {};
   const visibility = dbContent.sections_visibility || {};
   const content = dbContent.content || {};
+  const T = { ...BASE_T, accent: dbContent.theme?.accent || BASE_T.accent };
+
+  function Diamond({ className = "", size = 8 }: { className?: string; size?: number }) {
+    return <span className={`inline-block rotate-45 align-middle ${className}`} style={{ width: size, height: size, border: `1px solid ${T.accent}` }} />;
+  }
+
+  function SectionHead({ eyebrow, children }: { eyebrow?: string; children: React.ReactNode }) {
+    return (
+      <div className="text-center mb-12">
+        <div className="mb-4"><Diamond /></div>
+        {eyebrow && <p className="text-[10px] tracking-[0.4em] uppercase mb-3" style={{ color: T.muted }}>{eyebrow}</p>}
+        <h2 className="font-serif text-[34px] md:text-[44px] italic font-light leading-tight" style={{ color: T.heading }}>
+          {children}
+        </h2>
+      </div>
+    );
+  }
 
   const [detailTab, setDetailTab] = useState<"ceremony" | "reception">(
     content.event?.ceremony?.active !== false ? "ceremony" : "reception"

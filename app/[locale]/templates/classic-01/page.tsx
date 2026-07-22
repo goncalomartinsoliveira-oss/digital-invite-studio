@@ -10,25 +10,13 @@ import SmartRsvp from "../../../../components/invite/SmartRsvp";
 const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000";
 const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=2000&auto=format&fit=crop";
 
-const T = {
+// Cores base do modelo — o casal pode substituir `accent` no painel
+// (Design → Cor de Destaque); as restantes mantêm-se fixas para preservar a
+// identidade do desenho.
+const BASE_T = {
   bg: "#FDFBF7", heading: "#332E2B", text: "#4A4038", muted: "#8C7B6B",
   faint: "#C9BCA9", accent: "#B8945A", surface: "#F4EFE6", border: "#3e3226",
 };
-
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="text-center mb-10 md:mb-14">
-      <div className="flex items-center gap-3 justify-center max-w-[220px] mx-auto mb-6">
-        <div className="flex-1 h-px" style={{ background: `${T.accent}55` }} />
-        <div className="w-1.5 h-1.5 rotate-45" style={{ background: T.accent }} />
-        <div className="flex-1 h-px" style={{ background: `${T.accent}55` }} />
-      </div>
-      <h2 className="font-serif text-[28px] md:text-[40px] italic font-light" style={{ color: T.heading }}>
-        {children}
-      </h2>
-    </div>
-  );
-}
 
 function imgClass(i: number, total: number) {
   if (total === 1) return "col-span-2 h-80";
@@ -64,8 +52,8 @@ function Countdown({ date }: { date: string }) {
     <div className="flex justify-center gap-6 mt-8">
       {([["dias", diff.days], ["horas", diff.hours], ["min", diff.minutes], ["seg", diff.seconds]] as const).map(([l, v]) => (
         <div key={l} className="text-center">
-          <p className="text-3xl md:text-4xl font-light font-serif" style={{ color: T.heading }}>{String(v).padStart(2, "0")}</p>
-          <p className="text-[10px] tracking-[0.25em] uppercase mt-0.5" style={{ color: T.muted }}>{l}</p>
+          <p className="text-3xl md:text-4xl font-light font-serif" style={{ color: BASE_T.heading }}>{String(v).padStart(2, "0")}</p>
+          <p className="text-[10px] tracking-[0.25em] uppercase mt-0.5" style={{ color: BASE_T.muted }}>{l}</p>
         </div>
       ))}
     </div>
@@ -76,6 +64,22 @@ export default function ClassicTemplate({ data }: { data: any; params?: any }) {
   const dbContent = data?.content || {};
   const visibility = dbContent.sections_visibility || {};
   const content = dbContent.content || {};
+  const T = { ...BASE_T, accent: dbContent.theme?.accent || BASE_T.accent };
+
+  function SectionTitle({ children }: { children: React.ReactNode }) {
+    return (
+      <div className="text-center mb-10 md:mb-14">
+        <div className="flex items-center gap-3 justify-center max-w-[220px] mx-auto mb-6">
+          <div className="flex-1 h-px" style={{ background: `${T.accent}55` }} />
+          <div className="w-1.5 h-1.5 rotate-45" style={{ background: T.accent }} />
+          <div className="flex-1 h-px" style={{ background: `${T.accent}55` }} />
+        </div>
+        <h2 className="font-serif text-[28px] md:text-[40px] italic font-light" style={{ color: T.heading }}>
+          {children}
+        </h2>
+      </div>
+    );
+  }
 
   const [detailTab, setDetailTab] = useState<"ceremony" | "reception">(
     content.event?.ceremony?.active !== false ? "ceremony" : "reception"
