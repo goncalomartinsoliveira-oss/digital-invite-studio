@@ -2,6 +2,9 @@ import { supabase } from "@/lib/supabase";
 import LuxuryTemplate from "../../templates/luxury-01/page";
 import CollageTemplate from "../../templates/collage-01/page";
 import Minimal01Template from "../../templates/minimal-01/page";
+import ClassicTemplate from "../../templates/classic-01/page";
+import NoirTemplate from "../../templates/noir-01/page";
+import ArchTemplate from "../../templates/arch-01/page";
 import { EventBrandProvider } from "../../../../components/site/BrandProvider";
 import EventExpiredScreen from "../../../../components/site/EventExpiredScreen";
 
@@ -73,6 +76,12 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
           <CollageTemplate data={invite} />
         ) : invite.template_id === 'minimal-01' ? (
           <Minimal01Template data={invite} params={params} />
+        ) : invite.template_id === 'classic-01' ? (
+          <ClassicTemplate data={invite} params={params} />
+        ) : invite.template_id === 'noir-01' ? (
+          <NoirTemplate data={invite} params={params} />
+        ) : invite.template_id === 'arch-01' ? (
+          <ArchTemplate data={invite} params={params} />
         ) : (
           <LuxuryTemplate data={invite} params={params} />
         )}

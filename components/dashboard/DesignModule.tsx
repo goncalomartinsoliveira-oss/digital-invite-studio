@@ -19,6 +19,9 @@ const AVAILABLE_TEMPLATES = [
   { id: 'luxury-01', name: 'Classic Luxury', preview: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400' },
   { id: 'minimal-01', name: 'Modern Minimal', preview: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=400' },
   { id: 'collage-01', name: 'Editorial Collage', preview: '/collage-01/envelope-closed.png' },
+  { id: 'classic-01', name: 'Clássico', preview: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400' },
+  { id: 'noir-01', name: 'Editorial Noir', preview: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&sat=-100' },
+  { id: 'arch-01', name: 'Romântico', preview: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400' },
 ];
 
 export default function DesignModule({ formData, setFormData, handleSaveDesign, saving, canEdit, dict }: DesignModuleProps) {
