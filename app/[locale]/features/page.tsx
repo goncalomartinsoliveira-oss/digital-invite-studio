@@ -4,10 +4,11 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Smartphone, CalendarHeart, Mail, Users, Camera, MessageSquareHeart, ArrowRight, Check
+  CalendarHeart, Mail, Users, Camera, MessageSquareHeart, ArrowRight, Check
 } from "lucide-react";
 import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
 import { FEATURE_SLUGS } from "./slugs";
+import { Eyebrow } from "@/components/site/Eyebrow";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás)
 import pt from "../../../dictionaries/pt";
@@ -80,10 +81,9 @@ export default function FeaturesPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 text-xs font-bold uppercase tracking-widest text-[#722F37] mb-6 shadow-sm"
+          className="mb-6"
         >
-          <Smartphone size={14} />
-          <span>{dict.hero.badge}</span>
+          <Eyebrow>{dict.hero.badge}</Eyebrow>
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -122,7 +122,7 @@ export default function FeaturesPage() {
                 {feature.icon}
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-soft mb-3">{feature.tag}</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold mb-3">{feature.tag}</p>
                 <h2 className="text-3xl md:text-4xl font-serif text-gray-900">
                   {feature.title}
                 </h2>

@@ -26,17 +26,8 @@ import {
 
 import pt from '../../dictionaries/pt';
 import en from '../../dictionaries/en';
+import { Eyebrow } from '../../components/site/Eyebrow';
 const dictionaries = { pt, en };
-
-// Etiqueta editorial sobre os títulos: versaletes espaçados entre dois traços
-// finos, em vez de "pills" com ícones (que davam um ar genérico à página).
-const Eyebrow = ({ children, dark = false, align = "center" }: { children: React.ReactNode; dark?: boolean; align?: "center" | "left" }) => (
-  <div className={`flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.35em] ${dark ? 'text-gold-soft/90' : 'text-brand/90'} ${align === 'center' ? 'justify-center' : 'justify-center lg:justify-start'}`}>
-    <span className={`h-px w-8 shrink-0 ${dark ? 'bg-gold-soft/40' : 'bg-gold/60'}`}></span>
-    <span>{children}</span>
-    <span className={`h-px w-8 shrink-0 ${dark ? 'bg-gold-soft/40' : 'bg-gold/60'}`}></span>
-  </div>
-);
 
 export default function HomePage() {
   const params = useParams();
@@ -188,7 +179,7 @@ export default function HomePage() {
       <section className="py-32 px-6 md:px-20 bg-ink text-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-5">
-            <Eyebrow dark>{dict.templateShowcase.tag}</Eyebrow>
+            <Eyebrow tone="gold">{dict.templateShowcase.tag}</Eyebrow>
             <h2 className="font-serif text-4xl md:text-5xl text-gold-soft leading-tight">
               {dict.templateShowcase.title1} <span className="italic text-gold">{dict.templateShowcase.title2}</span>
             </h2>
@@ -401,7 +392,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="flex-1 text-center lg:text-left space-y-6"
           >
-            <Eyebrow dark align="left">{dict.b2b.tag}</Eyebrow>
+            <Eyebrow tone="gold" align="left">{dict.b2b.tag}</Eyebrow>
             <h2 className="font-serif text-3xl md:text-4xl text-white leading-tight">
               {dict.b2b.title}
             </h2>

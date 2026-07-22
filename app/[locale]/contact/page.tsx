@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Phone, Camera, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { Mail, Camera, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS COM OS 3 NÍVEIS CORRETOS PARA TRÁS
@@ -75,39 +75,36 @@ export default function ContactPage() {
             transition={{ delay: 0.2 }}
             className="space-y-12"
           >
-            <div className="space-y-8">
+            <div className="space-y-6">
               {/* Email */}
-              <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white transition-all">
+              <a
+                href="mailto:hello@digitalinvitestudio.com"
+                className="flex items-center gap-6 group rounded-3xl -mx-3 px-3 py-2 hover:bg-white transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white group-hover:border-brand transition-all shrink-0">
                   <Mail size={20} />
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.email}</p>
-                  <p className="text-lg text-ink">hello@digitalinvitestudio.com</p>
+                  <p className="text-lg text-ink group-hover:text-brand transition-colors">hello@digitalinvitestudio.com</p>
                 </div>
-              </div>
-
-              {/* Telefone */}
-              <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white transition-all">
-                  <Phone size={20} />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.whatsapp}</p>
-                  <p className="text-lg text-ink">+351 912 345 678</p>
-                </div>
-              </div>
+              </a>
 
               {/* Instagram */}
-              <div className="flex items-start gap-6 group">
-                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white transition-all">
+              <a
+                href="https://instagram.com/digitalinvitestudio.official"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-6 group rounded-3xl -mx-3 px-3 py-2 hover:bg-white transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white group-hover:border-brand transition-all shrink-0">
                   <Camera size={20} />
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.instagram}</p>
-                  <p className="text-lg text-ink">@digitalinvitestudio</p>
+                  <p className="text-lg text-ink group-hover:text-brand transition-colors">@digitalinvitestudio.official</p>
                 </div>
-              </div>
+              </a>
             </div>
 
             {/* Caixa de Horário */}

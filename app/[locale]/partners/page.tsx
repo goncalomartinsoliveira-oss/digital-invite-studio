@@ -7,6 +7,7 @@ import {
   ArrowRight, Check, Globe, Sparkles, LayoutDashboard, Users, Package, Palette, Building2, Loader2
 } from "lucide-react";
 import { useBrand } from "@/components/site/BrandProvider";
+import { Eyebrow } from "@/components/site/Eyebrow";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás)
 import pt from "../../../dictionaries/pt";
@@ -44,13 +45,13 @@ export default function PartnersPage() {
       {/* HERO */}
       <div className="pt-32 pb-20 px-6 bg-[#1a1210] text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.span
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-block text-[10px] font-bold uppercase tracking-[0.3em] text-gold-soft mb-6"
+            className="mb-6"
           >
-            {dict.hero.tag}
-          </motion.span>
+            <Eyebrow tone="gold">{dict.hero.tag}</Eyebrow>
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -113,7 +114,7 @@ export default function PartnersPage() {
                 <div className="w-14 h-14 rounded-2xl bg-[#722F37]/5 border border-gold-soft/60 flex items-center justify-center text-[#722F37] mb-6">
                   <Icon size={26} />
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gold-soft mb-2">{m.subtitle}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-2">{m.subtitle}</p>
                 <h3 className="font-serif text-2xl text-gray-800 mb-4">{m.title}</h3>
                 <p className="text-gray-500 leading-relaxed mb-8">{m.desc}</p>
                 <div className="space-y-3">

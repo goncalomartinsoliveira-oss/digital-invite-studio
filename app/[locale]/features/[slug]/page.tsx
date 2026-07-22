@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
 import { FEATURE_SLUGS, moduleIdFromSlug } from "../slugs";
+import { Eyebrow } from "@/components/site/Eyebrow";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -100,7 +101,7 @@ export default function FeatureDetailPage() {
           <div className="w-16 h-16 rounded-2xl bg-white shadow-md border border-gray-100 flex items-center justify-center text-[#722F37] mb-6">
             {MODULE_ICONS[moduleId]}
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-soft mb-4">{m.tag}</p>
+          <div className="mb-4"><Eyebrow align="left">{m.tag}</Eyebrow></div>
           <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-6 leading-tight max-w-3xl">
             {m.title}
           </h1>
@@ -117,7 +118,7 @@ export default function FeatureDetailPage() {
             viewport={{ once: true }}
             className="mb-24"
           >
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-soft mb-3">{m.howItWorks.tag}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold mb-3">{m.howItWorks.tag}</p>
             <h2 className="font-serif text-2xl md:text-3xl text-[#722F37] mb-14 max-w-2xl">{m.howItWorks.title}</h2>
 
             <div className="space-y-16">
