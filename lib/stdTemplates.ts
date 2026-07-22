@@ -22,6 +22,8 @@ export type StdTemplate = {
 export const STD_TEMPLATES: StdTemplate[] = [
   { id: "desenho", name: "Arco Dourado", svgUrl: "/std-templates/desenho.svg" },
   { id: "desenho2", name: "Moldura Preta", svgUrl: "/std-templates/desenho2.svg" },
+  { id: "desenho3", name: "Linhas Clássicas", svgUrl: "/std-templates/desenho3.svg" },
+  { id: "desenho4", name: "Tipográfico Bordô", svgUrl: "/std-templates/desenho4.svg" },
 ];
 
 export const DEFAULT_STD_TEMPLATE = STD_TEMPLATES[0];

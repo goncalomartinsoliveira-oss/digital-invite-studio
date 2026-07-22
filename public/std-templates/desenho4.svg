@@ -719,10 +719,11 @@
     </g>
     <text
        class="cls-3"
-       id="text190"
-       style="font-size:12.0676px;font-family:Brand, Brand;fill:#a93834;stroke-width:0.264583"
-       x="19.847036"
+       id="brideNameSlot"
+       style="font-size:12.0676px;font-family:Cinzel, serif;fill:#a93834;stroke-width:0.264583"
+       x="44.976521"
        y="108.85485"
+       text-anchor="middle"
        inkscape:label="nomenoiva"><tspan
          class="cls-7"
          x="19.847036"
@@ -731,10 +732,11 @@
          style="stroke-width:0.264583">Catarina</tspan></text>
     <text
        class="cls-3"
-       id="text194"
-       style="font-size:12.0676px;font-family:Brand, Brand;fill:#a93834;stroke-width:0.264583"
-       x="25.712851"
+       id="groomNameSlot"
+       style="font-size:12.0676px;font-family:Cinzel, serif;fill:#a93834;stroke-width:0.264583"
+       x="44.976521"
        y="124.88594"
+       text-anchor="middle"
        inkscape:label="nome-noivo"><tspan
          x="25.712851"
          y="124.88594"
