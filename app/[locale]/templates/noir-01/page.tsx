@@ -157,6 +157,41 @@ export default function Noir01Template({ data }: { data?: any; params?: any }) {
         </section>
       )}
 
+      {/* GALERIA */}
+      {visibility.gallery !== false && galleryImgs.length > 0 && (
+        <section className="py-24">
+          <div className={`${wrap} px-6 mb-10`}>
+            <EditorialTitle eyebrow="Momentos">{(content.gallery?.title_our ?? "A Nossa")} {(content.gallery?.title_gallery ?? "Galeria")}</EditorialTitle>
+          </div>
+          <div className="max-w-3xl mx-auto w-full">
+            <div className="grid grid-cols-2 gap-2 px-2">
+              {galleryImgs.map((src, i) => (
+                <div key={src + i} className={`overflow-hidden ${imgClass(i, galleryImgs.length)}`}>
+                  <img src={src} alt="" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* PROGRAMA — grelha horizontal de horas */}
+      {visibility.program !== false && (
+        <section className="px-6 py-24" style={{ background: T.surface }}>
+          <div className={wrap}>
+            <EditorialTitle eyebrow="A agenda">{(content.program?.title_our ?? "O Nosso")} {(content.program?.title_program ?? "Programa")}</EditorialTitle>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-px" style={{ background: T.border }}>
+              {programEvents.map((item, i) => (
+                <div key={i} className="px-4 py-7 text-center" style={{ background: T.bg }}>
+                  <p className="text-lg tracking-[0.2em] mb-3" style={{ color: T.accent }}>{item.time}</p>
+                  <p className="font-serif text-base uppercase tracking-[0.08em] leading-snug" style={{ color: T.heading }}>{item.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CERIMÓNIA & RECEÇÃO */}
       {visibility.event !== false && (ceremonyActive || receptionActive) && (
         <section className="px-6 py-24" style={{ background: T.surface }}>
@@ -196,46 +231,11 @@ export default function Noir01Template({ data }: { data?: any; params?: any }) {
         </section>
       )}
 
-      {/* GALERIA */}
-      {visibility.gallery !== false && galleryImgs.length > 0 && (
-        <section className="py-24">
-          <div className={`${wrap} px-6 mb-10`}>
-            <EditorialTitle eyebrow="Momentos">{content.gallery?.title_gallery ?? "Galeria"}</EditorialTitle>
-          </div>
-          <div className="max-w-3xl mx-auto w-full">
-            <div className="grid grid-cols-2 gap-2 px-2">
-              {galleryImgs.map((src, i) => (
-                <div key={src + i} className={`overflow-hidden ${imgClass(i, galleryImgs.length)}`}>
-                  <img src={src} alt="" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* PROGRAMA — grelha horizontal de horas */}
-      {visibility.program !== false && (
-        <section className="px-6 py-24" style={{ background: T.surface }}>
-          <div className={wrap}>
-            <EditorialTitle eyebrow="A agenda">{content.program?.title_program ?? "Programa do Dia"}</EditorialTitle>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-px" style={{ background: T.border }}>
-              {programEvents.map((item, i) => (
-                <div key={i} className="px-4 py-7 text-center" style={{ background: T.bg }}>
-                  <p className="text-lg tracking-[0.2em] mb-3" style={{ color: T.accent }}>{item.time}</p>
-                  <p className="font-serif text-base uppercase tracking-[0.08em] leading-snug" style={{ color: T.heading }}>{item.title}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* DETALHES: INFO ÚTEIS / ALOJAMENTO / DRESS CODE / PRESENTES */}
       {showDetailsSection && (
         <section className="px-6 py-24">
           <div className={wrap}>
-            <EditorialTitle eyebrow="Boa estadia">{content.details?.title_details ?? "Detalhes"}</EditorialTitle>
+            <EditorialTitle eyebrow="Boa estadia">{(content.details?.title_the ?? "Os")} {(content.details?.title_details ?? "Detalhes")}</EditorialTitle>
 
             {(showUsefulInfo || showAccommodation) && (
               <div className={`grid ${showUsefulInfo && showAccommodation ? "sm:grid-cols-2" : ""} gap-4 mb-4`}>
@@ -306,6 +306,16 @@ export default function Noir01Template({ data }: { data?: any; params?: any }) {
       {/* RSVP */}
       {visibility.rsvp !== false && (
         <div style={{ background: T.surface }}>
+          <div className="px-6 pt-24">
+            <div className={wrap}>
+              <EditorialTitle eyebrow="Contamos convosco">{(content.rsvp?.title_please ?? "Por favor")} {(content.rsvp?.title_confirm ?? "Confirmar Presença")}</EditorialTitle>
+              {content.rsvp?.text_limit_date_fixed && (
+                <p className="text-[10px] tracking-[0.2em] uppercase text-center -mt-8 mb-8" style={{ color: T.muted }}>
+                  até {content.rsvp.text_limit_date_fixed}
+                </p>
+              )}
+            </div>
+          </div>
           <SmartRsvp invitationId={data?.id || ""} />
         </div>
       )}
@@ -319,7 +329,10 @@ export default function Noir01Template({ data }: { data?: any; params?: any }) {
           </div>
           <div className="relative max-w-xl mx-auto md:max-w-2xl">
             <p className="text-[11px] tracking-[0.3em] uppercase text-white/70 mb-2">{content.footer?.title_main ?? "Mal podemos esperar para"}</p>
-            <p className="font-serif uppercase tracking-[0.1em] text-2xl md:text-3xl text-white mb-8 font-light">{content.footer?.title_celebrate ?? "Celebrar convosco!"}</p>
+            <p className="font-serif uppercase tracking-[0.1em] text-2xl md:text-3xl text-white mb-6 font-light">{content.footer?.title_celebrate ?? "Celebrar convosco!"}</p>
+            {content.footer?.location_text && (
+              <p className="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-8">{content.footer.location_text}</p>
+            )}
             {content.footer?.show_contacts !== false && (content.footer?.contact_1_phone || content.footer?.contact_2_phone) && (
               <div className="flex flex-wrap justify-center gap-x-7 gap-y-3">
                 {content.footer?.contact_1_phone && (

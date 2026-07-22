@@ -175,6 +175,45 @@ export default function ClassicTemplate({ data }: { data: any; params?: any }) {
         </section>
       )}
 
+      {/* GALERIA */}
+      {visibility.gallery !== false && galleryImgs.length > 0 && (
+        <section className="py-20">
+          <div className="max-w-lg mx-auto md:max-w-2xl px-6 mb-8">
+            <SectionTitle>{(content.gallery?.title_our ?? "A Nossa")} {(content.gallery?.title_gallery ?? "Galeria")}</SectionTitle>
+          </div>
+          <div className="max-w-2xl mx-auto w-full">
+            <div className="grid grid-cols-2 gap-1.5 px-1.5">
+              {galleryImgs.map((src, i) => (
+                <div key={src + i} className={`overflow-hidden rounded-sm ${imgClass(i, galleryImgs.length)}`}>
+                  <img src={src} alt="" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* PROGRAMA */}
+      {visibility.program !== false && (
+        <section className="px-6 py-20" style={{ background: T.surface }}>
+          <div className="max-w-lg mx-auto md:max-w-2xl">
+            <SectionTitle>{(content.program?.title_our ?? "O Nosso")} {(content.program?.title_program ?? "Programa")}</SectionTitle>
+            <div>
+              {programEvents.map((item, i) => (
+                <div key={i}>
+                  {i > 0 && <div className="w-px h-6 ml-[3px]" style={{ background: `${T.accent}55` }} />}
+                  <div className="flex items-center gap-3">
+                    <div className="w-[8px] h-[8px] rounded-full flex-shrink-0" style={{ background: T.accent }} />
+                    <span className="text-[11px] tracking-widest uppercase w-14 flex-shrink-0" style={{ color: T.accent }}>{item.time}</span>
+                    <span className="font-serif italic" style={{ fontSize: "20px", lineHeight: "1", color: T.heading }}>{item.title}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CERIMÓNIA & RECEÇÃO */}
       {visibility.event !== false && (ceremonyActive || receptionActive) && (
         <section className="px-6 py-20" style={{ background: T.surface }}>
@@ -213,50 +252,11 @@ export default function ClassicTemplate({ data }: { data: any; params?: any }) {
         </section>
       )}
 
-      {/* GALERIA */}
-      {visibility.gallery !== false && galleryImgs.length > 0 && (
-        <section className="py-20">
-          <div className="max-w-lg mx-auto md:max-w-2xl px-6 mb-8">
-            <SectionTitle>{content.gallery?.title_gallery ?? "Galeria"}</SectionTitle>
-          </div>
-          <div className="max-w-2xl mx-auto w-full">
-            <div className="grid grid-cols-2 gap-1.5 px-1.5">
-              {galleryImgs.map((src, i) => (
-                <div key={src + i} className={`overflow-hidden rounded-sm ${imgClass(i, galleryImgs.length)}`}>
-                  <img src={src} alt="" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* PROGRAMA */}
-      {visibility.program !== false && (
-        <section className="px-6 py-20" style={{ background: T.surface }}>
-          <div className="max-w-lg mx-auto md:max-w-2xl">
-            <SectionTitle>{content.program?.title_program ?? "Programa do Dia"}</SectionTitle>
-            <div>
-              {programEvents.map((item, i) => (
-                <div key={i}>
-                  {i > 0 && <div className="w-px h-6 ml-[3px]" style={{ background: `${T.accent}55` }} />}
-                  <div className="flex items-center gap-3">
-                    <div className="w-[8px] h-[8px] rounded-full flex-shrink-0" style={{ background: T.accent }} />
-                    <span className="text-[11px] tracking-widest uppercase w-14 flex-shrink-0" style={{ color: T.accent }}>{item.time}</span>
-                    <span className="font-serif italic" style={{ fontSize: "20px", lineHeight: "1", color: T.heading }}>{item.title}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* DETALHES: INFO ÚTEIS / ALOJAMENTO / DRESS CODE / PRESENTES */}
       {showDetailsSection && (
         <section className="px-6 py-24">
           <div className="max-w-lg mx-auto md:max-w-2xl">
-            <SectionTitle>{content.details?.title_details ?? "Detalhes"}</SectionTitle>
+            <SectionTitle>{(content.details?.title_the ?? "Os")} {(content.details?.title_details ?? "Detalhes")}</SectionTitle>
 
             {(showUsefulInfo || showAccommodation) && (
               <div className={`grid ${showUsefulInfo && showAccommodation ? "md:grid-cols-2" : ""} gap-12 mb-16 text-center`}>
@@ -327,6 +327,16 @@ export default function ClassicTemplate({ data }: { data: any; params?: any }) {
       {/* RSVP */}
       {visibility.rsvp !== false && (
         <div style={{ background: T.surface }}>
+          <div className="px-6 pt-20">
+            <div className="max-w-lg mx-auto md:max-w-2xl">
+              <SectionTitle>{(content.rsvp?.title_please ?? "Por favor")} {(content.rsvp?.title_confirm ?? "Confirmar Presença")}</SectionTitle>
+              {content.rsvp?.text_limit_date_fixed && (
+                <p className="text-[10px] text-center -mt-8 mb-4 tracking-widest uppercase" style={{ color: T.muted }}>
+                  até {content.rsvp.text_limit_date_fixed}
+                </p>
+              )}
+            </div>
+          </div>
           <SmartRsvp invitationId={data?.id || ""} />
         </div>
       )}
@@ -345,7 +355,10 @@ export default function ClassicTemplate({ data }: { data: any; params?: any }) {
               <div className="flex-1 h-px bg-white/30" />
             </div>
             <p className="text-sm tracking-[0.25em] uppercase text-white/70 mb-2">{content.footer?.title_main ?? "Mal podemos esperar para"}</p>
-            <p className="font-serif italic text-3xl md:text-4xl text-white mb-8">{content.footer?.title_celebrate ?? "Celebrar convosco!"}</p>
+            <p className="font-serif italic text-3xl md:text-4xl text-white mb-6">{content.footer?.title_celebrate ?? "Celebrar convosco!"}</p>
+            {content.footer?.location_text && (
+              <p className="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-8">{content.footer.location_text}</p>
+            )}
             {content.footer?.show_contacts !== false && (content.footer?.contact_1_phone || content.footer?.contact_2_phone) && (
               <div className="flex flex-wrap justify-center gap-x-7 gap-y-3">
                 {content.footer?.contact_1_phone && (

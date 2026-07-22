@@ -176,6 +176,49 @@ export default function ArchTemplate({ data }: { data: any; params?: any }) {
         </section>
       )}
 
+      {/* GALERIA — fotos em arco */}
+      {visibility.gallery !== false && galleryImgs.length > 0 && (
+        <section className="py-20">
+          <div className={`${wrap} px-6 mb-10`}>
+            <SectionHead eyebrow="Momentos">{(content.gallery?.title_our ?? "A Nossa")} {(content.gallery?.title_gallery ?? "Galeria")}</SectionHead>
+          </div>
+          <div className="max-w-xl mx-auto w-full px-3">
+            <div className="grid grid-cols-2 gap-3">
+              {galleryImgs.map((src, i) => (
+                <ArchImage key={src + i} src={src} className={`w-full ${i % 3 === 0 ? "h-72" : "h-56"}`} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* PROGRAMA — linha vertical com losangos */}
+      {visibility.program !== false && (
+        <section className="px-6 py-20" style={{ background: T.surface }}>
+          <div className={wrap}>
+            <SectionHead eyebrow="A agenda">{(content.program?.title_our ?? "O Nosso")} {(content.program?.title_program ?? "Programa")}</SectionHead>
+            <div className="max-w-sm mx-auto">
+              {programEvents.map((item, i) => {
+                const last = i === programEvents.length - 1;
+                return (
+                  <div key={i} className="flex gap-5">
+                    <div className="flex flex-col items-center">
+                      <div className="w-px flex-1" style={{ background: `${T.accent}55`, visibility: i === 0 ? "hidden" : "visible" }} />
+                      <span className="my-1.5"><Diamond size={7} /></span>
+                      <div className="w-px flex-1" style={{ background: `${T.accent}55`, visibility: last ? "hidden" : "visible" }} />
+                    </div>
+                    <div className="pb-9 pt-1">
+                      <p className="text-[11px] tracking-[0.25em] uppercase mb-1" style={{ color: T.accent }}>{item.time}</p>
+                      <p className="font-serif text-2xl italic leading-tight" style={{ color: T.heading }}>{item.title}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CERIMÓNIA & RECEÇÃO */}
       {visibility.event !== false && (ceremonyActive || receptionActive) && (
         <section className="px-6 py-20" style={{ background: T.surface }}>
@@ -215,54 +258,11 @@ export default function ArchTemplate({ data }: { data: any; params?: any }) {
         </section>
       )}
 
-      {/* GALERIA — fotos em arco */}
-      {visibility.gallery !== false && galleryImgs.length > 0 && (
-        <section className="py-20">
-          <div className={`${wrap} px-6 mb-10`}>
-            <SectionHead eyebrow="Momentos">{content.gallery?.title_gallery ?? "Galeria"}</SectionHead>
-          </div>
-          <div className="max-w-xl mx-auto w-full px-3">
-            <div className="grid grid-cols-2 gap-3">
-              {galleryImgs.map((src, i) => (
-                <ArchImage key={src + i} src={src} className={`w-full ${i % 3 === 0 ? "h-72" : "h-56"}`} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* PROGRAMA — linha vertical com losangos */}
-      {visibility.program !== false && (
-        <section className="px-6 py-20" style={{ background: T.surface }}>
-          <div className={wrap}>
-            <SectionHead eyebrow="A agenda">{content.program?.title_program ?? "Programa do Dia"}</SectionHead>
-            <div className="max-w-sm mx-auto">
-              {programEvents.map((item, i) => {
-                const last = i === programEvents.length - 1;
-                return (
-                  <div key={i} className="flex gap-5">
-                    <div className="flex flex-col items-center">
-                      <div className="w-px flex-1" style={{ background: `${T.accent}55`, visibility: i === 0 ? "hidden" : "visible" }} />
-                      <span className="my-1.5"><Diamond size={7} /></span>
-                      <div className="w-px flex-1" style={{ background: `${T.accent}55`, visibility: last ? "hidden" : "visible" }} />
-                    </div>
-                    <div className="pb-9 pt-1">
-                      <p className="text-[11px] tracking-[0.25em] uppercase mb-1" style={{ color: T.accent }}>{item.time}</p>
-                      <p className="font-serif text-2xl italic leading-tight" style={{ color: T.heading }}>{item.title}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* DETALHES: INFO ÚTEIS / ALOJAMENTO / DRESS CODE / PRESENTES */}
       {showDetailsSection && (
         <section className="px-6 py-20">
           <div className={wrap}>
-            <SectionHead eyebrow="Para ficar">{content.details?.title_details ?? "Detalhes"}</SectionHead>
+            <SectionHead eyebrow="Para ficar">{(content.details?.title_the ?? "Os")} {(content.details?.title_details ?? "Detalhes")}</SectionHead>
 
             {(showUsefulInfo || showAccommodation) && (
               <div className={`grid ${showUsefulInfo && showAccommodation ? "sm:grid-cols-2" : ""} gap-10 mb-14 text-center`}>
@@ -333,6 +333,16 @@ export default function ArchTemplate({ data }: { data: any; params?: any }) {
       {/* RSVP */}
       {visibility.rsvp !== false && (
         <div style={{ background: T.surface }}>
+          <div className="px-6 pt-20">
+            <div className={wrap}>
+              <SectionHead eyebrow="Contamos convosco">{(content.rsvp?.title_please ?? "Por favor")} {(content.rsvp?.title_confirm ?? "Confirmar Presença")}</SectionHead>
+              {content.rsvp?.text_limit_date_fixed && (
+                <p className="text-[10px] tracking-[0.2em] uppercase text-center -mt-8 mb-8" style={{ color: T.muted }}>
+                  até {content.rsvp.text_limit_date_fixed}
+                </p>
+              )}
+            </div>
+          </div>
           <SmartRsvp invitationId={data?.id || ""} />
         </div>
       )}
@@ -349,7 +359,10 @@ export default function ArchTemplate({ data }: { data: any; params?: any }) {
               <span className="inline-block rotate-45 align-middle" style={{ width: 8, height: 8, border: "1px solid rgba(255,255,255,0.85)" }} />
             </div>
             <p className="text-[11px] tracking-[0.25em] uppercase text-white/70 mb-2">{content.footer?.title_main ?? "Mal podemos esperar para"}</p>
-            <p className="font-serif italic text-3xl md:text-4xl text-white mb-8 font-light">{content.footer?.title_celebrate ?? "Celebrar convosco!"}</p>
+            <p className="font-serif italic text-3xl md:text-4xl text-white mb-6 font-light">{content.footer?.title_celebrate ?? "Celebrar convosco!"}</p>
+            {content.footer?.location_text && (
+              <p className="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-8">{content.footer.location_text}</p>
+            )}
             {content.footer?.show_contacts !== false && (content.footer?.contact_1_phone || content.footer?.contact_2_phone) && (
               <div className="flex flex-wrap justify-center gap-x-7 gap-y-3">
                 {content.footer?.contact_1_phone && (
