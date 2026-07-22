@@ -479,6 +479,26 @@ const pt = {
             }
           ],
           "outro": "Qualquer alteração de última hora fica visível para todos assim que voltam a abrir o link, sem reenviar nada."
+        },
+        "sectionsBlock": {
+          "tag": "Modular à vossa medida",
+          "title": "Todas as secções do site, e vocês escolhem quais aparecem",
+          "intro": "O vosso website inclui todas estas secções de raiz. Cada uma liga-se ou desliga-se com um clique no painel, por isso mostram só o que faz sentido para o vosso casamento, sem nunca ficar com espaços vazios ou informação a mais.",
+          "sections": [
+            { "key": "hero", "name": "Capa", "desc": "A primeira impressão: os vossos nomes, a data e uma fotografia ou vídeo a ocupar o ecrã inteiro." },
+            { "key": "countdown", "name": "Contagem decrescente", "desc": "Um contador que mostra quantos dias faltam para o grande dia, atualizado automaticamente." },
+            { "key": "story", "name": "A nossa história", "desc": "Contem como se conheceram, com os parágrafos que quiserem e uma fotografia à parte." },
+            { "key": "gallery", "name": "Galeria", "desc": "Uma seleção editorial de até cinco fotografias do casal." },
+            { "key": "program", "name": "Cronograma", "desc": "O programa do dia ao detalhe: cerimónia, cocktail, jantar, festa. Adicionam os momentos que quiserem, com hora." },
+            { "key": "event", "name": "Locais do evento", "desc": "A cerimónia e a receção, cada uma com hora, morada e um link direto para o Google Maps." },
+            { "key": "useful_info", "name": "Informações úteis", "desc": "Logística, estacionamento e qualquer indicação prática que ajude os convidados a chegar sem stress." },
+            { "key": "accommodation", "name": "Alojamento", "desc": "Sugestões de hotéis perto do local, com links diretos para os convidados reservarem." },
+            { "key": "dress_code", "name": "Dress code", "desc": "O código de vestuário, com uma mensagem e, se quiserem, uma paleta de cores visual." },
+            { "key": "gifts", "name": "Presentes", "desc": "Uma mensagem sobre presentes e, opcionalmente, um botão que revela o IBAN para contribuírem para a lua de mel." },
+            { "key": "rsvp", "name": "Confirmação (RSVP)", "desc": "Os convidados procuram o nome, confirmam presença e indicam restrições, com data limite. Tudo cai no vosso painel." },
+            { "key": "footer", "name": "Rodapé e contactos", "desc": "Uma mensagem de despedida e, se fizer sentido, os contactos de quem organiza para dúvidas de última hora." }
+          ],
+          "footnote": "Desligar uma secção nunca apaga o que lá escreveram: podem voltar a ativá-la a qualquer momento. E todas existem em qualquer um dos modelos de design."
         }
       },
       "guests_seating": {

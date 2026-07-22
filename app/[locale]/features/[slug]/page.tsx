@@ -4,7 +4,8 @@ import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft, ArrowRight, Check, CalendarHeart, Mail, Users, Camera, MessageSquareHeart
+  ArrowLeft, ArrowRight, Check, CalendarHeart, Mail, Users, Camera, MessageSquareHeart,
+  Image as ImageIcon, Timer, Heart, Images, CalendarClock, MapPin, Info, BedDouble, Shirt, Gift, CheckCircle2, Phone
 } from "lucide-react";
 import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
 import { FEATURE_SLUGS, moduleIdFromSlug } from "../slugs";
@@ -25,6 +26,23 @@ const MODULE_ICONS: Record<ModuleId, React.ReactNode> = {
   guests_seating: <Users size={26} />,
   photo_sharing: <Camera size={26} />,
   guestbook: <MessageSquareHeart size={26} />,
+};
+
+// Ícone de cada secção do website de casamento (só usado no módulo "invite",
+// no bloco que lista todas as secções que o convite pode ter).
+const INVITE_SECTION_ICONS: Record<string, React.ReactNode> = {
+  hero: <ImageIcon size={18} />,
+  countdown: <Timer size={18} />,
+  story: <Heart size={18} />,
+  gallery: <Images size={18} />,
+  program: <CalendarClock size={18} />,
+  event: <MapPin size={18} />,
+  useful_info: <Info size={18} />,
+  accommodation: <BedDouble size={18} />,
+  dress_code: <Shirt size={18} />,
+  gifts: <Gift size={18} />,
+  rsvp: <CheckCircle2 size={18} />,
+  footer: <Phone size={18} />,
 };
 
 // Imagens do "como funciona": algumas variam por idioma (mostram texto do
@@ -77,6 +95,10 @@ export default function FeatureDetailPage() {
     tag: string; title: string; summary: string; desc: string;
     includes: string[]; examples: { title: string; desc: string }[];
     howItWorks?: { tag: string; title: string; steps: { title: string; desc: string }[]; outro?: string };
+    sectionsBlock?: {
+      tag: string; title: string; intro: string; footnote: string;
+      sections: { key: string; name: string; desc: string }[];
+    };
   }>)[moduleId];
 
   const otherModules = ALL_MODULE_IDS.filter(id => id !== moduleId);
@@ -165,6 +187,41 @@ export default function FeatureDetailPage() {
                 {m.howItWorks.outro}
               </p>
             )}
+          </motion.div>
+        )}
+
+        {/* TODAS AS SECÇÕES DO SITE (só o módulo do convite) */}
+        {m.sectionsBlock && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-24"
+          >
+            <div className="mb-3"><Eyebrow align="left">{m.sectionsBlock.tag}</Eyebrow></div>
+            <h2 className="font-serif text-2xl md:text-3xl text-[#722F37] mb-4 max-w-2xl">{m.sectionsBlock.title}</h2>
+            <p className="text-gray-500 leading-relaxed max-w-2xl mb-12">{m.sectionsBlock.intro}</p>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              {m.sectionsBlock.sections.map((sec) => (
+                <div key={sec.key} className="flex items-start gap-4 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                  <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-xl bg-[#722F37]/5 border border-gold-soft/50 text-[#722F37] flex items-center justify-center">
+                    {INVITE_SECTION_ICONS[sec.key] ?? <Check size={16} />}
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-lg text-gray-800 leading-tight mb-1">{sec.name}</h4>
+                    <p className="text-sm text-gray-500 leading-relaxed">{sec.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-start gap-3 mt-8 bg-cream rounded-2xl px-6 py-5 border border-gold-soft/60 max-w-3xl">
+              <div className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-[#722F37]/10 text-[#722F37] flex items-center justify-center">
+                <Check size={11} strokeWidth={4} />
+              </div>
+              <p className="text-sm text-ink/80 leading-relaxed">{m.sectionsBlock.footnote}</p>
+            </div>
           </motion.div>
         )}
 

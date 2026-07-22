@@ -479,6 +479,26 @@ const en = {
             }
           ],
           "outro": "Any last-minute change is visible to everyone the next time they open the link, no need to resend anything."
+        },
+        "sectionsBlock": {
+          "tag": "Modular, your way",
+          "title": "Every section your site can have, and you choose which show",
+          "intro": "Your website includes all of these sections out of the box. Each one turns on or off with a single click in the dashboard, so you show only what makes sense for your wedding, with no empty spaces or clutter.",
+          "sections": [
+            { "key": "hero", "name": "Cover", "desc": "The first impression: your names, the date, and a full-screen photo or video." },
+            { "key": "countdown", "name": "Countdown", "desc": "A counter showing how many days are left until the big day, updated automatically." },
+            { "key": "story", "name": "Our story", "desc": "Tell how you met, with as many paragraphs as you like and a separate photo." },
+            { "key": "gallery", "name": "Gallery", "desc": "An editorial selection of up to five photos of the couple." },
+            { "key": "program", "name": "Timeline", "desc": "The day's schedule in detail: ceremony, cocktails, dinner, party. Add the moments you want, with times." },
+            { "key": "event", "name": "Event locations", "desc": "The ceremony and the reception, each with time, address, and a direct Google Maps link." },
+            { "key": "useful_info", "name": "Useful info", "desc": "Logistics, parking, and any practical note that helps guests arrive without stress." },
+            { "key": "accommodation", "name": "Accommodation", "desc": "Hotel suggestions near the venue, with direct links for guests to book." },
+            { "key": "dress_code", "name": "Dress code", "desc": "The dress code, with a message and, if you like, a visual color palette." },
+            { "key": "gifts", "name": "Gifts", "desc": "A note about gifts and, optionally, a button that reveals the IBAN for honeymoon contributions." },
+            { "key": "rsvp", "name": "RSVP", "desc": "Guests find their name, confirm attendance and flag restrictions, with a deadline. It all lands in your dashboard." },
+            { "key": "footer", "name": "Footer & contacts", "desc": "A closing message and, if it helps, the organisers' contacts for last-minute questions." }
+          ],
+          "footnote": "Turning a section off never deletes what you wrote: you can switch it back on at any time. And every section exists in each of the design templates."
         }
       },
       "guests_seating": {
