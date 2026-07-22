@@ -166,12 +166,16 @@ export default function FeaturesPage() {
                     alt={feature.title}
                     className="absolute inset-0 w-full h-full object-cover"
                     onError={(e) => {
-                      // Enquanto não houver versão EN, tenta a PT antes de desistir e mostrar o genérico.
-                      if (feature.conceptImageConfig?.perLocale && locale !== "pt" && !e.currentTarget.src.endsWith("-pt.jpg")) {
-                        e.currentTarget.src = `${feature.conceptImageConfig.file}-pt.jpg`;
+                      // Enquanto não houver as duas versões, tenta a do outro idioma antes
+                      // de desistir e mostrar o genérico (nos dois sentidos, PT↔EN).
+                      const target = e.currentTarget;
+                      if (feature.conceptImageConfig?.perLocale && !target.dataset.fallbackTried) {
+                        target.dataset.fallbackTried = "1";
+                        const otherLocale = locale === "pt" ? "en" : "pt";
+                        target.src = `${feature.conceptImageConfig.file}-${otherLocale}.jpg`;
                         return;
                       }
-                      e.currentTarget.style.display = "none";
+                      target.style.display = "none";
                     }}
                   />
                 )}
