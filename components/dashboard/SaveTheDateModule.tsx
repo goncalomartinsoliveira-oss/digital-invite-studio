@@ -206,20 +206,28 @@ export default function SaveTheDateModule({
                     key={t.id}
                     type="button"
                     onClick={() => setStd({ template_id: t.id })}
-                    className={`shrink-0 transition-all duration-300 ease-out ${
-                      isActive ? "w-32 opacity-100 scale-100 z-10" : "w-20 opacity-40 scale-90"
-                    }`}
+                    className="shrink-0 w-28"
                     style={{ marginLeft: -8, marginRight: -8 }}
                   >
-                    {/* Sem moldura de telemóvel: o próprio cartão já tem a sua margem/borda,
-                        e a proporção 340/640 evita distorcer a arte. O SVG tem de ser filho
-                        direto para o [&>svg] resultar — daí não haver aqui uma div extra. */}
-                    {preview && (
-                      <div
-                        className="rounded-[0.5rem] overflow-hidden shadow-lg aspect-[340/640] bg-white [&>svg]:w-full [&>svg]:h-full [&>svg]:block"
-                        dangerouslySetInnerHTML={{ __html: preview.markup }}
-                      />
-                    )}
+                    {/* Largura fixa no botão (nunca anima) — só a escala e a opacidade
+                        mudam. Animar "width" obriga o browser a recalcular o layout a
+                        cada frame, o que pesa muito com 4 SVGs complexos; scale/opacity
+                        são só composição, muito mais leves (sobretudo em mobile). */}
+                    <div
+                      className={`origin-center transition-[transform,opacity] duration-300 ease-out ${
+                        isActive ? "scale-100 opacity-100 z-10" : "scale-[0.68] opacity-40"
+                      }`}
+                    >
+                      {/* Sem moldura de telemóvel: o próprio cartão já tem a sua margem/borda,
+                          e a proporção 340/640 evita distorcer a arte. O SVG tem de ser filho
+                          direto para o [&>svg] resultar — daí não haver aqui uma div extra. */}
+                      {preview && (
+                        <div
+                          className="rounded-[0.5rem] overflow-hidden shadow-lg aspect-[340/640] bg-white [&>svg]:w-full [&>svg]:h-full [&>svg]:block"
+                          dangerouslySetInnerHTML={{ __html: preview.markup }}
+                        />
+                      )}
+                    </div>
                     <p className={`text-center mt-2 uppercase tracking-wide truncate ${isActive ? "text-[9px] text-brand font-bold" : "text-[8px] text-gray-400"}`}>
                       {t.name}
                     </p>
