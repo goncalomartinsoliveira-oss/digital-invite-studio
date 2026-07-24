@@ -175,6 +175,7 @@ const en = {
     "desc": "Do you have any questions or need a customized solution? We are here to ensure your digital experience is perfect.",
     "channels": {
       "email": "E-mail",
+      "phone": "Phone",
       "whatsapp": "WhatsApp",
       "instagram": "Instagram"
     },

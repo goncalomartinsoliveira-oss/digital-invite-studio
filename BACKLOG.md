@@ -11,7 +11,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 ## Comunicação
 - [x] Configurar um email profissional para a empresa — hello@digitalinvitestudio.com, via Zoho Mail
 - [x] Emails de confirmação de compra (recibo automático depois de um pagamento) — via Resend, disparado no webhook do Stripe
-- [ ] Número de WhatsApp Business a sério para atendimento ao cliente (o que está em `/contact` hoje é um placeholder fictício, `+351 912 345 678`, nem é link clicável) — começar por ser respondido manualmente; atendimento automático por IA (WhatsApp Business API + Claude API) fica para mais tarde, quando houver volume que o justifique
+- [ ] Ativar o WhatsApp Business no número da empresa, **+351 927 367 622** — o número já está publicado em `/contact` como contacto telefónico clicável; assim que a conta Business estiver ativa, trocar esse bloco para WhatsApp (`https://wa.me/351927367622` + rótulo `channels.whatsapp`, que já existe nos dicionários) e repor "WhatsApp" na descrição SEO em `app/[locale]/contact/layout.tsx`. Atendimento manual para começar; automático por IA (WhatsApp Business API + Claude API) fica para quando houver volume que o justifique
 
 ## Pagamentos
 - [x] Lidar com reembolsos no webhook (hoje só trata `checkout.session.completed`; um reembolso no Stripe não revoga o módulo)

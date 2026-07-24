@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Camera, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { Mail, Camera, Phone, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { useBrand } from "@/components/site/BrandProvider";
 
 // 1. IMPORTAR OS DICIONÁRIOS COM OS 3 NÍVEIS CORRETOS PARA TRÁS
@@ -87,6 +87,22 @@ export default function ContactPage() {
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.email}</p>
                   <p className="text-lg text-ink group-hover:text-brand transition-colors">hello@digitalinvitestudio.com</p>
+                </div>
+              </a>
+
+              {/* Telefone — passa a WhatsApp assim que a conta Business estiver
+                  ativa (basta trocar o href por https://wa.me/351927367622 e o
+                  rótulo por dict.channels.whatsapp). */}
+              <a
+                href="tel:+351927367622"
+                className="flex items-center gap-6 group rounded-3xl -mx-3 px-3 py-2 hover:bg-white transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:bg-brand group-hover:text-white group-hover:border-brand transition-all shrink-0">
+                  <Phone size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{dict.channels.phone}</p>
+                  <p className="text-lg text-ink group-hover:text-brand transition-colors">+351 927 367 622</p>
                 </div>
               </a>
 

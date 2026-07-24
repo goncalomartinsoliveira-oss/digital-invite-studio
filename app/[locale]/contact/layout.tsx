@@ -3,8 +3,8 @@ import { headers, cookies } from "next/headers";
 import { resolveBrand } from "@/lib/brands";
 
 const SEO = {
-  pt: { title: "Contacto | Digital Invite Studio", desc: "Têm alguma dúvida ou precisam de uma solução personalizada para o vosso casamento? Fale connosco por email, WhatsApp ou Instagram." },
-  en: { title: "Contact | Digital Invite Studio", desc: "Have a question or need a custom solution for your wedding? Reach us by email, WhatsApp or Instagram." },
+  pt: { title: "Contacto | Digital Invite Studio", desc: "Têm alguma dúvida ou precisam de uma solução personalizada para o vosso casamento? Fale connosco por email, telefone ou Instagram." },
+  en: { title: "Contact | Digital Invite Studio", desc: "Have a question or need a custom solution for your wedding? Reach us by email, phone or Instagram." },
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {

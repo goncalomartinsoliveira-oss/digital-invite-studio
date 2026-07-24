@@ -175,6 +175,7 @@ const pt = {
     "desc": "Têm alguma dúvida ou precisam de uma solução personalizada? Estamos aqui para garantir que a vossa experiência digital seja perfeita.",
     "channels": {
       "email": "E-mail",
+      "phone": "Telefone",
       "whatsapp": "WhatsApp",
       "instagram": "Instagram"
     },
