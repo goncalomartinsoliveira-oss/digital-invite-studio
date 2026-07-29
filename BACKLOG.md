@@ -41,7 +41,7 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 Prioridade alta — barato, é copy, não código:
 - [x] Reposicionar a homepage: comunicar a plataforma toda (site + RSVP + convidados/mesas + fotos + guestbook + canal para wedding planners), não só "convites digitais" — hero reescrito (tag, título e descrição) com o "antes/depois" (conversas dispersas e Excel → tudo num só lugar), sem prometer nada que não existe
 - [x] Storytelling "antes/depois" na homepage — secção nova com 5 pares (mensagens dispersas → um link, perguntas repetidas → RSVP, Excel → painel único, fotos espalhadas → galeria automática, recados perdidos → Guestbook)
-- [ ] Antes de dar destaque tipo "galeria" aos templates (ver `/deixado para mais tarde`), garantir que há templates suficientes para não parecer pobre — hoje só há 4 de convite e 2 de Save the Date
+- [x] Antes de dar destaque tipo "galeria" aos templates, garantir que há templates suficientes para não parecer pobre — resolvido: 6 de convite (Luxury, Minimal, Collage, Clássico, Editorial Noir, Romântico) e 4 de Save the Date (Arco Dourado, Moldura Preta, Linhas Clássicas, Tipográfico Bordô)
 
 Para depois do lançamento — direção certa, mas timing errado agora:
 - [ ] Funis de marketing separados para casais vs. wedding planners (landing page, copy e CTA próprios cada um — já existe o início disto com `/partners`); vídeos e produção mais pesada ficam para quando já houver tração real
@@ -53,8 +53,8 @@ Para depois do lançamento — direção certa, mas timing errado agora:
 
 ## Deixado para mais tarde (decisão já tomada, sem urgência)
 - [ ] Forma de prolongar um evento além dos 60 dias (pagamento extra para estender o prazo) — a aguardar uso real: ainda não há noção do volume/capacidade do sistema para decidir se vale a pena guardar dados por mais tempo
-- [ ] Novos templates de Save the Date
-- [ ] Novos templates para os websites de casamento (convite)
+- [x] Novos templates de Save the Date — Linhas Clássicas e Tipográfico Bordô, mais reposicionamento/zoom da foto e correção do enquadramento na Moldura Preta e no Arco Dourado
+- [x] Novos templates para os websites de casamento (convite) — Clássico, Editorial Noir e Romântico, com seletor de cor de destaque próprio
 - [ ] Save the Date em PDF vetorial (fase 2 — hoje é uma captura raster via html2canvas, a 3x, já com boa qualidade)
 - [ ] Eliminação de dados pesados (fotos/guestbook) depois da expiração — a configurar no futuro
 - [ ] Fechar mais a RLS das tabelas de convidados ao nível da linha (mover operações sensíveis para funções RPC)
