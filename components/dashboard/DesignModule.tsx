@@ -23,6 +23,7 @@ const AVAILABLE_TEMPLATES = [
   { id: 'classic-01', name: 'Clássico', preview: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400', supportsTheme: true },
   { id: 'noir-01', name: 'Editorial Noir', preview: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&sat=-100', supportsTheme: true },
   { id: 'arch-01', name: 'Romântico', preview: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400', supportsTheme: true },
+  { id: 'envelope-01', name: 'Envelope (em construção)', preview: '/envelope-01/envelope.webp' },
 ];
 
 // Cor de destaque: só os modelos com `supportsTheme` usam um único token de
