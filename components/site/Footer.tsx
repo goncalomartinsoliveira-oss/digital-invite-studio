@@ -33,12 +33,12 @@ export default function Footer({ brand }: { brand?: Brand }) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-1">
             {brand?.websiteUrl ? (
-              <a href={brand.websiteUrl} target="_blank" rel="noopener noreferrer" className="font-serif text-2xl text-brand block mb-4">
-                {brand.name}
+              <a href={brand.websiteUrl} target="_blank" rel="noopener noreferrer" className="inline-block mb-4">
+                <img src={brand.logo} alt={brand.logoAlt ?? brand.name} className="h-10 w-auto" />
               </a>
             ) : (
-              <Link href={`/${locale}`} className="font-serif text-2xl text-brand block mb-4">
-                {brand?.name ?? "Digital Invite Studio"}
+              <Link href={`/${locale}`} className="inline-block mb-4">
+                <img src={brand?.logo ?? "/logo-dis.svg"} alt={brand?.logoAlt ?? "Digital Invite Studio"} className="h-10 w-auto" />
               </Link>
             )}
             <p className="text-sm text-gray-500">
