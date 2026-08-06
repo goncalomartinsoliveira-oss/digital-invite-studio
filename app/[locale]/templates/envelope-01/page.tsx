@@ -37,6 +37,17 @@ const ENVELOPE_PHOTO_CLIP =
 // por isso o texto tem de ser centrado nessa zona e não no elemento inteiro.
 const ARCO_BODY_INSET = 21;
 
+// Versaletes da moldura dos nomes (intro, data, local) — mesmo tipo, tamanho
+// e cor nos três, tal como na maquete: serifada (a mesma do resto do site),
+// versalete com tracking largo, tom escuro e sólido (não o cinza-esverdeado
+// mais claro que se usa nas etiquetas "Clique aqui").
+const moldSmallCaps: React.CSSProperties = {
+  fontSize: "clamp(4px, 1.05cqw, 9px)",
+  letterSpacing: "0.16em",
+  color: "rgba(51,46,43,0.85)",
+  lineHeight: 1.5,
+};
+
 type Piece = {
   src: string;
   left: number;    // % da largura da tela
@@ -231,55 +242,34 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                 <div className="relative">
                   <img src={`${EL}/moldura-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[17%]">
-                    <span
-                      className="uppercase"
-                      style={{
-                        fontFamily: "var(--font-jost)",
-                        fontSize: "clamp(3px, 0.95cqw, 8px)",
-                        letterSpacing: "0.14em",
-                        color: "rgba(60,66,52,0.7)",
-                        lineHeight: 1.7,
-                      }}
-                    >
+                    <span className="uppercase font-serif" style={moldSmallCaps}>
                       {content.hero?.label_intro ?? "Juntem-se a nós no casamento de"}
                     </span>
                     <span
                       style={{
                         fontFamily: "var(--font-pinyon)",
                         fontSize: "clamp(12px, 4.4cqw, 34px)",
-                        color: "#3C4234",
-                        lineHeight: 1.1,
-                        margin: "4% 0",
+                        color: "#332E2B",
+                        lineHeight: 1.15,
+                        margin: "5% 0",
                       }}
                     >
                       {groom} &amp; {bride}
                     </span>
-                    {dateLabel && (
-                      <span
-                        className="uppercase"
-                        style={{
-                          fontFamily: "var(--font-jost)",
-                          fontSize: "clamp(4px, 1.3cqw, 10px)",
-                          letterSpacing: "0.18em",
-                          color: "rgba(60,66,52,0.75)",
-                        }}
-                      >
-                        {dateLabel}
-                      </span>
-                    )}
-                    {place && (
-                      <span
-                        className="uppercase"
-                        style={{
-                          fontFamily: "var(--font-jost)",
-                          fontSize: "clamp(4px, 1.3cqw, 10px)",
-                          letterSpacing: "0.18em",
-                          color: "rgba(60,66,52,0.75)",
-                          marginTop: "2%",
-                        }}
-                      >
-                        {place}
-                      </span>
+                    {(dateLabel || place) && (
+                      <div className="flex flex-col items-center">
+                        {dateLabel && (
+                          <span className="uppercase font-serif" style={moldSmallCaps}>
+                            {dateLabel}
+                          </span>
+                        )}
+                        {place &&
+                          place.split(",").map((line: string, i: number) => (
+                            <span key={i} className="uppercase font-serif" style={moldSmallCaps}>
+                              {line.trim()}
+                            </span>
+                          ))}
+                      </div>
                     )}
                   </div>
                 </div>
