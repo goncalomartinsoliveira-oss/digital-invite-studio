@@ -118,9 +118,11 @@ id="fotografia"` do ficheiro fonte — não copiar às cegas.
   do ecrã de entrada ("Recebeu um convite de") é fixo de propósito, tem
   um papel diferente (é a legenda do envelope fechado, não um título do
   casal) e não deve reutilizar o mesmo campo.
-- Nomes maiores e mais para baixo, e data+local com um espaço bem maior
-  a separar dos nomes (para lerem como o rodapé do cartão) — pedido
-  explícito depois de ver a primeira versão em produção.
+- As três zonas (intro, nomes, data+local) usam `top` absoluto (28% /
+  37% / 68% da altura do cartão) em vez de centragem flex — o casal
+  marcou a olho, numa captura de ecrã do cartão real, exatamente onde
+  queria cada uma, por isso é mais direto acertar com posições fixas do
+  que com margens a tentar simular o mesmo efeito.
 - O "&" da Pinyon Script tem uma laçada alta que a entrelinha apertada
   corta; tanto aqui como no ecrã de entrada usa-se `lineHeight` folgado
   (1.35–1.6) e `paddingBlock` para dar espaço de sobra ao glifo.

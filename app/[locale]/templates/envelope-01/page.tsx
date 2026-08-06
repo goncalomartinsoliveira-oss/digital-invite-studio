@@ -241,41 +241,45 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               <div style={pieceStyle(PIECES.molduraNomes)}>
                 <div className="relative">
                   <img src={`${EL}/moldura-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[17%]" style={{ paddingTop: "9%" }}>
+                  {/* As três zonas são posicionadas por `top` absoluto (como
+                      nas outras peças da colagem), não por centragem flex —
+                      o casal marcou a que altura exata quer cada uma numa
+                      captura de ecrã do cartão real. */}
+                  <div className="absolute left-0 right-0 text-center px-[15%]" style={{ top: "28%" }}>
                     <span className="uppercase font-serif" style={moldSmallCaps}>
                       {content.hero?.text_above_names || "O nosso casamento"}
                     </span>
+                  </div>
+                  <div className="absolute left-0 right-0 text-center px-[11%]" style={{ top: "37%" }}>
                     <span
-                      /* Mesma folga da versão do ecrã de entrada — a Pinyon
-                         Script tem laçadas altas que a entrelinha apertada
-                         cortava, sobretudo no "&". */
+                      /* A Pinyon Script tem laçadas altas que a entrelinha
+                         apertada corta, sobretudo no "&" — daí a folga. */
                       style={{
                         fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(14px, 5cqw, 38px)",
+                        fontSize: "clamp(16px, 6.2cqw, 44px)",
                         color: "#332E2B",
                         lineHeight: 1.35,
                         paddingBlock: "0.1em",
-                        margin: "5% 0",
                       }}
                     >
                       {groom} &amp; {bride}
                     </span>
-                    {(dateLabel || place) && (
-                      <div className="flex flex-col items-center" style={{ marginTop: "7%" }}>
-                        {dateLabel && (
-                          <span className="uppercase font-serif" style={moldSmallCaps}>
-                            {dateLabel}
-                          </span>
-                        )}
-                        {place &&
-                          place.split(",").map((line: string, i: number) => (
-                            <span key={i} className="uppercase font-serif" style={moldSmallCaps}>
-                              {line.trim()}
-                            </span>
-                          ))}
-                      </div>
-                    )}
                   </div>
+                  {(dateLabel || place) && (
+                    <div className="absolute left-0 right-0 flex flex-col items-center px-[15%]" style={{ top: "68%" }}>
+                      {dateLabel && (
+                        <span className="uppercase font-serif" style={moldSmallCaps}>
+                          {dateLabel}
+                        </span>
+                      )}
+                      {place &&
+                        place.split(",").map((line: string, i: number) => (
+                          <span key={i} className="uppercase font-serif" style={moldSmallCaps}>
+                            {line.trim()}
+                          </span>
+                        ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
