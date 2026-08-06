@@ -118,11 +118,22 @@ id="fotografia"` do ficheiro fonte — não copiar às cegas.
   do ecrã de entrada ("Recebeu um convite de") é fixo de propósito, tem
   um papel diferente (é a legenda do envelope fechado, não um título do
   casal) e não deve reutilizar o mesmo campo.
-- As três zonas (intro, nomes, data+local) usam `top` absoluto (28% /
-  37% / 68% da altura do cartão) em vez de centragem flex — o casal
-  marcou a olho, numa captura de ecrã do cartão real, exatamente onde
-  queria cada uma, por isso é mais direto acertar com posições fixas do
-  que com margens a tentar simular o mesmo efeito.
+- As três zonas (intro, nomes, data+local) ficam centradas — via `top` +
+  `translateY(-50%)` — a **43% / 59% / 79%** da altura do cartão. Isto
+  não foi acertado a olho: o casal enviou `elementos/"exemplo de
+  posicionamentos.svg"`, uma cópia do `moldura-nomes` com 3 camadas de
+  texto de exemplo (`"O NOSSO CASAMENTO"`, `"NOME NOIVOS"`, `"DATA
+  CASAMENTO"`) marcando o centro exato de cada zona. Esse ficheiro usa
+  `writing-mode:tb-rl` com `transform="rotate(-90)"` (texto vertical
+  rodado), por isso as coordenadas não se leem à letra — converteram-se
+  para o sistema normal (`(x,y) local → (y, -x) na página`, pela matriz
+  do `rotate(-90)`) e confirmaram-se por medição de pixel numa
+  renderização à parte do próprio SVG. As duas contas bateram a menos de
+  meio ponto percentual uma da outra.
+  Se as posições precisarem de ajuste outra vez, o mais fiável é pedir
+  um novo `exemplo de posicionamentos.svg` (ou equivalente) em vez de
+  tentar adivinhar por descrição — foi assim que se chegou a estes
+  números com confiança.
 - O "&" da Pinyon Script tem uma laçada alta que a entrelinha apertada
   corta; tanto aqui como no ecrã de entrada usa-se `lineHeight` folgado
   (1.35–1.6) e `paddingBlock` para dar espaço de sobra ao glifo.

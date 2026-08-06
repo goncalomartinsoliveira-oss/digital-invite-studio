@@ -241,16 +241,29 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               <div style={pieceStyle(PIECES.molduraNomes)}>
                 <div className="relative">
                   <img src={`${EL}/moldura-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  {/* As três zonas são posicionadas por `top` absoluto (como
-                      nas outras peças da colagem), não por centragem flex —
-                      o casal marcou a que altura exata quer cada uma numa
-                      captura de ecrã do cartão real. */}
-                  <div className="absolute left-0 right-0 text-center px-[15%]" style={{ top: "28%" }}>
+                  {/* As três zonas ficam centradas exatamente nos pontos que
+                      o casal marcou num ficheiro de referência próprio
+                      (elementos/"exemplo de posicionamentos.svg", com 3
+                      camadas de texto "O NOSSO CASAMENTO" / "NOME NOIVOS" /
+                      "DATA CASAMENTO"). As posições desse SVG usam uma
+                      rotação (writing-mode vertical) — convertidas para o
+                      sistema de coordenadas normal e depois confirmadas por
+                      medição de pixel numa renderização à parte, dão:
+                      43% / 59% / 79% da altura do cartão, sempre ao centro.
+                      `translateY(-50%)` centra cada bloco nesse ponto, em
+                      vez de o ponto ser o topo do bloco. */}
+                  <div
+                    className="absolute left-0 right-0 text-center px-[15%]"
+                    style={{ top: "43%", transform: "translateY(-50%)" }}
+                  >
                     <span className="uppercase font-serif" style={moldSmallCaps}>
                       {content.hero?.text_above_names || "O nosso casamento"}
                     </span>
                   </div>
-                  <div className="absolute left-0 right-0 text-center px-[11%]" style={{ top: "37%" }}>
+                  <div
+                    className="absolute left-0 right-0 text-center px-[11%]"
+                    style={{ top: "59%", transform: "translateY(-50%)" }}
+                  >
                     <span
                       /* A Pinyon Script tem laçadas altas que a entrelinha
                          apertada corta, sobretudo no "&" — daí a folga. */
@@ -266,7 +279,10 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                     </span>
                   </div>
                   {(dateLabel || place) && (
-                    <div className="absolute left-0 right-0 flex flex-col items-center px-[15%]" style={{ top: "68%" }}>
+                    <div
+                      className="absolute left-0 right-0 flex flex-col items-center px-[15%]"
+                      style={{ top: "79%", transform: "translateY(-50%)" }}
+                    >
                       {dateLabel && (
                         <span className="uppercase font-serif" style={moldSmallCaps}>
                           {dateLabel}
