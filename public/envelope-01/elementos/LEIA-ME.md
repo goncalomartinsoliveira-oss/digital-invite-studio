@@ -110,6 +110,21 @@ Se o `envelope-aberto.webp` for alguma vez substituído por um redesenho,
 este `clip-path` tem de ser recalculado a partir do novo `path
 id="fotografia"` do ficheiro fonte — não copiar às cegas.
 
+## Texto da moldura dos nomes
+
+- **Intro** (`"O NOSSO CASAMENTO"`) usa `content.hero.text_above_names` —
+  o mesmo campo editável no painel em Conteúdo do convite → Capa (Hero) →
+  "Título secundário". Note que esse campo é **só** usado aqui; o texto
+  do ecrã de entrada ("Recebeu um convite de") é fixo de propósito, tem
+  um papel diferente (é a legenda do envelope fechado, não um título do
+  casal) e não deve reutilizar o mesmo campo.
+- Nomes maiores e mais para baixo, e data+local com um espaço bem maior
+  a separar dos nomes (para lerem como o rodapé do cartão) — pedido
+  explícito depois de ver a primeira versão em produção.
+- O "&" da Pinyon Script tem uma laçada alta que a entrelinha apertada
+  corta; tanto aqui como no ecrã de entrada usa-se `lineHeight` folgado
+  (1.35–1.6) e `paddingBlock` para dar espaço de sobra ao glifo.
+
 ## Fotos usadas nas 5 zonas da colagem
 
 As 4 polaroides e o arco usam `photoAt(0)`, `photoAt(1)`, `photoAt(2)`,

@@ -142,7 +142,7 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               transition={{ duration: 0.8 }}
               className="text-[11px] md:text-xs tracking-[0.35em] uppercase text-[#332E2B]/55 mb-5"
             >
-              {content.hero?.text_above_names ?? "Recebeu um convite de"}
+              Recebeu um convite de
             </motion.p>
 
             <motion.h1
@@ -156,7 +156,7 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               style={{
                 fontFamily: "var(--font-pinyon)",
                 color: "#332E2B",
-                lineHeight: 1.45,
+                lineHeight: 1.6,
                 paddingBlock: "0.15em",
               }}
             >
@@ -241,23 +241,27 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               <div style={pieceStyle(PIECES.molduraNomes)}>
                 <div className="relative">
                   <img src={`${EL}/moldura-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[17%]">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[17%]" style={{ paddingTop: "9%" }}>
                     <span className="uppercase font-serif" style={moldSmallCaps}>
-                      {content.hero?.label_intro ?? "Juntem-se a nós no casamento de"}
+                      {content.hero?.text_above_names || "O nosso casamento"}
                     </span>
                     <span
+                      /* Mesma folga da versão do ecrã de entrada — a Pinyon
+                         Script tem laçadas altas que a entrelinha apertada
+                         cortava, sobretudo no "&". */
                       style={{
                         fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(12px, 4.4cqw, 34px)",
+                        fontSize: "clamp(14px, 5cqw, 38px)",
                         color: "#332E2B",
-                        lineHeight: 1.15,
+                        lineHeight: 1.35,
+                        paddingBlock: "0.1em",
                         margin: "5% 0",
                       }}
                     >
                       {groom} &amp; {bride}
                     </span>
                     {(dateLabel || place) && (
-                      <div className="flex flex-col items-center">
+                      <div className="flex flex-col items-center" style={{ marginTop: "7%" }}>
                         {dateLabel && (
                           <span className="uppercase font-serif" style={moldSmallCaps}>
                             {dateLabel}

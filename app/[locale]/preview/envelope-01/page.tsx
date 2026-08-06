@@ -13,8 +13,7 @@ const DEMO_DATA = {
     sections_visibility: {},
     content: {
       hero: {
-        text_above_names: "Recebeu um convite de",
-        label_intro: "Juntem-se a nós no casamento de",
+        text_above_names: "O nosso casamento",
         location: "Lago de Como, Itália",
         main_image_url: "/features/guestbook/04-casal-em-casa.jpg",
       },
