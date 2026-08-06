@@ -18,8 +18,8 @@ const CANVAS_H = 207;
 
 // Áreas onde entram as fotos do casal, medidas diretamente nos ficheiros
 // (em % do próprio elemento, não da tela).
-const POLAROID_PHOTO = { left: 6.62, top: 5.5, width: 87.34, height: 72.92 };
-const ARCO_PHOTO = { left: 45.8, top: 55.3, width: 28.4, height: 21.5 };
+const POLAROID_PHOTO = { left: 6.63, top: 5.5, width: 87.43, height: 72.92 };
+const ARCO_PHOTO = { left: 46.2, top: 54.9, width: 28.4, height: 21.1 };
 
 // O corpo do arco começa a 21% do ficheiro (as flores ficam à esquerda dele),
 // por isso o texto tem de ser centrado nessa zona e não no elemento inteiro.
@@ -38,16 +38,16 @@ type Piece = {
 // (ver LEIA-ME na pasta dos elementos), não estimadas a olho. Tudo é
 // relativo à tela, por isso é o único sítio a mexer para reajustar o arranjo.
 const PIECES: Record<string, Piece> = {
-  envelopeAberto: { src: "envelope-aberto", left: 17.25, top: 1.89,  width: 40.9, z: 2 },
-  molduraNomes:   { src: "moldura-nomes",   left: 41.9,  top: 10.3,  width: 39.4, z: 3 },
-  polaroidA:      { src: "polaroid",        left: 21.1,  top: 27.3,  width: 20.3, z: 4, rotate: -8 },
-  badgeDetalhes:  { src: "badge-detalhes",  left: 19.6,  top: 38.6,  width: 34.6, z: 5 },
-  bolo:           { src: "bolo",            left: 50.4,  top: 45.1,  width: 29.6, z: 4 },
-  envelopeRsvp:   { src: "envelope-rsvp",   left: 20.8,  top: 56.5,  width: 38.8, z: 6 },
-  polaroidB:      { src: "polaroid",        left: 57.3,  top: 63.8,  width: 20.6, z: 5, rotate: 14 },
-  arcoHistoria:   { src: "arco-historia",   left: 35.5,  top: 71.0,  width: 42.6, z: 5 },
-  polaroidC:      { src: "polaroid",        left: 20.7,  top: 71.4,  width: 21.6, z: 6, rotate: -8 },
-  polaroidD:      { src: "polaroid",        left: 23.1,  top: 83.9,  width: 20.6, z: 7, rotate: 14 },
+  envelopeAberto: { src: "envelope-aberto", left: 17.12, top: 1.75,  width: 40.80, z: 2 },
+  molduraNomes:   { src: "moldura-nomes",   left: 41.77, top: 10.31, width: 39.33, z: 3 },
+  polaroidA:      { src: "polaroid",        left: 21.08, top: 27.27, width: 20.32, z: 4, rotate: -8 },
+  badgeDetalhes:  { src: "badge-detalhes",  left: 19.58, top: 38.63, width: 34.75, z: 5 },
+  bolo:           { src: "bolo",            left: 50.40, top: 45.10, width: 29.60, z: 4 },
+  envelopeRsvp:   { src: "envelope-rsvp",   left: 20.80, top: 56.50, width: 38.80, z: 6 },
+  polaroidB:      { src: "polaroid",        left: 57.32, top: 63.81, width: 20.54, z: 5, rotate: 14 },
+  arcoHistoria:   { src: "arco-historia",   left: 35.34, top: 70.84, width: 42.60, z: 5 },
+  polaroidC:      { src: "polaroid",        left: 20.67, top: 71.44, width: 21.59, z: 6, rotate: -8 },
+  polaroidD:      { src: "polaroid",        left: 23.15, top: 83.93, width: 20.54, z: 7, rotate: 14 },
 };
 
 function pieceStyle(p: Piece): React.CSSProperties {
