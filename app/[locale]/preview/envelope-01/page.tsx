@@ -24,6 +24,7 @@ const DEMO_DATA = {
           "/features/guestbook/03-convidado-mensagem.jpg",
           "/features/save-the-date/04-recebido.jpg",
           "/features/guestbook/04-casal-em-casa.jpg",
+          "/features/photo-sharing-e-live-wall/03-mobile-galeria-pt.jpg",
         ],
       },
     },

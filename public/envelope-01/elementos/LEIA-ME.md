@@ -84,3 +84,23 @@ Substituir o `.webp` mantendo **as mesmas proporções**; se as proporções
 mudarem, é preciso reajustar as posições em `PIECES`, no topo do template.
 Todas as posições estão em percentagem de uma tela de proporção fixa, por
 isso a composição mantém-se idêntica em qualquer ecrã.
+
+## Nota sobre o "buraco" da foto de capa parecer sair do envelope
+
+Se em produção a foto de capa aparecer a sair para fora do bico do
+envelope, o `envelope-aberto.webp` em disco já não tem esse problema —
+verificado por medição direta do canal alfa (o buraco fica um pentágono
+fechado, sem fuga até às bordas do ficheiro) e por captura de ecrã do
+template a várias larguras, com a foto sempre contida dentro do bico. A
+causa mais provável de continuar a ver o problema é o deploy da Vercel
+não ter sido promovido a produção depois do último commit — ver a nota
+sobre isso no `CLAUDE.md`.
+
+## Fotos usadas nas 5 zonas da colagem
+
+As 4 polaroides e o arco usam `photoAt(0)`, `photoAt(1)`, `photoAt(2)`,
+`photoAt(3)` e `photoAt(4)` — cinco índices distintos da galeria do
+casal (`content.gallery.images_urls`), para que as 5 zonas mostrem 5
+fotos diferentes sempre que o casal tiver 5 ou mais fotos carregadas. Com
+menos fotos, `photoAt` faz `% length`, por isso alguma zona repete até
+haver fotos suficientes.

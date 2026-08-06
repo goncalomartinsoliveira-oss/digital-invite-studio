@@ -383,9 +383,9 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                       A Nossa História
                     </span>
                   </div>
-                  {photoAt(3) && (
+                  {photoAt(4) && (
                     <img
-                      src={photoAt(3)}
+                      src={photoAt(4)}
                       alt=""
                       className="absolute object-cover select-none"
                       draggable={false}
