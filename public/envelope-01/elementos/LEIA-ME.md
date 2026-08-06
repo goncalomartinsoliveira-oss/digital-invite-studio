@@ -85,16 +85,30 @@ mudarem, é preciso reajustar as posições em `PIECES`, no topo do template.
 Todas as posições estão em percentagem de uma tela de proporção fixa, por
 isso a composição mantém-se idêntica em qualquer ecrã.
 
-## Nota sobre o "buraco" da foto de capa parecer sair do envelope
+## A foto de capa saía do bico do envelope — causa real
 
-Se em produção a foto de capa aparecer a sair para fora do bico do
-envelope, o `envelope-aberto.webp` em disco já não tem esse problema —
-verificado por medição direta do canal alfa (o buraco fica um pentágono
-fechado, sem fuga até às bordas do ficheiro) e por captura de ecrã do
-template a várias larguras, com a foto sempre contida dentro do bico. A
-causa mais provável de continuar a ver o problema é o deploy da Vercel
-não ter sido promovido a produção depois do último commit — ver a nota
-sobre isso no `CLAUDE.md`.
+A primeira tentativa posicionava a foto num **retângulo** (`ENVELOPE_PHOTO`)
+que envolvia a área da foto, medido a partir do canto-a-canto do buraco. O
+problema: o buraco é um pentágono, não um retângulo, e os **cantos** desse
+retângulo caem fora do contorno do envelope perto do bico (nomeadamente
+perto do vértice de cima) — nessa zona não há nenhuma arte por cima a tapar
+a foto, porque ali já é o fundo transparente da página, não o desenho do
+envelope. Daí a foto "vazar" para cima do bico.
+
+Correção: em vez de um retângulo aproximado, o `ENVELOPE_PHOTO_CLIP` usa a
+forma exata da camada `id="fotografia"` do SVG original — as coordenadas do
+próprio `path` (lidas do ficheiro fonte, recuperado do histórico do git)
+convertidas em percentagem do viewBox e aplicadas como `clip-path: polygon(...)`
+na foto. A foto passa a preencher a peça toda (0/0/100%/100%, tal como o
+`envelope-aberto.webp`) e é a forma do `clip-path` que a recorta ao
+pentágono exato — já não depende de nenhuma caixa aproximada nem da forma
+como o buraco foi "furado" no ficheiro convertido. Verificado por captura
+de ecrã em várias larguras (375px a 1300px): a foto encosta exatamente ao
+contorno do envelope, sem vazar em nenhum canto.
+
+Se o `envelope-aberto.webp` for alguma vez substituído por um redesenho,
+este `clip-path` tem de ser recalculado a partir do novo `path
+id="fotografia"` do ficheiro fonte — não copiar às cegas.
 
 ## Fotos usadas nas 5 zonas da colagem
 

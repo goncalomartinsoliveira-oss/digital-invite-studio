@@ -21,10 +21,17 @@ const CANVAS_H = 207;
 const POLAROID_PHOTO = { left: 6.63, top: 5.5, width: 87.43, height: 72.92 };
 const ARCO_PHOTO = { left: 46.2, top: 54.9, width: 28.4, height: 21.1 };
 
-// Forro do envelope aberto: zona marcada pelo próprio designer no ficheiro
-// original (camada "fotografia"), não estimada — localizada por render
-// isolado dessa camada e depois medida em pixel no ficheiro final.
-const ENVELOPE_PHOTO = { left: 5.62, top: 5.42, width: 88.75, height: 65.42 };
+// Forro do envelope aberto: forma exata da camada "fotografia" do ficheiro
+// original (um pentágono com cantos arredondados, não um retângulo), lida
+// diretamente das coordenadas do próprio path SVG e convertida em polígono
+// percentual. Uma caixa retangular aproximada (a abordagem anterior) tem
+// cantos que caem fora do contorno do envelope perto do bico — nessas zonas
+// não há arte por cima a tapar a foto, porque ali já é fundo transparente da
+// página, não o envelope. O clip-path elimina esse problema: a foto fica
+// sempre recortada exatamente na forma desenhada, seja qual for a proporção
+// da foto do casal.
+const ENVELOPE_PHOTO_CLIP =
+  "polygon(3.64% 43.75%, 3.67% 37.53%, 6.78% 32.50%, 34.56% 13.72%, 47.62% 4.95%, 52.03% 5.06%, 77.24% 21.99%, 93.01% 32.68%, 95.85% 37.20%, 95.89% 43.73%, 88.78% 45.27%, 87.15% 46.21%, 61.58% 72.24%, 38.12% 72.24%, 12.67% 46.49%, 9.96% 45.07%)";
 
 // O corpo do arco começa a 21% do ficheiro (as flores ficam à esquerda dele),
 // por isso o texto tem de ser centrado nessa zona e não no elemento inteiro.
@@ -205,14 +212,9 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                     <img
                       src={coverPhoto}
                       alt=""
-                      className="absolute object-cover select-none"
+                      className="absolute inset-0 w-full h-full object-cover select-none"
                       draggable={false}
-                      style={{
-                        left: `${ENVELOPE_PHOTO.left}%`,
-                        top: `${ENVELOPE_PHOTO.top}%`,
-                        width: `${ENVELOPE_PHOTO.width}%`,
-                        height: `${ENVELOPE_PHOTO.height}%`,
-                      }}
+                      style={{ clipPath: ENVELOPE_PHOTO_CLIP }}
                     />
                   )}
                   <img
