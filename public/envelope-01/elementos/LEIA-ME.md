@@ -10,7 +10,7 @@ visível. Os originais continuam no Drive e no histórico do git.
 | `envelope-aberto.webp` | Topo da colagem |
 | `moldura-nomes.webp` | Nomes, data e local do casamento |
 | `polaroid.webp` | Usado 4×, com fotos da galeria do casal |
-| `badge-detalhes.webp` | Navegação → "Detalhes" |
+| `badge-detalhes.webp` | Navegação → "Local" |
 | `bolo.webp` | Decorativo |
 | `envelope-rsvp.webp` | Navegação → "Confirmar Presença" |
 | `arco-historia.webp` | Navegação → "A Nossa História" |
@@ -21,7 +21,9 @@ Medidas diretamente nos ficheiros e fixadas em
 `app/[locale]/templates/envelope-01/page.tsx`:
 
 - **Polaróide** — a área cinzenta: `left 6.63%, top 5.5%, 87.43% × 72.92%`
-- **Arco** — derivada da maquete: `left 46.2%, top 54.9%, 28.4% × 21.1%`
+- **Arco** — camada `id="fotografia"` de `POSICIONAMENTO elementos (5).svg`
+  (ver secção "Título e 'clique aqui' das 3 peças de navegação" abaixo):
+  `left 42.61%, top 50.89%, 34.66% × 26.15%`
 - **Envelope aberto** (forro = foto de capa, `hero.main_image_url`) —
   `left 5.62%, top 5.42%, 88.75% × 65.42%`. Ao contrário das outras, esta
   não foi medida por cor: o ficheiro original tinha uma camada com
@@ -137,6 +139,46 @@ id="fotografia"` do ficheiro fonte — não copiar às cegas.
 - O "&" da Pinyon Script tem uma laçada alta que a entrelinha apertada
   corta; tanto aqui como no ecrã de entrada usa-se `lineHeight` folgado
   (1.35–1.6) e `paddingBlock` para dar espaço de sobra ao glifo.
+
+## Título e "clique aqui" das 3 peças de navegação (Local, RSVP, Arco)
+
+Mesmo problema da moldura dos nomes, mesma solução: o casal enviou 3
+ficheiros de referência (`POSICIONAMENTO novo-badge-detalhes.svg`,
+`POSICIONAMENTO elementos (4).svg` = envelope RSVP, `POSICIONAMENTO
+elementos (5).svg` = arco), cada um uma cópia do elemento real com
+camadas de texto de exemplo a marcar o centro exato de cada zona — o
+texto/tipo de letra desses ficheiros não interessa, só a posição.
+
+Mesma técnica de conversão: texto em `writing-mode:tb-rl` +
+`transform="rotate(-90)"`, coordenadas locais convertidas via
+`(x,y) → (y, -x)` e depois expressas em percentagem do `viewBox` do
+ficheiro. Os pontos resultantes usam `left/top` + `translate(-50%,-50%)`
+em vez de âncora no topo, porque o que o casal marcou é o **centro** de
+cada texto, não o canto:
+
+| Peça | Título | "Clique aqui" |
+|---|---|---|
+| Local (ex-"Detalhes") | 50.0% / 28.8% | 50.9% / 66.8% |
+| RSVP | 50.0% / 32.8% | 52.5% / 84.4% |
+| Arco "A Nossa História" | 59.6% / 37.4% | 60.3% / 92.8% |
+
+No arco o centro do texto não é 50% — fica deslocado para a direita
+(~60%) porque o corpo do arco começa depois das flores, que ocupam a
+zona esquerda do ficheiro. Isto substitui o `ARCO_BODY_INSET` (uma
+estimativa de 21% de padding) por um número medido a sério.
+
+No mesmo ficheiro do arco, o casal também acrescentou uma nova camada
+`id="fotografia"` — desta vez um retângulo simples (sem rotação nem
+`writing-mode`), por isso bastou aplicar a transformação do grupo que a
+envolve (`matrix(escala, 0, 0, escala, tx, ty)`) às coordenadas do
+`rect` e converter para percentagem — sem necessidade de clip-path,
+como aconteceu no forro do envelope. Deu uma zona bem maior do que a
+estimativa anterior (que tinha sido tirada a olho da maquete): ver
+"Zonas de foto" acima.
+
+Também aqui: se for preciso ajustar outra vez, pedir um novo ficheiro
+de referência é muito mais rápido e fiável do que tentar acertar por
+descrição.
 
 ## Fotos usadas nas 5 zonas da colagem
 

@@ -19,7 +19,9 @@ const CANVAS_H = 207;
 // Áreas onde entram as fotos do casal, medidas diretamente nos ficheiros
 // (em % do próprio elemento, não da tela).
 const POLAROID_PHOTO = { left: 6.63, top: 5.5, width: 87.43, height: 72.92 };
-const ARCO_PHOTO = { left: 46.2, top: 54.9, width: 28.4, height: 21.1 };
+// Camada "fotografia" de elementos/"POSICIONAMENTO elementos (5).svg" — um
+// retângulo simples (sem rotação), por isso basta a caixa, sem clip-path.
+const ARCO_PHOTO = { left: 42.61, top: 50.89, width: 34.66, height: 26.15 };
 
 // Forro do envelope aberto: forma exata da camada "fotografia" do ficheiro
 // original (um pentágono com cantos arredondados, não um retângulo), lida
@@ -32,10 +34,6 @@ const ARCO_PHOTO = { left: 46.2, top: 54.9, width: 28.4, height: 21.1 };
 // da foto do casal.
 const ENVELOPE_PHOTO_CLIP =
   "polygon(3.64% 43.75%, 3.67% 37.53%, 6.78% 32.50%, 34.56% 13.72%, 47.62% 4.95%, 52.03% 5.06%, 77.24% 21.99%, 93.01% 32.68%, 95.85% 37.20%, 95.89% 43.73%, 88.78% 45.27%, 87.15% 46.21%, 61.58% 72.24%, 38.12% 72.24%, 12.67% 46.49%, 9.96% 45.07%)";
-
-// O corpo do arco começa a 21% do ficheiro (as flores ficam à esquerda dele),
-// por isso o texto tem de ser centrado nessa zona e não no elemento inteiro.
-const ARCO_BODY_INSET = 21;
 
 // Versaletes da moldura dos nomes (intro, data, local) — mesmo tipo, tamanho
 // e cor nos três, tal como na maquete: serifada (a mesma do resto do site),
@@ -327,13 +325,13 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                 </div>
               ))}
 
-              {/* Crachá "Detalhes" — navegação */}
-              <a href="#detalhes" style={pieceStyle(PIECES.badgeDetalhes)} className="block group">
+              {/* Crachá "Local" — navegação. Título e "clique aqui" centrados
+                  exatamente nos pontos marcados em
+                  elementos/"POSICIONAMENTO novo-badge-detalhes.svg". */}
+              <a href="#local" style={pieceStyle(PIECES.badgeDetalhes)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/badge-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  {/* Na maquete o título fica acima das pombas (que fazem parte
-                      do desenho) e a chamada por baixo delas. */}
-                  <div className="absolute left-0 right-0 flex justify-center" style={{ top: "14%" }}>
+                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "28.8%", transform: "translate(-50%, -50%)" }}>
                     <span
                       style={{
                         fontFamily: "var(--font-pinyon)",
@@ -342,10 +340,10 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                         lineHeight: 1,
                       }}
                     >
-                      Detalhes
+                      Local
                     </span>
                   </div>
-                  <div className="absolute left-0 right-0" style={{ top: "70%" }}>
+                  <div className="absolute" style={{ left: "50.9%", top: "66.8%", transform: "translate(-50%, -50%)" }}>
                     <ClickLabel dark>Clique aqui</ClickLabel>
                   </div>
                 </div>
@@ -354,13 +352,13 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               {/* Bolo — só decorativo */}
               <img src={`${EL}/bolo.webp`} alt="" style={pieceStyle(PIECES.bolo)} className="select-none" draggable={false} />
 
-              {/* Envelope creme "Confirmar presença" — navegação */}
+              {/* Envelope creme "Confirmar presença" — navegação. Mesma
+                  lógica, a partir de elementos/"POSICIONAMENTO elementos (4).svg". */}
               <a href="#rsvp" style={pieceStyle(PIECES.envelopeRsvp)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/envelope-rsvp.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute left-0 right-0 flex justify-center" style={{ top: "30%" }}>
+                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "32.8%", transform: "translate(-50%, -50%)" }}>
                     <span
-                      className="text-center"
                       style={{
                         fontFamily: "var(--font-pinyon)",
                         fontSize: "clamp(11px, 4cqw, 30px)",
@@ -371,24 +369,23 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                       Confirmar Presença
                     </span>
                   </div>
-                  <div className="absolute left-0 right-0" style={{ top: "76%" }}>
+                  <div className="absolute" style={{ left: "52.5%", top: "84.4%", transform: "translate(-50%, -50%)" }}>
                     <ClickLabel>Clique aqui</ClickLabel>
                   </div>
                 </div>
               </a>
 
-              {/* Arco "A Nossa História" — navegação */}
+              {/* Arco "A Nossa História" — navegação. Título, foto e "clique
+                  aqui" a partir de elementos/"POSICIONAMENTO elementos (5).svg"
+                  — o corpo do arco fica à direita das flores, por isso o
+                  centro do texto não é o centro do elemento (~60%, não 50%).
+                  A zona da foto é a camada "fotografia" desse ficheiro,
+                  medida diretamente (retângulo simples, sem rotação). */}
               <a href="#historia" style={pieceStyle(PIECES.arcoHistoria)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/arco-historia.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  {/* Ordem tirada da maquete: título em cima, foto emoldurada
-                      ao centro, e a chamada no fundo. */}
-                  <div
-                    className="absolute left-0 right-0 flex justify-center"
-                    style={{ top: "30%", paddingLeft: `${ARCO_BODY_INSET}%` }}
-                  >
+                  <div className="absolute w-[55%] text-center" style={{ left: "59.6%", top: "37.4%", transform: "translate(-50%, -50%)" }}>
                     <span
-                      className="text-center"
                       style={{
                         fontFamily: "var(--font-pinyon)",
                         fontSize: "clamp(10px, 3.6cqw, 28px)",
@@ -414,10 +411,7 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                       }}
                     />
                   )}
-                  <div
-                    className="absolute left-0 right-0"
-                    style={{ top: "88%", paddingLeft: `${ARCO_BODY_INSET}%` }}
-                  >
+                  <div className="absolute" style={{ left: "60.3%", top: "92.8%", transform: "translate(-50%, -50%)" }}>
                     <ClickLabel dark>Clique aqui</ClickLabel>
                   </div>
                 </div>
