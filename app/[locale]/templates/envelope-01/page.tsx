@@ -14,12 +14,12 @@ const EL = "/envelope-01/elementos";
 // dentro desta caixa; mexer aqui estica tudo, por isso é o único sítio onde
 // se ajusta o "comprimento" geral da página.
 const CANVAS_W = 100;
-const CANVAS_H = 204;
+const CANVAS_H = 207;
 
 // Áreas onde entram as fotos do casal, medidas diretamente nos ficheiros
 // (em % do próprio elemento, não da tela).
-const POLAROID_PHOTO = { left: 6.8, top: 5.5, width: 87.2, height: 74.5 };
-const ARCO_PHOTO = { left: 28, top: 11, width: 64, height: 47 };
+const POLAROID_PHOTO = { left: 6.62, top: 5.5, width: 87.34, height: 72.92 };
+const ARCO_PHOTO = { left: 45.8, top: 55.3, width: 28.4, height: 21.5 };
 
 // O corpo do arco começa a 21% do ficheiro (as flores ficam à esquerda dele),
 // por isso o texto tem de ser centrado nessa zona e não no elemento inteiro.
@@ -27,24 +27,27 @@ const ARCO_BODY_INSET = 21;
 
 type Piece = {
   src: string;
-  left: number;   // % da largura da tela
-  top: number;    // % da altura da tela
-  width: number;  // % da largura da tela
+  left: number;    // % da largura da tela
+  top: number;     // % da altura da tela
+  width: number;   // % da largura da tela
   z: number;
+  rotate?: number; // graus
 };
 
-// Posições retiradas da composição de referência. Tudo aqui é relativo à
-// tela, por isso é o único sítio a mexer para reajustar o arranjo.
+// Posições obtidas por correspondência de cada elemento contra a maquete
+// (ver LEIA-ME na pasta dos elementos), não estimadas a olho. Tudo é
+// relativo à tela, por isso é o único sítio a mexer para reajustar o arranjo.
 const PIECES: Record<string, Piece> = {
-  envelopeAberto: { src: "envelope-aberto", left: 14, top: 1.5,  width: 43, z: 2 },
-  molduraNomes:   { src: "moldura-nomes",   left: 48, top: 11,   width: 35, z: 3 },
-  polaroidA:      { src: "polaroid",        left: 11, top: 25.5, width: 31, z: 4 },
-  badgeDetalhes:  { src: "badge-detalhes",  left: 24, top: 39,   width: 41, z: 5 },
-  bolo:           { src: "bolo",            left: 53, top: 43.5, width: 41, z: 4 },
-  envelopeRsvp:   { src: "envelope-rsvp",   left: 14, top: 58,   width: 47, z: 6 },
-  polaroidB:      { src: "polaroid",        left: 58, top: 62,   width: 31, z: 4 },
-  arcoHistoria:   { src: "arco-historia",   left: 49, top: 74,   width: 39, z: 5 },
-  polaroidC:      { src: "polaroid",        left: 9,  top: 80,   width: 32, z: 4 },
+  envelopeAberto: { src: "envelope-aberto", left: 17.25, top: 1.89,  width: 40.9, z: 2 },
+  molduraNomes:   { src: "moldura-nomes",   left: 41.9,  top: 10.3,  width: 39.4, z: 3 },
+  polaroidA:      { src: "polaroid",        left: 21.1,  top: 27.3,  width: 20.3, z: 4, rotate: -8 },
+  badgeDetalhes:  { src: "badge-detalhes",  left: 19.6,  top: 38.6,  width: 34.6, z: 5 },
+  bolo:           { src: "bolo",            left: 50.4,  top: 45.1,  width: 29.6, z: 4 },
+  envelopeRsvp:   { src: "envelope-rsvp",   left: 20.8,  top: 56.5,  width: 38.8, z: 6 },
+  polaroidB:      { src: "polaroid",        left: 57.3,  top: 63.8,  width: 20.6, z: 5, rotate: 14 },
+  arcoHistoria:   { src: "arco-historia",   left: 35.5,  top: 71.0,  width: 42.6, z: 5 },
+  polaroidC:      { src: "polaroid",        left: 20.7,  top: 71.4,  width: 21.6, z: 6, rotate: -8 },
+  polaroidD:      { src: "polaroid",        left: 23.1,  top: 83.9,  width: 20.6, z: 7, rotate: 14 },
 };
 
 function pieceStyle(p: Piece): React.CSSProperties {
@@ -54,6 +57,7 @@ function pieceStyle(p: Piece): React.CSSProperties {
     top: `${p.top}%`,
     width: `${p.width}%`,
     zIndex: p.z,
+    ...(p.rotate ? { transform: `rotate(${p.rotate}deg)` } : {}),
   };
 }
 
@@ -237,11 +241,12 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
 
               {/* Polaroids — a foto entra na área cinzenta medida no ficheiro */}
               {[
-                { key: "polaroidA", piece: PIECES.polaroidA, idx: 0, rotate: -3 },
-                { key: "polaroidB", piece: PIECES.polaroidB, idx: 1, rotate: 2.5 },
-                { key: "polaroidC", piece: PIECES.polaroidC, idx: 2, rotate: -2 },
-              ].map(({ key, piece, idx, rotate }) => (
-                <div key={key} style={{ ...pieceStyle(piece), transform: `rotate(${rotate}deg)` }}>
+                { key: "polaroidA", piece: PIECES.polaroidA, idx: 0 },
+                { key: "polaroidB", piece: PIECES.polaroidB, idx: 1 },
+                { key: "polaroidC", piece: PIECES.polaroidC, idx: 2 },
+                { key: "polaroidD", piece: PIECES.polaroidD, idx: 3 },
+              ].map(({ key, piece, idx }) => (
+                <div key={key} style={pieceStyle(piece)}>
                   <div className="relative">
                     <img src={`${EL}/polaroid.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                     {photoAt(idx) && (
@@ -266,18 +271,21 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               <a href="#detalhes" style={pieceStyle(PIECES.badgeDetalhes)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/badge-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute inset-0 flex flex-col items-center justify-end pb-[15%]">
+                  {/* Na maquete o título fica acima das pombas (que fazem parte
+                      do desenho) e a chamada por baixo delas. */}
+                  <div className="absolute left-0 right-0 flex justify-center" style={{ top: "14%" }}>
                     <span
                       style={{
                         fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(13px, 5cqw, 38px)",
+                        fontSize: "clamp(11px, 4.2cqw, 32px)",
                         color: "#F2F0E6",
                         lineHeight: 1,
-                        marginBottom: "3%",
                       }}
                     >
                       Detalhes
                     </span>
+                  </div>
+                  <div className="absolute left-0 right-0" style={{ top: "70%" }}>
                     <ClickLabel dark>Clique aqui</ClickLabel>
                   </div>
                 </div>
@@ -290,18 +298,20 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               <a href="#rsvp" style={pieceStyle(PIECES.envelopeRsvp)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/envelope-rsvp.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pt-[16%]">
+                  <div className="absolute left-0 right-0 flex justify-center" style={{ top: "30%" }}>
                     <span
+                      className="text-center"
                       style={{
                         fontFamily: "var(--font-pinyon)",
                         fontSize: "clamp(11px, 4cqw, 30px)",
                         color: "#3C4234",
-                        lineHeight: 1,
-                        marginBottom: "3%",
+                        lineHeight: 1.05,
                       }}
                     >
                       Confirmar Presença
                     </span>
+                  </div>
+                  <div className="absolute left-0 right-0" style={{ top: "76%" }}>
                     <ClickLabel>Clique aqui</ClickLabel>
                   </div>
                 </div>
@@ -311,6 +321,24 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               <a href="#historia" style={pieceStyle(PIECES.arcoHistoria)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/arco-historia.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
+                  {/* Ordem tirada da maquete: título em cima, foto emoldurada
+                      ao centro, e a chamada no fundo. */}
+                  <div
+                    className="absolute left-0 right-0 flex justify-center"
+                    style={{ top: "30%", paddingLeft: `${ARCO_BODY_INSET}%` }}
+                  >
+                    <span
+                      className="text-center"
+                      style={{
+                        fontFamily: "var(--font-pinyon)",
+                        fontSize: "clamp(10px, 3.6cqw, 28px)",
+                        color: "#F2F0E6",
+                        lineHeight: 1.05,
+                      }}
+                    >
+                      A Nossa História
+                    </span>
+                  </div>
                   {photoAt(3) && (
                     <img
                       src={photoAt(3)}
@@ -322,25 +350,14 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                         top: `${ARCO_PHOTO.top}%`,
                         width: `${ARCO_PHOTO.width}%`,
                         height: `${ARCO_PHOTO.height}%`,
-                        borderRadius: "999px 999px 4px 4px",
+                        border: "2px solid #F2F0E6",
                       }}
                     />
                   )}
                   <div
-                    className="absolute inset-0 flex flex-col items-center justify-end pb-[13%]"
-                    style={{ paddingLeft: `${ARCO_BODY_INSET}%` }}
+                    className="absolute left-0 right-0"
+                    style={{ top: "88%", paddingLeft: `${ARCO_BODY_INSET}%` }}
                   >
-                    <span
-                      style={{
-                        fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(10px, 3.6cqw, 28px)",
-                        color: "#F2F0E6",
-                        lineHeight: 1,
-                        marginBottom: "3%",
-                      }}
-                    >
-                      A Nossa História
-                    </span>
                     <ClickLabel dark>Clique aqui</ClickLabel>
                   </div>
                 </div>
