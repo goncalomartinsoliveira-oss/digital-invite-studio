@@ -122,8 +122,16 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.15 }}
-              className="text-6xl md:text-8xl leading-tight mb-12 px-4"
-              style={{ fontFamily: "var(--font-pinyon)", color: "#332E2B" }}
+              className="text-6xl md:text-8xl mb-12 px-4"
+              /* A Pinyon Script tem laçadas altas e caudas longas: com
+                 entrelinha apertada, o topo e o fundo das letras ficam
+                 cortados. Daí a entrelinha folgada e o padding vertical. */
+              style={{
+                fontFamily: "var(--font-pinyon)",
+                color: "#332E2B",
+                lineHeight: 1.45,
+                paddingBlock: "0.15em",
+              }}
             >
               {groom} &amp; {bride}
             </motion.h1>
