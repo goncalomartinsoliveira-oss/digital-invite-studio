@@ -21,6 +21,11 @@ const CANVAS_H = 207;
 const POLAROID_PHOTO = { left: 6.63, top: 5.5, width: 87.43, height: 72.92 };
 const ARCO_PHOTO = { left: 46.2, top: 54.9, width: 28.4, height: 21.1 };
 
+// Forro do envelope aberto: zona marcada pelo próprio designer no ficheiro
+// original (camada "fotografia"), não estimada — localizada por render
+// isolado dessa camada e depois medida em pixel no ficheiro final.
+const ENVELOPE_PHOTO = { left: 5.62, top: 5.42, width: 88.75, height: 65.42 };
+
 // O corpo do arco começa a 21% do ficheiro (as flores ficam à esquerda dele),
 // por isso o texto tem de ser centrado nessa zona e não no elemento inteiro.
 const ARCO_BODY_INSET = 21;
@@ -99,6 +104,10 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
     (u: string) => u && u.trim() !== ""
   );
   const photoAt = (i: number) => photos[i % (photos.length || 1)] || "";
+
+  // Foto de capa escolhida no separador "Hero" do painel — é a que entra no
+  // forro do envelope aberto.
+  const coverPhoto: string = content.hero?.main_image_url || "";
 
   return (
     <div className="w-full min-h-screen bg-[#FDFCF9] font-sans overflow-x-hidden">
@@ -185,8 +194,35 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                 containerType: "inline-size",
               }}
             >
-              {/* Envelope aberto */}
-              <img src={`${EL}/envelope-aberto.webp`} alt="" style={pieceStyle(PIECES.envelopeAberto)} className="select-none" draggable={false} />
+              {/* Envelope aberto — o forro é a foto de capa do casal. O
+                  ficheiro tem um buraco recortado exatamente na forma do
+                  forro (a camada "fotografia" do desenho original), por
+                  isso a foto colocada por baixo, em posição retangular,
+                  aparece já recortada nessa forma pelo próprio desenho. */}
+              <div style={pieceStyle(PIECES.envelopeAberto)}>
+                <div className="relative w-full h-auto" style={{ aspectRatio: "978 / 1200" }}>
+                  {coverPhoto && (
+                    <img
+                      src={coverPhoto}
+                      alt=""
+                      className="absolute object-cover select-none"
+                      draggable={false}
+                      style={{
+                        left: `${ENVELOPE_PHOTO.left}%`,
+                        top: `${ENVELOPE_PHOTO.top}%`,
+                        width: `${ENVELOPE_PHOTO.width}%`,
+                        height: `${ENVELOPE_PHOTO.height}%`,
+                      }}
+                    />
+                  )}
+                  <img
+                    src={`${EL}/envelope-aberto.webp`}
+                    alt=""
+                    className="relative w-full h-full select-none"
+                    draggable={false}
+                  />
+                </div>
+              </div>
 
               {/* Moldura com os nomes, data e local */}
               <div style={pieceStyle(PIECES.molduraNomes)}>

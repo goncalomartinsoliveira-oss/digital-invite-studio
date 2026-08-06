@@ -22,6 +22,15 @@ Medidas diretamente nos ficheiros e fixadas em
 
 - **Polaróide** — a área cinzenta: `left 6.63%, top 5.5%, 87.43% × 72.92%`
 - **Arco** — derivada da maquete: `left 46.2%, top 54.9%, 28.4% × 21.1%`
+- **Envelope aberto** (forro = foto de capa, `hero.main_image_url`) —
+  `left 5.62%, top 5.42%, 88.75% × 65.42%`. Ao contrário das outras, esta
+  não foi medida por cor: o ficheiro original tinha uma camada com
+  `id="fotografia"` a marcar exatamente essa forma (um pentágono, não um
+  retângulo). Renderizou-se essa camada isolada para obter uma máscara,
+  usou-se a máscara para abrir um buraco transparente no `envelope-aberto`
+  (em vez do preenchimento verde original), e a foto entra por baixo desse
+  buraco — fica recortada na forma exata do forro, vinco central incluído,
+  sem precisar de `clip-path` nenhum em CSS.
 
 O corpo do arco começa a **21%** da largura do ficheiro (as flores ficam à
 esquerda dele), por isso o texto é centrado nessa zona e não no elemento

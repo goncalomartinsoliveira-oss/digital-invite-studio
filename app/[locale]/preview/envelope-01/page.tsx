@@ -16,6 +16,7 @@ const DEMO_DATA = {
         text_above_names: "Recebeu um convite de",
         label_intro: "Juntem-se a nós no casamento de",
         location: "Lago de Como, Itália",
+        main_image_url: "/features/guestbook/04-casal-em-casa.jpg",
       },
       gallery: {
         images_urls: [
