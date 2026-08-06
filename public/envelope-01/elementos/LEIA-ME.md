@@ -1,32 +1,35 @@
-# Elementos do modelo "Envelope" (hero / colagem)
+# Elementos do modelo "Envelope" (hero em colagem)
 
-Carregar aqui os elementos individuais, com **exatamente estes nomes**
-(assim consigo montá-los sem ter de perguntar qual é qual).
+Os ficheiros aqui são os que o template usa. Chegaram como SVG (na prática,
+imagens rasterizadas embrulhadas em tags SVG, ~15 MB no total) e foram
+convertidos para WebP com transparência: **15 MB → 618 KB**, sem diferença
+visível. Os originais continuam no Drive e no histórico do git.
 
-| Ficheiro | O que é | Notas importantes |
-|---|---|---|
-| `01-envelope-aberto.png` | Envelope verde aberto, com o forro padronizado e as flores | Se as flores forem uma peça separada, envie também como `01b-flores.png` |
-| `02-moldura-nomes.png` | A moldura ornamentada onde ficam os nomes/data/local | **Sem texto nenhum** — os nomes, a data e o local são escritos por código |
-| `03-polaroid.png` | A moldura tipo polaroid (a branca com o retângulo interior) | O interior deve ficar transparente ou branco; a foto do casal entra por baixo |
-| `04-badge-detalhes.png` | O crachá ondulado (forma de flor) do "Details" | Idealmente **sem o texto** "Details" nem "Click here" |
-| `05-bolo.png` | A ilustração do bolo/suporte com o laço | — |
-| `06-envelope-rsvp.png` | O envelope creme do "Kindly Rsvp" | Idealmente **sem o texto** |
-| `07-arco-historia.png` | A forma em arco do "Our Story" | Idealmente **sem o texto**; o interior escuro é onde entra a foto |
+| Ficheiro | Onde aparece |
+|---|---|
+| `envelope-aberto.webp` | Topo da colagem |
+| `moldura-nomes.webp` | Nomes, data e local do casamento |
+| `polaroid.webp` | Usado 3×, com fotos da galeria do casal |
+| `badge-detalhes.webp` | Navegação → "Detalhes" |
+| `bolo.webp` | Decorativo |
+| `envelope-rsvp.webp` | Navegação → "Confirmar Presença" |
+| `arco-historia.webp` | Navegação → "A Nossa História" |
 
-## Formato
+## Zonas de foto
 
-- **PNG com fundo transparente** (ou WebP transparente, ainda melhor).
-- Tamanho: ver a regra dos 2–3× — para estes elementos, **1000–1500px** no lado
-  maior é mais do que suficiente.
-- Se algum ficheiro passar de ~1MB, aviso e converto (como fiz com o envelope,
-  que passou de 3,5MB para 135KB sem perder qualidade).
+Medidas diretamente nos ficheiros e fixadas em
+`app/[locale]/templates/envelope-01/page.tsx`:
 
-## Porque peço sem texto
+- **Polaróide** — a área cinzenta: `left 6.8%, top 5.5%, 87.2% × 74.5%`
+- **Arco** — inserida no corpo do arco: `left 28%, top 11%, 64% × 47%`
 
-O site é PT/EN e cada casal escreve o seu próprio conteúdo. Texto desenhado
-dentro da imagem não se traduz nem se edita — ficaria "Details" em inglês para
-toda a gente, para sempre. As formas ficam como imagem, o texto entra por cima
-em código, na fonte certa.
+O corpo do arco começa a **21%** da largura do ficheiro (as flores ficam à
+esquerda dele), por isso o texto é centrado nessa zona e não no elemento
+inteiro — ver `ARCO_BODY_INSET`.
 
-Se algum elemento **só** existir com o texto lá dentro, envie na mesma — uso
-esse e depois vemos caso a caso.
+## Se precisar de trocar um elemento
+
+Substituir o `.webp` mantendo **as mesmas proporções**; se as proporções
+mudarem, é preciso reajustar as posições em `PIECES`, no topo do template.
+Todas as posições estão em percentagem de uma tela de proporção fixa, por
+isso a composição mantém-se idêntica em qualquer ecrã.

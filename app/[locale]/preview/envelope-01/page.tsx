@@ -14,6 +14,16 @@ const DEMO_DATA = {
     content: {
       hero: {
         text_above_names: "Recebeu um convite de",
+        label_intro: "Juntem-se a nós no casamento de",
+        location: "Lago de Como, Itália",
+      },
+      gallery: {
+        images_urls: [
+          "/features/convidados-e-mesas/03-rsvp-sincroniza-pt.jpg",
+          "/features/guestbook/03-convidado-mensagem.jpg",
+          "/features/save-the-date/04-recebido.jpg",
+          "/features/guestbook/04-casal-em-casa.jpg",
+        ],
       },
     },
   },
@@ -32,7 +42,8 @@ export default async function PreviewEnvelope01(props: { params: Promise<{ local
           <Link href={`/${locale}/dashboard`} className="text-[10px] font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors">← Dashboard</Link>
         </div>
       </div>
-      <div className="pt-[52px]">
+      {/* Folga para a barra de pré-visualização + a navbar fixa do site */}
+      <div className="pt-[170px]">
         <EnvelopeTemplate data={DEMO_DATA} />
       </div>
     </>
