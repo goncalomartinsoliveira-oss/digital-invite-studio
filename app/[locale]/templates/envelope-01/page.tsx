@@ -202,13 +202,20 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                 composição mantém-se idêntica em qualquer largura de ecrã.
                 `containerType: inline-size` permite dimensionar os textos em
                 `cqw` (percentagem da largura da tela), para escalarem com a
-                colagem em vez de saltarem por breakpoints. Sem padding
-                lateral no telemóvel (ecrãs até 640px) — a colagem ocupa a
-                largura toda, fica maior e mais imersiva a percorrer; o
-                padding só entra em ecrãs maiores, onde encolher tudo para
-                caber no `max-w` já dá o respiro necessário. */}
+                colagem em vez de saltarem por breakpoints.
+
+                Sem padding lateral não chega para as artes baterem quase na
+                borda: as peças em si já têm folga própria (o desenho vai só
+                de ~17% a ~81% da largura da tela, nunca 0-100%), por isso a
+                tela em si tem de ficar MAIOR do que o ecrã no telemóvel — 150%
+                de largura, recuada 25% à esquerda para ficar centrada — e o
+                que sobra para lá da borda fica escondido pelo
+                `overflow-x-hidden` do contentor lá em cima. Dá o efeito de
+                "zoom": as peças passam a encostar quase à borda do ecrã, à
+                custa de mais altura total (mais scroll) — como pedido. A
+                partir do `sm` volta ao tamanho normal, com respiro. */}
             <div
-              className="relative mx-auto w-full max-w-[560px]"
+              className="relative w-[150%] -ml-[25%] sm:mx-auto sm:w-full sm:ml-0 sm:max-w-[560px]"
               style={{
                 aspectRatio: `${CANVAS_W} / ${CANVAS_H}`,
                 containerType: "inline-size",
