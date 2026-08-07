@@ -195,14 +195,18 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="px-4 py-10"
+            className="px-0 py-10 sm:px-4"
           >
             {/* ── HERO / COLAGEM ────────────────────────────────────────
                 Tela de proporção fixa: tudo lá dentro está em %, por isso a
                 composição mantém-se idêntica em qualquer largura de ecrã.
                 `containerType: inline-size` permite dimensionar os textos em
                 `cqw` (percentagem da largura da tela), para escalarem com a
-                colagem em vez de saltarem por breakpoints. */}
+                colagem em vez de saltarem por breakpoints. Sem padding
+                lateral no telemóvel (ecrãs até 640px) — a colagem ocupa a
+                largura toda, fica maior e mais imersiva a percorrer; o
+                padding só entra em ecrãs maiores, onde encolher tudo para
+                caber no `max-w` já dá o respiro necessário. */}
             <div
               className="relative mx-auto w-full max-w-[560px]"
               style={{
