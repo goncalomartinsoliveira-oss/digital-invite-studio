@@ -314,9 +314,18 @@ export default function EnvelopeTemplate({ data }: { data: any; params?: any }) 
                 `overflow-x-hidden` do contentor lá em cima. Dá o efeito de
                 "zoom": as peças passam a encostar quase à borda do ecrã, à
                 custa de mais altura total (mais scroll) — como pedido. A
-                partir do `sm` volta ao tamanho normal, com respiro. */}
+                partir do `sm` volta ao tamanho normal, com respiro.
+
+                NOTA: `sm:ml-0` aqui ao lado de `sm:mx-auto` tinha partido a
+                centragem em desktop — as duas mexem em `margin-left` e o
+                Tailwind decide qual vence pela ordem em que gera o CSS (não
+                pela ordem escrita na className), e `ml-0` ganhava, deixando
+                a colagem encostada à esquerda com uma faixa enorme de
+                espaço vazio à direita. `mx-auto` sozinho já cobre o reset
+                do `-ml-[25%]` do telemóvel, por isso o `ml-0` era só a
+                mais — e a causa do bug. */}
             <div
-              className="relative w-[150%] -ml-[25%] sm:mx-auto sm:w-full sm:ml-0 sm:max-w-[560px]"
+              className="relative w-[150%] -ml-[25%] sm:mx-auto sm:w-full sm:max-w-[560px]"
               style={{
                 aspectRatio: `${CANVAS_W} / ${CANVAS_H}`,
                 containerType: "inline-size",
