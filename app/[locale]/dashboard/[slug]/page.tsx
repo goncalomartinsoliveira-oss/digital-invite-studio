@@ -347,7 +347,7 @@ export default function Dashboard() {
     ...(showManagement ? [{
       id: 'management' as const,
       icon: <ClipboardList size={26} />,
-      title: 'Gestão',
+      title: 'Planeamento',
       desc: 'Orçamento, custos por fornecedor e checklist do evento.',
     }] : []),
   ];
