@@ -21,7 +21,10 @@ import {
   AlertTriangle,
   Lock,
   MessageSquareHeart,
-  HelpCircle
+  HelpCircle,
+  Wallet,
+  ListChecks,
+  ClipboardList
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -32,12 +35,15 @@ import AccountModule from "@/components/dashboard/AccountModule";
 import PhotoSharingModule from "@/components/dashboard/PhotoSharingModule";
 import GuestbookModule from "@/components/dashboard/GuestbookModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
+import BudgetModule from "@/components/dashboard/BudgetModule";
+import TasksModule from "@/components/dashboard/TasksModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import BundleOffers from "@/components/dashboard/BundleOffers";
 import WelcomeTour from "@/components/dashboard/WelcomeTour";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
+import { fetchPlannerPlan, type PlannerPlan } from "@/lib/planner";
 import { fetchPricingOverrides, effectiveModulePriceCents, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from "@/lib/pricing";
 import { startModuleCheckout, formatPriceCents } from "@/lib/checkout";
 
@@ -50,10 +56,12 @@ const dictionaries = {
   en: en
 };
 
-type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'photosharing' | 'guestbook' | 'account';
+type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'photosharing' | 'guestbook' | 'budget' | 'tasks' | 'account';
 // Áreas do hub: uma por módulo vendável (mesmos ids de lib/modules.ts), para
 // que o hub mostre claramente o que está desbloqueado/bloqueado por módulo.
-type EventGroup = 'save_the_date' | 'invite' | 'guests_seating' | 'photo_sharing' | 'guestbook' | 'account' | null;
+// "management" é a exceção: não é um módulo à venda ao casal, é a área de
+// gestão das contas de wedding planner (ver lib/planner.ts).
+type EventGroup = 'save_the_date' | 'invite' | 'guests_seating' | 'photo_sharing' | 'guestbook' | 'management' | 'account' | null;
 
 const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
   save_the_date: ['savethedate'],
@@ -61,6 +69,7 @@ const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
   guests_seating: ['guests', 'seating'],
   photo_sharing: ['photosharing'],
   guestbook: ['guestbook'],
+  management: ['budget', 'tasks'],
   account: [],
 };
 
@@ -87,6 +96,9 @@ export default function Dashboard() {
   // da marca do evento) — ao contrário do casal, este vê preços e compra
   // normalmente, à sua tabela de preços (ver "Preços" na gestão de marcas).
   const [isAgencyStaff, setIsAgencyStaff] = useState(false);
+  // Plano de wedding planner da marca deste evento (null = não é conta de
+  // agência). É isto que faz aparecer a área de Gestão.
+  const [plannerPlan, setPlannerPlan] = useState<PlannerPlan | null>(null);
   const [buyingModule, setBuyingModule] = useState<string | null>(null);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
@@ -165,6 +177,9 @@ export default function Dashboard() {
       // Preços diferenciados por parceiro (lib/pricing.ts) — sem override
       // para este brand_id, os ecrãs de compra usam sempre o preço global.
       setPricingOverrides(await fetchPricingOverrides(supabase, invite.brand_id));
+      // Conta de wedding planner? Desbloqueia a área de Gestão (orçamento e
+      // tarefas) — ver lib/planner.ts.
+      setPlannerPlan(await fetchPlannerPlan(supabase, invite.brand_id));
 
       const { data: gs } = await supabase.from("guests").select("*").eq("invitation_id", invite.id);
       setGuests(gs || []);
@@ -228,10 +243,18 @@ export default function Dashboard() {
     { id: 'guests', label: dict.tabs.guests, icon: <Users size={20} /> },
     { id: 'seating', label: dict.tabs.seating, icon: <Grid size={20} /> },
     { id: 'photosharing', label: dict.tabs.photosharing, icon: <Camera size={20} /> },
-    { id: 'guestbook', label: dict.tabs.guestbook, icon: <MessageSquareHeart size={20} /> }
+    { id: 'guestbook', label: dict.tabs.guestbook, icon: <MessageSquareHeart size={20} /> },
+    { id: 'budget', label: 'Orçamento', icon: <Wallet size={20} /> },
+    { id: 'tasks', label: 'Tarefas', icon: <ListChecks size={20} /> }
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
-  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate';
+  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate' || activeTab === 'budget' || activeTab === 'tasks';
+
+  // Área de Gestão: existe apenas em eventos de contas de wedding planner.
+  // A equipa da agência vê tudo; o casal vê só o que estiver marcado como
+  // partilhado (imposto pelo Supabase, não aqui).
+  const showManagement = !!plannerPlan;
+  const confirmedGuests = guests.filter((g: any) => g.status === 'confirmed').length;
 
   // O bloqueio real (contra escrita) já é imposto pelo Supabase (RLS); isto só
   // reflete esse estado na interface para os noivos perceberem porque ficou só-leitura.
@@ -297,7 +320,9 @@ export default function Dashboard() {
   };
 
   // Separadores visíveis consoante a área selecionada no hub.
-  const visibleTabs = group ? tabsConfig.filter(t => GROUP_TABS[group].includes(t.id)) : tabsConfig;
+  const visibleTabs = (group ? tabsConfig.filter(t => GROUP_TABS[group].includes(t.id)) : tabsConfig)
+    // Orçamento e Tarefas só existem em contas de wedding planner.
+    .filter(t => showManagement || (t.id !== 'budget' && t.id !== 'tasks'));
 
   // Abrir uma área a partir do hub → entra no editor no primeiro separador dessa área.
   const openGroup = (g: Exclude<EventGroup, null>) => {
@@ -319,6 +344,12 @@ export default function Dashboard() {
     { id: 'guests_seating' as const, icon: <Users size={26} />, title: dict.groups.guests_seating.title, desc: dict.groups.guests_seating.desc },
     { id: 'photo_sharing' as const, icon: <Camera size={26} />, title: dict.groups.photo_sharing.title, desc: dict.groups.photo_sharing.desc },
     { id: 'guestbook' as const, icon: <MessageSquareHeart size={26} />, title: dict.groups.guestbook.title, desc: dict.groups.guestbook.desc },
+    ...(showManagement ? [{
+      id: 'management' as const,
+      icon: <ClipboardList size={26} />,
+      title: 'Gestão',
+      desc: 'Orçamento, custos por fornecedor e checklist do evento.',
+    }] : []),
   ];
 
   // Cada grupo do hub mapeia para um único módulo (mesmo quando agrupa mais
@@ -602,6 +633,24 @@ export default function Dashboard() {
                   isPartnerBrand={isPartnerBrand}
                   overrides={pricingOverrides}
                   dict={dictionaries[locale]?.PhotoSharingModule || dictionaries.pt.PhotoSharingModule}
+                />
+              )}
+              {activeTab === 'budget' && showManagement && (
+                <BudgetModule
+                  invitationId={formData.id}
+                  brandId={formData.brand_id}
+                  canEdit={canEdit}
+                  isAgency={isAgencyStaff || isSuperAdmin}
+                  confirmedGuests={confirmedGuests}
+                  locale={locale}
+                />
+              )}
+              {activeTab === 'tasks' && showManagement && (
+                <TasksModule
+                  invitationId={formData.id}
+                  eventDate={formData.event_date}
+                  canEdit={canEdit}
+                  isAgency={isAgencyStaff || isSuperAdmin}
                 />
               )}
               {activeTab === 'guestbook' && (

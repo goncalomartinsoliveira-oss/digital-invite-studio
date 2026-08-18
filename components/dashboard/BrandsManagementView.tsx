@@ -2,7 +2,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { BRANDS } from "@/lib/brands";
-import { Plus, Trash2, Loader2, ImagePlus, Building2, Save, Mail } from "lucide-react";
+import { Plus, Trash2, Loader2, ImagePlus, Building2, Save, Mail, ClipboardList } from "lucide-react";
+import { ALL_PLANNER_PLANS, PLANNER_PLANS, type PlannerPlan } from "@/lib/planner";
 
 interface BrandRow {
   id: string;
@@ -10,6 +11,7 @@ interface BrandRow {
   logo_url: string | null;
   domain: string | null;
   contact_url: string | null;
+  planner_plan: PlannerPlan | null;
 }
 
 export default function BrandsManagementView({ locale }: { locale: string }) {
@@ -38,6 +40,11 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     removeConfirm: en ? "Remove this partner? Existing events keep their brand tag." : "Remover este parceiro? Os eventos existentes mantêm a marca.",
     saveContact: en ? "Save" : "Guardar",
     noContact: en ? "no contact set" : "sem contacto definido",
+    plannerLbl: en ? "Wedding planner account" : "Conta wedding planner",
+    plannerOff: en ? "Off" : "Desligada",
+    plannerHint: en
+      ? "Unlocks the management area (budget and tasks) on this partner's events."
+      : "Desbloqueia a área de gestão (orçamento e tarefas) nos eventos deste parceiro.",
   };
 
   const [rows, setRows] = useState<BrandRow[]>([]);
@@ -57,7 +64,7 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("brands").select("id, name, logo_url, domain, contact_url").order("created_at", { ascending: true });
+    const { data } = await supabase.from("brands").select("id, name, logo_url, domain, contact_url, planner_plan").order("created_at", { ascending: true });
     const loaded = (data as BrandRow[]) || [];
     setRows(loaded);
     setContactDrafts(Object.fromEntries(loaded.map(r => [r.id, r.contact_url || ""])));
@@ -93,6 +100,15 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
       await load();
     }
     setCreating(false);
+  };
+
+  // Interruptor de conta wedding planner. Fica na conta de parceiro, e não num
+  // papel da pessoa, porque o que desbloqueia (diretório de fornecedores,
+  // histórico, vista de conjunto) pertence à agência — e é a agência que
+  // subscreve quando os planos entrarem. Ver lib/planner.ts.
+  const setPlannerPlan = async (id: string, plan: PlannerPlan | null) => {
+    setRows(prev => prev.map(r => (r.id === id ? { ...r, planner_plan: plan } : r)));
+    await supabase.from("brands").update({ planner_plan: plan }).eq("id", id);
   };
 
   const saveContact = async (id: string) => {
@@ -191,11 +207,30 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
                     {r.logo_url ? <img src={r.logo_url} className="max-w-full max-h-full object-contain" alt="" /> : <Building2 size={16} className="text-gray-300" />}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm text-ink font-semibold truncate">{r.name}</p>
+                    <p className="text-sm text-ink font-semibold truncate">
+                      {r.name}
+                      {r.planner_plan && (
+                        <span className="ml-2 inline-flex items-center gap-1 align-middle bg-brand/5 text-brand text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">
+                          <ClipboardList size={10} /> {PLANNER_PLANS[r.planner_plan].name}
+                        </span>
+                      )}
+                    </p>
                     <p className="text-[10px] text-gray-400">{r.id}{r.domain ? ` · ${r.domain}` : ""}</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 shrink-0">
+                  <select
+                    value={r.planner_plan ?? ""}
+                    onChange={e => setPlannerPlan(r.id, (e.target.value || null) as PlannerPlan | null)}
+                    title={t.plannerHint}
+                    aria-label={t.plannerLbl}
+                    className="px-3 py-2 text-[11px] border border-gray-200 rounded-full outline-none focus:border-brand bg-white text-gray-600"
+                  >
+                    <option value="">{t.plannerLbl} — {t.plannerOff}</option>
+                    {ALL_PLANNER_PLANS.map(p => (
+                      <option key={p} value={p}>{t.plannerLbl} — {PLANNER_PLANS[p].name}</option>
+                    ))}
+                  </select>
                   <div className="relative">
                     <Mail size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
                     <input

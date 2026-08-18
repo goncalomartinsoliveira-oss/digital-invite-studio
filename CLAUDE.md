@@ -24,6 +24,10 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 - Lista de eventos: `app/[locale]/dashboard/page.tsx`.
 - i18n: `dictionaries/pt.ts` e `en.ts` (~1135 linhas cada — **editar cirurgicamente com Edit, não ler na íntegra**).
 
+## Base de dados
+- **Alterações ao esquema vão para `supabase/migrations/`** (ver o LEIA-ME lá dentro), não para o painel do Supabase à mão. As tabelas antigas (invitations, guests, brands, etc.) são anteriores a esta regra e não têm ficheiro.
+- Módulo Wedding Planner (B2B, em piloto): ligado por `brands.planner_plan`; lógica em `lib/planner.ts`; área "Gestão" no painel do evento (`BudgetModule`, `TasksModule`), só visível em contas de agência.
+
 ## Dados
 - Coluna `content` (JSON) da tabela `invitations`: `{ sections_visibility: {...}, content: { <seccao>: {...} } }`. Nos módulos: `dbContent = formData.content`, `content = dbContent.content`. Guardar via `handleSaveDesign()` (faz update em `invitations`). Autosave: `useEffect` com debounce de 1500 ms sobre `formData`.
 - Storage Supabase: bucket `invites` (imagens do convite/Save the Date), `fotos_evento` (galeria/guestbook).

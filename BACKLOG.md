@@ -27,6 +27,16 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 - [x] Painel "Negócio" para super-admin: receita total/mensal, contas ativas e receita por parceiro
 - [x] QR code/link de RSVP standalone (`/rsvp/[slug]`) para convites físicos, independente do módulo Convite
 
+## Módulo Wedding Planner (B2B — piloto, ago/2026)
+Documento de estratégia: https://claude.ai/code/artifact/af5b0757-a3b7-470e-9b82-48957f6df006
+- [x] Fase 0 — área "Gestão" no painel do evento: orçamento (custos por fornecedor, IVA por linha, marcos de pagamento) e tarefas (prazos relativos à data do casamento, privadas ou partilhadas com o casal). Ligado por `brands.planner_plan`, ativado à mão pelo super-admin em Parceiros
+- [ ] **Correr `supabase/migrations/0001_planner_module.sql` no Supabase** — sem isto a área de Gestão não funciona
+- [ ] Testar com as 2 agências piloto durante um ciclo real (6-8 semanas). A pergunta não é "gostam?", é "deixaram de abrir o Excel?"
+- [ ] Fase 1 — vista de conjunto da agência (tarefas da semana e pagamentos a 30 dias, em todos os casamentos), documentos/contratos, histórico de preços por fornecedor
+- [ ] Fase 2 — linhas de custo por pessoa ligadas aos confirmados ao vivo, resumo de alergias para o catering, cronograma do dia com exportação PDF, link de leitura para fornecedores
+- [ ] Fase 3 — subscrições Stripe (não existe nada hoje: todo o checkout é pagamento único), vagas, desbloqueio automático das licenças, templates de checklist, planta do salão
+- [ ] Decidir preços antes da primeira conversa com as agências (proposta no documento: Solo 39€, Profissional 89€, Agência 169€/mês, anual com 2 meses grátis)
+
 ## Marketing / Crescimento
 - [x] Melhorar SEO das páginas de marketing — `sitemap.xml` e `robots.txt` dinâmicos (adaptados ao domínio, PT+EN, com as páginas privadas/dashboard bloqueadas), `metadataBase`, e título+descrição próprios por página (home, preços, parceiros, contacto, termos, privacidade, cookies, e cada uma das 5 páginas de funcionalidades)
 - [x] Configurar Google Analytics e Google Search Console
