@@ -77,6 +77,10 @@ export default function DashboardHub() {
       
       const email = session.user.email || "";
       setUserEmail(email);
+      // brand_members/super_admins guardam o email normalizado (trim+minúsculas);
+      // invitations.user_email não — por isso há duas variantes aqui, cada uma
+      // usada só contra a tabela com a mesma convenção.
+      const normEmail = email.trim().toLowerCase();
 
       // Marca de trabalho (parceiro leve): sobrepõe a marca do domínio no dashboard
       // — logo, lista de eventos e etiqueta de novos eventos passam a ser do parceiro.
@@ -89,7 +93,7 @@ export default function DashboardHub() {
         .from("brand_members")
         .select("role")
         .eq("brand_id", effBrandId)
-        .eq("user_email", email)
+        .eq("user_email", normEmail)
         .maybeSingle();
       const agencyMember = !!membership;
       setIsAgencyMember(agencyMember);
@@ -99,7 +103,7 @@ export default function DashboardHub() {
       const { data: sa } = await supabase
         .from("super_admins")
         .select("user_email")
-        .eq("user_email", email)
+        .eq("user_email", normEmail)
         .maybeSingle();
       const superAdmin = !!sa;
       setIsSuperAdmin(superAdmin);
@@ -113,7 +117,7 @@ export default function DashboardHub() {
       // Eventos próprios e partilhados — isolados pela marca efetiva.
       const [myData, collabs] = await Promise.all([
         supabase.from("invitations").select("*").eq("user_email", email).eq("brand_id", effBrandId),
-        supabase.from("invitation_collaborators").select("invitation_id").eq("user_email", email)
+        supabase.from("invitation_collaborators").select("invitation_id").eq("user_email", normEmail)
       ]);
 
       const myInvitesFound = myData.data || [];

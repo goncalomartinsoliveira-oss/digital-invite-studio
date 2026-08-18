@@ -26,10 +26,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
   }
 
+  // super_admins guarda o email normalizado (trim+minúsculas) — ver
+  // MembersManagementView; comparar com o email em bruto da sessão falha
+  // sempre que a capitalização não bater certo.
   const { data: sa } = await supabaseAdmin
     .from("super_admins")
     .select("user_email")
-    .eq("user_email", email)
+    .eq("user_email", email.trim().toLowerCase())
     .maybeSingle();
   if (!sa) return NextResponse.json({ error: "Sem permissão." }, { status: 403 });
 

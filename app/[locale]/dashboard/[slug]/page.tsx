@@ -116,23 +116,27 @@ export default function Dashboard() {
       if (!session) { router.push(`/${params.locale}/login`); return; }
       
       const email = session.user.email;
+      // brand_members/super_admins/invitation_collaborators guardam o email
+      // normalizado (trim+minúsculas); invitations.user_email não — por isso
+      // há duas variantes, cada uma só contra a tabela com a mesma convenção.
+      const normEmail = (email || "").trim().toLowerCase();
 
       const { data: invite } = await supabase.from("invitations").select("*").eq("slug", params.slug).single();
       if (!invite) { router.push(`/${params.locale}/dashboard`); return; }
-      
+
       const isOwner = invite.user_email === email;
       const { data: collab } = await supabase
         .from("invitation_collaborators")
         .select("id, role")
         .eq("invitation_id", invite.id)
-        .eq("user_email", email)
+        .eq("user_email", normEmail)
         .maybeSingle();
 
       // Super-admin → acesso total a qualquer evento.
       const { data: sa } = await supabase
         .from("super_admins")
         .select("user_email")
-        .eq("user_email", email)
+        .eq("user_email", normEmail)
         .maybeSingle();
       const isSuper = !!sa;
       setIsSuperAdmin(isSuper);
@@ -147,7 +151,7 @@ export default function Dashboard() {
           .from("brand_members")
           .select("role")
           .eq("brand_id", invite.brand_id)
-          .eq("user_email", email)
+          .eq("user_email", normEmail)
           .maybeSingle();
         if (member) agencyRole = member.role === "admin" ? "owner" : "editor";
       }

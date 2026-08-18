@@ -65,10 +65,17 @@ export async function resolveBrandById(sb: any, id?: string): Promise<WorkingBra
 // mostrar o logo do parceiro e etiquetar os eventos que ele cria).
 export async function resolveWorkingBrand(sb: any, email: string, domainBrandId: string): Promise<WorkingBrand | null> {
   if (domainBrandId !== "dis" || !email) return null;
+  // super_admins/brand_members guardam o email normalizado (trim+minúsculas,
+  // ver MembersManagementView) — comparar aqui com o email em bruto da sessão
+  // falha sempre que a capitalização não bater certo (ex.: login por Google
+  // devolve maiúsculas onde o email foi escrito em minúsculas). Foi isto que
+  // fez um evento criado por um wedding planner ficar preso à marca "dis" em
+  // vez da marca do parceiro.
+  const normEmail = email.trim().toLowerCase();
   // Super-admins são staff do master — não assumem a marca de um parceiro.
-  const { data: sa } = await sb.from("super_admins").select("user_email").eq("user_email", email).maybeSingle();
+  const { data: sa } = await sb.from("super_admins").select("user_email").eq("user_email", normEmail).maybeSingle();
   if (sa) return null;
-  const { data: mems } = await sb.from("brand_members").select("brand_id").eq("user_email", email);
+  const { data: mems } = await sb.from("brand_members").select("brand_id").eq("user_email", normEmail);
   const partnerId = ((mems as any[]) || []).map(m => m.brand_id).find((id: string) => id && id !== "dis");
   return resolveBrandById(sb, partnerId);
 }
