@@ -39,16 +39,18 @@ interface PhotoSharingModuleProps {
   unlockedModules?: string[];
   isSuperAdmin?: boolean;
   isPartnerBrand?: boolean;
+  /** Conta de wedding planner (brands.planner_plan) — licenças completas incluídas, nunca bloqueado. */
+  isPlannerAccount?: boolean;
   overrides?: PricingOverrides;
   dict: PhotoSharingModuleDict;
 }
 
-export default function PhotoSharingModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, isPartnerBrand, overrides, dict }: PhotoSharingModuleProps) {
+export default function PhotoSharingModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, isPartnerBrand, isPlannerAccount, overrides, dict }: PhotoSharingModuleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'pt';
   const brand = useBrand();
   const contactUrl = brand.contactUrl ?? `/${locale}/contact`;
-  const locked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'photo_sharing');
+  const locked = !isSuperAdmin && !isPlannerAccount && !isModuleUnlocked(unlockedModules, 'photo_sharing');
   const [buying, setBuying] = useState(false);
 
   const handleBuy = async (couponCode?: string) => {

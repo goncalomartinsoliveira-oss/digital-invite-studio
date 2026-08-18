@@ -39,16 +39,18 @@ interface GuestbookModuleProps {
   unlockedModules?: string[];
   isSuperAdmin?: boolean;
   isPartnerBrand?: boolean;
+  /** Conta de wedding planner (brands.planner_plan) — licenças completas incluídas, nunca bloqueado. */
+  isPlannerAccount?: boolean;
   overrides?: PricingOverrides;
   dict: GuestbookModuleDict;
 }
 
-export default function GuestbookModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, isPartnerBrand, overrides, dict }: GuestbookModuleProps) {
+export default function GuestbookModule({ invitationId, slug, canEdit, unlockedModules, isSuperAdmin, isPartnerBrand, isPlannerAccount, overrides, dict }: GuestbookModuleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'pt';
   const brand = useBrand();
   const contactUrl = brand.contactUrl ?? `/${locale}/contact`;
-  const locked = !isSuperAdmin && !isModuleUnlocked(unlockedModules, 'guestbook');
+  const locked = !isSuperAdmin && !isPlannerAccount && !isModuleUnlocked(unlockedModules, 'guestbook');
   const [buying, setBuying] = useState(false);
 
   const handleBuy = async (couponCode?: string) => {

@@ -268,13 +268,17 @@ export default function Dashboard() {
     ? new Date(formData.expires_at).toLocaleDateString(locale === 'en' ? 'en-US' : 'pt-PT', { day: '2-digit', month: 'long', year: 'numeric' })
     : "";
 
-  // Módulos: super-admin vê e edita sempre tudo; para todos os outros, um
-  // separador cujo módulo não esteja em unlocked_modules aparece bloqueado.
+  // Módulos: super-admin vê e edita sempre tudo. Contas de wedding planner
+  // também — é a "inclusão total" do módulo (ver documento de estratégia):
+  // as licenças completas do casal vêm de fábrica com o plano da agência,
+  // não se vendem à parte. Para todos os outros, um separador cujo módulo
+  // não esteja em unlocked_modules aparece bloqueado.
   const unlockedModules: string[] = formData.unlocked_modules || [];
   const isTabLocked = (tabId: DashboardTab) => {
     const moduleId = TAB_MODULE[tabId];
     if (!moduleId) return false;
-    return !isSuperAdmin && !isModuleUnlocked(unlockedModules, moduleId);
+    if (isSuperAdmin || plannerPlan) return false;
+    return !isModuleUnlocked(unlockedModules, moduleId);
   };
   const moduleNamesDict = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
   const bundleOffersDict = dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers;
@@ -444,17 +448,21 @@ export default function Dashboard() {
               ))}
             </div>
 
-            <BundleOffers
-              invitationId={formData.id}
-              slug={formData.slug}
-              locale={locale}
-              unlockedModules={unlockedModules}
-              isSuperAdmin={isSuperAdmin}
-              isPartnerBrand={isPartnerBrand}
-              overrides={pricingOverrides}
-              moduleNames={moduleNamesDict}
-              dict={dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers}
-            />
+            {/* Contas de wedding planner já têm as licenças todas incluídas —
+                não faz sentido oferecer pacotes para comprar por cima. */}
+            {!plannerPlan && (
+              <BundleOffers
+                invitationId={formData.id}
+                slug={formData.slug}
+                locale={locale}
+                unlockedModules={unlockedModules}
+                isSuperAdmin={isSuperAdmin}
+                isPartnerBrand={isPartnerBrand}
+                overrides={pricingOverrides}
+                moduleNames={moduleNamesDict}
+                dict={dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers}
+              />
+            )}
 
             <div className="mt-12 flex justify-center">
               <button
@@ -635,6 +643,7 @@ export default function Dashboard() {
                   unlockedModules={unlockedModules}
                   isSuperAdmin={isSuperAdmin}
                   isPartnerBrand={isPartnerBrand}
+                  isPlannerAccount={!!plannerPlan}
                   overrides={pricingOverrides}
                   dict={dictionaries[locale]?.PhotoSharingModule || dictionaries.pt.PhotoSharingModule}
                 />
@@ -665,6 +674,7 @@ export default function Dashboard() {
                   unlockedModules={unlockedModules}
                   isSuperAdmin={isSuperAdmin}
                   isPartnerBrand={isPartnerBrand}
+                  isPlannerAccount={!!plannerPlan}
                   overrides={pricingOverrides}
                   dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />
