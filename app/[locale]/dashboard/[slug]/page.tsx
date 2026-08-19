@@ -24,6 +24,7 @@ import {
   HelpCircle,
   Wallet,
   ListChecks,
+  Clock,
   ClipboardList
 } from "lucide-react";
 
@@ -37,6 +38,7 @@ import GuestbookModule from "@/components/dashboard/GuestbookModule";
 import SaveTheDateModule from "@/components/dashboard/SaveTheDateModule";
 import BudgetModule from "@/components/dashboard/BudgetModule";
 import TasksModule from "@/components/dashboard/TasksModule";
+import TimelineModule from "@/components/dashboard/TimelineModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import BundleOffers from "@/components/dashboard/BundleOffers";
 import WelcomeTour from "@/components/dashboard/WelcomeTour";
@@ -56,7 +58,7 @@ const dictionaries = {
   en: en
 };
 
-type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'photosharing' | 'guestbook' | 'budget' | 'tasks' | 'account';
+type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'photosharing' | 'guestbook' | 'budget' | 'tasks' | 'timeline' | 'account';
 // Áreas do hub: uma por módulo vendável (mesmos ids de lib/modules.ts), para
 // que o hub mostre claramente o que está desbloqueado/bloqueado por módulo.
 // "management" é a exceção: não é um módulo à venda ao casal, é a área de
@@ -69,7 +71,7 @@ const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
   guests_seating: ['guests', 'seating'],
   photo_sharing: ['photosharing'],
   guestbook: ['guestbook'],
-  management: ['budget', 'tasks'],
+  management: ['budget', 'tasks', 'timeline'],
   account: [],
 };
 
@@ -249,10 +251,11 @@ export default function Dashboard() {
     { id: 'photosharing', label: dict.tabs.photosharing, icon: <Camera size={20} /> },
     { id: 'guestbook', label: dict.tabs.guestbook, icon: <MessageSquareHeart size={20} /> },
     { id: 'budget', label: 'Orçamento', icon: <Wallet size={20} /> },
-    { id: 'tasks', label: 'Tarefas', icon: <ListChecks size={20} /> }
+    { id: 'tasks', label: 'Tarefas', icon: <ListChecks size={20} /> },
+    { id: 'timeline', label: 'Cronograma', icon: <Clock size={20} /> }
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
-  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate' || activeTab === 'budget' || activeTab === 'tasks';
+  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate' || activeTab === 'budget' || activeTab === 'tasks' || activeTab === 'timeline';
 
   // Área de Gestão: existe apenas em eventos de contas de wedding planner.
   // A equipa da agência vê tudo; o casal vê só o que estiver marcado como
@@ -329,8 +332,8 @@ export default function Dashboard() {
 
   // Separadores visíveis consoante a área selecionada no hub.
   const visibleTabs = (group ? tabsConfig.filter(t => GROUP_TABS[group].includes(t.id)) : tabsConfig)
-    // Orçamento e Tarefas só existem em contas de wedding planner.
-    .filter(t => showManagement || (t.id !== 'budget' && t.id !== 'tasks'));
+    // Orçamento, Tarefas e Cronograma só existem em contas de wedding planner.
+    .filter(t => showManagement || (t.id !== 'budget' && t.id !== 'tasks' && t.id !== 'timeline'));
 
   // Abrir uma área a partir do hub → entra no editor no primeiro separador dessa área.
   const openGroup = (g: Exclude<EventGroup, null>) => {
@@ -664,6 +667,18 @@ export default function Dashboard() {
                   eventDate={formData.event_date}
                   canEdit={canEdit}
                   isAgency={isAgencyStaff || isSuperAdmin}
+                />
+              )}
+              {activeTab === 'timeline' && showManagement && (
+                <TimelineModule
+                  invitationId={formData.id}
+                  brandId={formData.brand_id}
+                  eventDate={formData.event_date}
+                  groomName={formData.groom_name}
+                  brideName={formData.bride_name}
+                  canEdit={canEdit}
+                  isAgency={isAgencyStaff || isSuperAdmin}
+                  locale={locale}
                 />
               )}
               {activeTab === 'guestbook' && (

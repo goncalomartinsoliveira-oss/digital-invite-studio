@@ -27,7 +27,8 @@ aplicados.
 |---|---|---|
 | `0001_planner_module.sql` | Módulo Wedding Planner — fase 0: `brands.planner_plan`, `agency_vendors`, `event_costs`, `event_cost_payments`, `event_tasks`, funções auxiliares e RLS | ☑ |
 | `0002_task_priority_vendor_status.sql` | `event_tasks.priority`, `event_costs.status` (estado do contrato), `event_cost_notes` (histórico de reuniões por fornecedor) | ☑ |
-| `0003_documents.sql` | `event_documents` — documentos/contratos por evento, opcionalmente ligados a uma linha de custo | ☐ |
+| `0003_documents.sql` | `event_documents` — documentos/contratos por evento, opcionalmente ligados a uma linha de custo | ☑ |
+| `0004_event_timeline.sql` | `event_timeline` — cronograma do dia, partilhado com o casal por omissão (ao contrário das restantes tabelas do módulo) | ☐ |
 
 > Marcar a coluna "Aplicado" depois de correr em produção, para não haver
 > dúvidas mais tarde.

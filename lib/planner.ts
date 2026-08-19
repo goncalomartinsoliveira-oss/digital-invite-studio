@@ -266,6 +266,36 @@ export function isOverdue(task: EventTask, today: Date = new Date()): boolean {
   return task.due_date < today.toISOString().slice(0, 10);
 }
 
+// ── Cronograma do dia ────────────────────────────────────────────────────────
+// Ao contrário do resto do módulo, nasce partilhado com o casal por omissão —
+// é o horário do próprio dia deles, não informação interna da agência.
+
+export type TimelineBlock = {
+  id: string;
+  invitation_id: string;
+  event_time: string; // "HH:MM:SS", devolvido assim pelo Postgres (tipo `time`)
+  duration_minutes: number | null;
+  title: string;
+  notes: string | null;
+  vendor_id: string | null;
+  visibility: PlannerVisibility;
+  sort_order: number;
+};
+
+/** "14:30:00" → "14:30", para inputs `type="time"` e para mostrar. */
+export function formatEventTime(time: string): string {
+  return (time || "").slice(0, 5);
+}
+
+/** Hora de fim de um bloco, a partir da hora de início + duração. */
+export function timelineBlockEndTime(block: TimelineBlock): string | null {
+  if (!block.duration_minutes) return null;
+  const [h, m] = formatEventTime(block.event_time).split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+  const end = new Date(2000, 0, 1, h, m + block.duration_minutes);
+  return `${String(end.getHours()).padStart(2, "0")}:${String(end.getMinutes()).padStart(2, "0")}`;
+}
+
 // ── Formatação ───────────────────────────────────────────────────────────────
 
 export function formatCents(cents: number, locale = "pt-PT"): string {
