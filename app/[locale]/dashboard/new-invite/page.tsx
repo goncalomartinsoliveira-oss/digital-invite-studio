@@ -5,7 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
-import { resolveWorkingBrand } from "@/lib/brands";
+import { resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
+import { Building2 } from "lucide-react";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás a partir de app/[locale]/dashboard/new-invite/)
 import pt from "../../../../dictionaries/pt";
@@ -23,7 +24,8 @@ export default function NovoConvitePage() {
   const brand = useBrand();
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [workingBrandId, setWorkingBrandId] = useState<string | null>(null);
+  const [workingBrand, setWorkingBrand] = useState<WorkingBrand | null>(null);
+  const [brandChecked, setBrandChecked] = useState(false);
   const [baseUrl, setBaseUrl] = useState("");
   
   const [groomName, setGroomName] = useState("");
@@ -47,9 +49,13 @@ export default function NovoConvitePage() {
       }
       const email = session.user.email || "";
       setUserEmail(email);
-      // Parceiro leve: os eventos que cria ficam com a marca dele.
+      // Parceiro leve: os eventos que cria ficam com a marca dele. Mostrado
+      // no formulário (em vez de resolvido em silêncio) depois de uma conta
+      // de wedding planner mal associada ter criado vários eventos presos à
+      // marca errada sem ninguém notar até abrir cada um.
       const wb = await resolveWorkingBrand(supabase, email, brand.id);
-      setWorkingBrandId(wb?.id ?? null);
+      setWorkingBrand(wb);
+      setBrandChecked(true);
     }
     getUser();
     
@@ -93,7 +99,7 @@ export default function NovoConvitePage() {
         groom_name: groomName,
         bride_name: brideName,
         event_date: eventDate,
-        brand_id: workingBrandId || brand.id
+        brand_id: workingBrand?.id || brand.id
       }]);
 
       if (error) throw error;
@@ -137,6 +143,20 @@ export default function NovoConvitePage() {
             <p className="text-gray-500 text-sm">
               {dict.desc}
             </p>
+            {/* Marca a que o evento vai ficar associado — silenciosa até
+                aqui, o que já fez um evento nascer preso à marca errada sem
+                ninguém notar. Mostrada sempre, incluindo o caso "nenhuma". */}
+            {brandChecked && (
+              <div className="mt-5 inline-flex items-center gap-2 bg-cream border border-gold-soft/60 rounded-full px-4 py-2">
+                <Building2 size={13} className="text-brand shrink-0" />
+                <span className="text-[10px] uppercase tracking-widest text-gray-400">
+                  {locale === 'en' ? 'This event will belong to' : 'Este evento vai ficar associado a'}
+                </span>
+                <span className="text-[11px] font-bold text-brand">
+                  {workingBrand?.name || 'Digital Invite Studio'}
+                </span>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleCreateInvite} className="space-y-10">
