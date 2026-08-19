@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { ExternalLink, ListChecks, Wallet, Loader2, AlertTriangle } from "lucide-react";
-import { formatCents, isOverdue, type EventTask, type CostPayment } from "@/lib/planner";
+import { ExternalLink, ListChecks, Wallet, Loader2, AlertTriangle, Flag } from "lucide-react";
+import { formatCents, isOverdue, TASK_PRIORITY_WEIGHT, type EventTask, type CostPayment } from "@/lib/planner";
+
+const PRIORITY_COLOR: Record<string, string> = { baixa: "text-gray-300", normal: "text-gold-soft", alta: "text-red-500" };
 
 // "O que precisa da minha atenção esta semana, em todos os casamentos" — o
 // ecrã que a agência abre de manhã. Junta tarefas vencidas/a vencer e
@@ -71,7 +73,7 @@ export default function AgencyOverviewView({ events, locale, onOpenEvent }: Prop
 
   const relevantTasks = tasks
     .filter(tk => tk.due_date && tk.due_date <= windowEndISO)
-    .sort((a, b) => (a.due_date || "").localeCompare(b.due_date || ""));
+    .sort((a, b) => (a.due_date || "").localeCompare(b.due_date || "") || (TASK_PRIORITY_WEIGHT[b.priority] - TASK_PRIORITY_WEIGHT[a.priority]));
 
   const relevantPayments = payments
     .filter(p => p.due_date && p.due_date <= windowEndISO)
@@ -124,6 +126,7 @@ export default function AgencyOverviewView({ events, locale, onOpenEvent }: Prop
                         onClick={() => { const s = eventSlug(tk.invitation_id); if (s) onOpenEvent(s); }}
                         className="w-full flex items-center gap-3 px-6 py-3.5 text-left hover:bg-cream/40 transition-colors"
                       >
+                        <Flag size={12} className={`shrink-0 ${PRIORITY_COLOR[tk.priority]}`} fill={tk.priority === "alta" ? "currentColor" : "none"} />
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-ink truncate">{tk.title}</p>
                           <p className="text-[10px] text-gray-400 truncate">{eventName(tk.invitation_id)}</p>

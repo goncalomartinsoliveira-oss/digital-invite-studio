@@ -33,6 +33,7 @@ Documento de estratégia: https://claude.ai/code/artifact/af5b0757-a3b7-470e-9b8
 - [ ] **Correr `supabase/migrations/0001_planner_module.sql` no Supabase** — sem isto a área de Gestão não funciona
 - [ ] Testar com as 2 agências piloto durante um ciclo real (6-8 semanas). A pergunta não é "gostam?", é "deixaram de abrir o Excel?"
 - [x] Fase 1a — vista de conjunto "Esta Semana": tarefas e pagamentos vencidos/a 30 dias, de todos os eventos ativos da agência, num só ecrã (`AgencyOverviewView`, botão novo no painel de eventos, só visível a contas com `planner_plan`)
+- [x] Prioridade nas tarefas (baixa/normal/alta) e estado do contrato por fornecedor (a orçar/orçamento pedido/em negociação/contratado/cancelado, por linha de custo — não por fornecedor, porque o mesmo fornecedor pode ter estados diferentes em casamentos diferentes) + histórico de notas/reuniões por linha de custo, sempre privado da agência — comparação com um concorrente direto ao casal (WedPal) mostrou que eram expectativa mínima
 - [ ] Fase 1b — documentos/contratos por evento e por fornecedor, histórico de preços por fornecedor entre casamentos
 - [ ] Fase 2 — linhas de custo por pessoa ligadas aos confirmados ao vivo, resumo de alergias para o catering, cronograma do dia com exportação PDF, link de leitura para fornecedores
 - [ ] Fase 3 — subscrições Stripe (não existe nada hoje: todo o checkout é pagamento único), vagas, desbloqueio automático das licenças, templates de checklist, planta do salão

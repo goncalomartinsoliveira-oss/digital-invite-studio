@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check } from "lucide-react";
-import { dueDateFromOffset, isOverdue, type EventTask, type TaskStatus } from "@/lib/planner";
+import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check, Flag } from "lucide-react";
+import { dueDateFromOffset, isOverdue, TASK_PRIORITIES, TASK_PRIORITY_LABELS, type EventTask, type TaskPriority, type TaskStatus } from "@/lib/planner";
 
 // Checklist do evento — área de gestão, exclusiva de contas de agência.
 // As tarefas guardam a data-limite e, quando definido, o número de dias antes
@@ -19,6 +19,8 @@ interface Props {
 
 const STATUS_ORDER: TaskStatus[] = ["todo", "doing", "done"];
 const STATUS_LABELS: Record<TaskStatus, string> = { todo: "Por fazer", doing: "Em curso", done: "Feito" };
+// Cor da bandeirinha de prioridade — clicar percorre baixa → normal → alta.
+const PRIORITY_COLOR: Record<TaskPriority, string> = { baixa: "text-gray-300", normal: "text-gold-soft", alta: "text-red-500" };
 
 export default function TasksModule({ invitationId, eventDate, canEdit, isAgency }: Props) {
   const [tasks, setTasks] = useState<EventTask[]>([]);
@@ -79,6 +81,11 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
     patchTask(t.id, { status: next });
   };
 
+  const cyclePriority = (t: EventTask) => {
+    const next = TASK_PRIORITIES[(TASK_PRIORITIES.indexOf(t.priority) + 1) % TASK_PRIORITIES.length];
+    patchTask(t.id, { priority: next });
+  };
+
   /** Reaplica "N dias antes do casamento" a todas as tarefas que tenham desvio. */
   const recalcDueDates = async () => {
     if (!canEdit || !eventDate) return;
@@ -98,6 +105,7 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
   const inputCls = "w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-ink outline-none focus:border-brand transition-colors disabled:opacity-60";
   const done = tasks.filter(t => t.status === "done").length;
   const overdueCount = tasks.filter(t => isOverdue(t)).length;
+  const highPriorityCount = tasks.filter(t => t.priority === "alta" && t.status !== "done").length;
   const hasOffsets = tasks.some(t => t.due_offset_days !== null && t.due_offset_days !== undefined);
 
   if (loading) {
@@ -119,6 +127,11 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
             {overdueCount > 0 && (
               <span className="text-[10px] font-bold uppercase tracking-widest text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-full">
                 {overdueCount} em atraso
+              </span>
+            )}
+            {highPriorityCount > 0 && (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-brand bg-gold-soft/10 border border-gold-soft/40 px-3 py-2 rounded-full">
+                <Flag size={11} fill="currentColor" /> {highPriorityCount} prioridade alta
               </span>
             )}
             {hasOffsets && eventDate && canEdit && (
@@ -186,6 +199,15 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
                   >
                     {t.status === "done" && <Check size={14} />}
                     {t.status === "doing" && <span className="w-2 h-2 rounded-full bg-brand" />}
+                  </button>
+
+                  <button
+                    onClick={() => cyclePriority(t)}
+                    disabled={!canEdit}
+                    title={`Prioridade: ${TASK_PRIORITY_LABELS[t.priority]}`}
+                    className={`shrink-0 disabled:opacity-50 transition-colors ${PRIORITY_COLOR[t.priority]}`}
+                  >
+                    <Flag size={14} fill={t.priority === "alta" ? "currentColor" : "none"} />
                   </button>
 
                   <input

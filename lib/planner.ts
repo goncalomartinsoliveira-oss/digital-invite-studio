@@ -56,6 +56,22 @@ export async function fetchPlannerPlan(
 export type CostPricingMode = "fixed" | "per_person";
 export type PlannerVisibility = "agency" | "shared";
 
+// Fase da relação com o fornecedor nesta linha — independente de estar paga
+// ou não (isso é event_cost_payments). O mesmo fornecedor pode estar
+// "contratado" num casamento e "em negociação" noutro, por isso vive aqui e
+// não em agency_vendors.
+export type CostStatus = "a_orcar" | "orcamento_pedido" | "em_negociacao" | "contratado" | "cancelado";
+
+export const COST_STATUSES: CostStatus[] = ["a_orcar", "orcamento_pedido", "em_negociacao", "contratado", "cancelado"];
+
+export const COST_STATUS_LABELS: Record<CostStatus, string> = {
+  a_orcar: "A orçar",
+  orcamento_pedido: "Orçamento pedido",
+  em_negociacao: "Em negociação",
+  contratado: "Contratado",
+  cancelado: "Cancelado",
+};
+
 export type EventCost = {
   id: string;
   invitation_id: string;
@@ -67,9 +83,22 @@ export type EventCost = {
   quantity: number;
   budgeted_cents: number;
   vat_pct: number;
+  status: CostStatus;
   visibility: PlannerVisibility;
   notes: string | null;
   sort_order: number;
+};
+
+// Histórico de notas/reuniões por linha de custo — sempre da agência, nunca
+// partilhado com o casal (por isso não tem `visibility`, ao contrário de
+// EventCost/EventTask).
+export type CostNote = {
+  id: string;
+  cost_id: string;
+  invitation_id: string;
+  note: string;
+  created_by_email: string | null;
+  created_at: string;
 };
 
 export type CostPayment = {
@@ -166,6 +195,12 @@ export function budgetTotals(
 // ── Tarefas ──────────────────────────────────────────────────────────────────
 
 export type TaskStatus = "todo" | "doing" | "done";
+export type TaskPriority = "baixa" | "normal" | "alta";
+
+export const TASK_PRIORITIES: TaskPriority[] = ["baixa", "normal", "alta"];
+export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = { baixa: "Baixa", normal: "Normal", alta: "Alta" };
+// Ordem de urgência para ordenar (maior primeiro).
+export const TASK_PRIORITY_WEIGHT: Record<TaskPriority, number> = { alta: 2, normal: 1, baixa: 0 };
 
 export type EventTask = {
   id: string;
@@ -175,6 +210,7 @@ export type EventTask = {
   due_date: string | null;
   due_offset_days: number | null;
   status: TaskStatus;
+  priority: TaskPriority;
   assigned_to_email: string | null;
   visibility: PlannerVisibility;
   sort_order: number;

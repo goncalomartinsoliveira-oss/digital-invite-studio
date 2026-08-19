@@ -25,7 +25,8 @@ aplicados.
 
 | Ficheiro | O que faz | Aplicado |
 |---|---|---|
-| `0001_planner_module.sql` | Módulo Wedding Planner — fase 0: `brands.planner_plan`, `agency_vendors`, `event_costs`, `event_cost_payments`, `event_tasks`, funções auxiliares e RLS | ☐ |
+| `0001_planner_module.sql` | Módulo Wedding Planner — fase 0: `brands.planner_plan`, `agency_vendors`, `event_costs`, `event_cost_payments`, `event_tasks`, funções auxiliares e RLS | ☑ |
+| `0002_task_priority_vendor_status.sql` | `event_tasks.priority`, `event_costs.status` (estado do contrato), `event_cost_notes` (histórico de reuniões por fornecedor) | ☐ |
 
 > Marcar a coluna "Aplicado" depois de correr em produção, para não haver
 > dúvidas mais tarde.

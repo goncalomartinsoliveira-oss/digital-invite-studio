@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, ChevronDown, Eye, EyeOff, Users, AlertTriangle, Loader2 } from "lucide-react";
+import { Plus, Trash2, ChevronDown, Eye, EyeOff, Users, AlertTriangle, Loader2, MessageSquare } from "lucide-react";
 import {
   COST_CATEGORIES,
+  COST_STATUSES,
+  COST_STATUS_LABELS,
   DEFAULT_VAT_PCT,
   budgetTotals,
   costGrossCents,
@@ -11,9 +13,21 @@ import {
   effectiveQuantity,
   formatCents,
   parseAmountToCents,
+  type CostNote,
   type CostPayment,
+  type CostStatus,
   type EventCost,
 } from "@/lib/planner";
+
+// Cor do estado do contrato — a fase da relação com o fornecedor, à parte de
+// estar pago ou não (isso já é a secção de Pagamentos).
+const STATUS_COLOR: Record<CostStatus, string> = {
+  a_orcar: "text-gray-500 bg-gray-50 border-gray-100",
+  orcamento_pedido: "text-blue-600 bg-blue-50 border-blue-100",
+  em_negociacao: "text-amber-600 bg-amber-50 border-amber-100",
+  contratado: "text-green-700 bg-green-50 border-green-100",
+  cancelado: "text-red-500 bg-red-50 border-red-100",
+};
 
 // Orçamento e custos do evento — área de gestão, exclusiva de contas de
 // agência. Escreve diretamente nas suas tabelas (como Convidados ou Mesas),
@@ -44,21 +58,29 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const [costs, setCosts] = useState<EventCost[]>([]);
   const [payments, setPayments] = useState<CostPayment[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  // Histórico de reuniões/notas — sempre privado da agência (nem a RLS deixa
+  // o casal ler), por isso só se pede quando quem está a ver é agência.
+  const [notes, setNotes] = useState<CostNote[]>([]);
+  const [newNoteDrafts, setNewNoteDrafts] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
 
   const load = useCallback(async () => {
-    const [c, p, v] = await Promise.all([
+    const [c, p, v, n] = await Promise.all([
       supabase.from("event_costs").select("*").eq("invitation_id", invitationId).order("sort_order").order("created_at"),
       supabase.from("event_cost_payments").select("*").eq("invitation_id", invitationId).order("due_date"),
       supabase.from("agency_vendors").select("id, name, category").eq("brand_id", brandId).order("name"),
+      isAgency
+        ? supabase.from("event_cost_notes").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false })
+        : Promise.resolve({ data: [] as CostNote[] }),
     ]);
     setCosts((c.data as EventCost[]) || []);
     setPayments((p.data as CostPayment[]) || []);
     setVendors((v.data as Vendor[]) || []);
+    setNotes((n.data as CostNote[]) || []);
     setLoading(false);
-  }, [invitationId, brandId]);
+  }, [invitationId, brandId, isAgency]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -96,6 +118,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         quantity: 1,
         budgeted_cents: 0,
         vat_pct: DEFAULT_VAT_PCT,
+        status: "a_orcar",
         // Privado por omissão: o honorário e as margens da agência nunca podem
         // escapar para o casal por distração.
         visibility: isAgency ? "agency" : "shared",
@@ -143,6 +166,24 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
     if (!canEdit) return;
     setPayments(prev => prev.filter(p => p.id !== id));
     await supabase.from("event_cost_payments").delete().eq("id", id);
+  };
+
+  const addNote = async (costId: string) => {
+    const text = (newNoteDrafts[costId] || "").trim();
+    if (!canEdit || !isAgency || !text) return;
+    const { data } = await supabase
+      .from("event_cost_notes")
+      .insert([{ cost_id: costId, invitation_id: invitationId, note: text }])
+      .select("*")
+      .single();
+    if (data) setNotes(prev => [data as CostNote, ...prev]);
+    setNewNoteDrafts(prev => ({ ...prev, [costId]: "" }));
+  };
+
+  const removeNote = async (id: string) => {
+    if (!canEdit || !isAgency) return;
+    setNotes(prev => prev.filter(n => n.id !== id));
+    await supabase.from("event_cost_notes").delete().eq("id", id);
   };
 
   const inputCls = "w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-ink outline-none focus:border-brand transition-colors disabled:opacity-60";
@@ -238,6 +279,9 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                         <span className="text-[9px] font-bold uppercase tracking-widest text-brand bg-brand/5 px-2 py-0.5 rounded-md">
                           {CATEGORY_LABELS[cost.category] || cost.category}
                         </span>
+                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md border ${STATUS_COLOR[cost.status]}`}>
+                          {COST_STATUS_LABELS[cost.status]}
+                        </span>
                         {cost.pricing_mode === "per_person" && (
                           <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400 bg-gray-50 px-2 py-0.5 rounded-md">
                             {qty} × por pessoa
@@ -307,6 +351,18 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                             placeholder="Ex: Jantar e bar aberto"
                             onBlur={e => patchCost(cost.id, { description: e.target.value })}
                           />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Estado do contrato</label>
+                          <select
+                            className={inputCls}
+                            value={cost.status}
+                            onChange={e => patchCost(cost.id, { status: e.target.value as CostStatus })}
+                          >
+                            {COST_STATUSES.map(s => (
+                              <option key={s} value={s}>{COST_STATUS_LABELS[s]}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
 
@@ -443,6 +499,51 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                           </div>
                         )}
                       </div>
+
+                      {/* Histórico de reuniões/notas — nunca visível ao casal,
+                          nem sequer pela RLS (ver 0002_task_priority_vendor_status). */}
+                      {isAgency && (
+                        <div className="mt-4 bg-white rounded-2xl border border-gray-100 p-4">
+                          <p className={labelCls}>Reuniões e notas</p>
+                          <div className="flex gap-2 mt-2">
+                            <input
+                              className={inputCls}
+                              value={newNoteDrafts[cost.id] || ""}
+                              onChange={e => setNewNoteDrafts(prev => ({ ...prev, [cost.id]: e.target.value }))}
+                              onKeyDown={e => { if (e.key === "Enter") addNote(cost.id); }}
+                              placeholder="Ex: Reunião dia 3 — confirmaram menu vegetariano"
+                            />
+                            <button
+                              onClick={() => addNote(cost.id)}
+                              disabled={!(newNoteDrafts[cost.id] || "").trim()}
+                              className="inline-flex items-center gap-1.5 bg-brand/5 text-brand px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-brand/10 transition-all disabled:opacity-40 shrink-0"
+                            >
+                              <MessageSquare size={13} /> Registar
+                            </button>
+                          </div>
+                          {notes.filter(n => n.cost_id === cost.id).length > 0 && (
+                            <ul className="mt-3 space-y-2">
+                              {notes.filter(n => n.cost_id === cost.id).map(n => (
+                                <li key={n.id} className="flex items-start gap-2 text-xs bg-cream/60 rounded-xl px-3 py-2.5">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-ink">{n.note}</p>
+                                    <p className="text-[10px] text-gray-400 mt-0.5">
+                                      {new Date(n.created_at).toLocaleDateString(locale === "en" ? "en-GB" : "pt-PT", { day: "2-digit", month: "short", year: "numeric" })}
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={() => removeNote(n.id)}
+                                    className="text-gray-300 hover:text-red-500 transition-colors shrink-0"
+                                    aria-label="Remover nota"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
