@@ -3,16 +3,18 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet } from "lucide-react";
+import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
+import { fetchPlannerPlan, type PlannerPlan } from "@/lib/planner";
 import AdminManagementView from "@/components/dashboard/AdminManagementView";
 import MembersManagementView from "@/components/dashboard/MembersManagementView";
 import BrandsManagementView from "@/components/dashboard/BrandsManagementView";
 import CouponsManagementView from "@/components/dashboard/CouponsManagementView";
 import BrandPricingView from "@/components/dashboard/BrandPricingView";
 import BusinessOverviewView from "@/components/dashboard/BusinessOverviewView";
+import AgencyOverviewView from "@/components/dashboard/AgencyOverviewView";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -40,7 +42,10 @@ export default function DashboardHub() {
   const [guestCounts, setGuestCounts] = useState<Record<string, { total: number; confirmed: number }>>({});
   const [dbBrands, setDbBrands] = useState<{ id: string; name: string }[]>([]);
   const [workingBrand, setWorkingBrand] = useState<WorkingBrand | null>(null);
-  const [viewMode, setViewMode] = useState<'events' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business'>('events');
+  // Plano de wedding planner da marca efetiva — mostra a Vista de Conjunto
+  // (tarefas + pagamentos de todos os eventos ativos) só a contas de agência.
+  const [plannerPlan, setPlannerPlan] = useState<PlannerPlan | null>(null);
+  const [viewMode, setViewMode] = useState<'events' | 'planning' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -87,6 +92,7 @@ export default function DashboardHub() {
       const wb = await resolveWorkingBrand(supabase, email, brand.id);
       setWorkingBrand(wb);
       const effBrandId = wb?.id ?? brand.id;
+      setPlannerPlan(await fetchPlannerPlan(supabase, effBrandId));
 
       // É membro/admin da marca efetiva? → vê todos os eventos dessa marca.
       const { data: membership } = await supabase
@@ -262,6 +268,14 @@ export default function DashboardHub() {
               >
                 <LayoutGrid size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Events' : 'Eventos'}</span>
               </button>
+              {plannerPlan && (
+                <button
+                  onClick={() => setViewMode('planning')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'planning' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+                >
+                  <CalendarClock size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'This Week' : 'Esta Semana'}</span>
+                </button>
+              )}
               <button
                 onClick={() => setViewMode('admin')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'admin' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
@@ -328,7 +342,13 @@ export default function DashboardHub() {
       {/* ÁREA PRINCIPAL */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-12 sm:py-20">
 
-        {viewMode === 'admin' && canManage ? (
+        {viewMode === 'planning' && plannerPlan ? (
+          <AgencyOverviewView
+            events={agencyInvites}
+            locale={locale}
+            onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+          />
+        ) : viewMode === 'admin' && canManage ? (
           <AdminManagementView
             events={adminInvites}
             guestCounts={guestCounts}

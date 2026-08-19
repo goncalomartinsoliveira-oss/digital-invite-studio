@@ -32,7 +32,8 @@ Documento de estratégia: https://claude.ai/code/artifact/af5b0757-a3b7-470e-9b8
 - [x] Fase 0 — área "Gestão" no painel do evento: orçamento (custos por fornecedor, IVA por linha, marcos de pagamento) e tarefas (prazos relativos à data do casamento, privadas ou partilhadas com o casal). Ligado por `brands.planner_plan`, ativado à mão pelo super-admin em Parceiros
 - [ ] **Correr `supabase/migrations/0001_planner_module.sql` no Supabase** — sem isto a área de Gestão não funciona
 - [ ] Testar com as 2 agências piloto durante um ciclo real (6-8 semanas). A pergunta não é "gostam?", é "deixaram de abrir o Excel?"
-- [ ] Fase 1 — vista de conjunto da agência (tarefas da semana e pagamentos a 30 dias, em todos os casamentos), documentos/contratos, histórico de preços por fornecedor
+- [x] Fase 1a — vista de conjunto "Esta Semana": tarefas e pagamentos vencidos/a 30 dias, de todos os eventos ativos da agência, num só ecrã (`AgencyOverviewView`, botão novo no painel de eventos, só visível a contas com `planner_plan`)
+- [ ] Fase 1b — documentos/contratos por evento e por fornecedor, histórico de preços por fornecedor entre casamentos
 - [ ] Fase 2 — linhas de custo por pessoa ligadas aos confirmados ao vivo, resumo de alergias para o catering, cronograma do dia com exportação PDF, link de leitura para fornecedores
 - [ ] Fase 3 — subscrições Stripe (não existe nada hoje: todo o checkout é pagamento único), vagas, desbloqueio automático das licenças, templates de checklist, planta do salão
 - [ ] Decidir preços antes da primeira conversa com as agências (proposta no documento: Solo 39€, Profissional 89€, Agência 169€/mês, anual com 2 meses grátis)
