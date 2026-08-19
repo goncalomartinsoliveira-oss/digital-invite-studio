@@ -30,12 +30,11 @@ Lista de tarefas identificadas mas ainda não desenvolvidas. Não está por orde
 ## Módulo Wedding Planner (B2B — piloto, ago/2026)
 Documento de estratégia: https://claude.ai/code/artifact/af5b0757-a3b7-470e-9b82-48957f6df006
 - [x] Fase 0 — área "Gestão" no painel do evento: orçamento (custos por fornecedor, IVA por linha, marcos de pagamento) e tarefas (prazos relativos à data do casamento, privadas ou partilhadas com o casal). Ligado por `brands.planner_plan`, ativado à mão pelo super-admin em Parceiros
-- [ ] **Correr `supabase/migrations/0001_planner_module.sql` no Supabase** — sem isto a área de Gestão não funciona
-- [ ] Testar com as 2 agências piloto durante um ciclo real (6-8 semanas). A pergunta não é "gostam?", é "deixaram de abrir o Excel?"
+- [x] Migrações `0001`–`0003` aplicadas em produção (esquema todo do módulo, incluindo documentos/contratos — upload de PDF confirmado a funcionar no bucket `invites`)
 - [x] Fase 1a — vista de conjunto "Esta Semana": tarefas e pagamentos vencidos/a 30 dias, de todos os eventos ativos da agência, num só ecrã (`AgencyOverviewView`, botão novo no painel de eventos, só visível a contas com `planner_plan`)
 - [x] Prioridade nas tarefas (baixa/normal/alta) e estado do contrato por fornecedor (a orçar/orçamento pedido/em negociação/contratado/cancelado, por linha de custo — não por fornecedor, porque o mesmo fornecedor pode ter estados diferentes em casamentos diferentes) + histórico de notas/reuniões por linha de custo, sempre privado da agência — comparação com um concorrente direto ao casal (WedPal) mostrou que eram expectativa mínima
 - [x] Fase 1b — documentos/contratos por evento (gerais e por linha de custo, upload direto no Orçamento) e área "Fornecedores" nova ao nível da agência: ficha completa (contacto, avaliação, notas — os campos já existiam desde a Fase 0 mas sem interface nenhuma) + histórico de preços entre casamentos, sourced de `event_costs` por `vendor_id`
-  - ⚠️ Testar upload de PDF (não só imagens) no bucket `invites` do Supabase Storage — se houver restrição de tipo de ficheiro configurada, os contratos vão falhar a carregar
+- [ ] **Testar com as 2 agências piloto durante um ciclo real (6-8 semanas)**, antes de continuar para a Fase 2. A pergunta não é "gostam?", é "deixaram de abrir o Excel?" — já vamos com Fase 0, 1a e 1b construídas sem esse feedback
 - [ ] Fase 2 — linhas de custo por pessoa ligadas aos confirmados ao vivo, resumo de alergias para o catering, cronograma do dia com exportação PDF, link de leitura para fornecedores
 - [ ] Fase 3 — subscrições Stripe (não existe nada hoje: todo o checkout é pagamento único), vagas, desbloqueio automático das licenças, templates de checklist, planta do salão
 - [ ] Decidir preços antes da primeira conversa com as agências (proposta no documento: Solo 39€, Profissional 89€, Agência 169€/mês, anual com 2 meses grátis)
