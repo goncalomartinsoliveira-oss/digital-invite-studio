@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock } from "lucide-react";
+import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
@@ -15,6 +15,7 @@ import CouponsManagementView from "@/components/dashboard/CouponsManagementView"
 import BrandPricingView from "@/components/dashboard/BrandPricingView";
 import BusinessOverviewView from "@/components/dashboard/BusinessOverviewView";
 import AgencyOverviewView from "@/components/dashboard/AgencyOverviewView";
+import VendorsView from "@/components/dashboard/VendorsView";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -45,7 +46,7 @@ export default function DashboardHub() {
   // Plano de wedding planner da marca efetiva — mostra a Vista de Conjunto
   // (tarefas + pagamentos de todos os eventos ativos) só a contas de agência.
   const [plannerPlan, setPlannerPlan] = useState<PlannerPlan | null>(null);
-  const [viewMode, setViewMode] = useState<'events' | 'planning' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business'>('events');
+  const [viewMode, setViewMode] = useState<'events' | 'planning' | 'vendors' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -276,6 +277,14 @@ export default function DashboardHub() {
                   <CalendarClock size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'This Week' : 'Esta Semana'}</span>
                 </button>
               )}
+              {plannerPlan && (
+                <button
+                  onClick={() => setViewMode('vendors')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'vendors' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+                >
+                  <Store size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Vendors' : 'Fornecedores'}</span>
+                </button>
+              )}
               <button
                 onClick={() => setViewMode('admin')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'admin' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
@@ -344,6 +353,13 @@ export default function DashboardHub() {
 
         {viewMode === 'planning' && plannerPlan ? (
           <AgencyOverviewView
+            events={agencyInvites}
+            locale={locale}
+            onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+          />
+        ) : viewMode === 'vendors' && plannerPlan ? (
+          <VendorsView
+            brandId={workingBrand?.id ?? brand.id}
             events={agencyInvites}
             locale={locale}
             onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}

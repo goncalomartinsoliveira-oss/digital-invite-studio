@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, ChevronDown, Eye, EyeOff, Users, AlertTriangle, Loader2, MessageSquare } from "lucide-react";
+import { Plus, Trash2, ChevronDown, Eye, EyeOff, Users, AlertTriangle, Loader2, MessageSquare, FileText, Upload } from "lucide-react";
 import {
   COST_CATEGORIES,
   COST_STATUSES,
@@ -17,6 +17,7 @@ import {
   type CostPayment,
   type CostStatus,
   type EventCost,
+  type EventDocument,
 } from "@/lib/planner";
 
 // Cor do estado do contrato — a fase da relação com o fornecedor, à parte de
@@ -62,23 +63,32 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   // o casal ler), por isso só se pede quando quem está a ver é agência.
   const [notes, setNotes] = useState<CostNote[]>([]);
   const [newNoteDrafts, setNewNoteDrafts] = useState<Record<string, string>>({});
+  // Documentos/contratos — `cost_id` nulo é um documento geral do evento
+  // (ex.: contrato do espaço, cobre várias linhas); preenchido pertence a um
+  // fornecedor específico. Chave "general" nos drafts/uploading é a secção
+  // sem custo associado.
+  const [documents, setDocuments] = useState<EventDocument[]>([]);
+  const [newDocLabelDrafts, setNewDocLabelDrafts] = useState<Record<string, string>>({});
+  const [uploadingDoc, setUploadingDoc] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
 
   const load = useCallback(async () => {
-    const [c, p, v, n] = await Promise.all([
+    const [c, p, v, n, d] = await Promise.all([
       supabase.from("event_costs").select("*").eq("invitation_id", invitationId).order("sort_order").order("created_at"),
       supabase.from("event_cost_payments").select("*").eq("invitation_id", invitationId).order("due_date"),
       supabase.from("agency_vendors").select("id, name, category").eq("brand_id", brandId).order("name"),
       isAgency
         ? supabase.from("event_cost_notes").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false })
         : Promise.resolve({ data: [] as CostNote[] }),
+      supabase.from("event_documents").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false }),
     ]);
     setCosts((c.data as EventCost[]) || []);
     setPayments((p.data as CostPayment[]) || []);
     setVendors((v.data as Vendor[]) || []);
     setNotes((n.data as CostNote[]) || []);
+    setDocuments((d.data as EventDocument[]) || []);
     setLoading(false);
   }, [invitationId, brandId, isAgency]);
 
@@ -186,6 +196,41 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
     await supabase.from("event_cost_notes").delete().eq("id", id);
   };
 
+  // costId null → documento geral do evento. draftKey identifica a secção nos
+  // rascunhos de rótulo ("general" ou o id do custo).
+  const uploadDocument = async (file: File, costId: string | null, draftKey: string) => {
+    if (!canEdit) return;
+    setUploadingDoc(draftKey);
+    const ext = file.name.split(".").pop();
+    const path = `event-documents/${invitationId}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("invites").upload(path, file);
+    if (!error) {
+      const { data: { publicUrl } } = supabase.storage.from("invites").getPublicUrl(path);
+      const label = (newDocLabelDrafts[draftKey] || "").trim() || file.name;
+      const { data } = await supabase
+        .from("event_documents")
+        .insert([{
+          invitation_id: invitationId,
+          cost_id: costId,
+          name: label,
+          file_url: publicUrl,
+          // Mesma regra das restantes secções: privado por omissão.
+          visibility: isAgency ? "agency" : "shared",
+        }])
+        .select("*")
+        .single();
+      if (data) setDocuments(prev => [data as EventDocument, ...prev]);
+      setNewDocLabelDrafts(prev => ({ ...prev, [draftKey]: "" }));
+    }
+    setUploadingDoc(null);
+  };
+
+  const removeDocument = async (id: string) => {
+    if (!canEdit) return;
+    setDocuments(prev => prev.filter(d => d.id !== id));
+    await supabase.from("event_documents").delete().eq("id", id);
+  };
+
   const inputCls = "w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-ink outline-none focus:border-brand transition-colors disabled:opacity-60";
   const labelCls = "text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1.5 block";
 
@@ -235,6 +280,57 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
               <strong>{formatCents(totals.gross - totals.budgeted, locale === "en" ? "en-GB" : "pt-PT")}</strong>.
             </span>
           </div>
+        )}
+      </section>
+
+      {/* ── Documentos gerais do evento (sem fornecedor associado) ── */}
+      <section className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-md border border-gray-100">
+        <div className="mb-6">
+          <h4 className="font-serif text-2xl text-ink">Documentos</h4>
+          <p className="text-xs text-gray-400 uppercase tracking-widest mt-2 font-bold">
+            Contratos gerais — os ligados a um fornecedor específico ficam dentro de cada custo
+          </p>
+        </div>
+
+        {canEdit && (
+          <div className="flex gap-2 mb-5">
+            <input
+              className={inputCls}
+              value={newDocLabelDrafts.general || ""}
+              onChange={e => setNewDocLabelDrafts(prev => ({ ...prev, general: e.target.value }))}
+              placeholder="Ex: Contrato da quinta"
+            />
+            <label className="inline-flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-dark transition-all cursor-pointer shrink-0">
+              {uploadingDoc === "general" ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+              Carregar
+              <input
+                type="file"
+                className="hidden"
+                disabled={uploadingDoc === "general"}
+                onChange={e => { const f = e.target.files?.[0]; if (f) uploadDocument(f, null, "general"); e.target.value = ""; }}
+              />
+            </label>
+          </div>
+        )}
+
+        {documents.filter(d => !d.cost_id).length === 0 ? (
+          <p className="text-sm text-gray-400 py-6 text-center">Sem documentos gerais.</p>
+        ) : (
+          <ul className="space-y-2">
+            {documents.filter(d => !d.cost_id).map(doc => (
+              <li key={doc.id} className="flex items-center gap-3 bg-cream/60 rounded-xl px-4 py-3">
+                <FileText size={15} className="text-brand shrink-0" />
+                <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-0 text-sm font-medium text-ink hover:text-brand transition-colors truncate">
+                  {doc.name}
+                </a>
+                {canEdit && (
+                  <button onClick={() => removeDocument(doc.id)} className="text-gray-300 hover:text-red-500 transition-colors shrink-0" aria-label="Remover documento">
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
         )}
       </section>
 
@@ -544,6 +640,48 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                           )}
                         </div>
                       )}
+
+                      {/* Documentos deste fornecedor */}
+                      <div className="mt-4 bg-white rounded-2xl border border-gray-100 p-4">
+                        <p className={labelCls}>Documentos</p>
+                        {canEdit && (
+                          <div className="flex gap-2 mt-2">
+                            <input
+                              className={inputCls}
+                              value={newDocLabelDrafts[cost.id] || ""}
+                              onChange={e => setNewDocLabelDrafts(prev => ({ ...prev, [cost.id]: e.target.value }))}
+                              placeholder="Ex: Contrato assinado"
+                            />
+                            <label className="inline-flex items-center gap-1.5 bg-brand/5 text-brand px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-brand/10 transition-all cursor-pointer shrink-0">
+                              {uploadingDoc === cost.id ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+                              Carregar
+                              <input
+                                type="file"
+                                className="hidden"
+                                disabled={uploadingDoc === cost.id}
+                                onChange={e => { const f = e.target.files?.[0]; if (f) uploadDocument(f, cost.id, cost.id); e.target.value = ""; }}
+                              />
+                            </label>
+                          </div>
+                        )}
+                        {documents.filter(d => d.cost_id === cost.id).length > 0 && (
+                          <ul className="mt-3 space-y-2">
+                            {documents.filter(d => d.cost_id === cost.id).map(doc => (
+                              <li key={doc.id} className="flex items-center gap-2 bg-cream/60 rounded-xl px-3 py-2.5 text-xs">
+                                <FileText size={13} className="text-brand shrink-0" />
+                                <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-0 font-medium text-ink hover:text-brand transition-colors truncate">
+                                  {doc.name}
+                                </a>
+                                {canEdit && (
+                                  <button onClick={() => removeDocument(doc.id)} className="text-gray-300 hover:text-red-500 transition-colors shrink-0" aria-label="Remover documento">
+                                    <Trash2 size={12} />
+                                  </button>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

@@ -101,6 +101,38 @@ export type CostNote = {
   created_at: string;
 };
 
+// Documento/contrato por evento — `cost_id` nulo é um documento geral do
+// evento (ex.: contrato do espaço, que cobre várias linhas); preenchido é um
+// documento específico dessa relação com esse fornecedor.
+export type EventDocument = {
+  id: string;
+  invitation_id: string;
+  cost_id: string | null;
+  name: string;
+  file_url: string;
+  visibility: PlannerVisibility;
+  uploaded_by_email: string | null;
+  created_at: string;
+};
+
+// Ficha completa do fornecedor no diretório da agência — reutilizada em
+// todos os eventos da marca. `agency_vendors` já tinha estes campos desde a
+// Fase 0, mas sem nenhuma interface a preenchê-los além do nome (criado ao
+// escrever numa linha de custo) — é isso que a área de Fornecedores resolve.
+export type AgencyVendor = {
+  id: string;
+  brand_id: string;
+  name: string;
+  category: string | null;
+  contact_name: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  notes: string | null;
+  rating: number | null;
+  created_at: string;
+};
+
 export type CostPayment = {
   id: string;
   cost_id: string;
