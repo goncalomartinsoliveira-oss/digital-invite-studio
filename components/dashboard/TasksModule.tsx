@@ -4,7 +4,11 @@ import { supabase } from "@/lib/supabase";
 import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
 import { useSaveStatus } from "@/lib/useSaveStatus";
 import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check, Flag, ListChecks } from "lucide-react";
-import { dueDateFromOffset, isOverdue, TASK_PRIORITIES, TASK_PRIORITY_LABELS, type EventTask, type TaskPriority, type TaskStatus } from "@/lib/planner";
+import {
+  dueDateFromOffset, isOverdue, TASK_PRIORITIES, TASK_PRIORITY_LABELS,
+  TASK_RESPONSIBLES, TASK_RESPONSIBLE_LABELS,
+  type EventTask, type TaskPriority, type TaskStatus, type TaskResponsible,
+} from "@/lib/planner";
 import { WEDDING_TASK_TEMPLATE } from "@/lib/plannerTemplates";
 
 // Checklist do evento — área de gestão, exclusiva de contas de agência.
@@ -24,6 +28,12 @@ const STATUS_ORDER: TaskStatus[] = ["todo", "doing", "done"];
 const STATUS_LABELS: Record<TaskStatus, string> = { todo: "Por fazer", doing: "Em curso", done: "Feito" };
 // Cor da bandeirinha de prioridade — clicar percorre baixa → normal → alta.
 const PRIORITY_COLOR: Record<TaskPriority, string> = { baixa: "text-gray-300", normal: "text-gold-soft", alta: "text-red-500" };
+// Cor do selo de responsável — clicar percorre agência → noivos → conjunta.
+const RESPONSIBLE_COLOR: Record<TaskResponsible, string> = {
+  agency: "text-gray-500 bg-gray-50 border-gray-200",
+  couple: "text-brand bg-brand/5 border-gold-soft/50",
+  both: "text-amber-600 bg-amber-50 border-amber-200",
+};
 
 export default function TasksModule({ invitationId, eventDate, canEdit, isAgency }: Props) {
   const [tasks, setTasks] = useState<EventTask[]>([]);
@@ -33,6 +43,7 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
   const [adding, setAdding] = useState(false);
   const [recalculating, setRecalculating] = useState(false);
   const [applyingTemplate, setApplyingTemplate] = useState(false);
+  const [filter, setFilter] = useState<TaskResponsible | "all">("all");
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -57,6 +68,9 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
         invitation_id: invitationId,
         title,
         status: "todo",
+        // Quem escreve a tarefa é, por omissão, quem a vai fazer — ajustável
+        // a seguir com o selo de responsável.
+        responsible: isAgency ? "agency" : "couple",
         // Privado por omissão: o trabalho de bastidores da agência não deve
         // aparecer ao casal sem uma decisão explícita.
         visibility: isAgency ? "agency" : "shared",
@@ -83,9 +97,11 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
       title: item.title,
       status: "todo",
       priority: item.priority,
+      responsible: item.responsible,
       due_offset_days: item.offsetDays,
       due_date: dueDateFromOffset(eventDate, item.offsetDays),
-      visibility: isAgency ? "agency" : "shared",
+      // Tarefa não-agência tem sempre de ser partilhada (a BD também o impõe).
+      visibility: item.responsible === "agency" ? (isAgency ? "agency" : "shared") : "shared",
       sort_order: tasks.length + i,
     }));
     const { data } = await track(supabase.from("event_tasks").insert(rows).select("*"));
@@ -115,6 +131,13 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
     patchTask(t.id, { priority: next });
   };
 
+  const cycleResponsible = (t: EventTask) => {
+    const next = TASK_RESPONSIBLES[(TASK_RESPONSIBLES.indexOf(t.responsible) + 1) % TASK_RESPONSIBLES.length];
+    // Tarefa não-agência tem sempre de ser partilhada — a BD recusaria o
+    // contrário, mas corrigir aqui poupa a viagem ao servidor para falhar.
+    patchTask(t.id, { responsible: next, ...(next !== "agency" ? { visibility: "shared" } : {}) });
+  };
+
   /** Reaplica "N dias antes do casamento" a todas as tarefas que tenham desvio. */
   const recalcDueDates = async () => {
     if (!canEdit || !eventDate) return;
@@ -132,9 +155,10 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
   };
 
   const inputCls = "w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-ink outline-none focus:border-brand transition-colors disabled:opacity-60";
-  const done = tasks.filter(t => t.status === "done").length;
-  const overdueCount = tasks.filter(t => isOverdue(t)).length;
-  const highPriorityCount = tasks.filter(t => t.priority === "alta" && t.status !== "done").length;
+  const visibleTasks = filter === "all" ? tasks : tasks.filter(t => t.responsible === filter);
+  const done = visibleTasks.filter(t => t.status === "done").length;
+  const overdueCount = visibleTasks.filter(t => isOverdue(t)).length;
+  const highPriorityCount = visibleTasks.filter(t => t.priority === "alta" && t.status !== "done").length;
   const hasOffsets = tasks.some(t => t.due_offset_days !== null && t.due_offset_days !== undefined);
 
   if (loading) {
@@ -153,7 +177,7 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
           <div>
             <h3 className="font-serif text-3xl text-brand">Tarefas</h3>
             <p className="text-xs text-gray-400 uppercase tracking-widest mt-2 font-bold">
-              {tasks.length > 0 ? `${done} de ${tasks.length} concluídas` : "Checklist do evento"}
+              {tasks.length > 0 ? `${done} de ${visibleTasks.length} concluídas` : "Checklist do evento"}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -179,6 +203,22 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
             )}
           </div>
         </div>
+
+        {tasks.length > 0 && (
+          <div className="flex items-center gap-1 bg-cream rounded-full p-1 border border-gold-soft/50 w-fit mb-6">
+            {(["all", ...TASK_RESPONSIBLES] as const).map(value => (
+              <button
+                key={value}
+                onClick={() => setFilter(value)}
+                className={`px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${
+                  filter === value ? "bg-brand text-white" : "text-gray-400 hover:text-brand"
+                }`}
+              >
+                {value === "all" ? "Todas" : TASK_RESPONSIBLE_LABELS[value]}
+              </button>
+            ))}
+          </div>
+        )}
 
         {canEdit && (
           <div className="flex gap-2 mb-6">
@@ -218,9 +258,11 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
               </>
             )}
           </div>
+        ) : visibleTasks.length === 0 ? (
+          <p className="text-sm text-gray-400 py-10 text-center">Sem tarefas nesta vista.</p>
         ) : (
           <div className="space-y-2">
-            {tasks.map(t => {
+            {visibleTasks.map(t => {
               const late = isOverdue(t);
               return (
                 <div
@@ -266,6 +308,15 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
                     disabled={!canEdit}
                     onBlur={e => patchTask(t.id, { title: e.target.value })}
                   />
+
+                  <button
+                    onClick={() => cycleResponsible(t)}
+                    disabled={!canEdit}
+                    title="Responsável — clicar para trocar"
+                    className={`shrink-0 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1.5 rounded-full border transition-all disabled:opacity-50 ${RESPONSIBLE_COLOR[t.responsible]}`}
+                  >
+                    {TASK_RESPONSIBLE_LABELS[t.responsible]}
+                  </button>
 
                   <input
                     className="w-16 bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-center text-gray-500 outline-none focus:border-brand tabular-nums disabled:opacity-60"

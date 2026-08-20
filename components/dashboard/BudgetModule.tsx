@@ -19,11 +19,13 @@ import {
   formatCents,
   groupCosts,
   parseAmountToCents,
+  guestCountsTotal,
   type CostNote,
   type CostPayment,
   type CostStatus,
   type EventCost,
   type EventDocument,
+  type GuestCounts,
 } from "@/lib/planner";
 
 // Cor do estado do contrato — a fase da relação com o fornecedor, à parte de
@@ -50,7 +52,8 @@ interface Props {
   canEdit: boolean;
   /** Equipa da agência vê tudo; o casal só vê as linhas partilhadas. */
   isAgency: boolean;
-  confirmedGuests: number;
+  /** Confirmados por escalão etário — alimenta linhas "por pessoa", incluindo as que cobram por escalão. */
+  confirmedGuestCounts: GuestCounts;
   locale: string;
   /** Abre a Inspiração já na secção correspondente a esta categoria de custo. */
   onOpenMoodboard?: (sectionId: string) => void;
@@ -63,7 +66,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   transporte: "Transporte", honorarios: "Honorários", outros: "Outros",
 };
 
-export default function BudgetModule({ invitationId, brandId, canEdit, isAgency, confirmedGuests, locale, onOpenMoodboard }: Props) {
+export default function BudgetModule({ invitationId, brandId, canEdit, isAgency, confirmedGuestCounts, locale, onOpenMoodboard }: Props) {
+  const confirmedGuests = guestCountsTotal(confirmedGuestCounts);
   const [costs, setCosts] = useState<EventCost[]>([]);
   const [payments, setPayments] = useState<CostPayment[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -125,7 +129,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
 
   useEffect(() => { load(); }, [load]);
 
-  const totals = budgetTotals(costs, payments, confirmedGuests);
+  const totals = budgetTotals(costs, payments, confirmedGuestCounts);
   const vendorName = (id: string | null) => vendors.find(v => v.id === id)?.name || "";
 
   /** Secção da Inspiração ligada a esta categoria, se existir e tiver imagens. */
@@ -144,7 +148,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const otherLabel = locale === "en" ? "Others" : "Outros";
   const vendorGroups = groupCosts(
     costs,
-    confirmedGuests,
+    confirmedGuestCounts,
     c => ({
       key: c.vendor_id || "__none__",
       label: vendorName(c.vendor_id) || (locale === "en" ? "No vendor" : "Sem fornecedor"),
@@ -154,7 +158,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   );
   const categoryGroups = groupCosts(
     costs,
-    confirmedGuests,
+    confirmedGuestCounts,
     c => ({ key: c.category, label: CATEGORY_LABELS[c.category] || c.category }),
     8,
     otherLabel
@@ -235,6 +239,19 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
     if (!canEdit) return;
     setCosts(prev => prev.map(c => (c.id === id ? { ...c, ...patch } : c)));
     await track(supabase.from("event_costs").update(patch).eq("id", id));
+  };
+
+  // As duas variantes de "por pessoa" são mutuamente exclusivas (ver
+  // 0009_cost_tiers_and_task_responsible.sql) — este par trata-as como um
+  // seletor de três posições em vez de duas caixas independentes que
+  // pudessem ficar ambas ligadas ao mesmo tempo.
+  type PricingShape = "flat" | "category" | "minimum";
+  const pricingShapeOf = (c: EventCost): PricingShape =>
+    c.per_category ? "category" : c.min_quantity ? "minimum" : "flat";
+  const setPricingShape = (c: EventCost, shape: PricingShape) => {
+    if (shape === "flat") patchCost(c.id, { per_category: false, min_quantity: null, extra_unit_price_cents: null });
+    else if (shape === "category") patchCost(c.id, { per_category: true, min_quantity: null, extra_unit_price_cents: null });
+    else patchCost(c.id, { per_category: false, min_quantity: c.min_quantity || confirmedGuests || 1 });
   };
 
   const removeCost = async (id: string) => {
@@ -431,8 +448,8 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         ) : (
           <div className="space-y-3">
             {costs.map(cost => {
-              const qty = effectiveQuantity(cost, confirmedGuests);
-              const gross = costGrossCents(cost, confirmedGuests);
+              const qty = effectiveQuantity(cost, confirmedGuestCounts);
+              const gross = costGrossCents(cost, confirmedGuestCounts);
               const costPayments = payments.filter(p => p.cost_id === cost.id);
               const paid = costPayments.filter(p => p.paid_at).reduce((s, p) => s + p.amount_cents, 0);
               const isOpen = expanded === cost.id;
@@ -537,6 +554,27 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                         </div>
                       </div>
 
+                      {cost.pricing_mode === "per_person" && (
+                        <div className="flex items-center gap-1 bg-cream rounded-full p-1 border border-gold-soft/50 w-fit mt-5">
+                          {([
+                            ["flat", "Preço único"],
+                            ["category", "Por escalão"],
+                            ["minimum", "Com mínimo"],
+                          ] as const).map(([shape, label]) => (
+                            <button
+                              key={shape}
+                              onClick={() => setPricingShape(cost, shape)}
+                              disabled={!canEdit}
+                              className={`px-3.5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 ${
+                                pricingShapeOf(cost) === shape ? "bg-brand text-white" : "text-gray-400 hover:text-brand"
+                              }`}
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
                         <div>
                           <label className={labelCls}>Modo</label>
@@ -550,7 +588,9 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                           </select>
                         </div>
                         <div>
-                          <label className={labelCls}>{cost.pricing_mode === "per_person" ? "Preço/pessoa" : "Preço unitário"}</label>
+                          <label className={labelCls}>
+                            {cost.pricing_mode !== "per_person" ? "Preço unitário" : cost.per_category ? "Preço/adulto" : "Preço/pessoa"}
+                          </label>
                           <input
                             className={inputCls}
                             inputMode="decimal"
@@ -569,6 +609,15 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                             onChange={e => patchCost(cost.id, { quantity: parseInt(e.target.value) || 0 })}
                             title={cost.pricing_mode === "per_person" ? "Vem dos convidados confirmados" : undefined}
                           />
+                          {cost.pricing_mode === "per_person" && (
+                            <p className="text-[10px] text-gray-400 mt-1.5">
+                              {cost.per_category
+                                ? `${confirmedGuestCounts.adult} adultos · ${confirmedGuestCounts.child} crianças · ${confirmedGuestCounts.baby} bebés`
+                                : cost.min_quantity
+                                  ? `mínimo garantido: ${cost.min_quantity}`
+                                  : "vem dos confirmados"}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <label className={labelCls}>IVA %</label>
@@ -580,6 +629,57 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                           />
                         </div>
                       </div>
+
+                      {cost.pricing_mode === "per_person" && cost.per_category && (
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                          <div>
+                            <label className={labelCls}>Preço/criança</label>
+                            <input
+                              className={inputCls}
+                              inputMode="decimal"
+                              defaultValue={(cost.unit_price_child_cents / 100).toFixed(2).replace(".", ",")}
+                              onBlur={e => patchCost(cost.id, { unit_price_child_cents: parseAmountToCents(e.target.value) })}
+                            />
+                          </div>
+                          <div>
+                            <label className={labelCls}>Preço/bebé</label>
+                            <input
+                              className={inputCls}
+                              inputMode="decimal"
+                              defaultValue={(cost.unit_price_baby_cents / 100).toFixed(2).replace(".", ",")}
+                              onBlur={e => patchCost(cost.id, { unit_price_baby_cents: parseAmountToCents(e.target.value) })}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {cost.pricing_mode === "per_person" && !cost.per_category && cost.min_quantity != null && (
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                          <div>
+                            <label className={labelCls}>Mínimo de convidados</label>
+                            <input
+                              className={inputCls}
+                              type="number"
+                              min={0}
+                              defaultValue={cost.min_quantity}
+                              onBlur={e => patchCost(cost.id, { min_quantity: parseInt(e.target.value) || 0 })}
+                            />
+                          </div>
+                          <div>
+                            <label className={labelCls}>Preço extra/pessoa</label>
+                            <input
+                              className={inputCls}
+                              inputMode="decimal"
+                              placeholder="= preço normal"
+                              defaultValue={cost.extra_unit_price_cents != null ? (cost.extra_unit_price_cents / 100).toFixed(2).replace(".", ",") : ""}
+                              onBlur={e => {
+                                const raw = e.target.value.trim();
+                                patchCost(cost.id, { extra_unit_price_cents: raw === "" ? null : parseAmountToCents(raw) });
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
 
                       {/* Ponte para a Inspiração: só aparece quando a secção
                           correspondente existe e tem mesmo imagens. */}
@@ -603,7 +703,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
 
                       <div className="flex flex-wrap items-center justify-between gap-4 mt-5 pt-4 border-t border-gray-100">
                         <p className="text-xs text-gray-400">
-                          Sem IVA <strong className="text-ink tabular-nums">{formatCents(costNetCents(cost, confirmedGuests), locale === "en" ? "en-GB" : "pt-PT")}</strong>
+                          Sem IVA <strong className="text-ink tabular-nums">{formatCents(costNetCents(cost, confirmedGuestCounts), locale === "en" ? "en-GB" : "pt-PT")}</strong>
                           <span className="mx-2 text-gray-200">·</span>
                           Com IVA <strong className="text-ink tabular-nums">{formatCents(gross, locale === "en" ? "en-GB" : "pt-PT")}</strong>
                         </p>

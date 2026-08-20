@@ -88,6 +88,16 @@ export type EventCost = {
   visibility: PlannerVisibility;
   notes: string | null;
   sort_order: number;
+  // Duas formas alternativas de refinar uma linha "por pessoa" — mutuamente
+  // exclusivas por desenho (ver 0009_cost_tiers_and_task_responsible.sql).
+  /** true → cobra por escalão etário (unit_price_cents = adultos + os dois abaixo), ignora min_quantity. */
+  per_category: boolean;
+  unit_price_child_cents: number;
+  unit_price_baby_cents: number;
+  /** Mínimo contratual de convidados a cobrar, só relevante quando per_category=false. */
+  min_quantity: number | null;
+  /** Preço por convidado além do mínimo; null = mesmo preço que unit_price_cents. */
+  extra_unit_price_cents: number | null;
 };
 
 // Histórico de notas/reuniões por linha de custo — sempre da agência, nunca
@@ -164,23 +174,65 @@ export const COST_CATEGORIES = [
 
 export const DEFAULT_VAT_PCT = 23;
 
+// Confirmados por escalão etário — vem das categorias já preenchidas no RSVP
+// (adult/child/baby, ver GuestsModule). Um catering que cobra tarifas
+// diferentes por adulto/criança/bebé lê-se diretamente daqui, sem exigir nada
+// de novo do lado dos convidados.
+export type GuestCounts = { adult: number; child: number; baby: number };
+
+export function guestCountsTotal(g: GuestCounts): number {
+  return g.adult + g.child + g.baby;
+}
+
+// Chamadores que só têm um total (ex.: histórico de preços entre eventos, em
+// VendorsView) continuam a passar um número simples — atribuído inteiro a
+// "adultos", o que é exato para todas as linhas exceto as poucas com
+// per_category=true, onde fica uma aproximação. É um limite aceite: essa
+// vista é histórico, não a leitura principal do orçamento.
+function normalizeGuests(g: GuestCounts | number): GuestCounts {
+  return typeof g === "number" ? { adult: g, child: 0, baby: 0 } : g;
+}
+
 /**
  * Quantidade efetiva de uma linha. Em `per_person` vem dos convidados
  * confirmados e move-se sozinha à medida que os RSVP entram — é este o ponto
  * que nenhum concorrente consegue copiar sem ter primeiro um produto de RSVP.
+ * Com um mínimo contratual definido, nunca desce abaixo dele.
  */
-export function effectiveQuantity(cost: EventCost, confirmedGuests: number): number {
-  return cost.pricing_mode === "per_person" ? confirmedGuests : (cost.quantity || 0);
+export function effectiveQuantity(cost: EventCost, guests: GuestCounts | number): number {
+  if (cost.pricing_mode !== "per_person") return cost.quantity || 0;
+  const total = guestCountsTotal(normalizeGuests(guests));
+  if (cost.per_category) return total;
+  if (cost.min_quantity && total < cost.min_quantity) return cost.min_quantity;
+  return total;
 }
 
 /** Valor da linha sem IVA. */
-export function costNetCents(cost: EventCost, confirmedGuests: number): number {
-  return Math.round(cost.unit_price_cents * effectiveQuantity(cost, confirmedGuests));
+export function costNetCents(cost: EventCost, guests: GuestCounts | number): number {
+  const g = normalizeGuests(guests);
+
+  if (cost.pricing_mode === "per_person" && cost.per_category) {
+    return Math.round(
+      g.adult * cost.unit_price_cents +
+      g.child * cost.unit_price_child_cents +
+      g.baby * cost.unit_price_baby_cents
+    );
+  }
+
+  if (cost.pricing_mode === "per_person" && cost.min_quantity) {
+    const total = guestCountsTotal(g);
+    const base = cost.min_quantity * cost.unit_price_cents;
+    if (total <= cost.min_quantity) return Math.round(base);
+    const extraPrice = cost.extra_unit_price_cents ?? cost.unit_price_cents;
+    return Math.round(base + (total - cost.min_quantity) * extraPrice);
+  }
+
+  return Math.round(cost.unit_price_cents * effectiveQuantity(cost, g));
 }
 
 /** Valor da linha com IVA aplicado. */
-export function costGrossCents(cost: EventCost, confirmedGuests: number): number {
-  const net = costNetCents(cost, confirmedGuests);
+export function costGrossCents(cost: EventCost, guests: GuestCounts | number): number {
+  const net = costNetCents(cost, guests);
   return Math.round(net * (1 + (cost.vat_pct || 0) / 100));
 }
 
@@ -204,7 +256,7 @@ export type BudgetTotals = {
 export function budgetTotals(
   costs: EventCost[],
   payments: CostPayment[],
-  confirmedGuests: number,
+  confirmedGuests: GuestCounts | number,
   today: Date = new Date()
 ): BudgetTotals {
   const todayISO = today.toISOString().slice(0, 10);
@@ -241,7 +293,7 @@ export type CostGroup = { key: string; label: string; cents: number };
  */
 export function groupCosts(
   costs: EventCost[],
-  confirmedGuests: number,
+  confirmedGuests: GuestCounts | number,
   keyOf: (cost: EventCost) => { key: string; label: string },
   maxSlices = 8,
   otherLabel = "Outros"
@@ -296,6 +348,19 @@ export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = { baixa: "Baix
 // Ordem de urgência para ordenar (maior primeiro).
 export const TASK_PRIORITY_WEIGHT: Record<TaskPriority, number> = { alta: 2, normal: 1, baixa: 0 };
 
+// Quem faz a tarefa — não confundir com `assigned_to_email` (uma pessoa
+// concreta, ainda sem interface): isto é o lado, agência ou casal, que é o
+// filtro que interessa numa checklist com as duas partes misturadas.
+// Uma tarefa não-agência é sempre partilhada — imposto por constraint na BD
+// (0009_cost_tiers_and_task_responsible.sql), não só por convenção aqui.
+export type TaskResponsible = "agency" | "couple" | "both";
+export const TASK_RESPONSIBLES: TaskResponsible[] = ["agency", "couple", "both"];
+export const TASK_RESPONSIBLE_LABELS: Record<TaskResponsible, string> = {
+  agency: "Agência",
+  couple: "Noivos",
+  both: "Conjunta",
+};
+
 export type EventTask = {
   id: string;
   invitation_id: string;
@@ -305,6 +370,7 @@ export type EventTask = {
   due_offset_days: number | null;
   status: TaskStatus;
   priority: TaskPriority;
+  responsible: TaskResponsible;
   assigned_to_email: string | null;
   visibility: PlannerVisibility;
   sort_order: number;

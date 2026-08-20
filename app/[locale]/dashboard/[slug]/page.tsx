@@ -275,7 +275,15 @@ export default function Dashboard() {
   // A equipa da agência vê tudo; o casal vê só o que estiver marcado como
   // partilhado (imposto pelo Supabase, não aqui).
   const showManagement = !!plannerPlan;
-  const confirmedGuests = guests.filter((g: any) => g.status === 'confirmed').length;
+  const confirmedGuestsList = guests.filter((g: any) => g.status === 'confirmed');
+  const confirmedGuests = confirmedGuestsList.length;
+  // Por escalão etário — alimenta o Orçamento (preço por adulto/criança/bebé,
+  // ver lib/planner.ts). A categoria já vem do RSVP, nada de novo a pedir ao casal.
+  const confirmedGuestCounts = {
+    adult: confirmedGuestsList.filter((g: any) => g.category === 'adult').length,
+    child: confirmedGuestsList.filter((g: any) => g.category === 'child').length,
+    baby: confirmedGuestsList.filter((g: any) => g.category === 'baby').length,
+  };
 
   // O bloqueio real (contra escrita) já é imposto pelo Supabase (RLS); isto só
   // reflete esse estado na interface para os noivos perceberem porque ficou só-leitura.
@@ -675,7 +683,7 @@ export default function Dashboard() {
                   brandId={formData.brand_id}
                   canEdit={canEdit}
                   isAgency={isAgencyStaff || isSuperAdmin}
-                  confirmedGuests={confirmedGuests}
+                  confirmedGuestCounts={confirmedGuestCounts}
                   locale={locale}
                   onOpenMoodboard={sectionId => { setMoodboardFocus(sectionId); setActiveTab('moodboard'); }}
                 />
