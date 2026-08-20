@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
+import { useSaveStatus } from "@/lib/useSaveStatus";
 import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check, Flag } from "lucide-react";
 import { dueDateFromOffset, isOverdue, TASK_PRIORITIES, TASK_PRIORITY_LABELS, type EventTask, type TaskPriority, type TaskStatus } from "@/lib/planner";
 
@@ -25,6 +27,7 @@ const PRIORITY_COLOR: Record<TaskPriority, string> = { baixa: "text-gray-300", n
 export default function TasksModule({ invitationId, eventDate, canEdit, isAgency }: Props) {
   const [tasks, setTasks] = useState<EventTask[]>([]);
   const [loading, setLoading] = useState(true);
+  const { status: saveStatus, track } = useSaveStatus("TasksModule");
   const [newTitle, setNewTitle] = useState("");
   const [adding, setAdding] = useState(false);
   const [recalculating, setRecalculating] = useState(false);
@@ -67,13 +70,13 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
   const patchTask = async (id: string, patch: Partial<EventTask>) => {
     if (!canEdit) return;
     setTasks(prev => prev.map(t => (t.id === id ? { ...t, ...patch } : t)));
-    await supabase.from("event_tasks").update(patch).eq("id", id);
+    await track(supabase.from("event_tasks").update(patch).eq("id", id));
   };
 
   const removeTask = async (id: string) => {
     if (!canEdit) return;
     setTasks(prev => prev.filter(t => t.id !== id));
-    await supabase.from("event_tasks").delete().eq("id", id);
+    await track(supabase.from("event_tasks").delete().eq("id", id));
   };
 
   const cycleStatus = (t: EventTask) => {
@@ -114,6 +117,10 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
 
   return (
     <div className="space-y-8 pb-16 text-left animate-in fade-in duration-500 font-montserrat">
+      {/* Este módulo é todo em português (ver STATUS_LABELS), por isso o
+          indicador segue a mesma língua em vez de receber um `locale`. */}
+      <SaveStatusBadge status={saveStatus} locale="pt" />
+
       <section className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-md border border-gray-100">
 
         <div className="flex flex-wrap items-start justify-between gap-4 mb-8">

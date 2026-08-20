@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
+import { useSaveStatus } from "@/lib/useSaveStatus";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useBrand } from "@/components/site/BrandProvider";
@@ -33,6 +35,7 @@ export default function TimelineModule({ invitationId, brandId, eventDate, groom
   const [blocks, setBlocks] = useState<TimelineBlock[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
+  const { status: saveStatus, track } = useSaveStatus("TimelineModule");
   const [adding, setAdding] = useState(false);
   const [exporting, setExporting] = useState(false);
 
@@ -76,13 +79,13 @@ export default function TimelineModule({ invitationId, brandId, eventDate, groom
       const next = prev.map(b => (b.id === id ? { ...b, ...patch } : b));
       return patch.event_time ? [...next].sort((a, b) => a.event_time.localeCompare(b.event_time)) : next;
     });
-    await supabase.from("event_timeline").update(patch).eq("id", id);
+    await track(supabase.from("event_timeline").update(patch).eq("id", id));
   };
 
   const removeBlock = async (id: string) => {
     if (!canEdit) return;
     setBlocks(prev => prev.filter(b => b.id !== id));
-    await supabase.from("event_timeline").delete().eq("id", id);
+    await track(supabase.from("event_timeline").delete().eq("id", id));
   };
 
   const exportPDF = async () => {
@@ -138,6 +141,8 @@ export default function TimelineModule({ invitationId, brandId, eventDate, groom
 
   return (
     <div className="space-y-8 pb-16 text-left animate-in fade-in duration-500 font-montserrat">
+      <SaveStatusBadge status={saveStatus} locale={locale} />
+
       <section className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-md border border-gray-100">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
           <div>

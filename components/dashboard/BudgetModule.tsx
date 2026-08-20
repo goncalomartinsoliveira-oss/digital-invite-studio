@@ -3,6 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { Plus, Trash2, ChevronDown, Eye, EyeOff, Loader2, MessageSquare, FileText, Upload } from "lucide-react";
 import BudgetSummary from "@/components/dashboard/BudgetSummary";
+import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
+import { useSaveStatus } from "@/lib/useSaveStatus";
 import {
   COST_CATEGORIES,
   COST_STATUSES,
@@ -64,6 +66,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   // Orçamento total do evento — um único número, vive em `invitations`
   // (ver 0008_budget_total.sql), não na soma das linhas de custo.
   const [budgetTotalCents, setBudgetTotalCents] = useState(0);
+  const { status: saveStatus, track } = useSaveStatus("BudgetModule");
   // Histórico de reuniões/notas — sempre privado da agência (nem a RLS deixa
   // o casal ler), por isso só se pede quando quem está a ver é agência.
   const [notes, setNotes] = useState<CostNote[]>([]);
@@ -107,7 +110,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const saveBudgetTotal = async (cents: number) => {
     if (!canEdit || cents === budgetTotalCents) return;
     setBudgetTotalCents(cents);
-    await supabase.from("invitations").update({ planner_budget_total_cents: cents }).eq("id", invitationId);
+    await track(supabase.from("invitations").update({ planner_budget_total_cents: cents }).eq("id", invitationId));
   };
 
   const otherLabel = locale === "en" ? "Others" : "Outros";
@@ -177,14 +180,14 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const patchCost = async (id: string, patch: Partial<EventCost>) => {
     if (!canEdit) return;
     setCosts(prev => prev.map(c => (c.id === id ? { ...c, ...patch } : c)));
-    await supabase.from("event_costs").update(patch).eq("id", id);
+    await track(supabase.from("event_costs").update(patch).eq("id", id));
   };
 
   const removeCost = async (id: string) => {
     if (!canEdit) return;
     setCosts(prev => prev.filter(c => c.id !== id));
     setPayments(prev => prev.filter(p => p.cost_id !== id));
-    await supabase.from("event_costs").delete().eq("id", id);
+    await track(supabase.from("event_costs").delete().eq("id", id));
   };
 
   const addPayment = async (costId: string) => {
@@ -200,13 +203,13 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const patchPayment = async (id: string, patch: Partial<CostPayment>) => {
     if (!canEdit) return;
     setPayments(prev => prev.map(p => (p.id === id ? { ...p, ...patch } : p)));
-    await supabase.from("event_cost_payments").update(patch).eq("id", id);
+    await track(supabase.from("event_cost_payments").update(patch).eq("id", id));
   };
 
   const removePayment = async (id: string) => {
     if (!canEdit) return;
     setPayments(prev => prev.filter(p => p.id !== id));
-    await supabase.from("event_cost_payments").delete().eq("id", id);
+    await track(supabase.from("event_cost_payments").delete().eq("id", id));
   };
 
   const addNote = async (costId: string) => {
@@ -224,7 +227,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const removeNote = async (id: string) => {
     if (!canEdit || !isAgency) return;
     setNotes(prev => prev.filter(n => n.id !== id));
-    await supabase.from("event_cost_notes").delete().eq("id", id);
+    await track(supabase.from("event_cost_notes").delete().eq("id", id));
   };
 
   // costId null → documento geral do evento. draftKey identifica a secção nos
@@ -259,7 +262,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const removeDocument = async (id: string) => {
     if (!canEdit) return;
     setDocuments(prev => prev.filter(d => d.id !== id));
-    await supabase.from("event_documents").delete().eq("id", id);
+    await track(supabase.from("event_documents").delete().eq("id", id));
   };
 
   const inputCls = "w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-ink outline-none focus:border-brand transition-colors disabled:opacity-60";
@@ -271,6 +274,8 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
 
   return (
     <div className="space-y-8 pb-16 text-left animate-in fade-in duration-500 font-montserrat">
+
+      <SaveStatusBadge status={saveStatus} locale={locale} />
 
       {/* ── Resumo: orçamento vs. contratado + onde está o dinheiro ── */}
       <BudgetSummary
