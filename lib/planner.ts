@@ -288,12 +288,54 @@ export function formatEventTime(time: string): string {
 }
 
 /** Hora de fim de um bloco, a partir da hora de início + duração. */
-export function timelineBlockEndTime(block: TimelineBlock): string | null {
+export function timelineBlockEndTime(block: Pick<TimelineBlock, "event_time" | "duration_minutes">): string | null {
   if (!block.duration_minutes) return null;
   const [h, m] = formatEventTime(block.event_time).split(":").map(Number);
   if (Number.isNaN(h) || Number.isNaN(m)) return null;
   const end = new Date(2000, 0, 1, h, m + block.duration_minutes);
   return `${String(end.getHours()).padStart(2, "0")}:${String(end.getMinutes()).padStart(2, "0")}`;
+}
+
+// ── Portal do fornecedor ─────────────────────────────────────────────────────
+// Link de leitura, sem conta DIS, por linha de custo (evento + fornecedor).
+// Ver 0005_vendor_portal.sql para o porquê de não ter política de leitura
+// pública: a página pública lê esta tabela do servidor, com a service_role
+// key, nunca com a anon key do browser.
+
+export type VendorPortalLink = {
+  id: string;
+  cost_id: string;
+  invitation_id: string;
+  token: string;
+  expires_at: string;
+  created_by_email: string | null;
+  created_at: string;
+};
+
+/** Token de 192 bits — só é chamado no browser (botão "Gerar link"), nunca no servidor. */
+export function generatePortalToken(): string {
+  const bytes = new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Expira 7 dias depois do casamento — tempo suficiente para o dia-de e um
+ * possível ajuste de última hora, sem o link continuar válido meses depois.
+ * Se o casamento já passou (ou não há data), dá 7 dias a partir de agora, em
+ * vez de gerar um link já nascido expirado.
+ */
+export function portalLinkExpiry(eventDate: string | null | undefined, now: Date = new Date()): string {
+  const nowPlus7 = new Date(now);
+  nowPlus7.setDate(nowPlus7.getDate() + 7);
+  if (!eventDate) return nowPlus7.toISOString();
+  const eventPlus7 = new Date(eventDate);
+  eventPlus7.setDate(eventPlus7.getDate() + 7);
+  return (eventPlus7 > now ? eventPlus7 : nowPlus7).toISOString();
+}
+
+export function isPortalLinkExpired(link: Pick<VendorPortalLink, "expires_at">, now: Date = new Date()): boolean {
+  return new Date(link.expires_at).getTime() < now.getTime();
 }
 
 // ── Formatação ───────────────────────────────────────────────────────────────

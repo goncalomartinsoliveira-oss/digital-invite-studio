@@ -658,6 +658,7 @@ export default function Dashboard() {
                   canEdit={canEdit}
                   isAgency={isAgencyStaff || isSuperAdmin}
                   confirmedGuests={confirmedGuests}
+                  eventDate={formData.event_date}
                   locale={locale}
                 />
               )}

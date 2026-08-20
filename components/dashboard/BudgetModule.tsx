@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, ChevronDown, Eye, EyeOff, Users, AlertTriangle, Loader2, MessageSquare, FileText, Upload } from "lucide-react";
+import { Plus, Trash2, ChevronDown, Eye, EyeOff, Users, AlertTriangle, Loader2, MessageSquare, FileText, Upload, Share2, Copy, Check, RefreshCw } from "lucide-react";
 import {
   COST_CATEGORIES,
   COST_STATUSES,
@@ -13,11 +13,14 @@ import {
   effectiveQuantity,
   formatCents,
   parseAmountToCents,
+  generatePortalToken,
+  portalLinkExpiry,
   type CostNote,
   type CostPayment,
   type CostStatus,
   type EventCost,
   type EventDocument,
+  type VendorPortalLink,
 } from "@/lib/planner";
 
 // Cor do estado do contrato — a fase da relação com o fornecedor, à parte de
@@ -45,6 +48,7 @@ interface Props {
   /** Equipa da agência vê tudo; o casal só vê as linhas partilhadas. */
   isAgency: boolean;
   confirmedGuests: number;
+  eventDate: string | null;
   locale: string;
 }
 
@@ -55,10 +59,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   transporte: "Transporte", honorarios: "Honorários", outros: "Outros",
 };
 
-export default function BudgetModule({ invitationId, brandId, canEdit, isAgency, confirmedGuests, locale }: Props) {
+export default function BudgetModule({ invitationId, brandId, canEdit, isAgency, confirmedGuests, eventDate, locale }: Props) {
   const [costs, setCosts] = useState<EventCost[]>([]);
   const [payments, setPayments] = useState<CostPayment[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  // Portal do fornecedor — link de leitura sem conta, um por linha de custo.
+  const [portalLinks, setPortalLinks] = useState<VendorPortalLink[]>([]);
+  const [copiedLink, setCopiedLink] = useState<string | null>(null);
   // Histórico de reuniões/notas — sempre privado da agência (nem a RLS deixa
   // o casal ler), por isso só se pede quando quem está a ver é agência.
   const [notes, setNotes] = useState<CostNote[]>([]);
@@ -75,7 +82,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const [adding, setAdding] = useState(false);
 
   const load = useCallback(async () => {
-    const [c, p, v, n, d] = await Promise.all([
+    const [c, p, v, n, d, pl] = await Promise.all([
       supabase.from("event_costs").select("*").eq("invitation_id", invitationId).order("sort_order").order("created_at"),
       supabase.from("event_cost_payments").select("*").eq("invitation_id", invitationId).order("due_date"),
       supabase.from("agency_vendors").select("id, name, category").eq("brand_id", brandId).order("name"),
@@ -83,9 +90,11 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         ? supabase.from("event_cost_notes").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false })
         : Promise.resolve({ data: [] as CostNote[] }),
       supabase.from("event_documents").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false }),
+      supabase.from("vendor_portal_links").select("*").eq("invitation_id", invitationId),
     ]);
     setCosts((c.data as EventCost[]) || []);
     setPayments((p.data as CostPayment[]) || []);
+    setPortalLinks((pl.data as VendorPortalLink[]) || []);
     setVendors((v.data as Vendor[]) || []);
     setNotes((n.data as CostNote[]) || []);
     setDocuments((d.data as EventDocument[]) || []);
@@ -229,6 +238,39 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
     if (!canEdit) return;
     setDocuments(prev => prev.filter(d => d.id !== id));
     await supabase.from("event_documents").delete().eq("id", id);
+  };
+
+  const portalLinkFor = (costId: string) => portalLinks.find(l => l.cost_id === costId) || null;
+  const portalLinkUrl = (link: VendorPortalLink) => `${window.location.origin}/${locale}/fornecedor/${link.token}`;
+
+  // Um link por linha de custo (cost_id é único): gerar quando não existe
+  // nenhum, ou trocar o token quando já existe — o link antigo deixa de
+  // funcionar assim que o novo token é gravado.
+  const generatePortalLink = async (costId: string) => {
+    if (!canEdit) return;
+    const { data } = await supabase
+      .from("vendor_portal_links")
+      .upsert(
+        { cost_id: costId, invitation_id: invitationId, token: generatePortalToken(), expires_at: portalLinkExpiry(eventDate) },
+        { onConflict: "cost_id" }
+      )
+      .select("*")
+      .single();
+    if (data) setPortalLinks(prev => [...prev.filter(l => l.cost_id !== costId), data as VendorPortalLink]);
+  };
+
+  const revokePortalLink = async (costId: string) => {
+    if (!canEdit) return;
+    const link = portalLinkFor(costId);
+    if (!link) return;
+    setPortalLinks(prev => prev.filter(l => l.cost_id !== costId));
+    await supabase.from("vendor_portal_links").delete().eq("id", link.id);
+  };
+
+  const copyPortalLink = (link: VendorPortalLink) => {
+    navigator.clipboard.writeText(portalLinkUrl(link));
+    setCopiedLink(link.id);
+    setTimeout(() => setCopiedLink(prev => (prev === link.id ? null : prev)), 2000);
   };
 
   const inputCls = "w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm text-ink outline-none focus:border-brand transition-colors disabled:opacity-60";
@@ -682,6 +724,67 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                           </ul>
                         )}
                       </div>
+
+                      {/* Portal do fornecedor — link de leitura sem conta, só
+                          faz sentido depois de haver um nome de fornecedor. */}
+                      {cost.vendor_id && (
+                        <div className="mt-4 bg-white rounded-2xl border border-gray-100 p-4">
+                          <div className="flex items-center gap-1.5 mb-2">
+                            <Share2 size={13} className="text-brand" />
+                            <p className={labelCls + " mb-0"}>Portal do Fornecedor</p>
+                          </div>
+                          {(() => {
+                            const link = portalLinkFor(cost.id);
+                            if (!link) {
+                              return canEdit ? (
+                                <button
+                                  onClick={() => generatePortalLink(cost.id)}
+                                  className="inline-flex items-center gap-1.5 bg-brand/5 text-brand px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-brand/10 transition-all"
+                                >
+                                  <Share2 size={13} /> Gerar link
+                                </button>
+                              ) : (
+                                <p className="text-xs text-gray-400">Ainda não gerado.</p>
+                              );
+                            }
+                            const expiresLabel = new Date(link.expires_at).toLocaleDateString(
+                              locale === "en" ? "en-GB" : "pt-PT",
+                              { day: "2-digit", month: "short", year: "numeric" }
+                            );
+                            return (
+                              <div>
+                                <div className="flex items-center gap-2 bg-cream/60 rounded-xl px-3 py-2.5">
+                                  <p className="flex-1 min-w-0 text-xs text-ink truncate font-mono">{portalLinkUrl(link)}</p>
+                                  <button
+                                    onClick={() => copyPortalLink(link)}
+                                    className="text-gray-400 hover:text-brand transition-colors shrink-0"
+                                    aria-label="Copiar link"
+                                  >
+                                    {copiedLink === link.id ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+                                  </button>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-2">Válido até {expiresLabel}</p>
+                                {canEdit && (
+                                  <div className="flex gap-3 mt-2">
+                                    <button
+                                      onClick={() => generatePortalLink(cost.id)}
+                                      className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand transition-colors"
+                                    >
+                                      <RefreshCw size={11} /> Gerar novo
+                                    </button>
+                                    <button
+                                      onClick={() => revokePortalLink(cost.id)}
+                                      className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors"
+                                    >
+                                      <Trash2 size={11} /> Revogar
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
