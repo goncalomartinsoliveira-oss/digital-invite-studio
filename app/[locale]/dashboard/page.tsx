@@ -274,7 +274,7 @@ export default function DashboardHub() {
                   onClick={() => setViewMode('planning')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'planning' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
                 >
-                  <CalendarClock size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'This Week' : 'Esta Semana'}</span>
+                  <CalendarClock size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Tasks' : 'Tarefas'}</span>
                 </button>
               )}
               {plannerPlan && (

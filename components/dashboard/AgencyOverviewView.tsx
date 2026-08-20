@@ -25,7 +25,7 @@ const PAYMENT_WINDOW_DAYS = 30;
 export default function AgencyOverviewView({ events, locale, onOpenEvent }: Props) {
   const en = locale === "en";
   const t = {
-    title: en ? "This Week" : "Esta Semana",
+    title: en ? "Tasks" : "Tarefas",
     subtitle: en
       ? "Tasks and payments across every active event, in one place."
       : "Tarefas e pagamentos de todos os eventos ativos, num só sítio.",
