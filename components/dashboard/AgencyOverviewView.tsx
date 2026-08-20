@@ -38,12 +38,19 @@ export default function AgencyOverviewView({ events, locale, onOpenEvent }: Prop
     today: en ? "Today" : "Hoje",
     inDays: (n: number) => en ? `In ${n}d` : `Em ${n}d`,
     overdueDays: (n: number) => en ? `${n}d overdue` : `${n}d de atraso`,
+    noDueDate: en ? "No due date" : "Sem prazo",
     noEvents: en ? "No active events yet." : "Ainda não há eventos ativos.",
+    window30: en ? "Next 30 days" : "Próximos 30 dias",
+    windowAll: en ? "All" : "Todas",
   };
 
   const [tasks, setTasks] = useState<EventTask[]>([]);
   const [payments, setPayments] = useState<CostPayment[]>([]);
   const [loading, setLoading] = useState(true);
+  // "30d" é a triagem rápida (o que precisa de atenção agora); "all" é para
+  // planear mais à frente — a mesma consulta já traz tudo, isto só decide
+  // quanto mostrar.
+  const [viewWindow, setViewWindow] = useState<"30d" | "all">("30d");
 
   const eventIds = events.map(e => e.id);
   const eventName = (invitationId: string) => {
@@ -71,18 +78,27 @@ export default function AgencyOverviewView({ events, locale, onOpenEvent }: Prop
   const todayISO = new Date().toISOString().slice(0, 10);
   const windowEndISO = new Date(Date.now() + PAYMENT_WINDOW_DAYS * 86400000).toISOString().slice(0, 10);
 
-  const relevantTasks = tasks
-    .filter(tk => tk.due_date && tk.due_date <= windowEndISO)
-    .sort((a, b) => (a.due_date || "").localeCompare(b.due_date || "") || (TASK_PRIORITY_WEIGHT[b.priority] - TASK_PRIORITY_WEIGHT[a.priority]));
+  // Nulos por último — em "Todas" mostram-se, mas não devem intercalar com
+  // datas reais.
+  const sortByDue = (a: { due_date: string | null }, b: { due_date: string | null }) => {
+    if (!a.due_date && !b.due_date) return 0;
+    if (!a.due_date) return 1;
+    if (!b.due_date) return -1;
+    return a.due_date.localeCompare(b.due_date);
+  };
 
-  const relevantPayments = payments
-    .filter(p => p.due_date && p.due_date <= windowEndISO)
-    .sort((a, b) => (a.due_date || "").localeCompare(b.due_date || ""));
+  const relevantTasks = (viewWindow === "all" ? tasks : tasks.filter(tk => tk.due_date && tk.due_date <= windowEndISO))
+    .slice()
+    .sort((a, b) => sortByDue(a, b) || (TASK_PRIORITY_WEIGHT[b.priority] - TASK_PRIORITY_WEIGHT[a.priority]));
+
+  const relevantPayments = (viewWindow === "all" ? payments : payments.filter(p => p.due_date && p.due_date <= windowEndISO))
+    .slice()
+    .sort(sortByDue);
 
   const daysFrom = (iso: string) => Math.round((new Date(iso).getTime() - new Date(todayISO).getTime()) / 86400000);
 
   const dueLabel = (iso: string | null) => {
-    if (!iso) return "";
+    if (!iso) return t.noDueDate;
     const d = daysFrom(iso);
     if (d < 0) return t.overdueDays(-d);
     if (d === 0) return t.today;
@@ -91,9 +107,27 @@ export default function AgencyOverviewView({ events, locale, onOpenEvent }: Prop
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-3">{t.title}</h1>
-        <p className="text-gray-500 text-sm">{t.subtitle}</p>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-3">{t.title}</h1>
+          <p className="text-gray-500 text-sm">{t.subtitle}</p>
+        </div>
+        {events.length > 0 && (
+          <div className="flex items-center gap-1 bg-cream rounded-full p-1 border border-gold-soft/50 shrink-0">
+            <button
+              onClick={() => setViewWindow("30d")}
+              className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewWindow === "30d" ? "bg-brand text-white" : "text-gray-400 hover:text-brand"}`}
+            >
+              {t.window30}
+            </button>
+            <button
+              onClick={() => setViewWindow("all")}
+              className={`px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewWindow === "all" ? "bg-brand text-white" : "text-gray-400 hover:text-brand"}`}
+            >
+              {t.windowAll}
+            </button>
+          </div>
+        )}
       </div>
 
       {events.length === 0 ? (
