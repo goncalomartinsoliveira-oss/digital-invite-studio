@@ -32,6 +32,7 @@ aplicados.
 | `0005_vendor_portal.sql` | `vendor_portal_links` — link de leitura sem conta para fornecedores, por evento + tipo ("timeline" / "full"), reutilizável por vários fornecedores. Sem política de leitura pública de propósito: a página lê com a service_role key, nunca com a anon key | ☑ |
 | `0006_moodboard.sql` | `event_moodboard_sections` + `event_moodboard_items` — moodboard do evento organizado em secções (imagens carregadas ou links com miniatura extraída), sempre partilhado entre agência e casal, sem distinção agency/shared | ☑ |
 | `0007_moodboard_share.sql` | `moodboard_share_links` — link de partilha do Moodboard (ver + contribuir), sem conta DIS, um por evento. Sem política de leitura/escrita pública: as rotas em `app/api/moodboard/public` usam a service_role key | ☑ |
+| `0008_budget_total.sql` | `invitations.planner_budget_total_cents` — orçamento total por evento (um número, em vez da soma de `event_costs.budgeted_cents`). Faz backfill da soma antiga; a coluna antiga fica na BD sem uso | ☐ |
 
 > Marcar a coluna "Aplicado" depois de correr em produção, para não haver
 > dúvidas mais tarde.

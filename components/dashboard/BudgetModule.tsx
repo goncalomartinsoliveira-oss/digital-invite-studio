@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, ChevronDown, Eye, EyeOff, Users, AlertTriangle, Loader2, MessageSquare, FileText, Upload } from "lucide-react";
+import { Plus, Trash2, ChevronDown, Eye, EyeOff, Loader2, MessageSquare, FileText, Upload } from "lucide-react";
+import BudgetSummary from "@/components/dashboard/BudgetSummary";
 import {
   COST_CATEGORIES,
   COST_STATUSES,
@@ -12,6 +13,7 @@ import {
   costNetCents,
   effectiveQuantity,
   formatCents,
+  groupCosts,
   parseAmountToCents,
   type CostNote,
   type CostPayment,
@@ -59,6 +61,9 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const [costs, setCosts] = useState<EventCost[]>([]);
   const [payments, setPayments] = useState<CostPayment[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  // Orçamento total do evento — um único número, vive em `invitations`
+  // (ver 0008_budget_total.sql), não na soma das linhas de custo.
+  const [budgetTotalCents, setBudgetTotalCents] = useState(0);
   // Histórico de reuniões/notas — sempre privado da agência (nem a RLS deixa
   // o casal ler), por isso só se pede quando quem está a ver é agência.
   const [notes, setNotes] = useState<CostNote[]>([]);
@@ -75,7 +80,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const [adding, setAdding] = useState(false);
 
   const load = useCallback(async () => {
-    const [c, p, v, n, d] = await Promise.all([
+    const [c, p, v, n, d, inv] = await Promise.all([
       supabase.from("event_costs").select("*").eq("invitation_id", invitationId).order("sort_order").order("created_at"),
       supabase.from("event_cost_payments").select("*").eq("invitation_id", invitationId).order("due_date"),
       supabase.from("agency_vendors").select("id, name, category").eq("brand_id", brandId).order("name"),
@@ -83,9 +88,11 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         ? supabase.from("event_cost_notes").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false })
         : Promise.resolve({ data: [] as CostNote[] }),
       supabase.from("event_documents").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false }),
+      supabase.from("invitations").select("planner_budget_total_cents").eq("id", invitationId).maybeSingle(),
     ]);
     setCosts((c.data as EventCost[]) || []);
     setPayments((p.data as CostPayment[]) || []);
+    setBudgetTotalCents((inv.data as { planner_budget_total_cents: number } | null)?.planner_budget_total_cents || 0);
     setVendors((v.data as Vendor[]) || []);
     setNotes((n.data as CostNote[]) || []);
     setDocuments((d.data as EventDocument[]) || []);
@@ -96,6 +103,31 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
 
   const totals = budgetTotals(costs, payments, confirmedGuests);
   const vendorName = (id: string | null) => vendors.find(v => v.id === id)?.name || "";
+
+  const saveBudgetTotal = async (cents: number) => {
+    if (!canEdit || cents === budgetTotalCents) return;
+    setBudgetTotalCents(cents);
+    await supabase.from("invitations").update({ planner_budget_total_cents: cents }).eq("id", invitationId);
+  };
+
+  const otherLabel = locale === "en" ? "Others" : "Outros";
+  const vendorGroups = groupCosts(
+    costs,
+    confirmedGuests,
+    c => ({
+      key: c.vendor_id || "__none__",
+      label: vendorName(c.vendor_id) || (locale === "en" ? "No vendor" : "Sem fornecedor"),
+    }),
+    8,
+    otherLabel
+  );
+  const categoryGroups = groupCosts(
+    costs,
+    confirmedGuests,
+    c => ({ key: c.category, label: CATEGORY_LABELS[c.category] || c.category }),
+    8,
+    otherLabel
+  );
 
   // Fornecedor por nome: se ainda não existir no diretório da agência, é criado
   // agora. É assim que o diretório se constrói sozinho com o uso, sem obrigar
@@ -126,7 +158,6 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         pricing_mode: "fixed",
         unit_price_cents: 0,
         quantity: 1,
-        budgeted_cents: 0,
         vat_pct: DEFAULT_VAT_PCT,
         status: "a_orcar",
         // Privado por omissão: o honorário e as margens da agência nunca podem
@@ -241,47 +272,17 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   return (
     <div className="space-y-8 pb-16 text-left animate-in fade-in duration-500 font-montserrat">
 
-      {/* ── Resumo ──────────────────────────────────────────────── */}
-      <section className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-md border border-gray-100">
-        <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
-          <div>
-            <h3 className="font-serif text-3xl text-brand">Orçamento</h3>
-            <p className="text-xs text-gray-400 uppercase tracking-widest mt-2 font-bold">
-              Custos, fornecedores e pagamentos
-            </p>
-          </div>
-          <div className="flex items-center gap-2 bg-cream border border-gold-soft/60 rounded-full px-4 py-2">
-            <Users size={14} className="text-brand" />
-            <span className="text-[11px] font-bold text-ink tabular-nums">{confirmedGuests}</span>
-            <span className="text-[10px] uppercase tracking-widest text-gray-400">confirmados</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          {[
-            { label: "Orçamentado", value: totals.budgeted, tone: "text-gray-500" },
-            { label: "Contratado c/ IVA", value: totals.gross, tone: "text-ink" },
-            { label: "Pago", value: totals.paid, tone: "text-green-600" },
-            { label: "Por pagar", value: totals.outstanding, tone: "text-ink" },
-            { label: "Vencido", value: totals.overdue, tone: totals.overdue > 0 ? "text-red-600" : "text-gray-300" },
-          ].map(k => (
-            <div key={k.label} className="bg-cream rounded-2xl border border-gray-100 p-4">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">{k.label}</p>
-              <p className={`text-lg font-bold tabular-nums ${k.tone}`}>{formatCents(k.value, locale === "en" ? "en-GB" : "pt-PT")}</p>
-            </div>
-          ))}
-        </div>
-
-        {totals.gross > totals.budgeted && totals.budgeted > 0 && (
-          <div className="mt-5 flex items-center gap-2.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-2xl px-4 py-3">
-            <AlertTriangle size={15} className="shrink-0" />
-            <span>
-              O contratado ultrapassa o orçamentado em{" "}
-              <strong>{formatCents(totals.gross - totals.budgeted, locale === "en" ? "en-GB" : "pt-PT")}</strong>.
-            </span>
-          </div>
-        )}
-      </section>
+      {/* ── Resumo: orçamento vs. contratado + onde está o dinheiro ── */}
+      <BudgetSummary
+        totals={totals}
+        budgetTotalCents={budgetTotalCents}
+        onBudgetTotalChange={saveBudgetTotal}
+        vendorGroups={vendorGroups}
+        categoryGroups={categoryGroups}
+        confirmedGuests={confirmedGuests}
+        canEdit={canEdit}
+        locale={locale}
+      />
 
       {/* ── Documentos gerais do evento (sem fornecedor associado) ── */}
       <section className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-md border border-gray-100">
@@ -462,7 +463,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-5">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
                         <div>
                           <label className={labelCls}>Modo</label>
                           <select
@@ -502,15 +503,6 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                             inputMode="decimal"
                             defaultValue={String(cost.vat_pct)}
                             onBlur={e => patchCost(cost.id, { vat_pct: parseFloat(e.target.value.replace(",", ".")) || 0 })}
-                          />
-                        </div>
-                        <div>
-                          <label className={labelCls}>Orçamentado</label>
-                          <input
-                            className={inputCls}
-                            inputMode="decimal"
-                            defaultValue={(cost.budgeted_cents / 100).toFixed(2).replace(".", ",")}
-                            onBlur={e => patchCost(cost.id, { budgeted_cents: parseAmountToCents(e.target.value) })}
                           />
                         </div>
                       </div>

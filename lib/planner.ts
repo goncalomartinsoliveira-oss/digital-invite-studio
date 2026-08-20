@@ -81,6 +81,7 @@ export type EventCost = {
   pricing_mode: CostPricingMode;
   unit_price_cents: number;
   quantity: number;
+  /** @deprecated O orçamento passou a ser um total por evento (ver 0008_budget_total.sql). A coluna ficou na BD para não perder o histórico, mas já não é lida nem escrita. */
   budgeted_cents: number;
   vat_pct: number;
   status: CostStatus;
@@ -184,7 +185,6 @@ export function costGrossCents(cost: EventCost, confirmedGuests: number): number
 }
 
 export type BudgetTotals = {
-  budgeted: number;
   net: number;
   gross: number;
   paid: number;
@@ -196,6 +196,10 @@ export type BudgetTotals = {
  * Totais do orçamento. `outstanding` é o que está previsto em marcos de
  * pagamento e ainda não foi pago; `overdue` é a parte disso que já passou do
  * prazo — é o número que interessa à agência de manhã.
+ *
+ * O valor orçamentado não vem daqui: desde 0008_budget_total.sql é um único
+ * número por evento (`invitations.planner_budget_total_cents`), não a soma
+ * das linhas.
  */
 export function budgetTotals(
   costs: EventCost[],
@@ -204,10 +208,9 @@ export function budgetTotals(
   today: Date = new Date()
 ): BudgetTotals {
   const todayISO = today.toISOString().slice(0, 10);
-  const totals: BudgetTotals = { budgeted: 0, net: 0, gross: 0, paid: 0, outstanding: 0, overdue: 0 };
+  const totals: BudgetTotals = { net: 0, gross: 0, paid: 0, outstanding: 0, overdue: 0 };
 
   for (const c of costs) {
-    totals.budgeted += c.budgeted_cents || 0;
     totals.net += costNetCents(c, confirmedGuests);
     totals.gross += costGrossCents(c, confirmedGuests);
   }
@@ -222,6 +225,65 @@ export function budgetTotals(
   }
 
   return totals;
+}
+
+// ── Leitura do orçamento (gráficos) ──────────────────────────────────────────
+
+export type CostGroup = { key: string; label: string; cents: number };
+
+/**
+ * Agrupa os custos por uma dimensão (fornecedor, categoria) e devolve-os
+ * ordenados do maior para o menor — a ordem que um gráfico de barras precisa.
+ *
+ * `maxSlices` dobra a cauda numa fatia "Outros" em vez de desenhar 20 barras
+ * de 1% cada. A fatia diz quantas linhas absorveu, para nunca parecer que o
+ * gráfico mostra tudo quando não mostra.
+ */
+export function groupCosts(
+  costs: EventCost[],
+  confirmedGuests: number,
+  keyOf: (cost: EventCost) => { key: string; label: string },
+  maxSlices = 8,
+  otherLabel = "Outros"
+): CostGroup[] {
+  const byKey = new Map<string, CostGroup>();
+  for (const cost of costs) {
+    // Uma linha cancelada não é dinheiro comprometido — não conta.
+    if (cost.status === "cancelado") continue;
+    const cents = costGrossCents(cost, confirmedGuests);
+    if (cents <= 0) continue;
+    const { key, label } = keyOf(cost);
+    const existing = byKey.get(key);
+    if (existing) existing.cents += cents;
+    else byKey.set(key, { key, label, cents });
+  }
+
+  const sorted = [...byKey.values()].sort((a, b) => b.cents - a.cents);
+  if (sorted.length <= maxSlices) return sorted;
+
+  const head = sorted.slice(0, maxSlices - 1);
+  const tail = sorted.slice(maxSlices - 1);
+  head.push({
+    key: "__other__",
+    label: `${otherLabel} (${tail.length})`,
+    cents: tail.reduce((sum, g) => sum + g.cents, 0),
+  });
+  return head;
+}
+
+export type BudgetHealth = "under" | "close" | "over";
+
+/**
+ * Estado do orçamento face ao contratado. "close" a partir dos 85% é um aviso
+ * deliberadamente cedo: quando um casamento chega aos 100% já não há margem
+ * para o imprevisto que aparece sempre.
+ */
+export function budgetHealth(grossCents: number, budgetCents: number): BudgetHealth {
+  if (budgetCents <= 0) return "under";
+  const pct = (grossCents / budgetCents) * 100;
+  if (pct > 100) return "over";
+  if (pct >= 85) return "close";
+  return "under";
 }
 
 // ── Tarefas ──────────────────────────────────────────────────────────────────
