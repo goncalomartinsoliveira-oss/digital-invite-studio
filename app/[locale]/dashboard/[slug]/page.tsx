@@ -263,6 +263,12 @@ export default function Dashboard() {
 
   const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate' || activeTab === 'budget' || activeTab === 'tasks' || activeTab === 'timeline' || activeTab === 'sharing' || activeTab === 'moodboard';
 
+  // "Copiar Link" / "Abrir Convite" apontam para o site do casal
+  // (/invite/[slug]) — só fazem sentido nas áreas do próprio convite, não em
+  // Planeamento (Orçamento, Tarefas, ...) nem em Minha Conta, que não têm
+  // nada a ver com esse site.
+  const showInviteActions = group !== 'management' && activeTab !== 'account';
+
   // Área de Gestão: existe apenas em eventos de contas de wedding planner.
   // A equipa da agência vê tudo; o casal vê só o que estiver marcado como
   // partilhado (imposto pelo Supabase, não aqui).
@@ -606,27 +612,31 @@ export default function Dashboard() {
                   )}
                </div>
 
-               <button 
-                 onClick={copyInviteLink} 
-                 className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all active:scale-95"
-               >
-                  {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-                  <span className="hidden sm:inline">{copied ? dict.copied : dict.copyLink}</span>
-               </button>
+               {showInviteActions && (
+                 <button
+                   onClick={copyInviteLink}
+                   className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all active:scale-95"
+                 >
+                    {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                    <span className="hidden sm:inline">{copied ? dict.copied : dict.copyLink}</span>
+                 </button>
+               )}
 
                {!isFullScreenTab && (
                  <button onClick={() => setShowMobilePreview(!showMobilePreview)} className="lg:hidden bg-gray-100 text-gray-600 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest">
                    {dict.mobilePreview}
                  </button>
                )}
-               
-               <button 
-                 onClick={() => window.open(`/${params.locale}/invite/${params.slug}`, '_blank')} 
-                 className="flex items-center gap-2 bg-brand text-white px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md hover:bg-brand-dark transition-all active:scale-95"
-               >
-                  <span className="hidden sm:inline">{dict.openInvite}</span>
-                  <ExternalLink size={14} />
-               </button>
+
+               {showInviteActions && (
+                 <button
+                   onClick={() => window.open(`/${params.locale}/invite/${params.slug}`, '_blank')}
+                   className="flex items-center gap-2 bg-brand text-white px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md hover:bg-brand-dark transition-all active:scale-95"
+                 >
+                    <span className="hidden sm:inline">{dict.openInvite}</span>
+                    <ExternalLink size={14} />
+                 </button>
+               )}
             </div>
           </header>
 

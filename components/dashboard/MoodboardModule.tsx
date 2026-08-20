@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import { Upload, Link2, Trash2, Loader2, X, ExternalLink, Image as ImageIcon, Plus, Pencil, Share2, Copy, Check, RefreshCw } from "lucide-react";
+import { Upload, Link2, Trash2, Loader2, X, ExternalLink, Image as ImageIcon, Plus, Pencil, Share2, Copy, Check, RefreshCw, AlertTriangle } from "lucide-react";
 import { moodboardItemDomain, DEFAULT_MOODBOARD_SECTIONS, type MoodboardItem, type MoodboardSection, type MoodboardShareLink } from "@/lib/moodboard";
 import { generatePortalToken, portalLinkExpiry } from "@/lib/planner";
 
@@ -30,6 +30,7 @@ export default function MoodboardModule({ invitationId, eventDate, canEdit, loca
   const [items, setItems] = useState<MoodboardItem[]>([]);
   const [shareLink, setShareLink] = useState<MoodboardShareLink | null>(null);
   const [generatingShare, setGeneratingShare] = useState(false);
+  const [shareError, setShareError] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
   const [loading, setLoading] = useState(true);
   const [uploadingSection, setUploadingSection] = useState<string | null>(null);
@@ -75,7 +76,8 @@ export default function MoodboardModule({ invitationId, eventDate, canEdit, loca
   const generateShareLink = async () => {
     if (!canEdit) return;
     setGeneratingShare(true);
-    const { data } = await supabase
+    setShareError(false);
+    const { data, error } = await supabase
       .from("moodboard_share_links")
       .upsert(
         { invitation_id: invitationId, token: generatePortalToken(), expires_at: portalLinkExpiry(eventDate) },
@@ -83,7 +85,12 @@ export default function MoodboardModule({ invitationId, eventDate, canEdit, loca
       )
       .select("*")
       .single();
-    if (data) setShareLink(data as MoodboardShareLink);
+    if (error) {
+      console.error("[MoodboardModule] Falha ao gerar link de partilha:", error.message);
+      setShareError(true);
+    } else if (data) {
+      setShareLink(data as MoodboardShareLink);
+    }
     setGeneratingShare(false);
   };
 
@@ -310,6 +317,12 @@ export default function MoodboardModule({ invitationId, eventDate, canEdit, loca
             </button>
           )}
         </div>
+        {shareError && (
+          <p className="flex items-center gap-1.5 text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2">
+            <AlertTriangle size={12} />
+            {en ? "Couldn't generate the link — try again in a moment." : "Não foi possível gerar o link — tente novamente."}
+          </p>
+        )}
         {shareLink && (
           <div className="mt-3">
             <div className="flex items-center gap-2 bg-white rounded-xl px-3 py-2.5 border border-gray-100">
