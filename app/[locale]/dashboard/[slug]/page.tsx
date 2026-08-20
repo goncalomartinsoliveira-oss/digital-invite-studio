@@ -688,6 +688,8 @@ export default function Dashboard() {
                 <SharingModule
                   invitationId={formData.id}
                   eventDate={formData.event_date}
+                  groomName={formData.groom_name}
+                  brideName={formData.bride_name}
                   canEdit={canEdit}
                   locale={locale}
                 />
