@@ -10,23 +10,25 @@
 -- pública aqui — a página do fornecedor lê esta tabela do servidor, com a
 -- service_role key (lib/supabaseAdmin.ts), que ignora RLS por completo. As
 -- políticas abaixo só cobrem quem gera/revoga o link (agência ou o casal,
--- os mesmos que já podem editar a linha de custo desse fornecedor).
+-- os mesmos que já podem editar o evento).
 --
--- Um link é sempre por linha de custo (evento + fornecedor), nunca global ao
--- fornecedor — o mesmo fornecedor em três casamentos da agência tem três
--- links distintos, e cada um só vê o desse casamento. "Gerar novo link"
--- substitui o token da mesma linha (cost_id é único), o que invalida
--- imediatamente qualquer link antigo em circulação.
+-- Um link é por evento + "tipo" (kind), não por fornecedor: uma página
+-- central (Partilha, no painel do evento) lista os tipos disponíveis, e a
+-- agência/casal envia o mesmo link a quantos fornecedores fizer sentido —
+-- por isso "invitation_id + kind" é único, e "Gerar novo" substitui o token
+-- desse tipo, invalidando de imediato qualquer link antigo em circulação
+-- (afeta todos os que o receberam, não só um).
 -- ═══════════════════════════════════════════════════════════════════════════
 
 create table if not exists public.vendor_portal_links (
   id                uuid primary key default gen_random_uuid(),
-  cost_id           uuid not null unique references public.event_costs(id) on delete cascade,
   invitation_id     uuid not null references public.invitations(id) on delete cascade,
+  kind              text not null check (kind in ('timeline', 'full')),
   token             text not null unique,
   expires_at        timestamptz not null,
   created_by_email  text,
-  created_at        timestamptz not null default now()
+  created_at        timestamptz not null default now(),
+  unique (invitation_id, kind)
 );
 
 create index if not exists vendor_portal_links_invitation_idx on public.vendor_portal_links (invitation_id);

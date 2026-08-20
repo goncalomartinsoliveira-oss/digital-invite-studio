@@ -29,7 +29,7 @@ aplicados.
 | `0002_task_priority_vendor_status.sql` | `event_tasks.priority`, `event_costs.status` (estado do contrato), `event_cost_notes` (histórico de reuniões por fornecedor) | ☑ |
 | `0003_documents.sql` | `event_documents` — documentos/contratos por evento, opcionalmente ligados a uma linha de custo | ☑ |
 | `0004_event_timeline.sql` | `event_timeline` — cronograma do dia, partilhado com o casal por omissão (ao contrário das restantes tabelas do módulo) | ☑ |
-| `0005_vendor_portal.sql` | `vendor_portal_links` — link de leitura sem conta para o fornecedor, por linha de custo. Sem política de leitura pública de propósito: a página lê com a service_role key, nunca com a anon key | ☐ |
+| `0005_vendor_portal.sql` | `vendor_portal_links` — link de leitura sem conta para fornecedores, por evento + tipo ("timeline" / "full"), reutilizável por vários fornecedores. Sem política de leitura pública de propósito: a página lê com a service_role key, nunca com a anon key | ☐ |
 
 > Marcar a coluna "Aplicado" depois de correr em produção, para não haver
 > dúvidas mais tarde.

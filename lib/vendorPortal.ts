@@ -16,34 +16,33 @@ type TimelineRow = { event_time: string; duration_minutes: number | null; title:
 // browser. Só a página do fornecedor (Server Component) importa este ficheiro.
 
 export type VendorPortalData = {
-  vendorName: string;
-  category: string;
   groomName: string;
   brideName: string;
   eventDate: string | null;
   brand: WorkingBrand | null;
   timeline: { start: string; end: string | null; title: string; notes: string | null }[];
+  // Presente apenas no link "full" — nunca inclui orçamento/preços, mesmo
+  // aqui (ver conversa antes de construir: expor o que a agência cobra a
+  // fornecedores pode prejudicá-la comercialmente).
   catering: { confirmedGuests: number; dietary: Record<string, number> } | null;
 };
 
 export async function loadVendorPortalData(token: string): Promise<VendorPortalData | null> {
   const { data: link } = await supabaseAdmin
     .from("vendor_portal_links")
-    .select("cost_id, invitation_id, expires_at")
+    .select("invitation_id, kind, expires_at")
     .eq("token", token)
     .maybeSingle();
   if (!link || isPortalLinkExpired(link)) return null;
 
-  const [{ data: cost }, { data: invitation }] = await Promise.all([
-    supabaseAdmin.from("event_costs").select("category, vendor_id").eq("id", link.cost_id).maybeSingle(),
-    supabaseAdmin.from("invitations").select("groom_name, bride_name, event_date, brand_id").eq("id", link.invitation_id).maybeSingle(),
-  ]);
-  if (!cost || !invitation) return null;
+  const { data: invitation } = await supabaseAdmin
+    .from("invitations")
+    .select("groom_name, bride_name, event_date, brand_id")
+    .eq("id", link.invitation_id)
+    .maybeSingle();
+  if (!invitation) return null;
 
-  const [{ data: vendor }, { data: timelineRows }, brand] = await Promise.all([
-    cost.vendor_id
-      ? supabaseAdmin.from("agency_vendors").select("name").eq("id", cost.vendor_id).maybeSingle()
-      : Promise.resolve({ data: null }),
+  const [{ data: timelineRows }, brand] = await Promise.all([
     supabaseAdmin
       .from("event_timeline")
       .select("event_time, duration_minutes, title, notes")
@@ -54,7 +53,7 @@ export async function loadVendorPortalData(token: string): Promise<VendorPortalD
   ]);
 
   let catering: VendorPortalData["catering"] = null;
-  if (cost.category === "catering") {
+  if (link.kind === "full") {
     const { data: guests } = await supabaseAdmin
       .from("guests")
       .select("dietary_notes")
@@ -70,8 +69,6 @@ export async function loadVendorPortalData(token: string): Promise<VendorPortalD
   }
 
   return {
-    vendorName: vendor?.name || "Fornecedor",
-    category: cost.category,
     groomName: invitation.groom_name,
     brideName: invitation.bride_name,
     eventDate: invitation.event_date,

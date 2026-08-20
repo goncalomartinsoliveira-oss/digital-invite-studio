@@ -297,15 +297,40 @@ export function timelineBlockEndTime(block: Pick<TimelineBlock, "event_time" | "
 }
 
 // ── Portal do fornecedor ─────────────────────────────────────────────────────
-// Link de leitura, sem conta DIS, por linha de custo (evento + fornecedor).
+// Link de leitura, sem conta DIS, por evento — não por fornecedor: uma página
+// central (SharingModule) lista os "tipos" de link disponíveis, a agência ou
+// o casal gera o que fizer sentido e envia a quem quiser (um fotógrafo e um
+// DJ podem perfeitamente receber o mesmo link "Cronograma"). Por isso é
+// reutilizável por vários fornecedores, e revogar afeta todos os que o
+// receberam de uma vez — decisão consciente, trocada por simplicidade em vez
+// de um link individual por fornecedor.
+//
 // Ver 0005_vendor_portal.sql para o porquê de não ter política de leitura
 // pública: a página pública lê esta tabela do servidor, com a service_role
 // key, nunca com a anon key do browser.
 
+export type VendorPortalKind = "timeline" | "full";
+
+export const VENDOR_PORTAL_KINDS: VendorPortalKind[] = ["timeline", "full"];
+
+export const VENDOR_PORTAL_KIND_LABELS: Record<VendorPortalKind, { pt: string; en: string }> = {
+  timeline: { pt: "Só Cronograma", en: "Timeline only" },
+  full: { pt: "Informação completa", en: "Full information" },
+};
+
+// "Completa" fica deliberadamente limitada a informação logística — nunca
+// inclui orçamento/preços, mesmo neste link mais aberto (ver conversa antes
+// de construir: um fornecedor a ver o que a agência cobra a outros
+// fornecedores pode prejudicar comercialmente a própria agência).
+export const VENDOR_PORTAL_KIND_DESCRIPTIONS: Record<VendorPortalKind, { pt: string; en: string }> = {
+  timeline: { pt: "Só o horário do dia — ideal para fotografia, música, decoração.", en: "Just the day's schedule — ideal for photography, music, decor." },
+  full: { pt: "Cronograma + confirmados + alergias — ideal para catering.", en: "Timeline + confirmed guests + dietary summary — ideal for catering." },
+};
+
 export type VendorPortalLink = {
   id: string;
-  cost_id: string;
   invitation_id: string;
+  kind: VendorPortalKind;
   token: string;
   expires_at: string;
   created_by_email: string | null;
