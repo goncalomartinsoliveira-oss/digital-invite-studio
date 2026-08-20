@@ -40,6 +40,26 @@ export type MoodboardShareLink = {
 // pragmática (ver app/api/moodboard/public).
 export const MOODBOARD_PUBLIC_ITEM_LIMIT = 300;
 
+// Ponte entre o Orçamento e a Inspiração: a categoria de uma linha de custo
+// aponta para a secção do moodboard com o mesmo assunto, para quem está a
+// negociar com a florista conseguir abrir as inspirações de flores sem as ir
+// procurar. Feito por nome (e não por id) porque as secções são criadas por
+// evento; se a agência renomear ou apagar a secção, a ligação simplesmente
+// deixa de aparecer, que é a degradação certa.
+//
+// Nem todas as categorias têm par — espaço, bebidas, música ou honorários não
+// são assuntos visuais, e ficar de fora é melhor do que forçar um par pobre.
+export const COST_CATEGORY_TO_SECTION: Record<string, string> = {
+  decoracao: "Decoração & Cenografia",
+  flores: "Flores",
+  fotografia: "Fotografia & Vídeo",
+  video: "Fotografia & Vídeo",
+  bolo: "Bolo & Doces",
+  convites: "Convites & Papelaria",
+  beleza: "Cabelo & Maquilhagem",
+  vestuario: "Vestido & Fato",
+};
+
 export type MoodboardItem = {
   id: string;
   invitation_id: string;

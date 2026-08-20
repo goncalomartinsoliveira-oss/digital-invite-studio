@@ -3,8 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
 import { useSaveStatus } from "@/lib/useSaveStatus";
-import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check, Flag } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check, Flag, ListChecks } from "lucide-react";
 import { dueDateFromOffset, isOverdue, TASK_PRIORITIES, TASK_PRIORITY_LABELS, type EventTask, type TaskPriority, type TaskStatus } from "@/lib/planner";
+import { WEDDING_TASK_TEMPLATE } from "@/lib/plannerTemplates";
 
 // Checklist do evento — área de gestão, exclusiva de contas de agência.
 // As tarefas guardam a data-limite e, quando definido, o número de dias antes
@@ -31,6 +32,7 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
   const [newTitle, setNewTitle] = useState("");
   const [adding, setAdding] = useState(false);
   const [recalculating, setRecalculating] = useState(false);
+  const [applyingTemplate, setApplyingTemplate] = useState(false);
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -65,6 +67,30 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
     if (data) setTasks(prev => [...prev, data as EventTask]);
     setNewTitle("");
     setAdding(false);
+  };
+
+  /**
+   * Ponto de partida: a checklist que se repete em todos os casamentos.
+   * Guarda o desvio ("N dias antes") e não só a data, para os prazos se
+   * recalcularem sozinhos se a data do casamento mudar.
+   */
+  const applyTemplate = async () => {
+    if (!canEdit) return;
+    if (!confirm(`Adicionar ${WEDDING_TASK_TEMPLATE.length} tarefas ao evento? Pode editar ou apagar qualquer uma a seguir.`)) return;
+    setApplyingTemplate(true);
+    const rows = WEDDING_TASK_TEMPLATE.map((item, i) => ({
+      invitation_id: invitationId,
+      title: item.title,
+      status: "todo",
+      priority: item.priority,
+      due_offset_days: item.offsetDays,
+      due_date: dueDateFromOffset(eventDate, item.offsetDays),
+      visibility: isAgency ? "agency" : "shared",
+      sort_order: tasks.length + i,
+    }));
+    const { data } = await track(supabase.from("event_tasks").insert(rows).select("*"));
+    if (data) setTasks(prev => [...prev, ...(data as EventTask[])]);
+    setApplyingTemplate(false);
   };
 
   const patchTask = async (id: string, patch: Partial<EventTask>) => {
@@ -174,9 +200,24 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
         )}
 
         {tasks.length === 0 ? (
-          <p className="text-sm text-gray-400 py-10 text-center">
-            Sem tarefas. Comece pelas que se repetem em todos os casamentos.
-          </p>
+          <div className="py-10 text-center">
+            <p className="text-sm text-gray-400">Sem tarefas.</p>
+            {canEdit && (
+              <>
+                <button
+                  onClick={applyTemplate}
+                  disabled={applyingTemplate}
+                  className="inline-flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-dark transition-all disabled:opacity-50 mt-4"
+                >
+                  {applyingTemplate ? <Loader2 size={14} className="animate-spin" /> : <ListChecks size={14} />}
+                  Começar com a checklist base
+                </button>
+                <p className="text-[11px] text-gray-400 mt-3 max-w-xs mx-auto">
+                  {WEDDING_TASK_TEMPLATE.length} tarefas com prazos relativos à data do casamento. Edite ou apague o que não se aplicar.
+                </p>
+              </>
+            )}
+          </div>
         ) : (
           <div className="space-y-2">
             {tasks.map(t => {

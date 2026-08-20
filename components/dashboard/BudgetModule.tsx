@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, ChevronDown, Eye, EyeOff, Loader2, MessageSquare, FileText, Upload } from "lucide-react";
+import { Plus, Trash2, ChevronDown, Eye, EyeOff, Loader2, MessageSquare, FileText, Upload, Wallet, Images, ChevronRight } from "lucide-react";
 import BudgetSummary from "@/components/dashboard/BudgetSummary";
 import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
 import { useSaveStatus } from "@/lib/useSaveStatus";
+import { WEDDING_COST_TEMPLATE } from "@/lib/plannerTemplates";
+import { COST_CATEGORY_TO_SECTION } from "@/lib/moodboard";
 import {
   COST_CATEGORIES,
   COST_STATUSES,
@@ -50,6 +52,8 @@ interface Props {
   isAgency: boolean;
   confirmedGuests: number;
   locale: string;
+  /** Abre a Inspiração já na secção correspondente a esta categoria de custo. */
+  onOpenMoodboard?: (sectionId: string) => void;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -59,7 +63,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   transporte: "Transporte", honorarios: "Honorários", outros: "Outros",
 };
 
-export default function BudgetModule({ invitationId, brandId, canEdit, isAgency, confirmedGuests, locale }: Props) {
+export default function BudgetModule({ invitationId, brandId, canEdit, isAgency, confirmedGuests, locale, onOpenMoodboard }: Props) {
   const [costs, setCosts] = useState<EventCost[]>([]);
   const [payments, setPayments] = useState<CostPayment[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -81,9 +85,13 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [applyingTemplate, setApplyingTemplate] = useState(false);
+  // Secções da Inspiração com pelo menos uma imagem, para a linha de custo
+  // poder oferecer o atalho só quando há mesmo alguma coisa para ver.
+  const [sectionsWithItems, setSectionsWithItems] = useState<{ id: string; name: string; count: number }[]>([]);
 
   const load = useCallback(async () => {
-    const [c, p, v, n, d, inv] = await Promise.all([
+    const [c, p, v, n, d, inv, mbSections, mbItems] = await Promise.all([
       supabase.from("event_costs").select("*").eq("invitation_id", invitationId).order("sort_order").order("created_at"),
       supabase.from("event_cost_payments").select("*").eq("invitation_id", invitationId).order("due_date"),
       supabase.from("agency_vendors").select("id, name, category").eq("brand_id", brandId).order("name"),
@@ -92,6 +100,8 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         : Promise.resolve({ data: [] as CostNote[] }),
       supabase.from("event_documents").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false }),
       supabase.from("invitations").select("planner_budget_total_cents").eq("id", invitationId).maybeSingle(),
+      supabase.from("event_moodboard_sections").select("id, name").eq("invitation_id", invitationId),
+      supabase.from("event_moodboard_items").select("section_id").eq("invitation_id", invitationId),
     ]);
     setCosts((c.data as EventCost[]) || []);
     setPayments((p.data as CostPayment[]) || []);
@@ -99,6 +109,17 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
     setVendors((v.data as Vendor[]) || []);
     setNotes((n.data as CostNote[]) || []);
     setDocuments((d.data as EventDocument[]) || []);
+
+    const counts = new Map<string, number>();
+    ((mbItems.data as { section_id: string | null }[]) || []).forEach(item => {
+      if (item.section_id) counts.set(item.section_id, (counts.get(item.section_id) || 0) + 1);
+    });
+    setSectionsWithItems(
+      ((mbSections.data as { id: string; name: string }[]) || [])
+        .map(sec => ({ ...sec, count: counts.get(sec.id) || 0 }))
+        .filter(sec => sec.count > 0)
+    );
+
     setLoading(false);
   }, [invitationId, brandId, isAgency]);
 
@@ -106,6 +127,13 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
 
   const totals = budgetTotals(costs, payments, confirmedGuests);
   const vendorName = (id: string | null) => vendors.find(v => v.id === id)?.name || "";
+
+  /** Secção da Inspiração ligada a esta categoria, se existir e tiver imagens. */
+  const inspirationFor = (category: string) => {
+    const name = COST_CATEGORY_TO_SECTION[category];
+    if (!name) return null;
+    return sectionsWithItems.find(sec => sec.name === name) || null;
+  };
 
   const saveBudgetTotal = async (cents: number) => {
     if (!canEdit || cents === budgetTotalCents) return;
@@ -175,6 +203,32 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
       setExpanded((data as EventCost).id);
     }
     setAdding(false);
+  };
+
+  /**
+   * Ponto de partida: as rubricas que praticamente todos os casamentos têm,
+   * a zeros. Catering e bebidas nascem em "por pessoa" — é assim que são
+   * orçamentados, e é aí que a ligação aos confirmados ao vivo se paga.
+   */
+  const applyTemplate = async () => {
+    if (!canEdit) return;
+    if (!confirm(`Criar ${WEDDING_COST_TEMPLATE.length} rubricas de orçamento a zeros? Pode editar ou apagar qualquer uma a seguir.`)) return;
+    setApplyingTemplate(true);
+    const rows = WEDDING_COST_TEMPLATE.map((item, i) => ({
+      invitation_id: invitationId,
+      category: item.category,
+      description: item.description,
+      pricing_mode: item.pricingMode,
+      unit_price_cents: 0,
+      quantity: 1,
+      vat_pct: DEFAULT_VAT_PCT,
+      status: "a_orcar",
+      visibility: isAgency ? "agency" : "shared",
+      sort_order: costs.length + i,
+    }));
+    const { data } = await track(supabase.from("event_costs").insert(rows).select("*"));
+    if (data) setCosts(prev => [...prev, ...(data as EventCost[])]);
+    setApplyingTemplate(false);
   };
 
   const patchCost = async (id: string, patch: Partial<EventCost>) => {
@@ -356,9 +410,24 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         </div>
 
         {costs.length === 0 ? (
-          <p className="text-sm text-gray-400 py-10 text-center">
-            Ainda não há custos registados. Comece por adicionar o espaço ou o catering.
-          </p>
+          <div className="py-10 text-center">
+            <p className="text-sm text-gray-400">Ainda não há custos registados.</p>
+            {canEdit && (
+              <>
+                <button
+                  onClick={applyTemplate}
+                  disabled={applyingTemplate}
+                  className="inline-flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-dark transition-all disabled:opacity-50 mt-4"
+                >
+                  {applyingTemplate ? <Loader2 size={14} className="animate-spin" /> : <Wallet size={14} />}
+                  Começar com as rubricas típicas
+                </button>
+                <p className="text-[11px] text-gray-400 mt-3 max-w-xs mx-auto">
+                  {WEDDING_COST_TEMPLATE.length} rubricas a zeros, prontas a preencher. Edite ou apague o que não se aplicar.
+                </p>
+              </>
+            )}
+          </div>
         ) : (
           <div className="space-y-3">
             {costs.map(cost => {
@@ -511,6 +580,26 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
                           />
                         </div>
                       </div>
+
+                      {/* Ponte para a Inspiração: só aparece quando a secção
+                          correspondente existe e tem mesmo imagens. */}
+                      {(() => {
+                        const inspiration = inspirationFor(cost.category);
+                        if (!inspiration || !onOpenMoodboard) return null;
+                        return (
+                          <button
+                            onClick={() => onOpenMoodboard(inspiration.id)}
+                            className="w-full flex items-center gap-2 mt-4 bg-white border border-gray-100 rounded-2xl px-4 py-3 text-left hover:border-gold-soft transition-colors group"
+                          >
+                            <Images size={14} className="text-brand shrink-0" />
+                            <span className="flex-1 text-xs text-gray-500">
+                              {inspiration.count} {inspiration.count === 1 ? "inspiração" : "inspirações"} em{" "}
+                              <strong className="text-ink font-medium">{inspiration.name}</strong>
+                            </span>
+                            <ChevronRight size={14} className="text-gray-300 group-hover:text-brand transition-colors shrink-0" />
+                          </button>
+                        );
+                      })()}
 
                       <div className="flex flex-wrap items-center justify-between gap-4 mt-5 pt-4 border-t border-gray-100">
                         <p className="text-xs text-gray-400">

@@ -24,9 +24,11 @@ interface Props {
   locale: string;
   /** Leva à página Partilha, onde vive o link deste moodboard. */
   onOpenSharing?: () => void;
+  /** Secção a destacar à chegada, quando se entra a partir do Orçamento. */
+  focusSectionId?: string | null;
 }
 
-export default function MoodboardModule({ invitationId, canEdit, locale, onOpenSharing }: Props) {
+export default function MoodboardModule({ invitationId, canEdit, locale, onOpenSharing, focusSectionId }: Props) {
   const en = locale === "en";
   const [sections, setSections] = useState<MoodboardSection[]>([]);
   const [items, setItems] = useState<MoodboardItem[]>([]);
@@ -43,6 +45,7 @@ export default function MoodboardModule({ invitationId, canEdit, locale, onOpenS
   const [newSectionName, setNewSectionName] = useState("");
   const [addingSection, setAddingSection] = useState(false);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const load = useCallback(async () => {
     const [{ data: sectionRows }, { data: itemRows }] = await Promise.all([
@@ -64,6 +67,15 @@ export default function MoodboardModule({ invitationId, canEdit, locale, onOpenS
   }, [invitationId]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Chegando do Orçamento com uma secção em mente, ir até ela — sem isto o
+  // atalho deixava o utilizador no topo de uma página longa, a procurar.
+  useEffect(() => {
+    if (loading || !focusSectionId) return;
+    const el = sectionRefs.current[focusSectionId];
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [loading, focusSectionId]);
 
   const addSection = async () => {
     const name = newSectionName.trim();
@@ -281,7 +293,14 @@ export default function MoodboardModule({ invitationId, canEdit, locale, onOpenS
         return (
           <section
             key={section.id}
-            className={`bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-md border transition-colors ${dragOverSection === section.id ? "border-brand" : "border-gray-100"}`}
+            ref={el => { sectionRefs.current[section.id] = el; }}
+            className={`bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-md border transition-colors scroll-mt-24 ${
+              dragOverSection === section.id
+                ? "border-brand"
+                : focusSectionId === section.id
+                  ? "border-gold-soft ring-2 ring-gold-soft/30"
+                  : "border-gray-100"
+            }`}
             onDragOver={e => { e.preventDefault(); if (canEdit) setDragOverSection(section.id); }}
             onDragLeave={() => setDragOverSection(null)}
             onDrop={e => handleDrop(e, section.id)}

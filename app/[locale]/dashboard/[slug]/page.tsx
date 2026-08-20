@@ -105,6 +105,8 @@ export default function Dashboard() {
   // Plano de wedding planner da marca deste evento (null = não é conta de
   // agência). É isto que faz aparecer a área de Gestão.
   const [plannerPlan, setPlannerPlan] = useState<PlannerPlan | null>(null);
+  // Secção da Inspiração a destacar quando se lá chega a partir do Orçamento.
+  const [moodboardFocus, setMoodboardFocus] = useState<string | null>(null);
   const [buyingModule, setBuyingModule] = useState<string | null>(null);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
@@ -675,6 +677,7 @@ export default function Dashboard() {
                   isAgency={isAgencyStaff || isSuperAdmin}
                   confirmedGuests={confirmedGuests}
                   locale={locale}
+                  onOpenMoodboard={sectionId => { setMoodboardFocus(sectionId); setActiveTab('moodboard'); }}
                 />
               )}
               {activeTab === 'tasks' && showManagement && (
@@ -713,6 +716,7 @@ export default function Dashboard() {
                   canEdit={canEdit}
                   locale={locale}
                   onOpenSharing={() => setActiveTab('sharing')}
+                  focusSectionId={moodboardFocus}
                 />
               )}
               {activeTab === 'guestbook' && (
