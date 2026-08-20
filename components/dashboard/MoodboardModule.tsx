@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import { Upload, Link2, Trash2, Loader2, X, ExternalLink, Image as ImageIcon, Plus, Pencil } from "lucide-react";
-import { moodboardItemDomain, DEFAULT_MOODBOARD_SECTIONS, type MoodboardItem, type MoodboardSection } from "@/lib/moodboard";
+import { Upload, Link2, Trash2, Loader2, X, ExternalLink, Image as ImageIcon, Plus, Pencil, Share2, Copy, Check, RefreshCw } from "lucide-react";
+import { moodboardItemDomain, DEFAULT_MOODBOARD_SECTIONS, type MoodboardItem, type MoodboardSection, type MoodboardShareLink } from "@/lib/moodboard";
+import { generatePortalToken, portalLinkExpiry } from "@/lib/planner";
 
 // Moodboard do evento — área de gestão, exclusiva de contas de agência.
 // Mural partilhado entre agência e casal, organizado em secções (Identidade
@@ -18,14 +19,18 @@ import { moodboardItemDomain, DEFAULT_MOODBOARD_SECTIONS, type MoodboardItem, ty
 
 interface Props {
   invitationId: string;
+  eventDate: string | null;
   canEdit: boolean;
   locale: string;
 }
 
-export default function MoodboardModule({ invitationId, canEdit, locale }: Props) {
+export default function MoodboardModule({ invitationId, eventDate, canEdit, locale }: Props) {
   const en = locale === "en";
   const [sections, setSections] = useState<MoodboardSection[]>([]);
   const [items, setItems] = useState<MoodboardItem[]>([]);
+  const [shareLink, setShareLink] = useState<MoodboardShareLink | null>(null);
+  const [generatingShare, setGeneratingShare] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
   const [loading, setLoading] = useState(true);
   const [uploadingSection, setUploadingSection] = useState<string | null>(null);
   const [linkInputs, setLinkInputs] = useState<Record<string, string>>({});
@@ -40,9 +45,10 @@ export default function MoodboardModule({ invitationId, canEdit, locale }: Props
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const load = useCallback(async () => {
-    const [{ data: sectionRows }, { data: itemRows }] = await Promise.all([
+    const [{ data: sectionRows }, { data: itemRows }, { data: shareRow }] = await Promise.all([
       supabase.from("event_moodboard_sections").select("*").eq("invitation_id", invitationId).order("sort_order"),
       supabase.from("event_moodboard_items").select("*").eq("invitation_id", invitationId).order("created_at", { ascending: false }),
+      supabase.from("moodboard_share_links").select("*").eq("invitation_id", invitationId).maybeSingle(),
     ]);
     let loadedSections = (sectionRows as MoodboardSection[]) || [];
     // Primeira vez que este evento abre a área — semear as secções por omissão.
@@ -55,10 +61,45 @@ export default function MoodboardModule({ invitationId, canEdit, locale }: Props
     }
     setSections(loadedSections);
     setItems((itemRows as MoodboardItem[]) || []);
+    setShareLink((shareRow as MoodboardShareLink) || null);
     setLoading(false);
   }, [invitationId]);
 
   useEffect(() => { load(); }, [load]);
+
+  const shareLinkUrl = (link: MoodboardShareLink) => `${window.location.origin}/${locale}/moodboard/${link.token}`;
+
+  // "invitation_id" é único: gerar quando não existe nenhum, ou trocar o
+  // token quando já existe — o link antigo deixa de funcionar assim que o
+  // novo token é gravado.
+  const generateShareLink = async () => {
+    if (!canEdit) return;
+    setGeneratingShare(true);
+    const { data } = await supabase
+      .from("moodboard_share_links")
+      .upsert(
+        { invitation_id: invitationId, token: generatePortalToken(), expires_at: portalLinkExpiry(eventDate) },
+        { onConflict: "invitation_id" }
+      )
+      .select("*")
+      .single();
+    if (data) setShareLink(data as MoodboardShareLink);
+    setGeneratingShare(false);
+  };
+
+  const revokeShareLink = async () => {
+    if (!canEdit || !shareLink) return;
+    const id = shareLink.id;
+    setShareLink(null);
+    await supabase.from("moodboard_share_links").delete().eq("id", id);
+  };
+
+  const copyShareLink = () => {
+    if (!shareLink) return;
+    navigator.clipboard.writeText(shareLinkUrl(shareLink));
+    setCopiedShare(true);
+    setTimeout(() => setCopiedShare(false), 2000);
+  };
 
   const addSection = async () => {
     const name = newSectionName.trim();
@@ -250,6 +291,52 @@ export default function MoodboardModule({ invitationId, canEdit, locale }: Props
           {en ? "A shared moodboard for the event, organized by section" : "Um mural de inspiração partilhado para o evento, organizado por secções"}
         </p>
       </div>
+
+      <section className="bg-cream/50 border border-gray-100 rounded-[2rem] p-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-sm font-bold text-ink flex items-center gap-1.5"><Share2 size={14} className="text-brand" /> {en ? "Share to add photos" : "Partilhar para acrescentar fotos"}</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {en ? "Anyone with this link can view and contribute — bridesmaids, family…" : "Quem tiver este link pode ver e contribuir — madrinhas, família…"}
+            </p>
+          </div>
+          {!shareLink && canEdit && (
+            <button
+              onClick={generateShareLink}
+              disabled={generatingShare}
+              className="inline-flex items-center gap-1.5 bg-brand/5 text-brand px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-brand/10 transition-all disabled:opacity-50 shrink-0"
+            >
+              {generatingShare ? <Loader2 size={13} className="animate-spin" /> : <Share2 size={13} />} {en ? "Generate" : "Gerar"}
+            </button>
+          )}
+        </div>
+        {shareLink && (
+          <div className="mt-3">
+            <div className="flex items-center gap-2 bg-white rounded-xl px-3 py-2.5 border border-gray-100">
+              <p className="flex-1 min-w-0 text-xs text-ink truncate font-mono">{shareLinkUrl(shareLink)}</p>
+              <button onClick={copyShareLink} className="text-gray-400 hover:text-brand transition-colors shrink-0" aria-label={en ? "Copy link" : "Copiar link"}>
+                {copiedShare ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+              </button>
+            </div>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
+                {en ? "Valid until " : "Válido até "}
+                {new Date(shareLink.expires_at).toLocaleDateString(en ? "en-GB" : "pt-PT", { day: "2-digit", month: "short", year: "numeric" })}
+              </p>
+              {canEdit && (
+                <div className="flex gap-3">
+                  <button onClick={generateShareLink} disabled={generatingShare} className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand transition-colors disabled:opacity-50">
+                    <RefreshCw size={11} /> {en ? "Regenerate" : "Gerar novo"}
+                  </button>
+                  <button onClick={revokeShareLink} className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors">
+                    <Trash2 size={11} /> {en ? "Revoke" : "Revogar"}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </section>
 
       {sections.map(section => {
         const sectionItems = items.filter(i => i.section_id === section.id);

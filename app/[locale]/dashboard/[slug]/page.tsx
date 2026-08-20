@@ -700,6 +700,7 @@ export default function Dashboard() {
               {activeTab === 'moodboard' && showManagement && (
                 <MoodboardModule
                   invitationId={formData.id}
+                  eventDate={formData.event_date}
                   canEdit={canEdit}
                   locale={locale}
                 />

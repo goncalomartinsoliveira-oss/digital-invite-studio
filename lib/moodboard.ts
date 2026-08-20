@@ -23,6 +23,23 @@ export const DEFAULT_MOODBOARD_SECTIONS = [
   "Fotografia & Vídeo",
 ];
 
+// Link de partilha do Moodboard — ver + contribuir, sem conta DIS. Ao
+// contrário do vendor_portal_links, não tem "kind": é sempre um por evento,
+// sempre a mesma coisa (ver lib/moodboardShare.ts e 0007_moodboard_share.sql).
+export type MoodboardShareLink = {
+  id: string;
+  invitation_id: string;
+  token: string;
+  expires_at: string;
+  created_by_email: string | null;
+  created_at: string;
+};
+
+// Travão simples contra spam no link público — sem infraestrutura de
+// rate-limiting nesta app, um limite total por moodboard é a defesa
+// pragmática (ver app/api/moodboard/public).
+export const MOODBOARD_PUBLIC_ITEM_LIMIT = 300;
+
 export type MoodboardItem = {
   id: string;
   invitation_id: string;
