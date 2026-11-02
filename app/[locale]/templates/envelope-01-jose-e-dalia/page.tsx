@@ -755,7 +755,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                     )}
                   </div>
                 </div>
-                <SmartRsvp invitationId={data?.id || ""} />
+                <SmartRsvp invitationId={data?.id || ""} hideHeader />
               </div>
             )}
 

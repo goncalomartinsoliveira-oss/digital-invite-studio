@@ -11,9 +11,12 @@ const dictionaries = { pt, en };
 
 interface SmartRsvpProps {
   invitationId: string;
+  // Alguns modelos já mostram o próprio título "Confirmar Presença" antes
+  // de renderizar este componente — sem isto, o título sai repetido.
+  hideHeader?: boolean;
 }
 
-export default function SmartRsvp({ invitationId }: SmartRsvpProps) {
+export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) {
   const params = useParams();
   const locale = (params?.locale as "en" | "pt") || "pt";
   const dict = (dictionaries[locale]?.SmartRsvp || dictionaries.pt.SmartRsvp);
@@ -132,11 +135,13 @@ export default function SmartRsvp({ invitationId }: SmartRsvpProps) {
   return (
     <section id="rsvp" className="py-24 px-6 bg-white border-t border-neutral-100 font-sans">
       <div className="max-w-xl mx-auto space-y-12">
-        <header className="text-center space-y-2">
-          <span className="text-[10px] uppercase tracking-[0.4em] text-neutral-400 font-bold block">RSVP</span>
-          <h2 className="font-serif text-4xl uppercase tracking-tighter">{dict.title}</h2>
-          <div className="h-px w-12 bg-neutral-200 mx-auto mt-6"></div>
-        </header>
+        {!hideHeader && (
+          <header className="text-center space-y-2">
+            <span className="text-[10px] uppercase tracking-[0.4em] text-neutral-400 font-bold block">RSVP</span>
+            <h2 className="font-serif text-4xl uppercase tracking-tighter">{dict.title}</h2>
+            <div className="h-px w-12 bg-neutral-200 mx-auto mt-6"></div>
+          </header>
+        )}
 
         <AnimatePresence mode="wait">
 
