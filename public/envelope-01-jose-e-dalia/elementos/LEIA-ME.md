@@ -15,12 +15,11 @@ nativa e convertidos para WebP: **~25 MB → ~2,3 MB**, sem perda visível.
 | `etiqueta-nomes.webp` | Nomes, data e local do casamento |
 | `peonia.webp` | Decorativo |
 | `busto.webp` | Decorativo |
-| `bouquet-calla.webp` | Decorativo — só no ramo final, fundo da colagem |
-| `hortensias-densas.webp` | Decorativo — junto ao coração (ficheiro fonte `10.svg`; ver nota abaixo) |
+| `bouquet-calla.webp` | Decorativo |
 | `forma-circulo.webp` | Decorativo (mancha de cor) |
 | `coracao-renda.webp` | Decorativo |
 | `pandeiro.webp` | Decorativo |
-| `hortensias.webp` | Decorativo — buquê mais solto (ficheiro fonte `12.svg`) |
+| `hortensias.webp` | Decorativo — buquê de hortênsias denso (ficheiro fonte `10.svg`, não `12.svg`; ver nota abaixo) |
 | `etiqueta-detalhes.webp` | Navegação → "Local" |
 
 ## Posições
@@ -52,20 +51,16 @@ vem pré-recortado a essa janela exata (via ImageMagick, coordenadas
 convertidas do espaço do `rect` para pixels da imagem fonte, dividindo
 pela escala do `transform`) — não é a imagem completa.
 
-### Duas hortênsias diferentes, não uma trocada pela outra
+### `hortensias.webp` trocado (`12.svg` → `10.svg`)
 
-`12.svg` (buquê mais solto, confirmado por correspondência exata de
-dimensões com o `mockup_link.svg`) e `10.svg` (mais denso, quatro maços
-de hortênsia — duas azuis, duas brancas — bem juntos, sem caules
-visíveis) são imagens **diferentes**, não a mesma trocada. A primeira
-tentativa pôs `10.svg` no sítio do `12.svg` (`hortensias.webp`, junto à
-etiqueta "Detalhes" azul); o casal corrigiu — essa posição é mesmo
-`12.svg`, e `10.svg` vai no `bouquetCalla` (junto ao coração, por cima
-do ramo de copo-de-leite que lá estava), daí o ficheiro novo
-`hortensias-densas.webp`. **Cuidado ao reajustar outra vez: não assumir
-que só há uma "hortênsia" na composição** — confirmado por captura de
-ecrã com caixas e nomes de ficheiro sobrepostos a cada peça (ver
-histórico da conversa), não só pela posição.
+A primeira versão usava `12.svg` (buquê mais solto, confirmado por
+correspondência exata de dimensões com o `mockup_link.svg`). O casal
+corrigiu: o buquê certo nessa posição é o de `10.svg` — mais denso,
+quatro maços de hortênsia (duas azuis, duas brancas) bem juntos, sem
+caules visíveis. Confirmado por captura de ecrã lado a lado com o
+exemplo que enviaram antes de publicar. Fica por esclarecer se `12.svg`
+tinha mesmo lugar nalgum outro ponto da composição original — por agora
+não é usado em lado nenhum.
 
 ## Forro do envelope (foto de capa)
 
