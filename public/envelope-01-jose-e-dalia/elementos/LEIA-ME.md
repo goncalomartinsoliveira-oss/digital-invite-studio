@@ -19,7 +19,7 @@ nativa e convertidos para WebP: **~25 MB → ~2,3 MB**, sem perda visível.
 | `forma-circulo.webp` | Decorativo (mancha de cor) |
 | `coracao-renda.webp` | Decorativo |
 | `pandeiro.webp` | Decorativo |
-| `hortensias.webp` | Decorativo |
+| `hortensias.webp` | Decorativo — buquê de hortênsias denso (ficheiro fonte `10.svg`, não `12.svg`; ver nota abaixo) |
 | `etiqueta-detalhes.webp` | Navegação → "Local" |
 
 ## Posições
@@ -50,6 +50,17 @@ círculo, recortado por um `clipPath` com um `<rect>`. O ficheiro aqui já
 vem pré-recortado a essa janela exata (via ImageMagick, coordenadas
 convertidas do espaço do `rect` para pixels da imagem fonte, dividindo
 pela escala do `transform`) — não é a imagem completa.
+
+### `hortensias.webp` trocado (`12.svg` → `10.svg`)
+
+A primeira versão usava `12.svg` (buquê mais solto, confirmado por
+correspondência exata de dimensões com o `mockup_link.svg`). O casal
+corrigiu: o buquê certo nessa posição é o de `10.svg` — mais denso,
+quatro maços de hortênsia (duas azuis, duas brancas) bem juntos, sem
+caules visíveis. Confirmado por captura de ecrã lado a lado com o
+exemplo que enviaram antes de publicar. Fica por esclarecer se `12.svg`
+tinha mesmo lugar nalgum outro ponto da composição original — por agora
+não é usado em lado nenhum.
 
 ## Forro do envelope (foto de capa)
 
