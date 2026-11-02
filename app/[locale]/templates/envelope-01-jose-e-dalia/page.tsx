@@ -52,10 +52,11 @@ const BASE_T = {
 
 // Proporção da tela da colagem (largura : altura). Toda a composição vive
 // dentro desta caixa; mexer aqui estica tudo, por isso é o único sítio onde
-// se ajusta o "comprimento" geral da página. Medida diretamente na maquete
-// completa que os noivos enviaram (748 × 2000 px): 100 / (100×2000/748).
+// se ajusta o "comprimento" geral da página. Lida diretamente do viewBox do
+// ficheiro fonte ("mockup_link.svg", com a composição final já no sítio
+// certo, imagens por link não embutidas): 454.4 × 1216.62.
 const CANVAS_W = 100;
-const CANVAS_H = 267.38;
+const CANVAS_H = 267.75;
 
 // Forro do envelope aberto: forma exata da camada "fotografia" do ficheiro
 // fonte (um pentágono com cantos arredondados, não um retângulo) — lida
@@ -88,25 +89,28 @@ type Piece = {
   rotate?: number; // graus
 };
 
-// Posições medidas diretamente sobre a maquete completa ("template completo
-// sem texto", 748 × 2000 px) que os noivos enviaram: grelha de 5% sobreposta
-// à imagem, não estimadas a olho. A ordem da lista é também a ordem de
-// empilhamento (z) — do fundo (envelope) para a frente, tal como na maquete.
-// Tudo relativo à tela, por isso é o único sítio a mexer para reajustar o
+// Posições lidas diretamente das transformações do ficheiro fonte
+// ("mockup_link.svg" — a composição final, com tudo já no sítio certo,
+// enviada pelo casal com as imagens por link em vez de embutidas, para dar
+// para abrir). Não são estimativas: são o `translate`/`scale`/`rotate` de
+// cada elemento, convertidos para percentagem do viewBox (454.4 × 1216.62).
+// A ordem da lista é também a ordem de empilhamento (z), a mesma ordem em
+// que os elementos aparecem nesse ficheiro (do fundo para a frente). Tudo
+// relativo à tela, por isso é o único sítio a mexer para reajustar o
 // arranjo. Ver LEIA-ME.md na pasta dos elementos para o detalhe de cada peça.
 const PIECES: Record<string, Piece> = {
-  envelopeAberto:     { src: "envelope-aberto",     left: 16.9, top: 2,  width: 50, z: 1 },
-  bouquetCascante:    { src: "bouquet-cascante",     left: 54.1, top: 2,  width: 34, z: 2 },
-  etiquetaNomes:      { src: "etiqueta-nomes",       left: 38, top: 18, width: 48, z: 3 },
-  peonia:             { src: "peonia",               left: 13, top: 28, width: 40, z: 4 },
-  busto:              { src: "busto",                left: 58, top: 43, width: 25, z: 5 },
-  bouquetCalla:       { src: "bouquet-calla",        left: 15, top: 42, width: 50, z: 6 },
-  formaCirculo:       { src: "forma-circulo",        left: 45, top: 58, width: 43, z: 7 },
-  coracaoRenda:       { src: "coracao-renda",         left: 17, top: 65, width: 47, z: 8 },
-  pandeiro:           { src: "pandeiro",              left: 58, top: 65, width: 27, z: 9 },
-  hortensias:         { src: "hortensias",            left: 15, top: 76, width: 41, z: 10 },
-  etiquetaDetalhes:   { src: "etiqueta-detalhes",      left: 45, top: 83, width: 43, z: 11 },
-  bouquetCallaFinal:  { src: "bouquet-calla",          left: 52, top: 90, width: 39, z: 12 },
+  envelopeAberto:     { src: "envelope-aberto",    left: 21.71, top: 0.96,  width: 53.41, z: 1 },
+  etiquetaNomes:      { src: "etiqueta-nomes",      left: 46.49, top: 20.54, width: 48.76, z: 2 },
+  peonia:             { src: "peonia",              left: 20.31, top: 29.57, width: 37.36, z: 3 },
+  bouquetCascante:    { src: "bouquet-cascante",    left: 58.02, top: 2.28,  width: 36.06, z: 4 },
+  formaCirculo:       { src: "forma-circulo",       left: 45.48, top: 51.68, width: 48.83, z: 5 },
+  coracaoRenda:       { src: "coracao-renda",       left: 24.53, top: 65.03, width: 44.04, z: 6 },
+  etiquetaDetalhes:   { src: "etiqueta-detalhes",   left: 50.43, top: 78.26, width: 37.44, z: 7 },
+  hortensias:         { src: "hortensias",          left: 61.34, top: 85.98, width: 34.30, z: 8 },
+  bouquetCalla:       { src: "bouquet-calla",       left: 21.87, top: 43.98, width: 42.82, z: 9, rotate: -12.28 },
+  bouquetCallaFinal:  { src: "bouquet-calla",       left: 25.44, top: 72.95, width: 43.95, z: 10, rotate: 20.5 },
+  busto:              { src: "busto",               left: 62.89, top: 42.01, width: 22.54, z: 11 },
+  pandeiro:           { src: "pandeiro",            left: 53.10, top: 71.78, width: 35.02, z: 12, rotate: -38.53 },
 };
 
 function pieceStyle(p: Piece): React.CSSProperties {
@@ -440,16 +444,16 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
               <img src={`${EL}/hortensias.webp`} alt="" style={pieceStyle(PIECES.hortensias)} className="select-none" draggable={false} />
 
               {/* Etiqueta "Detalhes" — navegação para a secção "Local",
-                  mesmo papel do antigo crachá "badge-detalhes". Texto
-                  deslocado para o quadrante superior do cartão: o ramo
-                  final (bouquetCallaFinal) sobrepõe-se ao canto inferior
-                  direito, tal como na maquete — aqui, ao contrário da
-                  maquete (que não tinha texto), isso tapava o "clique
-                  aqui" se ficasse centrado. */}
+                  mesmo papel do antigo crachá "badge-detalhes". Texto no
+                  quadrante inferior do cartão: o pandeiro (z mais alto,
+                  rodado -38.53°) tem uma pegada visual, por causa da
+                  rotação, bem maior do que a sua própria caixa — cobre o
+                  terço superior do cartão. Confirmado por medição direta
+                  das caixas no browser (não a olho), não só pela imagem. */}
               <a href="#local" style={pieceStyle(PIECES.etiquetaDetalhes)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/etiqueta-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "20%", transform: "translate(-50%, -50%)" }}>
+                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "63%", transform: "translate(-50%, -50%)" }}>
                     <span
                       style={{
                         fontFamily: "var(--font-pinyon)",
@@ -461,7 +465,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                       Detalhes
                     </span>
                   </div>
-                  <div className="absolute" style={{ left: "50%", top: "36%", transform: "translate(-50%, -50%)" }}>
+                  <div className="absolute" style={{ left: "50%", top: "79%", transform: "translate(-50%, -50%)" }}>
                     <ClickLabel dark>Clique aqui</ClickLabel>
                   </div>
                 </div>

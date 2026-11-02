@@ -24,14 +24,32 @@ nativa e convertidos para WebP: **~25 MB → ~2,3 MB**, sem perda visível.
 
 ## Posições
 
-Medidas sobre a maquete completa que o casal enviou ("template completo sem
-texto", 748 × 2000 px — dá a proporção de `CANVAS_H` em
-`envelope-01-jose-e-dalia/page.tsx`): grelha de 5% sobreposta à imagem,
-afinadas por comparação direta lado-a-lado entre a maquete e a renderização
-real do template (não só a olho — ver histórico da conversa para o processo
-de várias iterações). Tal como no "envelope-01" original, tudo em `PIECES`
-é percentagem da tela, por isso a composição escala por igual em qualquer
-largura de ecrã.
+**Não são estimadas.** A primeira versão desta colagem foi medida sobre uma
+maquete em imagem (grelha de 5% sobreposta, comparação lado-a-lado com a
+renderização real) e depois afinada por pedidos de "mover X px" — processo
+lento e impreciso, como o casal reparou. A versão atual vem de um SVG com
+as imagens por **link** em vez de embutidas (`mockup_link.svg`, pedido
+especificamente por ser leve o suficiente para abrir — um SVG com imagens
+embutidas da composição toda ronda os 35 MB, grande demais para as
+ferramentas disponíveis): cada elemento tem aí o seu `transform`
+(`translate`/`scale`/`rotate`) exato, lido diretamente e convertido para
+percentagem do `viewBox` (454.4 × 1216.62 → dá `CANVAS_H`). A ordem dos
+elementos nesse ficheiro é também a ordem de empilhamento em `PIECES`.
+
+Se for preciso ajustar o arranjo outra vez, o caminho mais rápido e exato
+é pedir ao casal um novo SVG assim (Illustrator: exportar com
+"Image Location: Link", não "Embed") com a composição já no sítio
+certo — não tentar adivinhar por descrição ou marcações em capturas de
+ecrã.
+
+### `forma-circulo.webp` é um recorte, não o ficheiro inteiro
+
+A imagem fonte ("Formas Azuis de Papel Texturado.png") tem duas formas
+lado a lado (um oval alto e um círculo); o `mockup_link.svg` usa só o
+círculo, recortado por um `clipPath` com um `<rect>`. O ficheiro aqui já
+vem pré-recortado a essa janela exata (via ImageMagick, coordenadas
+convertidas do espaço do `rect` para pixels da imagem fonte, dividindo
+pela escala do `transform`) — não é a imagem completa.
 
 ## Forro do envelope (foto de capa)
 
