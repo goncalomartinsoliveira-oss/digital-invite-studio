@@ -321,16 +321,17 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 `cqw` (percentagem da largura da tela), para escalarem com a
                 colagem em vez de saltarem por breakpoints.
 
-                Sem padding lateral não chega para as artes baterem quase na
-                borda: as peças em si já têm folga própria (o desenho vai só
-                de ~17% a ~81% da largura da tela, nunca 0-100%), por isso a
-                tela em si tem de ficar MAIOR do que o ecrã no telemóvel — 150%
-                de largura, recuada 25% à esquerda para ficar centrada — e o
-                que sobra para lá da borda fica escondido pelo
-                `overflow-x-hidden` do contentor lá em cima. Dá o efeito de
-                "zoom": as peças passam a encostar quase à borda do ecrã, à
-                custa de mais altura total (mais scroll) — como pedido. A
-                partir do `sm` volta ao tamanho normal, com respiro.
+                Sem padding lateral não chega: as peças desta colagem vão de
+                ~13% a ~91% da largura da tela (nunca 0-100%), por isso a
+                tela em si tem de ficar um pouco MAIOR do que o ecrã no
+                telemóvel — 115% de largura, recuada 7.5% à esquerda para
+                ficar centrada — e o que sobra para lá da borda fica
+                escondido pelo `overflow-x-hidden` do contentor lá em cima.
+                Dá um ligeiro efeito de "zoom", mas com folga de propósito —
+                a pedido do casal, as artes já não encostam à borda do ecrã
+                como no "envelope-01" original (lá, a tela ia a 150%/-25%,
+                zoom mais forte). A partir do `sm` volta ao tamanho normal,
+                com respiro.
 
                 NOTA: `sm:ml-0` aqui ao lado de `sm:mx-auto` tinha partido a
                 centragem em desktop — as duas mexem em `margin-left` e o
@@ -338,10 +339,10 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 pela ordem escrita na className), e `ml-0` ganhava, deixando
                 a colagem encostada à esquerda com uma faixa enorme de
                 espaço vazio à direita. `mx-auto` sozinho já cobre o reset
-                do `-ml-[25%]` do telemóvel, por isso o `ml-0` era só a
+                do `-ml-[7.5%]` do telemóvel, por isso o `ml-0` era só a
                 mais — e a causa do bug. */}
             <div
-              className="relative w-[150%] -ml-[25%] sm:mx-auto sm:w-full sm:max-w-[560px]"
+              className="relative w-[115%] -ml-[7.5%] sm:mx-auto sm:w-full sm:max-w-[560px]"
               style={{
                 aspectRatio: `${CANVAS_W} / ${CANVAS_H}`,
                 containerType: "inline-size",
