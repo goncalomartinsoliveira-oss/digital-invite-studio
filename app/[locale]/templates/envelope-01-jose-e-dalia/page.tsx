@@ -114,7 +114,7 @@ const PIECES: Record<string, Piece> = {
   coracaoRenda:       { src: "coracao-renda",       left: 24.53, top: 65.03, width: 44.04, z: 6 },
   etiquetaDetalhes:   { src: "etiqueta-detalhes",   left: 50.43, top: 78.26, width: 37.44, z: 7 },
   hortensias:         { src: "hortensias",          left: 61.34, top: 85.98, width: 34.30, z: 8 },
-  bouquetCalla:       { src: "bouquet-calla",       left: 21.87, top: 43.98, width: 42.82, z: 9, rotate: -12.28 },
+  bouquetCalla:       { src: "hortensias-densas",   left: 21.87, top: 43.98, width: 42.82, z: 9, rotate: -12.28 },
   bouquetCallaFinal:  { src: "bouquet-calla",       left: 25.44, top: 72.95, width: 43.95, z: 10, rotate: 20.5 },
   busto:              { src: "busto",               left: 62.89, top: 42.01, width: 22.54, z: 11 },
   pandeiro:           { src: "pandeiro",            left: 60.60, top: 66.44, width: 35.02, z: 12, rotate: -38.53 },
@@ -453,7 +453,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                   só decorativa para não duplicar o mesmo CTA duas vezes. */}
               <img src={`${EL}/peonia.webp`} alt="" style={pieceStyle(PIECES.peonia)} className="select-none" draggable={false} />
               <img src={`${EL}/busto.webp`} alt="" style={pieceStyle(PIECES.busto)} className="select-none" draggable={false} />
-              <img src={`${EL}/bouquet-calla.webp`} alt="" style={pieceStyle(PIECES.bouquetCalla)} className="select-none" draggable={false} />
+              <img src={`${EL}/hortensias-densas.webp`} alt="" style={pieceStyle(PIECES.bouquetCalla)} className="select-none" draggable={false} />
 
               {/* "Save the Date" no elemento círculo — data vinda do
                   sistema (event_date), formato DD.MM.AAAA como no exemplo
