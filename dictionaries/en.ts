@@ -806,9 +806,7 @@ const en = {
         "mediaLabel": "Photo / Video (.mp4)",
         "noFile": "No File",
         "uploading": "Uploading...",
-        "changeMedia": "Change Media",
-        "monogramLabel": "Monogram (optional)",
-        "inviteLineLabel": "Invite line"
+        "changeMedia": "Change Media"
       },
       "countdown": {
         "title": "02. Countdown",
@@ -836,8 +834,7 @@ const en = {
         "mainTitleLabel": "Main Title",
         "eventsLabel": "Event List",
         "addBtn": "Add",
-        "newEventDefault": "New Event",
-        "iconLabel": "Icon"
+        "newEventDefault": "New Event"
       },
       "event": {
         "title": "06. Event Venues",
