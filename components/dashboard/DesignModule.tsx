@@ -74,7 +74,13 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
   return (
     <div className="space-y-8 pb-12 text-left animate-in fade-in duration-500 font-montserrat">
 
-      {/* 01. TEMPLATES DO CONVITE */}
+      {/* 01. TEMPLATES DO CONVITE — a secção toda fica fora, não só a grelha,
+          quando o modelo é à medida: nada aqui para alguém clicar por engano. */}
+      {isCustomTemplate ? (
+        <p className="flex items-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest px-1">
+          <Lock size={11} /> Desenho personalizado — gerido fora desta área
+        </p>
+      ) : (
       <section className="bg-white p-8 rounded-[2.5rem] shadow-md border border-gray-100">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
@@ -97,15 +103,6 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
           </button>
         </div>
 
-        {isCustomTemplate ? (
-          <div className="flex flex-col items-center text-center gap-3 py-10 px-6 bg-cream rounded-3xl border border-gray-200">
-            <Lock size={18} className="text-gray-400" />
-            <p className="text-sm font-bold text-ink">Modelo personalizado</p>
-            <p className="text-xs text-gray-400 max-w-sm">
-              Este convite tem um desenho feito à medida para este casamento. Não é possível trocar de modelo por aqui — fale com a equipa se precisar de alguma alteração ao desenho.
-            </p>
-          </div>
-        ) : (
         <div className={`grid grid-cols-2 md:grid-cols-4 gap-6 ${!canEdit ? 'pointer-events-none opacity-80' : ''}`}>
           {AVAILABLE_TEMPLATES.map(t => (
             <div
@@ -137,8 +134,8 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
             </div>
           ))}
         </div>
-        )}
       </section>
+      )}
 
       {/* 01b. COR DE DESTAQUE — só nos modelos que suportam personalização de cor */}
       {activeTemplate?.supportsTheme && (
