@@ -24,9 +24,16 @@ import SmartRsvp from "../../../../components/invite/SmartRsvp";
 // interruptores de visibilidade (`sections_visibility`) dos outros modelos —
 // para o painel (ContentModule) funcionar aqui sem alterações.
 
-const EL = "/envelope-01/elementos";
+// Layout da hero redesenhado a pedido do casal (nov/2026) — elementos novos,
+// próprios deste evento, já não os do "envelope-01" original. Pasta e
+// LEIA-ME próprios: ver public/envelope-01-jose-e-dalia/elementos/LEIA-ME.md.
+const EL = "/envelope-01-jose-e-dalia/elementos";
 
 const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=2000&auto=format&fit=crop";
+// Visual por omissão do forro do envelope, enquanto os noivos não carregam
+// a própria foto de capa — o padrão floral que já vem desenhado para esse
+// efeito (ver LEIA-ME).
+const DEFAULT_COVER_IMAGE = `${EL}/capa-floral-default.webp`;
 
 // Paleta das secções de baixo (tudo o que não é a colagem) — o mesmo tom
 // creme/tinta/oliva já usado na colagem, para as duas partes lerem como um
@@ -45,28 +52,21 @@ const BASE_T = {
 
 // Proporção da tela da colagem (largura : altura). Toda a composição vive
 // dentro desta caixa; mexer aqui estica tudo, por isso é o único sítio onde
-// se ajusta o "comprimento" geral da página.
+// se ajusta o "comprimento" geral da página. Medida diretamente na maquete
+// completa que os noivos enviaram (748 × 2000 px): 100 / (100×2000/748).
 const CANVAS_W = 100;
-const CANVAS_H = 207;
-
-// Áreas onde entram as fotos do casal, medidas diretamente nos ficheiros
-// (em % do próprio elemento, não da tela).
-const POLAROID_PHOTO = { left: 6.63, top: 5.5, width: 87.43, height: 72.92 };
-// Camada "fotografia" de elementos/"POSICIONAMENTO elementos (5).svg" — um
-// retângulo simples (sem rotação), por isso basta a caixa, sem clip-path.
-const ARCO_PHOTO = { left: 42.61, top: 50.89, width: 34.66, height: 26.15 };
+const CANVAS_H = 267.38;
 
 // Forro do envelope aberto: forma exata da camada "fotografia" do ficheiro
-// original (um pentágono com cantos arredondados, não um retângulo), lida
-// diretamente das coordenadas do próprio path SVG e convertida em polígono
-// percentual. Uma caixa retangular aproximada (a abordagem anterior) tem
-// cantos que caem fora do contorno do envelope perto do bico — nessas zonas
-// não há arte por cima a tapar a foto, porque ali já é fundo transparente da
-// página, não o envelope. O clip-path elimina esse problema: a foto fica
-// sempre recortada exatamente na forma desenhada, seja qual for a proporção
-// da foto do casal.
+// fonte (um pentágono com cantos arredondados, não um retângulo) — lida
+// diretamente das coordenadas do próprio path SVG (clipPath "clippath" do
+// ficheiro recebido) e convertida em polígono percentual (curvas Bézier
+// amostradas em ~60 pontos, não aproximadas por um retângulo). O clip-path
+// garante que a foto fica sempre recortada exatamente na forma desenhada,
+// seja qual for a proporção da foto do casal — mesma técnica do
+// "envelope-01" original, recalculada a partir do novo ficheiro.
 const ENVELOPE_PHOTO_CLIP =
-  "polygon(3.64% 43.75%, 3.67% 37.53%, 6.78% 32.50%, 34.56% 13.72%, 47.62% 4.95%, 52.03% 5.06%, 77.24% 21.99%, 93.01% 32.68%, 95.85% 37.20%, 95.89% 43.73%, 88.78% 45.27%, 87.15% 46.21%, 61.58% 72.24%, 38.12% 72.24%, 12.67% 46.49%, 9.96% 45.07%)";
+  "polygon(89.25% 36.62%, 55.81% 8.35%, 55.75% 8.29%, 55.59% 8.13%, 55.34% 7.89%, 55.02% 7.59%, 54.65% 7.25%, 54.26% 6.9%, 53.86% 6.56%, 53.47% 6.24%, 53.11% 5.98%, 52.8% 5.79%, 51.82% 5.33%, 50.84% 5.2%, 49.89% 5.32%, 48.99% 5.63%, 48.16% 6.07%, 47.43% 6.57%, 46.83% 7.08%, 46.36% 7.52%, 46.07% 7.83%, 45.96% 7.95%, 12.43% 36.52%, 12.3% 36.63%, 11.95% 36.96%, 11.42% 37.49%, 10.8% 38.21%, 10.14% 39.11%, 9.49% 40.18%, 8.93% 41.41%, 8.5% 42.78%, 8.28% 44.28%, 8.32% 45.9%, 8.38% 45.92%, 8.56% 45.99%, 8.83% 46.1%, 9.17% 46.26%, 9.58% 46.45%, 10.04% 46.68%, 10.52% 46.95%, 11.01% 47.26%, 11.49% 47.59%, 11.95% 47.96%, 32.62% 64.65%, 68.67% 64.54%, 90.84% 46.97%, 91.23% 46.74%, 91.61% 46.53%, 91.97% 46.34%, 92.3% 46.18%, 92.6% 46.04%, 92.86% 45.93%, 93.08% 45.84%, 93.24% 45.78%, 93.34% 45.74%, 93.38% 45.73%, 93.42% 44.12%, 93.19% 42.64%, 92.77% 41.3%, 92.2% 40.11%, 91.55% 39.08%, 90.89% 38.22%, 90.26% 37.53%, 89.74% 37.03%, 89.38% 36.73%, 89.25% 36.62%)";
 
 // Versaletes da moldura dos nomes (intro, data, local) — mesmo tipo, tamanho
 // e cor nos três, tal como na maquete: serifada (a mesma do resto do site),
@@ -88,20 +88,25 @@ type Piece = {
   rotate?: number; // graus
 };
 
-// Posições obtidas por correspondência de cada elemento contra a maquete
-// (ver LEIA-ME na pasta dos elementos), não estimadas a olho. Tudo é
-// relativo à tela, por isso é o único sítio a mexer para reajustar o arranjo.
+// Posições medidas diretamente sobre a maquete completa ("template completo
+// sem texto", 748 × 2000 px) que os noivos enviaram: grelha de 5% sobreposta
+// à imagem, não estimadas a olho. A ordem da lista é também a ordem de
+// empilhamento (z) — do fundo (envelope) para a frente, tal como na maquete.
+// Tudo relativo à tela, por isso é o único sítio a mexer para reajustar o
+// arranjo. Ver LEIA-ME.md na pasta dos elementos para o detalhe de cada peça.
 const PIECES: Record<string, Piece> = {
-  envelopeAberto: { src: "envelope-aberto", left: 17.12, top: 1.75,  width: 40.80, z: 2 },
-  molduraNomes:   { src: "moldura-nomes",   left: 41.77, top: 10.31, width: 39.33, z: 3 },
-  polaroidA:      { src: "polaroid",        left: 21.08, top: 27.27, width: 20.32, z: 4, rotate: -8 },
-  badgeDetalhes:  { src: "badge-detalhes",  left: 19.58, top: 38.63, width: 34.75, z: 5 },
-  bolo:           { src: "bolo",            left: 50.40, top: 45.10, width: 29.60, z: 4 },
-  envelopeRsvp:   { src: "envelope-rsvp",   left: 20.80, top: 56.50, width: 38.80, z: 6 },
-  polaroidB:      { src: "polaroid",        left: 57.32, top: 63.81, width: 20.54, z: 5, rotate: 14 },
-  arcoHistoria:   { src: "arco-historia",   left: 35.34, top: 70.84, width: 42.60, z: 5 },
-  polaroidC:      { src: "polaroid",        left: 20.67, top: 71.44, width: 21.59, z: 6, rotate: -8 },
-  polaroidD:      { src: "polaroid",        left: 23.15, top: 83.93, width: 20.54, z: 7, rotate: 14 },
+  envelopeAberto:     { src: "envelope-aberto",     left: 16, top: 2,  width: 50, z: 1 },
+  bouquetCascante:    { src: "bouquet-cascante",     left: 55, top: 1,  width: 34, z: 2 },
+  etiquetaNomes:      { src: "etiqueta-nomes",       left: 38, top: 27, width: 48, z: 3 },
+  peonia:             { src: "peonia",               left: 13, top: 28, width: 40, z: 4 },
+  busto:              { src: "busto",                left: 58, top: 43, width: 25, z: 5 },
+  bouquetCalla:       { src: "bouquet-calla",        left: 15, top: 42, width: 50, z: 6 },
+  formaCirculo:       { src: "forma-circulo",        left: 45, top: 58, width: 43, z: 7 },
+  coracaoRenda:       { src: "coracao-renda",         left: 17, top: 65, width: 47, z: 8 },
+  pandeiro:           { src: "pandeiro",              left: 58, top: 65, width: 27, z: 9 },
+  hortensias:         { src: "hortensias",            left: 15, top: 76, width: 41, z: 10 },
+  etiquetaDetalhes:   { src: "etiqueta-detalhes",      left: 45, top: 83, width: 43, z: 11 },
+  bouquetCallaFinal:  { src: "bouquet-calla",          left: 52, top: 90, width: 39, z: 12 },
 };
 
 function pieceStyle(p: Piece): React.CSSProperties {
@@ -189,7 +194,6 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
   const photos: string[] = (content.gallery?.images_urls || []).filter(
     (u: string) => u && u.trim() !== ""
   );
-  const photoAt = (i: number) => photos[i % (photos.length || 1)] || "";
 
   // Foto de capa escolhida no separador "Hero" do painel — é a que entra no
   // forro do envelope aberto.
@@ -343,64 +347,59 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 containerType: "inline-size",
               }}
             >
-              {/* Envelope aberto — o forro é a foto de capa do casal. O
-                  ficheiro tem um buraco recortado exatamente na forma do
-                  forro (a camada "fotografia" do desenho original), por
-                  isso a foto colocada por baixo, em posição retangular,
-                  aparece já recortada nessa forma pelo próprio desenho. */}
+              {/* Envelope aberto — o forro é a foto de capa do casal (ou o
+                  padrão floral por omissão, enquanto não carregam a
+                  própria). O recorte é feito em CSS (`clip-path`, forma
+                  exata do pentágono do ficheiro fonte — ver
+                  ENVELOPE_PHOTO_CLIP), não por um buraco no próprio webp,
+                  por isso a foto entra por cima do envelope, não por baixo. */}
               <div style={pieceStyle(PIECES.envelopeAberto)}>
-                <div className="relative w-full h-auto" style={{ aspectRatio: "978 / 1200" }}>
-                  {coverPhoto && (
-                    <img
-                      src={coverPhoto}
-                      alt=""
-                      className="absolute inset-0 w-full h-full object-cover select-none"
-                      draggable={false}
-                      style={{ clipPath: ENVELOPE_PHOTO_CLIP }}
-                    />
-                  )}
+                <div className="relative w-full h-auto" style={{ aspectRatio: "1103 / 1426" }}>
                   <img
                     src={`${EL}/envelope-aberto.webp`}
                     alt=""
-                    className="relative w-full h-full select-none"
+                    className="absolute inset-0 w-full h-full select-none"
                     draggable={false}
+                  />
+                  <img
+                    src={coverPhoto || DEFAULT_COVER_IMAGE}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover select-none"
+                    draggable={false}
+                    style={{ clipPath: ENVELOPE_PHOTO_CLIP }}
                   />
                 </div>
               </div>
 
-              {/* Moldura com os nomes, data e local */}
-              <div style={pieceStyle(PIECES.molduraNomes)}>
+              {/* Ramo junto ao envelope — só decorativo */}
+              <img src={`${EL}/bouquet-cascante.webp`} alt="" style={pieceStyle(PIECES.bouquetCascante)} className="select-none" draggable={false} />
+
+              {/* Etiqueta com os nomes, data e local — mesmos campos e
+                  mesma lógica de texto da moldura do "envelope-01" original,
+                  só que agora sobre o novo cartão em branco (sem marcador de
+                  posição próprio; centrado a olho dentro da zona em branco,
+                  que é larga e sem elementos decorativos a evitar). */}
+              <div style={pieceStyle(PIECES.etiquetaNomes)}>
                 <div className="relative">
-                  <img src={`${EL}/moldura-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  {/* As três zonas ficam centradas exatamente nos pontos que
-                      o casal marcou num ficheiro de referência próprio
-                      (elementos/"exemplo de posicionamentos.svg", com 3
-                      camadas de texto "O NOSSO CASAMENTO" / "NOME NOIVOS" /
-                      "DATA CASAMENTO"). As posições desse SVG usam uma
-                      rotação (writing-mode vertical) — convertidas para o
-                      sistema de coordenadas normal e depois confirmadas por
-                      medição de pixel numa renderização à parte, dão:
-                      43% / 59% / 79% da altura do cartão, sempre ao centro.
-                      `translateY(-50%)` centra cada bloco nesse ponto, em
-                      vez de o ponto ser o topo do bloco. */}
+                  <img src={`${EL}/etiqueta-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                   <div
-                    className="absolute left-0 right-0 text-center px-[15%]"
-                    style={{ top: "43%", transform: "translateY(-50%)" }}
+                    className="absolute left-0 right-0 text-center px-[18%]"
+                    style={{ top: "34%", transform: "translateY(-50%)" }}
                   >
                     <span className="uppercase font-serif" style={moldSmallCaps}>
                       {content.hero?.text_above_names || "O nosso casamento"}
                     </span>
                   </div>
                   <div
-                    className="absolute left-0 right-0 text-center px-[11%]"
-                    style={{ top: "59%", transform: "translateY(-50%)" }}
+                    className="absolute left-0 right-0 text-center px-[12%]"
+                    style={{ top: "52%", transform: "translateY(-50%)" }}
                   >
                     <span
                       /* A Pinyon Script tem laçadas altas que a entrelinha
                          apertada corta, sobretudo no "&" — daí a folga. */
                       style={{
                         fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(16px, 6.2cqw, 44px)",
+                        fontSize: "clamp(16px, 6cqw, 42px)",
                         color: "#332E2B",
                         lineHeight: 1.35,
                         paddingBlock: "0.1em",
@@ -411,8 +410,8 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                   </div>
                   {(dateLabel || place) && (
                     <div
-                      className="absolute left-0 right-0 flex flex-col items-center px-[15%]"
-                      style={{ top: "79%", transform: "translateY(-50%)" }}
+                      className="absolute left-0 right-0 flex flex-col items-center px-[18%]"
+                      style={{ top: "71%", transform: "translateY(-50%)" }}
                     >
                       {dateLabel && (
                         <span className="uppercase font-serif" style={moldSmallCaps}>
@@ -430,126 +429,75 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 </div>
               </div>
 
-              {/* Polaroids — a foto entra na área cinzenta medida no ficheiro */}
-              {[
-                { key: "polaroidA", piece: PIECES.polaroidA, idx: 0 },
-                { key: "polaroidB", piece: PIECES.polaroidB, idx: 1 },
-                { key: "polaroidC", piece: PIECES.polaroidC, idx: 2 },
-                { key: "polaroidD", piece: PIECES.polaroidD, idx: 3 },
-              ].map(({ key, piece, idx }) => (
-                <div key={key} style={pieceStyle(piece)}>
-                  <div className="relative">
-                    <img src={`${EL}/polaroid.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                    {photoAt(idx) && (
-                      <img
-                        src={photoAt(idx)}
-                        alt=""
-                        className="absolute object-cover select-none"
-                        draggable={false}
-                        style={{
-                          left: `${POLAROID_PHOTO.left}%`,
-                          top: `${POLAROID_PHOTO.top}%`,
-                          width: `${POLAROID_PHOTO.width}%`,
-                          height: `${POLAROID_PHOTO.height}%`,
-                        }}
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
+              {/* Peónia, busto, ramo, forma e coração — só decorativos */}
+              <img src={`${EL}/peonia.webp`} alt="" style={pieceStyle(PIECES.peonia)} className="select-none" draggable={false} />
+              <img src={`${EL}/busto.webp`} alt="" style={pieceStyle(PIECES.busto)} className="select-none" draggable={false} />
+              <img src={`${EL}/bouquet-calla.webp`} alt="" style={pieceStyle(PIECES.bouquetCalla)} className="select-none" draggable={false} />
+              <img src={`${EL}/forma-circulo.webp`} alt="" style={pieceStyle(PIECES.formaCirculo)} className="select-none" draggable={false} />
+              <img src={`${EL}/coracao-renda.webp`} alt="" style={pieceStyle(PIECES.coracaoRenda)} className="select-none" draggable={false} />
+              <img src={`${EL}/pandeiro.webp`} alt="" style={pieceStyle(PIECES.pandeiro)} className="select-none" draggable={false} />
+              <img src={`${EL}/hortensias.webp`} alt="" style={pieceStyle(PIECES.hortensias)} className="select-none" draggable={false} />
 
-              {/* Crachá "Local" — navegação. Título e "clique aqui" centrados
-                  exatamente nos pontos marcados em
-                  elementos/"POSICIONAMENTO novo-badge-detalhes.svg". */}
-              <a href="#local" style={pieceStyle(PIECES.badgeDetalhes)} className="block group">
+              {/* Etiqueta "Detalhes" — navegação para a secção "Local",
+                  mesmo papel do antigo crachá "badge-detalhes". Texto
+                  deslocado para o quadrante superior do cartão: o ramo
+                  final (bouquetCallaFinal) sobrepõe-se ao canto inferior
+                  direito, tal como na maquete — aqui, ao contrário da
+                  maquete (que não tinha texto), isso tapava o "clique
+                  aqui" se ficasse centrado. */}
+              <a href="#local" style={pieceStyle(PIECES.etiquetaDetalhes)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
-                  <img src={`${EL}/badge-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "28.8%", transform: "translate(-50%, -50%)" }}>
+                  <img src={`${EL}/etiqueta-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
+                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "20%", transform: "translate(-50%, -50%)" }}>
                     <span
                       style={{
                         fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(11px, 4.2cqw, 32px)",
+                        fontSize: "clamp(12px, 4.4cqw, 32px)",
                         color: "#F2F0E6",
                         lineHeight: 1,
                       }}
                     >
-                      Local
+                      Detalhes
                     </span>
                   </div>
-                  <div className="absolute" style={{ left: "50.9%", top: "66.8%", transform: "translate(-50%, -50%)" }}>
+                  <div className="absolute" style={{ left: "50%", top: "36%", transform: "translate(-50%, -50%)" }}>
                     <ClickLabel dark>Clique aqui</ClickLabel>
                   </div>
                 </div>
               </a>
 
-              {/* Bolo — só decorativo */}
-              <img src={`${EL}/bolo.webp`} alt="" style={pieceStyle(PIECES.bolo)} className="select-none" draggable={false} />
-
-              {/* Envelope creme "Confirmar presença" — navegação. Mesma
-                  lógica, a partir de elementos/"POSICIONAMENTO elementos (4).svg". */}
-              <a href="#rsvp" style={pieceStyle(PIECES.envelopeRsvp)} className="block group">
-                <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
-                  <img src={`${EL}/envelope-rsvp.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "32.8%", transform: "translate(-50%, -50%)" }}>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(11px, 4cqw, 30px)",
-                        color: "#3C4234",
-                        lineHeight: 1.05,
-                      }}
-                    >
-                      Confirmar Presença
-                    </span>
-                  </div>
-                  <div className="absolute" style={{ left: "52.5%", top: "84.4%", transform: "translate(-50%, -50%)" }}>
-                    <ClickLabel>Clique aqui</ClickLabel>
-                  </div>
-                </div>
-              </a>
-
-              {/* Arco "A Nossa História" — navegação. Título, foto e "clique
-                  aqui" a partir de elementos/"POSICIONAMENTO elementos (5).svg"
-                  — o corpo do arco fica à direita das flores, por isso o
-                  centro do texto não é o centro do elemento (~60%, não 50%).
-                  A zona da foto é a camada "fotografia" desse ficheiro,
-                  medida diretamente (retângulo simples, sem rotação). */}
-              <a href="#historia" style={pieceStyle(PIECES.arcoHistoria)} className="block group">
-                <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
-                  <img src={`${EL}/arco-historia.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute w-[55%] text-center" style={{ left: "59.6%", top: "37.4%", transform: "translate(-50%, -50%)" }}>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(10px, 3.6cqw, 28px)",
-                        color: "#F2F0E6",
-                        lineHeight: 1.05,
-                      }}
-                    >
-                      A Nossa História
-                    </span>
-                  </div>
-                  {photoAt(4) && (
-                    <img
-                      src={photoAt(4)}
-                      alt=""
-                      className="absolute object-cover select-none"
-                      draggable={false}
-                      style={{
-                        left: `${ARCO_PHOTO.left}%`,
-                        top: `${ARCO_PHOTO.top}%`,
-                        width: `${ARCO_PHOTO.width}%`,
-                        height: `${ARCO_PHOTO.height}%`,
-                        border: "2px solid #F2F0E6",
-                      }}
-                    />
-                  )}
-                  <div className="absolute" style={{ left: "60.3%", top: "92.8%", transform: "translate(-50%, -50%)" }}>
-                    <ClickLabel dark>Clique aqui</ClickLabel>
-                  </div>
-                </div>
-              </a>
+              {/* Ramo final — só decorativo */}
+              <img src={`${EL}/bouquet-calla.webp`} alt="" style={pieceStyle(PIECES.bouquetCallaFinal)} className="select-none" draggable={false} />
             </div>
+
+            {/* Atalhos discretos para "Confirmar Presença" e "A Nossa
+                História" — sem equivalente visual na nova colagem (só
+                "Detalhes"/Local tem), mas a pedido do casal mantêm-se
+                acessíveis a partir daqui, em vez de só por scroll normal.
+                `relative z-20`: sem isto, ficava tapada pelo ramo final da
+                colagem — um `div` com `position:relative` pinta sempre por
+                cima de um irmão seguinte sem posição própria, seja qual for
+                a ordem no DOM; só dando posição + z-index à navegação é que
+                a ordem normal (o que vem depois fica por cima) passa a
+                valer. Encostados à esquerda (não centrados): o ramo final
+                invade o lado direito da faixa por baixo da colagem, por
+                isso texto centrado caía em cima das flores, difícil de ler. */}
+            <nav className="relative z-20 flex flex-col items-start gap-2 pt-7 pb-2 pl-8 pr-6">
+              <a
+                href="#rsvp"
+                className="uppercase font-serif transition-opacity hover:opacity-60"
+                style={{ fontSize: "10px", letterSpacing: "0.22em", color: T.accent }}
+              >
+                Confirmar Presença
+              </a>
+              <a
+                href="#historia"
+                className="uppercase font-serif transition-opacity hover:opacity-60"
+                style={{ fontSize: "10px", letterSpacing: "0.22em", color: T.accent }}
+              >
+                A Nossa História
+              </a>
+            </nav>
 
             {/* ── CONTADOR ────────────────────────────────────────────── */}
             {visibility.countdown !== false && (
@@ -744,7 +692,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
 
             {/* ── CONFIRMAR PRESENÇA ─────────────────────────────────── */}
             {visibility.rsvp !== false && (
-              <div style={{ background: T.surface }}>
+              <div id="rsvp" className="scroll-mt-6" style={{ background: T.surface }}>
                 <div className="px-6 pt-20">
                   <div className={wrap}>
                     <SectionTitle eyebrow="Contamos convosco">{(content.rsvp?.title_please ?? "Por favor")} {(content.rsvp?.title_confirm ?? "Confirmar Presença")}</SectionTitle>
