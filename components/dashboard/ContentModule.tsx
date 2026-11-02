@@ -1,15 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { PROGRAM_ICON_KEYS, PROGRAM_ICON_LABELS } from "@/lib/weddingCardIcons";
 
 interface ContentModuleDict {
   toggle: { visible: string; hidden: string };
   sections: {
-    hero: { title: string; subtitleLabel: string; mediaLabel: string; noFile: string; uploading: string; changeMedia: string };
+    hero: { title: string; subtitleLabel: string; mediaLabel: string; noFile: string; uploading: string; changeMedia: string; monogramLabel: string; inviteLineLabel: string };
     countdown: { title: string; mainTitleLabel: string };
     story: { title: string; subtitleLabel: string; mainTitleLabel: string; photoLabel: string; photoEmpty: string; photoUpload: string; textsLabel: string; paragraphPrefix: string };
     gallery: { title: string; subtitleLabel: string; mainTitleLabel: string; photosLabel: string };
-    program: { title: string; subtitleLabel: string; mainTitleLabel: string; eventsLabel: string; addBtn: string; newEventDefault: string };
+    program: { title: string; subtitleLabel: string; mainTitleLabel: string; eventsLabel: string; addBtn: string; newEventDefault: string; iconLabel: string };
     event: { title: string; sectionTitleLabel: string; ceremonyTitle: string; receptionTitle: string; titleLabel: string; timeLabel: string; locationLabel: string; mapsLabel: string; mapsPlaceholder: string };
     details: {
       title: string; subtitleLabel: string; mainTitleLabel: string;
@@ -132,6 +133,8 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             <div>
               <label className={labelClass}>{s.hero.subtitleLabel}</label>
               <input className={inputClass} value={content.hero?.text_above_names ?? ''} onChange={e => handleTextChange('hero', 'text_above_names', e.target.value)} placeholder="Ex: THE WEDDING OF" />
+              <label className={`${labelClass} mt-6`}>{s.hero.inviteLineLabel}</label>
+              <textarea className={`${inputClass} resize-none`} rows={2} value={content.hero?.invite_line ?? ''} onChange={e => handleTextChange('hero', 'invite_line', e.target.value)} placeholder="Ex: Convidamos-vos para celebrar o nosso matrimónio." />
             </div>
             <div>
               <label className={labelClass}>{s.hero.mediaLabel}</label>
@@ -149,6 +152,24 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                 <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white text-[10px] font-bold tracking-widest uppercase transition-all backdrop-blur-sm">
                   {uploading === 'hero' ? s.hero.uploading : s.hero.changeMedia}
                   <input type="file" className="hidden" onChange={e => handleUpload(e, 'hero', 'main_image_url')} />
+                </label>
+              </div>
+
+              {/* Opcional: só usado por templates que desenham um monograma próprio
+                  (ex. "monogram-01") — os restantes ignoram este campo por completo. */}
+              <label className={`${labelClass} mt-6`}>{s.hero.monogramLabel}</label>
+              <div className="relative w-28 h-28 rounded-2xl overflow-hidden bg-white border border-gray-200 shadow-sm group mt-2">
+                {content.hero?.monogram_url ? (
+                  <>
+                    <img src={content.hero.monogram_url} className="w-full h-full object-contain p-2" />
+                    <button onClick={() => handleTextChange('hero', 'monogram_url', '')} className="absolute top-1.5 right-1.5 bg-red-500/90 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] shadow-lg hover:scale-110 transition-transform z-10">✕</button>
+                  </>
+                ) : <div className="h-full flex items-center justify-center text-gray-300 text-[9px] font-bold uppercase tracking-widest bg-gray-50">{s.hero.noFile}</div>}
+                <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white text-[9px] font-bold tracking-widest uppercase transition-all backdrop-blur-sm text-center px-1">
+                  {/* handleUpload() usa só a secção como id de estado — "hero"
+                      cobre as duas imagens deste bloco, não uma por campo. */}
+                  {uploading === 'hero' ? s.hero.uploading : s.hero.changeMedia}
+                  <input type="file" className="hidden" onChange={e => handleUpload(e, 'hero', 'monogram_url')} />
                 </label>
               </div>
             </div>
@@ -250,6 +271,23 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                 <input className="w-24 bg-cream border border-gray-200 focus:border-brand rounded-xl px-3 py-2.5 font-bold text-brand text-sm text-center outline-none transition-colors" value={ev.time} onChange={e => {
                   const newEvs = [...content.program.events]; newEvs[idx].time = e.target.value; handleTextChange('program', 'events', newEvs);
                 }} />
+                {/* Opcional: só usado por templates que desenham um ícone por
+                    momento (ex. "monogram-01") — os restantes ignoram este
+                    campo. Lista fechada (lib/weddingCardIcons.ts), não um
+                    picker de biblioteca inteira. */}
+                <select
+                  className="bg-cream border border-gray-200 focus:border-brand rounded-xl px-2 py-2.5 text-xs text-gray-500 outline-none transition-colors shrink-0"
+                  value={ev.icon || ''}
+                  title={s.program.iconLabel}
+                  onChange={e => {
+                    const newEvs = [...content.program.events]; newEvs[idx].icon = e.target.value || undefined; handleTextChange('program', 'events', newEvs);
+                  }}
+                >
+                  <option value="">—</option>
+                  {PROGRAM_ICON_KEYS.map(key => (
+                    <option key={key} value={key}>{PROGRAM_ICON_LABELS[key]}</option>
+                  ))}
+                </select>
                 <input className="flex-grow bg-transparent border-none text-[15px] font-semibold text-ink focus:ring-0 px-2" value={ev.title} onChange={e => {
                   const newEvs = [...content.program.events]; newEvs[idx].title = e.target.value; handleTextChange('program', 'events', newEvs);
                 }} />

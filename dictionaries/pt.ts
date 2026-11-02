@@ -806,7 +806,9 @@ const pt = {
         "mediaLabel": "Fotografia / Vídeo (.mp4)",
         "noFile": "Sem Ficheiro",
         "uploading": "A carregar...",
-        "changeMedia": "Alterar Média"
+        "changeMedia": "Alterar Média",
+        "monogramLabel": "Monograma (opcional)",
+        "inviteLineLabel": "Linha de convite"
       },
       "countdown": {
         "title": "02. Contador Regressivo",
@@ -834,7 +836,8 @@ const pt = {
         "mainTitleLabel": "Título Principal",
         "eventsLabel": "Lista de Eventos",
         "addBtn": "Adicionar",
-        "newEventDefault": "Novo Evento"
+        "newEventDefault": "Novo Evento",
+        "iconLabel": "Ícone"
       },
       "event": {
         "title": "06. Locais do Evento",
