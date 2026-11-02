@@ -101,7 +101,7 @@ type Piece = {
 const PIECES: Record<string, Piece> = {
   envelopeAberto:     { src: "envelope-aberto",    left: 21.71, top: 0.96,  width: 53.41, z: 1 },
   etiquetaNomes:      { src: "etiqueta-nomes",      left: 46.49, top: 20.54, width: 48.76, z: 2 },
-  peonia:             { src: "peonia",              left: 20.31, top: 29.57, width: 37.36, z: 3 },
+  peonia:             { src: "peonia",              left: 18.51, top: 30.27, width: 37.36, z: 3 },
   bouquetCascante:    { src: "bouquet-cascante",    left: 58.02, top: 2.28,  width: 36.06, z: 4 },
   formaCirculo:       { src: "forma-circulo",       left: 45.48, top: 51.68, width: 48.83, z: 5 },
   coracaoRenda:       { src: "coracao-renda",       left: 24.53, top: 65.03, width: 44.04, z: 6 },
