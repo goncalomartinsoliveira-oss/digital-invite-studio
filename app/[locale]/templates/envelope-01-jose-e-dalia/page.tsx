@@ -388,9 +388,9 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 <div className="relative">
                   <img src={`${EL}/etiqueta-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                   {[
-                    { top: "23%", text: bride, size: "clamp(14px, 5cqw, 32px)" },
-                    { top: "31%", text: "e", size: "clamp(9px, 2.8cqw, 18px)" },
-                    { top: "39%", text: groom, size: "clamp(14px, 5cqw, 32px)" },
+                    { top: "23%", text: bride, size: "clamp(18px, 7cqw, 44px)" },
+                    { top: "30%", text: "e", size: "clamp(11px, 3.2cqw, 22px)" },
+                    { top: "37%", text: groom, size: "clamp(18px, 7cqw, 44px)" },
                   ].map(({ top, text, size }, i) => (
                     <div
                       key={i}
@@ -398,8 +398,10 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                       style={{ top, transform: "translateY(-50%)" }}
                     >
                       {/* A Pinyon Script tem laçadas altas que a entrelinha
-                          apertada corta — daí a folga. */}
-                      <span style={{ fontFamily: "var(--font-pinyon)", fontSize: size, color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                          apertada corta — daí a folga, mesmo com entrelinha
+                          mais apertada entre as três linhas (pedido do
+                          casal: letra maior, linhas mais próximas). */}
+                      <span style={{ fontFamily: "var(--font-pinyon)", fontSize: size, color: "#332E2B", lineHeight: 1.1, paddingBlock: "0.1em" }}>
                         {text}
                       </span>
                     </div>
