@@ -188,12 +188,6 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
   const groom = data?.groom_name || "Noivo";
 
   const eventDate = data?.event_date || new Date().toISOString();
-  const dateLabel = data?.event_date
-    ? new Date(data.event_date)
-        .toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" })
-        .toUpperCase()
-    : "";
-  const place = content.hero?.location || content.footer?.location_text || "";
 
   const photos: string[] = (content.gallery?.images_urls || []).filter(
     (u: string) => u && u.trim() !== ""
@@ -379,58 +373,53 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
               {/* Ramo junto ao envelope — só decorativo */}
               <img src={`${EL}/bouquet-cascante.webp`} alt="" style={pieceStyle(PIECES.bouquetCascante)} className="select-none" draggable={false} />
 
-              {/* Etiqueta com os nomes, data e local — mesmos campos e
-                  mesma lógica de texto da moldura do "envelope-01" original,
-                  só que agora sobre o novo cartão em branco (sem marcador de
-                  posição próprio; centrado a olho dentro da zona em branco,
-                  que é larga e sem elementos decorativos a evitar). */}
+              {/* Etiqueta com os nomes — ordem e disposição pedidas pelo
+                  casal (ver maquete de referência "Carolina e Pedro"):
+                  nome da noiva, "e", nome do noivo, cada um na sua linha;
+                  depois a frase fixa do convite; "Casamento" em destaque,
+                  maior que o resto. A frase e o "Casamento" são fixos
+                  (não vêm de `content.hero`, que aqui deixou de ter uma
+                  zona própria neste cartão) — texto exato pedido pelo
+                  casal, não um valor por omissão genérico. Data/local
+                  deixaram de aparecer aqui (não estavam na disposição
+                  pedida); continuam visíveis no contador e em "O Grande
+                  Dia", mais abaixo na página. */}
               <div style={pieceStyle(PIECES.etiquetaNomes)}>
                 <div className="relative">
                   <img src={`${EL}/etiqueta-nomes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div
-                    className="absolute left-0 right-0 text-center px-[18%]"
-                    style={{ top: "34%", transform: "translateY(-50%)" }}
-                  >
-                    <span className="uppercase font-serif" style={moldSmallCaps}>
-                      {content.hero?.text_above_names || "O nosso casamento"}
-                    </span>
-                  </div>
-                  <div
-                    className="absolute left-0 right-0 text-center px-[12%]"
-                    style={{ top: "52%", transform: "translateY(-50%)" }}
-                  >
-                    <span
-                      /* A Pinyon Script tem laçadas altas que a entrelinha
-                         apertada corta, sobretudo no "&" — daí a folga. */
-                      style={{
-                        fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(16px, 6cqw, 42px)",
-                        color: "#332E2B",
-                        lineHeight: 1.35,
-                        paddingBlock: "0.1em",
-                      }}
-                    >
-                      {groom} &amp; {bride}
-                    </span>
-                  </div>
-                  {(dateLabel || place) && (
+                  {[
+                    { top: "23%", text: bride, size: "clamp(14px, 5cqw, 32px)" },
+                    { top: "31%", text: "e", size: "clamp(9px, 2.8cqw, 18px)" },
+                    { top: "39%", text: groom, size: "clamp(14px, 5cqw, 32px)" },
+                  ].map(({ top, text, size }, i) => (
                     <div
-                      className="absolute left-0 right-0 flex flex-col items-center px-[18%]"
-                      style={{ top: "71%", transform: "translateY(-50%)" }}
+                      key={i}
+                      className="absolute left-0 right-0 text-center px-[12%]"
+                      style={{ top, transform: "translateY(-50%)" }}
                     >
-                      {dateLabel && (
-                        <span className="uppercase font-serif" style={moldSmallCaps}>
-                          {dateLabel}
-                        </span>
-                      )}
-                      {place &&
-                        place.split(",").map((line: string, i: number) => (
-                          <span key={i} className="uppercase font-serif" style={moldSmallCaps}>
-                            {line.trim()}
-                          </span>
-                        ))}
+                      {/* A Pinyon Script tem laçadas altas que a entrelinha
+                          apertada corta — daí a folga. */}
+                      <span style={{ fontFamily: "var(--font-pinyon)", fontSize: size, color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                        {text}
+                      </span>
                     </div>
-                  )}
+                  ))}
+                  <div
+                    className="absolute left-0 right-0 flex flex-col items-center gap-[0.3em] px-[16%]"
+                    style={{ top: "58%", transform: "translateY(-50%)" }}
+                  >
+                    <span className="uppercase font-serif" style={moldSmallCaps}>É com muita alegria</span>
+                    <span className="uppercase font-serif" style={moldSmallCaps}>que convidamos</span>
+                    <span className="uppercase font-serif" style={moldSmallCaps}>para o nosso</span>
+                  </div>
+                  <div
+                    className="absolute left-0 right-0 text-center px-[10%]"
+                    style={{ top: "74%", transform: "translateY(-50%)" }}
+                  >
+                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(18px, 6.4cqw, 42px)", color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                      Casamento
+                    </span>
+                  </div>
                 </div>
               </div>
 
