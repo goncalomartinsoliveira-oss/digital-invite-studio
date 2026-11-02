@@ -332,16 +332,25 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 colagem em vez de saltarem por breakpoints.
 
                 Sem padding lateral não chega: as peças desta colagem vão de
-                ~13% a ~91% da largura da tela (nunca 0-100%), por isso a
-                tela em si tem de ficar um pouco MAIOR do que o ecrã no
-                telemóvel — 115% de largura, recuada 7.5% à esquerda para
-                ficar centrada — e o que sobra para lá da borda fica
-                escondido pelo `overflow-x-hidden` do contentor lá em cima.
-                Dá um ligeiro efeito de "zoom", mas com folga de propósito —
-                a pedido do casal, as artes já não encostam à borda do ecrã
+                ~15% a ~96% da largura da tela (nunca 0-100%), incluindo as
+                peças rodadas, cuja pegada visual real — medida com
+                `boundingBox()` no browser, não a olho — é maior do que a
+                caixa declarada. Por isso a tela em si tem de ficar um
+                pouco MAIOR do que o ecrã no telemóvel — 113% de largura,
+                recuada ~12.6% à esquerda para ficar centrada — e o que
+                sobra para lá da borda fica escondido pelo
+                `overflow-x-hidden` do contentor lá em cima. Dá um ligeiro
+                efeito de "zoom", mas com folga de propósito dos dois
+                lados (~18px em cada lado, medido a 390px de largura) — a
+                pedido do casal, as artes já não encostam à borda do ecrã
                 como no "envelope-01" original (lá, a tela ia a 150%/-25%,
-                zoom mais forte). A partir do `sm` volta ao tamanho normal,
-                com respiro.
+                zoom mais forte). A primeira tentativa (115%/-7.5%) foi
+                calculada antes das posições exatas do SVG fonte entrarem
+                — a extensão real das peças (sobretudo as rodadas) acabou
+                maior do que essa estimativa, e a margem direita
+                desapareceu; os números acima já contam com a extensão
+                medida (`boundingBox()` de todas as peças), não estimada.
+                A partir do `sm` volta ao tamanho normal, com respiro.
 
                 NOTA: `sm:ml-0` aqui ao lado de `sm:mx-auto` tinha partido a
                 centragem em desktop — as duas mexem em `margin-left` e o
@@ -352,7 +361,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 do `-ml-[7.5%]` do telemóvel, por isso o `ml-0` era só a
                 mais — e a causa do bug. */}
             <div
-              className="relative w-[115%] -ml-[7.5%] sm:mx-auto sm:w-full sm:max-w-[560px]"
+              className="relative w-[113%] -ml-[12.6%] sm:mx-auto sm:w-full sm:max-w-[560px]"
               style={{
                 aspectRatio: `${CANVAS_W} / ${CANVAS_H}`,
                 containerType: "inline-size",
@@ -469,19 +478,17 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
 
               {/* Coração "Detalhes" — navegação para a secção "Local" (ver
                   nota acima: papel que estava na etiqueta azul em losango).
-                  Texto encostado à metade esquerda do coração, não
-                  centrado: o pandeiro (rodado) invade a metade direita por
-                  baixo, com uma pegada visual bem maior do que a sua
-                  própria caixa — confirmado por medição direta no browser. */}
+                  Texto centrado e maior, nos pontos marcados pelo casal
+                  diretamente na pré-visualização. */}
               <a href="#local" style={pieceStyle(PIECES.coracaoRenda)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/coracao-renda.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute text-center" style={{ left: "8%", width: "40%", top: "43%", transform: "translateY(-50%)" }}>
-                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(13px, 4.6cqw, 27px)", color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                  <div className="absolute left-0 right-0 text-center" style={{ top: "35%", transform: "translateY(-50%)" }}>
+                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(17px, 6cqw, 36px)", color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
                       Detalhes
                     </span>
                   </div>
-                  <div className="absolute text-center" style={{ left: "8%", width: "40%", top: "54%", transform: "translateY(-50%)" }}>
+                  <div className="absolute left-0 right-0 text-center" style={{ top: "55%", transform: "translateY(-50%)" }}>
                     <ClickLabel>Clique aqui</ClickLabel>
                   </div>
                 </div>
