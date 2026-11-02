@@ -59,6 +59,11 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
   const dateLocked = !!formData.date_locked_at;
   const dbContent = formData.content || {};
   const activeTemplate = AVAILABLE_TEMPLATES.find(t => t.id === formData.template_id);
+  // Um template_id que não está na lista de opções é um modelo à medida,
+  // feito fora do seletor de propósito (ver AVAILABLE_TEMPLATES) — ninguém
+  // devia conseguir trocá-lo por engano a clicar na grelha. Sem isto, o
+  // dono do evento continuava a ver e a poder escolher os outros modelos.
+  const isCustomTemplate = !!formData.template_id && !activeTemplate;
   const accent = dbContent.theme?.accent || "";
 
   const setAccent = (hex: string) => {
@@ -92,22 +97,31 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
           </button>
         </div>
 
+        {isCustomTemplate ? (
+          <div className="flex flex-col items-center text-center gap-3 py-10 px-6 bg-cream rounded-3xl border border-gray-200">
+            <Lock size={18} className="text-gray-400" />
+            <p className="text-sm font-bold text-ink">Modelo personalizado</p>
+            <p className="text-xs text-gray-400 max-w-sm">
+              Este convite tem um desenho feito à medida para este casamento. Não é possível trocar de modelo por aqui — fale com a equipa se precisar de alguma alteração ao desenho.
+            </p>
+          </div>
+        ) : (
         <div className={`grid grid-cols-2 md:grid-cols-4 gap-6 ${!canEdit ? 'pointer-events-none opacity-80' : ''}`}>
           {AVAILABLE_TEMPLATES.map(t => (
-            <div 
-              key={t.id} 
-              onClick={() => { if(canEdit) setFormData({...formData, template_id: t.id}) }} 
+            <div
+              key={t.id}
+              onClick={() => { if(canEdit) setFormData({...formData, template_id: t.id}) }}
               className={`group cursor-pointer p-3 rounded-3xl border-2 transition-all duration-300 ${
-                formData.template_id === t.id 
-                ? 'border-brand bg-brand/5 shadow-inner' 
+                formData.template_id === t.id
+                ? 'border-brand bg-brand/5 shadow-inner'
                 : 'border-transparent opacity-60 hover:opacity-100 hover:border-gray-200'
               }`}
             >
               <div className="relative overflow-hidden rounded-2xl mb-4 shadow-sm aspect-[4/3]">
-                <img 
-                  src={t.preview} 
-                  className={`w-full h-full object-cover transition-transform duration-500 ${formData.template_id === t.id ? 'scale-110' : 'group-hover:scale-105'}`} 
-                  alt={t.name} 
+                <img
+                  src={t.preview}
+                  className={`w-full h-full object-cover transition-transform duration-500 ${formData.template_id === t.id ? 'scale-110' : 'group-hover:scale-105'}`}
+                  alt={t.name}
                 />
                 {formData.template_id === t.id && (
                   <div className="absolute inset-0 bg-brand/20 flex items-center justify-center backdrop-blur-[2px]">
@@ -123,6 +137,7 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
             </div>
           ))}
         </div>
+        )}
       </section>
 
       {/* 01b. COR DE DESTAQUE — só nos modelos que suportam personalização de cor */}
