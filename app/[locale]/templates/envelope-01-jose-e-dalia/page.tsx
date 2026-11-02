@@ -95,8 +95,8 @@ type Piece = {
 // Tudo relativo à tela, por isso é o único sítio a mexer para reajustar o
 // arranjo. Ver LEIA-ME.md na pasta dos elementos para o detalhe de cada peça.
 const PIECES: Record<string, Piece> = {
-  envelopeAberto:     { src: "envelope-aberto",     left: 16, top: 2,  width: 50, z: 1 },
-  bouquetCascante:    { src: "bouquet-cascante",     left: 55, top: 1,  width: 34, z: 2 },
+  envelopeAberto:     { src: "envelope-aberto",     left: 16.9, top: 2,  width: 50, z: 1 },
+  bouquetCascante:    { src: "bouquet-cascante",     left: 55, top: 1.3,  width: 34, z: 2 },
   etiquetaNomes:      { src: "etiqueta-nomes",       left: 38, top: 27, width: 48, z: 3 },
   peonia:             { src: "peonia",               left: 13, top: 28, width: 40, z: 4 },
   busto:              { src: "busto",                left: 58, top: 43, width: 25, z: 5 },
