@@ -188,6 +188,12 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
   const groom = data?.groom_name || "Noivo";
 
   const eventDate = data?.event_date || new Date().toISOString();
+  // "Save the Date" no elemento círculo — formato DD.MM.AAAA, como no
+  // exemplo que os noivos enviaram (diferente do formato por extenso usado
+  // noutros modelos).
+  const dateShort = data?.event_date
+    ? new Date(data.event_date).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, ".")
+    : "";
 
   const photos: string[] = (content.gallery?.images_urls || []).filter(
     (u: string) => u && u.trim() !== ""
@@ -425,42 +431,59 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 </div>
               </div>
 
-              {/* Peónia, busto, ramo, forma e coração — só decorativos */}
+              {/* Peónia, busto, ramo e etiqueta de detalhes — só decorativos.
+                  A etiqueta azul em losango já teve texto/link "Detalhes"
+                  (escolha minha, sem indicação do casal); esse papel passou
+                  para o coração (ver abaixo), por pedido do casal — fica
+                  só decorativa para não duplicar o mesmo CTA duas vezes. */}
               <img src={`${EL}/peonia.webp`} alt="" style={pieceStyle(PIECES.peonia)} className="select-none" draggable={false} />
               <img src={`${EL}/busto.webp`} alt="" style={pieceStyle(PIECES.busto)} className="select-none" draggable={false} />
               <img src={`${EL}/bouquet-calla.webp`} alt="" style={pieceStyle(PIECES.bouquetCalla)} className="select-none" draggable={false} />
-              <img src={`${EL}/forma-circulo.webp`} alt="" style={pieceStyle(PIECES.formaCirculo)} className="select-none" draggable={false} />
-              <img src={`${EL}/coracao-renda.webp`} alt="" style={pieceStyle(PIECES.coracaoRenda)} className="select-none" draggable={false} />
-              <img src={`${EL}/pandeiro.webp`} alt="" style={pieceStyle(PIECES.pandeiro)} className="select-none" draggable={false} />
-              <img src={`${EL}/hortensias.webp`} alt="" style={pieceStyle(PIECES.hortensias)} className="select-none" draggable={false} />
 
-              {/* Etiqueta "Detalhes" — navegação para a secção "Local",
-                  mesmo papel do antigo crachá "badge-detalhes". Texto no
-                  quadrante inferior do cartão: o pandeiro (z mais alto,
-                  rodado -38.53°) tem uma pegada visual, por causa da
-                  rotação, bem maior do que a sua própria caixa — cobre o
-                  terço superior do cartão. Confirmado por medição direta
-                  das caixas no browser (não a olho), não só pela imagem. */}
-              <a href="#local" style={pieceStyle(PIECES.etiquetaDetalhes)} className="block group">
+              {/* "Save the Date" no elemento círculo — data vinda do
+                  sistema (event_date), formato DD.MM.AAAA como no exemplo
+                  enviado. Só informativo, sem link. */}
+              <div style={pieceStyle(PIECES.formaCirculo)}>
+                <div className="relative">
+                  <img src={`${EL}/forma-circulo.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
+                  <div className="absolute left-0 right-0 text-center px-[12%]" style={{ top: "42%", transform: "translateY(-50%)" }}>
+                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(16px, 5.6cqw, 34px)", color: "#F2F0E6", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                      Save the Date
+                    </span>
+                  </div>
+                  {dateShort && (
+                    <div className="absolute left-0 right-0 text-center px-[10%]" style={{ top: "58%", transform: "translateY(-50%)" }}>
+                      <span className="font-sans font-semibold" style={{ fontSize: "clamp(16px, 5.8cqw, 36px)", color: "#F2F0E6", letterSpacing: "0.02em" }}>
+                        {dateShort}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Coração "Detalhes" — navegação para a secção "Local" (ver
+                  nota acima: papel que estava na etiqueta azul em losango).
+                  Texto encostado à metade esquerda do coração, não
+                  centrado: o pandeiro (rodado) invade a metade direita por
+                  baixo, com uma pegada visual bem maior do que a sua
+                  própria caixa — confirmado por medição direta no browser. */}
+              <a href="#local" style={pieceStyle(PIECES.coracaoRenda)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
-                  <img src={`${EL}/etiqueta-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute w-[70%] text-center" style={{ left: "50%", top: "63%", transform: "translate(-50%, -50%)" }}>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-pinyon)",
-                        fontSize: "clamp(12px, 4.4cqw, 32px)",
-                        color: "#F2F0E6",
-                        lineHeight: 1,
-                      }}
-                    >
+                  <img src={`${EL}/coracao-renda.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
+                  <div className="absolute text-center" style={{ left: "8%", width: "40%", top: "43%", transform: "translateY(-50%)" }}>
+                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(13px, 4.6cqw, 27px)", color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
                       Detalhes
                     </span>
                   </div>
-                  <div className="absolute" style={{ left: "50%", top: "79%", transform: "translate(-50%, -50%)" }}>
-                    <ClickLabel dark>Clique aqui</ClickLabel>
+                  <div className="absolute text-center" style={{ left: "8%", width: "40%", top: "54%", transform: "translateY(-50%)" }}>
+                    <ClickLabel>Clique aqui</ClickLabel>
                   </div>
                 </div>
               </a>
+
+              <img src={`${EL}/pandeiro.webp`} alt="" style={pieceStyle(PIECES.pandeiro)} className="select-none" draggable={false} />
+              <img src={`${EL}/hortensias.webp`} alt="" style={pieceStyle(PIECES.hortensias)} className="select-none" draggable={false} />
+              <img src={`${EL}/etiqueta-detalhes.webp`} alt="" style={pieceStyle(PIECES.etiquetaDetalhes)} className="select-none" draggable={false} />
 
               {/* Ramo final — só decorativo */}
               <img src={`${EL}/bouquet-calla.webp`} alt="" style={pieceStyle(PIECES.bouquetCallaFinal)} className="select-none" draggable={false} />
