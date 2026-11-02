@@ -1,7 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Cinzel } from "next/font/google";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
+
+// A pedido do casal: a data (no círculo), o "Clique aqui" (no coração) e a
+// frase "É com muita alegria..." (na etiqueta dos nomes) usam Cinzel — não é
+// uma das fontes globais do site (essas são Cormorant/Jost/Pinyon, no
+// layout.tsx), mas já é usada noutros modelos (minimal-01, luxury-01),
+// carregada aqui à parte, só para este template.
+const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600"], display: "swap" });
 
 // Duplicado de "envelope-01" (template_id "envelope-01-jose-e-dalia") — à
 // medida do evento de Dália & José, para abrir espaço a alterações profundas
@@ -69,10 +77,9 @@ const CANVAS_H = 267.75;
 const ENVELOPE_PHOTO_CLIP =
   "polygon(89.25% 36.62%, 55.81% 8.35%, 55.75% 8.29%, 55.59% 8.13%, 55.34% 7.89%, 55.02% 7.59%, 54.65% 7.25%, 54.26% 6.9%, 53.86% 6.56%, 53.47% 6.24%, 53.11% 5.98%, 52.8% 5.79%, 51.82% 5.33%, 50.84% 5.2%, 49.89% 5.32%, 48.99% 5.63%, 48.16% 6.07%, 47.43% 6.57%, 46.83% 7.08%, 46.36% 7.52%, 46.07% 7.83%, 45.96% 7.95%, 12.43% 36.52%, 12.3% 36.63%, 11.95% 36.96%, 11.42% 37.49%, 10.8% 38.21%, 10.14% 39.11%, 9.49% 40.18%, 8.93% 41.41%, 8.5% 42.78%, 8.28% 44.28%, 8.32% 45.9%, 8.38% 45.92%, 8.56% 45.99%, 8.83% 46.1%, 9.17% 46.26%, 9.58% 46.45%, 10.04% 46.68%, 10.52% 46.95%, 11.01% 47.26%, 11.49% 47.59%, 11.95% 47.96%, 32.62% 64.65%, 68.67% 64.54%, 90.84% 46.97%, 91.23% 46.74%, 91.61% 46.53%, 91.97% 46.34%, 92.3% 46.18%, 92.6% 46.04%, 92.86% 45.93%, 93.08% 45.84%, 93.24% 45.78%, 93.34% 45.74%, 93.38% 45.73%, 93.42% 44.12%, 93.19% 42.64%, 92.77% 41.3%, 92.2% 40.11%, 91.55% 39.08%, 90.89% 38.22%, 90.26% 37.53%, 89.74% 37.03%, 89.38% 36.73%, 89.25% 36.62%)";
 
-// Versaletes da moldura dos nomes (intro, data, local) — mesmo tipo, tamanho
-// e cor nos três, tal como na maquete: serifada (a mesma do resto do site),
-// versalete com tracking largo, tom escuro e sólido (não o cinza-esverdeado
-// mais claro que se usa nas etiquetas "Clique aqui").
+// Versaletes da frase fixa da etiqueta dos nomes ("É com muita alegria...")
+// — tamanho, tracking e cor; a fonte (Cinzel, a pedido do casal) vem do
+// `className` em cada uso, não daqui.
 const moldSmallCaps: React.CSSProperties = {
   fontSize: "clamp(4px, 1.05cqw, 9px)",
   letterSpacing: "0.16em",
@@ -128,9 +135,8 @@ function pieceStyle(p: Piece): React.CSSProperties {
 function ClickLabel({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
   return (
     <span
-      className="block text-center uppercase"
+      className={`${cinzel.className} block text-center uppercase`}
       style={{
-        fontFamily: "var(--font-jost)",
         fontSize: "clamp(5px, 1.5cqw, 11px)",
         letterSpacing: "0.22em",
         color: dark ? "rgba(255,255,255,0.75)" : "rgba(60,66,52,0.6)",
@@ -416,9 +422,9 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                     className="absolute left-0 right-0 flex flex-col items-center gap-[0.3em] px-[16%]"
                     style={{ top: "58%", transform: "translateY(-50%)" }}
                   >
-                    <span className="uppercase font-serif" style={moldSmallCaps}>É com muita alegria</span>
-                    <span className="uppercase font-serif" style={moldSmallCaps}>que convidamos</span>
-                    <span className="uppercase font-serif" style={moldSmallCaps}>para o nosso</span>
+                    <span className={`${cinzel.className} uppercase`} style={moldSmallCaps}>É com muita alegria</span>
+                    <span className={`${cinzel.className} uppercase`} style={moldSmallCaps}>que convidamos</span>
+                    <span className={`${cinzel.className} uppercase`} style={moldSmallCaps}>para o nosso</span>
                   </div>
                   <div
                     className="absolute left-0 right-0 text-center px-[10%]"
@@ -453,7 +459,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                   </div>
                   {dateShort && (
                     <div className="absolute left-0 right-0 text-center px-[10%]" style={{ top: "58%", transform: "translateY(-50%)" }}>
-                      <span className="font-sans font-semibold" style={{ fontSize: "clamp(16px, 5.8cqw, 36px)", color: "#F2F0E6", letterSpacing: "0.02em" }}>
+                      <span className={`${cinzel.className} font-semibold`} style={{ fontSize: "clamp(16px, 5.8cqw, 36px)", color: "#F2F0E6", letterSpacing: "0.02em" }}>
                         {dateShort}
                       </span>
                     </div>
