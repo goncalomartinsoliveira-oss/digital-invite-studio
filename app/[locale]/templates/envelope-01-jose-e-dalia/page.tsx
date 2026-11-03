@@ -77,13 +77,17 @@ const CANVAS_H = 267.75;
 const ENVELOPE_PHOTO_CLIP =
   "polygon(89.25% 36.62%, 55.81% 8.35%, 55.75% 8.29%, 55.59% 8.13%, 55.34% 7.89%, 55.02% 7.59%, 54.65% 7.25%, 54.26% 6.9%, 53.86% 6.56%, 53.47% 6.24%, 53.11% 5.98%, 52.8% 5.79%, 51.82% 5.33%, 50.84% 5.2%, 49.89% 5.32%, 48.99% 5.63%, 48.16% 6.07%, 47.43% 6.57%, 46.83% 7.08%, 46.36% 7.52%, 46.07% 7.83%, 45.96% 7.95%, 12.43% 36.52%, 12.3% 36.63%, 11.95% 36.96%, 11.42% 37.49%, 10.8% 38.21%, 10.14% 39.11%, 9.49% 40.18%, 8.93% 41.41%, 8.5% 42.78%, 8.28% 44.28%, 8.32% 45.9%, 8.38% 45.92%, 8.56% 45.99%, 8.83% 46.1%, 9.17% 46.26%, 9.58% 46.45%, 10.04% 46.68%, 10.52% 46.95%, 11.01% 47.26%, 11.49% 47.59%, 11.95% 47.96%, 32.62% 64.65%, 68.67% 64.54%, 90.84% 46.97%, 91.23% 46.74%, 91.61% 46.53%, 91.97% 46.34%, 92.3% 46.18%, 92.6% 46.04%, 92.86% 45.93%, 93.08% 45.84%, 93.24% 45.78%, 93.34% 45.74%, 93.38% 45.73%, 93.42% 44.12%, 93.19% 42.64%, 92.77% 41.3%, 92.2% 40.11%, 91.55% 39.08%, 90.89% 38.22%, 90.26% 37.53%, 89.74% 37.03%, 89.38% 36.73%, 89.25% 36.62%)";
 
+// Cor dos textos da etiqueta dos nomes (nomes, frase, "Casamento") e do coração
+// ("Detalhes", "Clique aqui") — pedida pelo casal.
+const TEXT_BLUE = "#7095b0";
+
 // Versaletes da frase fixa da etiqueta dos nomes ("É com muita alegria...")
 // — tamanho, tracking e cor; a fonte (Cinzel, a pedido do casal) vem do
 // `className` em cada uso, não daqui.
 const moldSmallCaps: React.CSSProperties = {
   fontSize: "clamp(4px, 1.05cqw, 9px)",
   letterSpacing: "0.16em",
-  color: "rgba(51,46,43,0.85)",
+  color: TEXT_BLUE,
   lineHeight: 1.5,
 };
 
@@ -139,7 +143,7 @@ function ClickLabel({ children, dark = false }: { children: React.ReactNode; dar
       style={{
         fontSize: "clamp(5px, 1.5cqw, 11px)",
         letterSpacing: "0.22em",
-        color: dark ? "rgba(255,255,255,0.75)" : "rgba(60,66,52,0.6)",
+        color: dark ? "rgba(255,255,255,0.75)" : TEXT_BLUE,
       }}
     >
       {children}
@@ -422,7 +426,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                           apertada corta — daí a folga, mesmo com entrelinha
                           mais apertada entre as três linhas (pedido do
                           casal: letra maior, linhas mais próximas). */}
-                      <span style={{ fontFamily: "var(--font-pinyon)", fontSize: size, color: "#332E2B", lineHeight: 1.1, paddingBlock: "0.1em" }}>
+                      <span style={{ fontFamily: "var(--font-pinyon)", fontSize: size, color: TEXT_BLUE, lineHeight: 1.1, paddingBlock: "0.1em" }}>
                         {text}
                       </span>
                     </div>
@@ -439,7 +443,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                     className="absolute left-0 right-0 text-center px-[10%]"
                     style={{ top: "74%", transform: "translateY(-50%)" }}
                   >
-                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(18px, 6.4cqw, 42px)", color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(18px, 6.4cqw, 42px)", color: TEXT_BLUE, lineHeight: 1.35, paddingBlock: "0.1em" }}>
                       Casamento
                     </span>
                   </div>
@@ -479,7 +483,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/coracao-renda.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                   <div className="absolute left-0 right-0 text-center" style={{ top: "35%", transform: "translateY(-50%)" }}>
-                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(17px, 6cqw, 36px)", color: "#332E2B", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(17px, 6cqw, 36px)", color: TEXT_BLUE, lineHeight: 1.35, paddingBlock: "0.1em" }}>
                       Detalhes
                     </span>
                   </div>
