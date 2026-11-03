@@ -504,6 +504,9 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                       RSVP
                     </span>
                   </div>
+                  <div className="absolute left-0 right-0 text-center px-[16%]" style={{ top: "62%", transform: "translateY(-50%)" }}>
+                    <ClickLabel dark>Confirme a sua presença</ClickLabel>
+                  </div>
                 </div>
               </a>
 
