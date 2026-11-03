@@ -446,11 +446,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 </div>
               </div>
 
-              {/* Peónia, busto, ramo e etiqueta de detalhes — só decorativos.
-                  A etiqueta azul em losango já teve texto/link "Detalhes"
-                  (escolha minha, sem indicação do casal); esse papel passou
-                  para o coração (ver abaixo), por pedido do casal — fica
-                  só decorativa para não duplicar o mesmo CTA duas vezes. */}
+              {/* Peónia, busto e ramo de copo-de-leite — só decorativos. */}
               <img src={`${EL}/peonia.webp`} alt="" style={pieceStyle(PIECES.peonia)} className="select-none" draggable={false} />
               <img src={`${EL}/busto.webp`} alt="" style={pieceStyle(PIECES.busto)} className="select-none" draggable={false} />
               <img src={`${EL}/bouquet-calla.webp`} alt="" style={pieceStyle(PIECES.bouquetCalla)} className="select-none" draggable={false} />
@@ -476,8 +472,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 </div>
               </div>
 
-              {/* Coração "Detalhes" — navegação para a secção "Local" (ver
-                  nota acima: papel que estava na etiqueta azul em losango).
+              {/* Coração "Detalhes" — navegação para a secção "Local".
                   Texto centrado e maior, nos pontos marcados pelo casal
                   diretamente na pré-visualização. */}
               <a href="#local" style={pieceStyle(PIECES.coracaoRenda)} className="block group">
@@ -496,7 +491,21 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
 
               <img src={`${EL}/pandeiro.webp`} alt="" style={pieceStyle(PIECES.pandeiro)} className="select-none" draggable={false} />
               <img src={`${EL}/hortensias.webp`} alt="" style={pieceStyle(PIECES.hortensias)} className="select-none" draggable={false} />
-              <img src={`${EL}/etiqueta-detalhes.webp`} alt="" style={pieceStyle(PIECES.etiquetaDetalhes)} className="select-none" draggable={false} />
+
+              {/* Losango azul "RSVP" — navegação para a secção "Confirmar
+                  Presença" (#rsvp). Texto no centro do cartão, no ponto
+                  marcado pelo casal; as hortênsias e o ramo de
+                  copo-de-leite só tapam as laterais e o canto inferior. */}
+              <a href="#rsvp" style={pieceStyle(PIECES.etiquetaDetalhes)} className="block group">
+                <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
+                  <img src={`${EL}/etiqueta-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
+                  <div className="absolute left-0 right-0 text-center" style={{ top: "46%", transform: "translateY(-50%)" }}>
+                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(24px, 8.6cqw, 52px)", color: "#F2F0E6", lineHeight: 1.35, paddingBlock: "0.1em" }}>
+                      RSVP
+                    </span>
+                  </div>
+                </div>
+              </a>
 
               {/* Hortênsias por baixo do coração — só decorativo. No
                   mockup_link.svg esta posição é o "Buquê de Hortênsias"
@@ -504,35 +513,6 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                   aqui, por engano, o ramo de copo-de-leite repetido. */}
               <img src={`${EL}/hortensias-densas.webp`} alt="" style={pieceStyle(PIECES.hortensiasCoracao)} className="select-none" draggable={false} />
             </div>
-
-            {/* Atalhos discretos para "Confirmar Presença" e "A Nossa
-                História" — sem equivalente visual na nova colagem (só
-                "Detalhes"/Local tem), mas a pedido do casal mantêm-se
-                acessíveis a partir daqui, em vez de só por scroll normal.
-                `relative z-20`: sem isto, ficava tapada pelo ramo final da
-                colagem — um `div` com `position:relative` pinta sempre por
-                cima de um irmão seguinte sem posição própria, seja qual for
-                a ordem no DOM; só dando posição + z-index à navegação é que
-                a ordem normal (o que vem depois fica por cima) passa a
-                valer. Encostados à esquerda (não centrados): o ramo final
-                invade o lado direito da faixa por baixo da colagem, por
-                isso texto centrado caía em cima das flores, difícil de ler. */}
-            <nav className="relative z-20 flex flex-col items-start gap-2 pt-7 pb-2 pl-8 pr-6">
-              <a
-                href="#rsvp"
-                className="uppercase font-serif transition-opacity hover:opacity-60"
-                style={{ fontSize: "10px", letterSpacing: "0.22em", color: T.accent }}
-              >
-                Confirmar Presença
-              </a>
-              <a
-                href="#historia"
-                className="uppercase font-serif transition-opacity hover:opacity-60"
-                style={{ fontSize: "10px", letterSpacing: "0.22em", color: T.accent }}
-              >
-                A Nossa História
-              </a>
-            </nav>
 
             {/* ── CONTADOR ────────────────────────────────────────────── */}
             {visibility.countdown !== false && (

@@ -21,7 +21,7 @@ nativa e convertidos para WebP: **~25 MB → ~2,3 MB**, sem perda visível.
 | `coracao-renda.webp` | Decorativo |
 | `pandeiro.webp` | Decorativo |
 | `hortensias.webp` | Decorativo — canto inferior direito (`12.svg`; ver nota abaixo) |
-| `etiqueta-detalhes.webp` | Navegação → "Local" |
+| `etiqueta-detalhes.webp` | Losango azul — navegação → "Confirmar Presença" (RSVP) |
 
 ## Posições
 
@@ -93,11 +93,12 @@ padrão floral que já vinha desenhado para esse efeito).
 ## O que mudou em relação ao "envelope-01" original
 
 A pedido do casal, esta colagem **não tem** polaroids da galeria nem os
-badges ilustrados de "Confirmar Presença" / "A Nossa História" (só
-"Detalhes"→Local tem equivalente visual, a etiqueta azul). Esses dois
-atalhos continuam acessíveis, mas como uma navegação de texto simples por
-baixo da colagem (`<nav>` com dois links), não como elementos ilustrados
-dentro dela.
+badges ilustrados de "Confirmar Presença" / "A Nossa História". As duas
+ligações que existem são elementos da própria colagem: o coração
+"Detalhes" leva a `#local` e o losango azul "RSVP" leva a `#rsvp`. Já
+não há atalho para "A Nossa História" (a faixa de texto que existia por
+baixo da colagem foi removida a pedido do casal) — essa secção só se
+alcança a fazer scroll.
 
 ## Se precisar de ajustar outra vez
 
@@ -109,10 +110,9 @@ captura de ecrã real do template — não estimar só pela descrição.
 
 ### Cuidado com `position:relative` a tapar conteúdo a seguir
 
-A faixa de navegação ("Confirmar Presença" / "A Nossa História") logo
-a seguir ao `<div>` da colagem ficava tapada pelo ramo final, mesmo
-vindo depois no DOM — porque esse `<div>` tem `position:relative`, e um
-elemento posicionado pinta sempre por cima de um irmão seguinte sem
-posição própria, seja qual for a ordem no DOM. A correção foi dar também
-`relative z-20` a essa navegação (não mexer em espaçamento/padding, que
-não resolvia a causa).
+O `<div>` da colagem tem `position:relative`, e um elemento posicionado
+pinta sempre por cima de um irmão seguinte sem posição própria, seja qual
+for a ordem no DOM. Foi assim que a antiga faixa de texto por baixo da
+colagem ficou tapada pelo ramo final (corrigido na altura com
+`relative z-20`; a faixa entretanto foi removida). Se voltar a pôr
+qualquer coisa logo a seguir à colagem, dar-lhe também posição + z-index.
