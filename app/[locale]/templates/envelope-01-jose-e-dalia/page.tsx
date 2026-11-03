@@ -115,7 +115,7 @@ const PIECES: Record<string, Piece> = {
   etiquetaDetalhes:   { src: "etiqueta-detalhes",   left: 50.43, top: 78.26, width: 37.44, z: 7 },
   hortensias:         { src: "hortensias",          left: 61.34, top: 85.98, width: 34.30, z: 8 },
   bouquetCalla:       { src: "bouquet-calla",       left: 21.87, top: 43.98, width: 42.82, z: 9, rotate: -12.28 },
-  bouquetCallaFinal:  { src: "bouquet-calla",       left: 25.44, top: 72.95, width: 43.95, z: 10, rotate: 20.5 },
+  hortensiasCoracao:  { src: "hortensias-densas",   left: 25.44, top: 72.95, width: 43.95, z: 10, rotate: 20.5 },
   busto:              { src: "busto",               left: 62.89, top: 42.01, width: 22.54, z: 11 },
   pandeiro:           { src: "pandeiro",            left: 60.60, top: 66.44, width: 35.02, z: 12, rotate: -38.53 },
 };
@@ -498,8 +498,11 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
               <img src={`${EL}/hortensias.webp`} alt="" style={pieceStyle(PIECES.hortensias)} className="select-none" draggable={false} />
               <img src={`${EL}/etiqueta-detalhes.webp`} alt="" style={pieceStyle(PIECES.etiquetaDetalhes)} className="select-none" draggable={false} />
 
-              {/* Ramo final — só decorativo */}
-              <img src={`${EL}/bouquet-calla.webp`} alt="" style={pieceStyle(PIECES.bouquetCallaFinal)} className="select-none" draggable={false} />
+              {/* Hortênsias por baixo do coração — só decorativo. No
+                  mockup_link.svg esta posição é o "Buquê de Hortênsias"
+                  (1536×1024, ficheiro 10.svg); durante algum tempo esteve
+                  aqui, por engano, o ramo de copo-de-leite repetido. */}
+              <img src={`${EL}/hortensias-densas.webp`} alt="" style={pieceStyle(PIECES.hortensiasCoracao)} className="select-none" draggable={false} />
             </div>
 
             {/* Atalhos discretos para "Confirmar Presença" e "A Nossa

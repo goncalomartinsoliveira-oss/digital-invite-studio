@@ -15,11 +15,12 @@ nativa e convertidos para WebP: **~25 MB → ~2,3 MB**, sem perda visível.
 | `etiqueta-nomes.webp` | Nomes, data e local do casamento |
 | `peonia.webp` | Decorativo |
 | `busto.webp` | Decorativo |
-| `bouquet-calla.webp` | Decorativo |
+| `bouquet-calla.webp` | Decorativo — ao lado do círculo "Save the Date" |
+| `hortensias-densas.webp` | Decorativo — por baixo do coração "Detalhes" (`10.svg`) |
 | `forma-circulo.webp` | Decorativo (mancha de cor) |
 | `coracao-renda.webp` | Decorativo |
 | `pandeiro.webp` | Decorativo |
-| `hortensias.webp` | Decorativo — buquê de hortênsias denso (ficheiro fonte `10.svg`, não `12.svg`; ver nota abaixo) |
+| `hortensias.webp` | Decorativo — canto inferior direito (`12.svg`; ver nota abaixo) |
 | `etiqueta-detalhes.webp` | Navegação → "Local" |
 
 ## Posições
@@ -51,16 +52,26 @@ vem pré-recortado a essa janela exata (via ImageMagick, coordenadas
 convertidas do espaço do `rect` para pixels da imagem fonte, dividindo
 pela escala do `transform`) — não é a imagem completa.
 
-### `hortensias.webp` trocado (`12.svg` → `10.svg`)
+### Dois ramos parecidos, posições diferentes — não confundir
 
-A primeira versão usava `12.svg` (buquê mais solto, confirmado por
-correspondência exata de dimensões com o `mockup_link.svg`). O casal
-corrigiu: o buquê certo nessa posição é o de `10.svg` — mais denso,
-quatro maços de hortênsia (duas azuis, duas brancas) bem juntos, sem
-caules visíveis. Confirmado por captura de ecrã lado a lado com o
-exemplo que enviaram antes de publicar. Fica por esclarecer se `12.svg`
-tinha mesmo lugar nalgum outro ponto da composição original — por agora
-não é usado em lado nenhum.
+O `mockup_link.svg` tem, por esta ordem de cima para baixo:
+
+- **Ramo de copo-de-leite** (`bouquet-calla.webp`, `6.svg`) — ao lado do
+  círculo "Save the Date" (peça `bouquetCalla`). Aparece **uma só vez**.
+- **"Buquê de Hortênsias"** (`hortensias-densas.webp`, `10.svg`, 1536×1024,
+  quatro maços azuis/brancos sem caules) — por baixo do coração "Detalhes"
+  (peça `hortensiasCoracao`, rodada 20.5°).
+- **"Buquê Floral Branco e Azul"** (`hortensias.webp`, `12.svg`,
+  1199×1312, com copos-de-leite) — no canto inferior direito, sobre a
+  etiqueta azul em losango (peça `hortensias`).
+
+Durante algumas iterações, a posição por baixo do coração mostrou por
+engano o ramo de copo-de-leite repetido, e as tentativas de correção
+trocaram a peça errada (primeiro a imagem do canto inferior direito,
+depois a posição do ramo de cima). A versão atual bate com o
+`mockup_link.svg` e com a foto de referência do Illustrator que o casal
+enviou. **Antes de mexer outra vez nestes três, confirmar qual é qual com
+uma captura de ecrã com o nome do ficheiro sobreposto a cada peça.**
 
 ## Forro do envelope (foto de capa)
 
