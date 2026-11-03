@@ -25,6 +25,16 @@ nativa e convertidos para WebP: **~25 MB → ~2,3 MB**, sem perda visível.
 | `entrada-fundo.webp` | Fundo de seda do ecrã de entrada (envelope fechado) |
 | `entrada-envelope.webp` | Envelope azul com selo de cera do ecrã de entrada |
 
+## Tipos de letra
+
+Todo o texto do convite é **Cinzel**; só os títulos de exibição (nomes,
+"Casamento", "Detalhes", "Save the Date", "RSVP", títulos de secção)
+ficam em **Pinyon Script**. O formulário de RSVP é o componente partilhado
+`SmartRsvp`, que define a própria fonte por classes; aqui força-se Cinzel
+só dentro de um bloco `.rsvp-cinzel` com uma regra `!important`, para não
+afetar os outros modelos. Cinzel não tem itálico nem pesos abaixo de 400 —
+não usar `italic` nem `font-light` neste template (dá oblíquo sintético).
+
 ## Ecrã de entrada (envelope fechado)
 
 Redesenhado a partir da maquete "Carolina e Pedro": fundo de seda, nomes

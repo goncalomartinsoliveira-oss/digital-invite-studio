@@ -4,11 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Cinzel } from "next/font/google";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
 
-// A pedido do casal: a data (no círculo), o "Clique aqui" (no coração) e a
-// frase "É com muita alegria..." (na etiqueta dos nomes) usam Cinzel — não é
-// uma das fontes globais do site (essas são Cormorant/Jost/Pinyon, no
-// layout.tsx), mas já é usada noutros modelos (minimal-01, luxury-01),
-// carregada aqui à parte, só para este template.
+// A pedido do casal, todo o texto do convite usa Cinzel — contador, história,
+// programa, local, detalhes, formulário de RSVP, rodapé. Só ficam em Pinyon
+// Script (script) os títulos de exibição: nomes, "Casamento", "Detalhes",
+// "Save the Date", "RSVP" e os títulos de secção. Não é uma das fontes
+// globais do site (essas são Cormorant/Jost/Pinyon, no layout.tsx), mas já é
+// usada noutros modelos (minimal-01, luxury-01), carregada aqui à parte.
+// Cinzel só tem 400 e 600 e não tem itálico: não usar `italic`/`font-light`.
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600"], display: "swap" });
 
 // Duplicado de "envelope-01" (template_id "envelope-01-jose-e-dalia") — à
@@ -178,8 +180,8 @@ function Countdown({ date }: { date: string }) {
     <div className="flex justify-center gap-6 md:gap-10 mt-8">
       {([["dias", diff.days], ["horas", diff.hours], ["min", diff.minutes], ["seg", diff.seconds]] as const).map(([l, v]) => (
         <div key={l} className="text-center">
-          <p className="font-serif text-3xl md:text-4xl" style={{ color: BASE_T.heading }}>{String(v).padStart(2, "0")}</p>
-          <p className="font-serif text-[10px] tracking-[0.25em] uppercase mt-1" style={{ color: BASE_T.muted }}>{l}</p>
+          <p className="text-3xl md:text-4xl" style={{ color: BASE_T.heading }}>{String(v).padStart(2, "0")}</p>
+          <p className="text-[10px] tracking-[0.25em] uppercase mt-1" style={{ color: BASE_T.muted }}>{l}</p>
         </div>
       ))}
     </div>
@@ -243,7 +245,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
     return (
       <div className="text-center mb-12">
         {eyebrow && (
-          <p className="uppercase font-serif mb-3" style={{ fontSize: "11px", letterSpacing: "0.3em", color: T.accent }}>
+          <p className="uppercase mb-3" style={{ fontSize: "11px", letterSpacing: "0.3em", color: T.accent }}>
             {eyebrow}
           </p>
         )}
@@ -257,7 +259,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
   const wrap = "max-w-lg mx-auto md:max-w-2xl";
 
   return (
-    <div className="w-full min-h-screen bg-[#FDFCF9] font-sans overflow-x-hidden">
+    <div className={`w-full min-h-screen bg-[#FDFCF9] ${cinzel.className} overflow-x-hidden`}>
       <AnimatePresence mode="wait">
         {!opened ? (
           <motion.section
@@ -526,7 +528,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
             {/* ── CONTADOR ────────────────────────────────────────────── */}
             {visibility.countdown !== false && (
               <section className="px-6 pt-14 pb-6 text-center">
-                <p className="font-serif italic text-lg md:text-xl" style={{ color: T.heading }}>
+                <p className="text-lg md:text-xl" style={{ color: T.heading }}>
                   {content.countdown?.title ?? "O dia do “Sim” aproxima-se..."}
                 </p>
                 <Countdown date={eventDate} />
@@ -548,7 +550,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                   {storyParagraphs.length > 0 && (
                     <div className="space-y-6">
                       {storyParagraphs.map((p, i) => (
-                        <p key={i} className="font-serif text-xl md:text-2xl italic leading-relaxed font-light text-center" style={{ color: T.text }}>
+                        <p key={i} className="text-xl md:text-2xl leading-relaxed text-center" style={{ color: T.text }}>
                           &ldquo;{p}&rdquo;
                         </p>
                       ))}
@@ -593,7 +595,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                           </div>
                           <div className="pb-9 pt-1">
                             <p className="text-[11px] tracking-[0.25em] uppercase mb-1" style={{ color: T.accent }}>{item.time}</p>
-                            <p className="font-serif text-2xl italic leading-tight" style={{ color: T.heading }}>{item.title}</p>
+                            <p className="text-2xl leading-tight" style={{ color: T.heading }}>{item.title}</p>
                           </div>
                         </div>
                       );
@@ -626,7 +628,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                       <div key={tab} className="text-center max-w-xs mx-auto">
                         {!showBothDetails && <p className="text-[10px] tracking-[0.3em] uppercase mb-4" style={{ color: T.accent }}>{tab === "ceremony" ? "Cerimónia" : "Receção"}</p>}
                         <div className="space-y-2.5">
-                          {d.title && <p className="font-serif text-2xl md:text-3xl italic font-light" style={{ color: T.heading }}>{d.title}</p>}
+                          {d.title && <p className="text-2xl md:text-3xl" style={{ color: T.heading }}>{d.title}</p>}
                           {d.location && <p className="text-[11px] md:text-xs tracking-wide" style={{ color: T.muted }}>{d.location}</p>}
                           {d.time && <p className="text-[11px] tracking-[0.25em] uppercase" style={{ color: T.accent }}>{d.time}</p>}
                           {d.google_maps_url && (
@@ -676,7 +678,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
 
                   {visibility.dress_code !== false && (
                     <div className="text-center mb-14">
-                      <p className="font-serif text-2xl md:text-3xl italic font-light mb-6" style={{ color: T.heading }}>{content.dress_code?.title ?? "Dress Code"}</p>
+                      <p className="text-2xl md:text-3xl mb-6" style={{ color: T.heading }}>{content.dress_code?.title ?? "Dress Code"}</p>
                       {content.dress_code?.show_palette !== false && (content.dress_code?.colors || []).length > 0 && (
                         <div className="flex justify-center gap-3 mb-6">
                           {content.dress_code.colors.map((c: string, i: number) => (
@@ -685,7 +687,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                         </div>
                       )}
                       {(content.dress_code?.text || []).map((t: string, i: number) => t && (
-                        <p key={i} className="text-xl italic font-serif leading-relaxed font-light" style={{ color: T.text }}>{t}</p>
+                        <p key={i} className="text-xl leading-relaxed" style={{ color: T.text }}>{t}</p>
                       ))}
                     </div>
                   )}
@@ -698,7 +700,7 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                         showIban ? (
                           <div className="border p-5 text-center space-y-2 mt-4 max-w-xs mx-auto rounded-2xl" style={{ borderColor: `${T.border}22` }}>
                             <p className="text-xs" style={{ color: T.muted }}>{content.gifts?.iban_holders_name || `${groom} & ${bride}`}</p>
-                            <p className="font-mono text-sm tracking-wider" style={{ color: T.heading }}>{content.gifts.iban_value}</p>
+                            <p className="text-sm tracking-wider" style={{ color: T.heading }}>{content.gifts.iban_value}</p>
                           </div>
                         ) : (
                           <button onClick={() => setShowIban(true)}
@@ -727,7 +729,14 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                     )}
                   </div>
                 </div>
-                <SmartRsvp invitationId={data?.id || ""} hideHeader />
+                <div className="rsvp-cinzel">
+                  {/* O formulário é o componente partilhado SmartRsvp, que
+                      define a sua própria fonte (Cormorant/Jost) com classes
+                      — por isso aqui força-se Cinzel só dentro deste bloco,
+                      sem mexer nos outros modelos que o usam. */}
+                  <style>{`.rsvp-cinzel, .rsvp-cinzel * { font-family: ${cinzel.style.fontFamily} !important; font-style: normal !important; }`}</style>
+                  <SmartRsvp invitationId={data?.id || ""} hideHeader />
+                </div>
               </div>
             )}
 
