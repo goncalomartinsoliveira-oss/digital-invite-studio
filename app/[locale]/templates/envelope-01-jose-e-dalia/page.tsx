@@ -548,13 +548,14 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                     </div>
                   )}
                   {storyParagraphs.length > 0 && (
-                    <div className="space-y-6">
-                      {storyParagraphs.map((p, i) => (
-                        <p key={i} className="text-xl md:text-2xl leading-relaxed text-center" style={{ color: T.text }}>
-                          &ldquo;{p}&rdquo;
-                        </p>
-                      ))}
-                    </div>
+                    /* Os parágrafos do painel juntam-se num único texto, sem aspas
+                       (pedido do casal). Tira-se também aspas que venham dentro
+                       do próprio texto, no início/fim de cada parágrafo. */
+                    <p className="text-[17px] md:text-xl leading-relaxed text-center" style={{ color: T.text }}>
+                      {storyParagraphs
+                        .map((p) => p.trim().replace(/^[“”"]+|[“”"]+$/g, "").trim())
+                        .join(" ")}
+                    </p>
                   )}
                 </div>
               </section>
