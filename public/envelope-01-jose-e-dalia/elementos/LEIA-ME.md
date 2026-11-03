@@ -22,6 +22,25 @@ nativa e convertidos para WebP: **~25 MB → ~2,3 MB**, sem perda visível.
 | `pandeiro.webp` | Decorativo |
 | `hortensias.webp` | Decorativo — canto inferior direito (`12.svg`; ver nota abaixo) |
 | `etiqueta-detalhes.webp` | Losango azul — navegação → "Confirmar Presença" (RSVP) |
+| `entrada-fundo.webp` | Fundo de seda do ecrã de entrada (envelope fechado) |
+| `entrada-envelope.webp` | Envelope azul com selo de cera do ecrã de entrada |
+
+## Ecrã de entrada (envelope fechado)
+
+Redesenhado a partir da maquete "Carolina e Pedro": fundo de seda, nomes
+em script (Pinyon, `TEXT_BLUE`) por cima do envelope azul, "Clique para
+abrir" por baixo. Os ficheiros chegaram com resolução muito alta
+(envelope 6116×4403, fundo 1872×3832; ~15 MB) e foram reduzidos para
+1200 px e 1100 px de largura (**~110 KB e ~21 KB**). No envelope, os
+pixéis quase transparentes soltos à volta (resíduo da remoção do fundo,
+invisíveis em fundo claro mas visíveis em alguns visualizadores) foram
+limpos e a imagem recortada ao envelope.
+
+A maquete tem ainda, por baixo do envelope, o nome do convidado ("Ana e
+Tiago") e "Iremos reservar (2) lugares para vocês". Isso exige convites
+personalizados por convidado, que o sistema ainda não tem — hoje os
+convidados confirmam procurando o próprio nome em `SmartRsvp`. Por isso
+essas duas linhas **não estão** no template.
 
 ## Posições
 

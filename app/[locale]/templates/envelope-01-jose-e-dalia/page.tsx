@@ -263,33 +263,34 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
           <motion.section
             key="entry"
             exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
-            className="min-h-screen flex flex-col items-center justify-center px-6 text-center"
+            className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-cover bg-center"
+            style={{ backgroundImage: `url(${EL}/entrada-fundo.webp)` }}
           >
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-[11px] md:text-xs tracking-[0.35em] uppercase text-[#332E2B]/55 mb-5"
-            >
-              Recebeu um convite de
-            </motion.p>
-
+            {/* Ecrã de entrada redesenhado a pedido do casal (maquete
+                "Carolina e Pedro"): fundo de seda, nomes em script azul
+                por cima do envelope azul com selo de cera. Sem "Recebeu um
+                convite de", que a maquete não tem. As duas linhas por
+                baixo do envelope na maquete (nome do convidado e "Iremos
+                reservar (2) lugares para vocês") precisam de convites
+                personalizados por convidado, que o sistema ainda não tem —
+                não estão aqui. */}
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-              className="text-6xl md:text-8xl mb-12 px-4"
+              transition={{ duration: 0.8 }}
+              className="mb-8 px-2"
               /* A Pinyon Script tem laçadas altas e caudas longas: com
                  entrelinha apertada, o topo e o fundo das letras ficam
                  cortados. Daí a entrelinha folgada e o padding vertical. */
               style={{
                 fontFamily: "var(--font-pinyon)",
-                color: "#332E2B",
-                lineHeight: 1.6,
+                fontSize: "clamp(44px, 13vw, 84px)",
+                color: TEXT_BLUE,
+                lineHeight: 1.5,
                 paddingBlock: "0.15em",
               }}
             >
-              {groom} &amp; {bride}
+              {bride} e {groom}
             </motion.h1>
 
             <motion.button
@@ -298,15 +299,15 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
               aria-label="Abrir o convite"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="w-full max-w-[300px] md:max-w-[360px] cursor-pointer"
+              className="w-[84%] max-w-[480px] cursor-pointer"
             >
               <img
-                src="/envelope-01/envelope.webp"
+                src={`${EL}/entrada-envelope.webp`}
                 alt=""
-                className="w-full h-auto drop-shadow-xl select-none"
+                className="w-full h-auto select-none drop-shadow-[0_14px_20px_rgba(70,95,125,0.22)]"
                 draggable={false}
               />
             </motion.button>
@@ -315,7 +316,8 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-[10px] md:text-[11px] tracking-[0.3em] uppercase text-[#332E2B]/40 mt-9"
+              className={`${cinzel.className} uppercase mt-9`}
+              style={{ fontSize: "11px", letterSpacing: "0.3em", color: TEXT_BLUE }}
             >
               Clique para abrir
             </motion.p>
