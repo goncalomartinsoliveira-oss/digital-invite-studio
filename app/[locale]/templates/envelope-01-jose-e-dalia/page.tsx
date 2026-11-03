@@ -551,7 +551,11 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                     /* Os parágrafos do painel juntam-se num único texto, sem aspas
                        (pedido do casal). Tira-se também aspas que venham dentro
                        do próprio texto, no início/fim de cada parágrafo. */
-                    <p className="text-[17px] md:text-xl leading-relaxed text-center" style={{ color: T.text }}>
+                    /* Mesmo estilo e tamanho do título pequeno das secções ("A
+                       AGENDA", "O INÍCIO"...), a pedido do casal: maiúsculas,
+                       11px, 0.3em de espaçamento e a mesma cor. Entrelinha
+                       larga, porque aqui são várias linhas. */
+                    <p className="uppercase text-center leading-[2.1]" style={{ fontSize: "11px", letterSpacing: "0.3em", color: T.accent }}>
                       {storyParagraphs
                         .map((p) => p.trim().replace(/^[“”"]+|[“”"]+$/g, "").trim())
                         .join(" ")}
