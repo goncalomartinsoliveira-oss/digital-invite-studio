@@ -17,7 +17,8 @@ async function loadLink(token: string, invitationId?: string | null) {
   if (!GUEST_TOKEN_RE.test(token)) return null;
   const { data: link } = await supabaseAdmin
     .from("guest_links")
-    .select("invitation_id, group_id, display_name, seats_override")
+    // "*" de propósito: funciona antes e depois da migração 0011 (colunas de aberturas).
+    .select("*")
     .eq("token", token)
     .maybeSingle();
   if (!link) return null;
@@ -51,6 +52,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ toke
     id: m.id, name: m.name, category: m.category, status: m.status, dietary_notes: m.dietary_notes, notes: m.notes,
   }));
   if (list.length === 0) return NextResponse.json({ error: "not_found" }, { status: 404, headers: { "cache-control": "no-store" } });
+
+  // "Quem já abriu": só datas e contagem, sem IP nem dados do aparelho. Cada
+  // abertura do convite (já depois do código de acesso, se houver) faz um
+  // pedido aqui. Falhas não afetam o convidado (ex.: migração por correr).
+  const now = new Date().toISOString();
+  await supabaseAdmin
+    .from("guest_links")
+    .update({ first_opened_at: link.first_opened_at ?? now, last_opened_at: now, open_count: (link.open_count ?? 0) + 1 })
+    .eq("token", token)
+    .then(() => {}, () => {});
 
   return NextResponse.json(
     { invitationId: link.invitation_id, ...resolveGuestLink(list, link), members: list },

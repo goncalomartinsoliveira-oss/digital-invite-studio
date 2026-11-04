@@ -45,6 +45,7 @@ import TimelineModule from "@/components/dashboard/TimelineModule";
 import SharingModule from "@/components/dashboard/SharingModule";
 import LinksHub from "@/components/dashboard/LinksHub";
 import GuestLinksPanel from "@/components/dashboard/GuestLinksPanel";
+import InviteAccessCard from "@/components/dashboard/InviteAccessCard";
 import SetupChecklist, { type ChecklistItem } from "@/components/dashboard/SetupChecklist";
 import MoodboardModule from "@/components/dashboard/MoodboardModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
@@ -83,6 +84,25 @@ const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
   management: ['budget', 'tasks', 'timeline', 'sharing', 'moodboard'],
   account: [],
 };
+
+// Quem gere o evento não deve ter de pôr o código do convite (opcional) para ver a
+// pré-visualização ou abrir o convite: o servidor reconhece a sessão e dá-lhe o
+// cookie de acesso. Devolve true se o evento tem código ligado e o cookie foi dado.
+async function grantPreviewAccess(invitationId: string): Promise<boolean> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return false;
+    const res = await fetch("/api/invite-access/preview", {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({ invitationId }),
+    });
+    if (!res.ok) return false;
+    return !!(await res.json()).gated;
+  } catch {
+    return false;
+  }
+}
 
 export default function Dashboard() {
   const params = useParams();
@@ -192,6 +212,11 @@ export default function Dashboard() {
         ...invite,
         user_email: invite.user_email || email
       });
+
+      // Código de acesso ligado → dar ao administrador o cookie e recarregar a pré-visualização.
+      if (invite.access_code_enabled) {
+        grantPreviewAccess(invite.id).then(gated => { if (gated) setIframeKey(k => k + 1); });
+      }
 
       // Marca do próprio evento → logo do parceiro no editor.
       setEventBrand(await resolveBrandById(supabase, invite.brand_id));
@@ -802,6 +827,17 @@ export default function Dashboard() {
                   locale={locale}
                   onOpenSharing={() => setActiveTab('sharing')}
                   focusSectionId={moodboardFocus}
+                />
+              )}
+              {activeTab === 'links' && canEdit && !isTabLocked('design') && (
+                <InviteAccessCard
+                  invitationId={formData.id}
+                  inviteUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/${params.locale}/invite/${formData.slug}`}
+                  enabled={!!formData.access_code_enabled}
+                  version={formData.access_code_version ?? 1}
+                  setFormData={setFormData}
+                  onChanged={() => { grantPreviewAccess(formData.id).then(gated => { if (gated) setIframeKey(k => k + 1); }); }}
+                  dict={dictionaries[locale]?.InviteAccessCard || dictionaries.pt.InviteAccessCard}
                 />
               )}
               {activeTab === 'links' && (

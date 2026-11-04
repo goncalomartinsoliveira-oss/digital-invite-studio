@@ -31,6 +31,7 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 - Módulo Wedding Planner (B2B, em piloto): ligado por `brands.planner_plan`; lógica em `lib/planner.ts`; área "Gestão" no painel do evento (`BudgetModule`, `TasksModule`), só visível em contas de agência.
 
 - Links personalizados por grupo de convidados (opcional): tabela `guest_links` (migração `0010`), `lib/guestLinks.ts`, rota `app/api/guest-link/[token]`, painel `GuestLinksPanel`, `GuestGreeting` no convite e `SmartRsvp` com `?c=`. Sem links, o convite e o RSVP funcionam como sempre.
+- Código de acesso ao convite (opcional, desligado por omissão): migração `0011`, `lib/inviteAccess.ts` (cookie assinado + limites), rotas `app/api/invite-access` e `…/preview`, `InviteAccessGate` (ecrã de código, mostrado pelo `invite/[slug]/page.tsx`) e `InviteAccessCard` (painel, área Links). O código fica em `invite_access`, nunca em `invitations`.
 
 ## Dados
 - Coluna `content` (JSON) da tabela `invitations`: `{ sections_visibility: {...}, content: { <seccao>: {...} } }`. Nos módulos: `dbContent = formData.content`, `content = dbContent.content`. Guardar via `handleSaveDesign()` (faz update em `invitations`). Autosave: `useEffect` com debounce de 1500 ms sobre `formData`.
