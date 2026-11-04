@@ -1,0 +1,294 @@
+# Mapa do projeto — Digital Invite Studio
+
+Documento para quem se sente perdido no projeto: o que existe, para quem, onde
+está no código e o que ainda está por arrumar. Foi feito a partir de um
+levantamento do código em novembro de 2026; se algo aqui já não bater certo
+com o código, **o código manda** — e este ficheiro deve ser corrigido (ver
+"Como manter este documento" no fim).
+
+Para regras de trabalho (deploy, migrações, fontes, convenções) ver
+`CLAUDE.md`. Para a base de dados ver `supabase/migrations/LEIA-ME.md`.
+
+---
+
+## 1. Em 30 segundos
+
+Plataforma de **convites digitais de casamento**, em PT e EN. Cada casamento é
+um **evento** (uma linha da tabela `invitations`) com um site público
+(`/invite/<slug>`) e um painel de gestão (`/dashboard/<slug>`).
+
+O que o casal pode comprar são **5 módulos** (ver secção 5). Por cima disso há:
+
+- uma **área de planeamento** só para agências de wedding planning (secção 6);
+- uma camada **white-label**: marcas parceiras com o seu domínio, logo e preços
+  (secção 9);
+- uma **área de administração** só para a equipa da DIS (secção 7).
+
+---
+
+## 2. Quem usa e o que cada um vê
+
+| Quem | Como é reconhecido | O que pode fazer |
+|---|---|---|
+| **Dono do evento** (casal) | `invitations.user_email` | Tudo no seu evento. |
+| **Colaborador** | tabela `invitation_collaborators` (`editor` ou `viewer`) | Editar (`editor`) ou só ver (`viewer`). |
+| **Equipa da agência/parceiro** | tabela `brand_members` da marca do evento (`admin` → "owner", resto → "editor") | Gerir os eventos da marca, incluindo o planeamento. |
+| **Super admin** | tabela `super_admins` | Acesso total, mais as vistas de administração. |
+| **Convidado** | sem conta | Só as páginas públicas (secção 4). |
+| **Fornecedor** | sem conta, só um link com token | Só a página que a agência lhe partilhou. |
+
+Quem pode **editar**: dono, `editor`, equipa da agência e super admin, e só
+enquanto o evento não estiver expirado. O convite fica inacessível 60 dias
+depois do evento (campo `invitations.expires_at`).
+
+---
+
+## 3. Mapa de ecrãs (rotas)
+
+### Site de marketing (público)
+`/` · `/features` · `/features/<slug>` · `/pricing` · `/partners` · `/contact`
+· `/login` · `/reset-password` · `/terms` · `/privacy` · `/cookies`
+
+### Painel (precisa de login)
+| Rota | O que é |
+|---|---|
+| `/dashboard` | Lista de eventos. Para agências e super admin, tem uma barra com as vistas extra (secções 6 e 7). |
+| `/dashboard/new-invite` | Criar um evento novo. |
+| `/dashboard/<slug>` | O painel de um evento (secção 4). |
+
+### Páginas públicas de um evento
+| Rota | Para quê |
+|---|---|
+| `/invite/<slug>` | **O convite.** Escolhe o modelo pelo `template_id`. Mostra um ecrã "expirado" ou "módulo indisponível" quando for o caso. |
+| `/rsvp/<slug>` | Confirmação de presença isolada, pensada para o QR de um convite em papel. Só precisa do módulo Convidados, não do Convite. |
+| `/seating/<slug>` | O convidado procura o seu nome e vê a mesa. |
+| `/moments/<slug>` | Os convidados enviam fotos (por QR). |
+| `/live-wall/<slug>` | Mural de fotos para projetar na festa. |
+| `/guestbook/<slug>` | Livro de visitas. |
+| `/fornecedor/<token>` | Portal de um fornecedor (só leitura). |
+| `/moodboard/<token>` | Moodboard partilhado (ver e acrescentar imagens, não apagar). |
+| `/preview/<modelo>` | Pré-visualização dos modelos (só existe para 5 deles). |
+
+### API (`app/api`)
+`checkout` (cria a sessão Stripe) · `stripe/webhook` (regista o pagamento e
+desbloqueia módulos) · `contact` (formulário, envia email por Resend) ·
+`admin/business-overview` · `moodboard/unfurl` (pré-visualização de links) ·
+`moodboard/public/<token>` e `…/upload` (escrita no moodboard partilhado).
+
+---
+
+## 4. O painel de um evento (`dashboard/[slug]`)
+
+Duas camadas: **áreas** (uma por módulo vendável) e, dentro de cada uma, os
+**separadores**. O código está em `app/[locale]/dashboard/[slug]/page.tsx`
+(`GROUP_TABS`).
+
+| Área | Separadores | Componente |
+|---|---|---|
+| Save the Date | Save the Date | `SaveTheDateModule` |
+| Convite | Design · Conteúdo | `DesignModule` · `ContentModule` |
+| Convidados e Mesas | Convidados · Mesas | `GuestsModule` · `SeatingModule` |
+| Partilha de fotos | Fotos | `PhotoSharingModule` |
+| Livro de visitas | Livro de visitas | `GuestbookModule` |
+| Planeamento *(só agências)* | Orçamento · Tarefas · Cronograma · Partilha · Inspiração | ver secção 6 |
+| Conta | Minha conta | `AccountModule` |
+
+Se o módulo não estiver comprado, o separador mostra `LockedModuleNotice` com
+botão de compra direta (`lib/checkout.ts`). O `WelcomeTour` é o tour de
+boas-vindas.
+
+**Como o convite guarda os dados:** a coluna `invitations.content` (JSON) tem
+`sections_visibility` (que secções estão visíveis) e `content.<secção>` (os
+textos). Os módulos editam `formData` e gravam com `handleSaveDesign()`, com
+gravação automática 1,5 s depois de parar de escrever.
+
+---
+
+## 5. Os 5 módulos vendáveis
+
+Registo fixo em `lib/modules.ts`; preços e pacotes em `lib/pricing.ts`.
+
+| Módulo (`id`) | Preço | O que faz |
+|---|---|---|
+| `save_the_date` | 15 € | Gera o cartão Save the Date a partir de modelos SVG (`lib/stdTemplates.ts`, `lib/svgTemplate.ts`), com a foto e os nomes do casal, para descarregar. |
+| `invite` | 79 € | O site do casamento: escolha do modelo e da cor de destaque, e todos os textos (capa, contador, história, galeria, programa, local, detalhes, presentes, RSVP, rodapé), com interruptores para esconder secções. **Inclui sempre `guests_seating`** (o RSVP precisa da lista de convidados). |
+| `guests_seating` | 39 € | Lista de convidados (grupos, restrições alimentares, estados), importação e exportação em Excel e PDF, estatísticas, QR do RSVP público e plano de mesas com arrastar e largar. |
+| `photo_sharing` | 35 € | Convidados enviam fotos por QR (`/moments`) e há o mural `/live-wall`. |
+| `guestbook` | 19 € | Livro de visitas (`/guestbook`). |
+
+**Pacotes:** "convite" (Save the Date + Convite + Convidados, 75 €), "momentos"
+(Fotos + Livro de visitas, 44 €) e "completo" (os 5, 119 €). **Cupões:** tabela
+`coupons`, com a lógica toda em `lib/coupons.ts`.
+
+---
+
+## 6. Planeamento (só contas de agência)
+
+Ligado por `brands.planner_plan`; lógica e limites em `lib/planner.ts`. Os
+dados escrevem diretamente nas suas tabelas (não pelo `handleSaveDesign`).
+
+| Separador / vista | Componente | O que faz |
+|---|---|---|
+| Orçamento | `BudgetModule`, `BudgetSummary` | Custos, escalões por adulto/criança/bebé, pagamentos, contratos, notas, documentos. |
+| Tarefas | `TasksModule` | Checklist; as datas recalculam-se se a data do casamento mudar. |
+| Cronograma | `TimelineModule` | Horário do dia; a agência pode esconder blocos (ex.: surpresas) do casal. |
+| Partilha | `SharingModule` | Todos os links partilháveis: portal do fornecedor e moodboard. |
+| Inspiração | `MoodboardModule` | Mural partilhado com o casal, por secções. |
+| Vista "Tarefas" (na lista de eventos) | `AgencyOverviewView` | O que precisa de atenção esta semana, em todos os casamentos. |
+| Vista "Fornecedores" (na lista de eventos) | `VendorsView` | Diretório de fornecedores da agência, com histórico de preços. |
+
+Os links de fornecedor e do moodboard têm **token** e correm no servidor com a
+chave de serviço (`lib/vendorPortal.ts`, `lib/moodboardShare.ts`); nunca
+importar esses ficheiros num componente `"use client"`.
+
+---
+
+## 7. Administração (só super admin, no domínio da DIS)
+
+Vistas da lista de eventos (`dashboard/page.tsx`, `viewMode`):
+
+| Vista | Componente | O que faz |
+|---|---|---|
+| Gestão | `AdminManagementView` | Todos os eventos ativos, com marca, data e convidados. |
+| Membros | `MembersManagementView` | Quem pertence a cada marca. |
+| Marcas | `BrandsManagementView` | Criar e editar marcas parceiras. |
+| Cupões | `CouponsManagementView` | Cupões de desconto. |
+| Preços | `BrandPricingView` | Preços por marca (`brand_pricing_overrides`). |
+| Negócio | `BusinessOverviewView` | Visão geral do negócio (`api/admin/business-overview`). |
+
+---
+
+## 8. Pagamentos
+
+1. O casal clica "comprar" num módulo bloqueado ou num pacote (`lib/checkout.ts`).
+2. `api/checkout` cria a sessão no Stripe, já com o cupão aplicado.
+3. Quando o pagamento termina, `api/stripe/webhook` (evento
+   `checkout.session.completed`) regista a linha em `payments` e acrescenta os
+   módulos em `invitations.unlocked_modules`. É o **único** sítio que escreve
+   `unlocked_modules`.
+
+---
+
+## 9. Marcas e white-label
+
+- `lib/brands.ts` resolve a marca pelo domínio (ex.: `digital.amazingmoon.pt`)
+  e junta as marcas definidas no código às da tabela `brands`.
+- A marca dá logo, contacto e preços; o `EventBrandProvider` aplica-a ao
+  convite.
+- `brand_id` nos eventos é **texto sem chave estrangeira** de propósito, porque
+  há marcas definidas só no código.
+
+---
+
+## 10. Modelos de convite
+
+Escolha em `DesignModule` (lista `AVAILABLE_TEMPLATES`); o convite público
+escolhe o modelo por `template_id` e, se não reconhecer, usa o Luxury.
+
+| `template_id` | Nome no seletor | Cor de destaque editável | Pré-visualização |
+|---|---|---|---|
+| `luxury-01` | Classic Luxury | não | não |
+| `minimal-01` | Modern Minimal | não | sim |
+| `collage-01` | Editorial Collage | não | não |
+| `classic-01` | Clássico | sim | sim |
+| `noir-01` | Editorial Noir | sim | sim |
+| `arch-01` | Romântico | sim | sim |
+| `envelope-01` | Envelope (em construção) | não | sim |
+| `envelope-01-jose-e-dalia` | *(fora do seletor de propósito)* | n/a | não |
+
+**Modelos à medida:** um `template_id` que está ligado em
+`app/[locale]/invite/[slug]/page.tsx` mas **não** está em `AVAILABLE_TEMPLATES`
+fica invisível para os outros casais, e o `DesignModule` esconde o seletor no
+evento que o usa. Foi assim que se fez o do José e da Dália (cópia do
+`envelope-01`). A documentação dele está em
+`public/envelope-01-jose-e-dalia/elementos/LEIA-ME.md` (elementos, posições
+lidas do SVG, fontes, ecrã de entrada).
+
+---
+
+## 11. Base de dados (Supabase)
+
+Esquema novo vai **sempre** para `supabase/migrations/` (0001–0009 aplicadas),
+com RLS ativada; as tabelas antigas não têm ficheiro.
+
+| Tema | Tabelas |
+|---|---|
+| Eventos e acesso | `invitations`, `invitation_collaborators`, `super_admins` |
+| Convidados e mesas | `guests`, `event_tables` |
+| Momentos | `fotos_evento`, `fotos_likes`, `guestbook` |
+| Marcas e dinheiro | `brands`, `brand_members`, `brand_pricing_overrides`, `coupons`, `payments` |
+| Planeamento | `event_costs`, `event_cost_payments`, `event_cost_notes`, `event_tasks`, `event_timeline`, `event_documents`, `agency_vendors` |
+| Links com token | `vendor_portal_links`, `moodboard_share_links` |
+| Moodboard | `event_moodboard_sections`, `event_moodboard_items` |
+
+**Storage:** buckets `invites` (imagens do convite e do Save the Date) e
+`fotos_evento` (galeria e fotos dos convidados).
+
+**Dois clientes Supabase:** `lib/supabase.ts` (chave pública, browser) e
+`lib/supabaseAdmin.ts` (chave de serviço, **só servidor**).
+
+---
+
+## 12. Onde está o quê no código
+
+| Pasta | Conteúdo |
+|---|---|
+| `app/[locale]/…` | Todas as páginas (secção 3). `middleware.ts` trata do idioma: cookie, depois idioma do browser; PT se for português, senão EN. |
+| `components/dashboard/` | Os módulos do painel (secções 4 a 7). |
+| `components/invite/SmartRsvp.tsx` | O formulário de RSVP, **partilhado por todos os modelos**: pesquisa o nome, mostra o grupo, grava o estado. |
+| `components/site/` | Barra, rodapé, marca (`BrandProvider`), ecrã de expirado. |
+| `lib/` | Regras de negócio: módulos, preços, cupões, planeamento, marcas, Stripe, PDF/QR. |
+| `dictionaries/pt.ts`, `en.ts` | Textos traduzidos (~1500 linhas cada). Editar com cirurgia, não ler inteiros. |
+| `public/<modelo>/` | Imagens dos modelos. |
+| `supabase/migrations/` | Alterações ao esquema. |
+
+---
+
+## 13. Coisas que convém não esquecer
+
+- **Produção = `main`.** Mexer só num ramo não altera o site real.
+- Os textos novos devem ir para os dicionários PT e EN, não escritos à mão no componente.
+- O RSVP atual lê a lista de convidados do evento com a chave pública (qualquer
+  pessoa com o link pode, em teoria, ver os nomes). Resolver implica mover o
+  RSVP para o servidor.
+- **Cinzel** não existe como fonte global: cada modelo que a usa carrega-a à
+  parte. No modelo do José e da Dália todo o texto é Cinzel e só os títulos de
+  exibição são Pinyon Script.
+
+---
+
+## 14. Estado: o que está por arrumar
+
+**Decisões à espera:**
+- **Links personalizados por convidado** (por exemplo "Ana e Tiago — iremos
+  reservar 2 lugares para vocês" no ecrã de entrada). O desenho está discutido
+  (um link por grupo de convidados, tabela nova de links, painel para os
+  gerar) mas ainda não foi decidido nem construído.
+
+**Melhorias de organização sugeridas:**
+1. Fundir "Design" e "Conteúdo" num só "Convite", com pré-visualização ao lado.
+2. Lista "O que falta fazer" para o casal (nomes e data, foto, textos,
+   convidados, link partilhado).
+3. Juntar todos os links num só sítio. Hoje estão espalhados: convite no
+   cabeçalho, QR do RSVP em Convidados, QR e live wall em Fotos, fornecedor e
+   moodboard em Partilha.
+4. Agrupar as 9 vistas de administração da lista de eventos num menu único.
+5. Os separadores de planeamento (Orçamento, Tarefas, Cronograma, Partilha,
+   Inspiração) estão em português diretamente no código, fora dos dicionários.
+
+**Limpeza de código:**
+- `components/dashboard/EventModule.tsx` não é usado em lado nenhum.
+- Ficheiros muito grandes: `GuestsModule` (~985 linhas), `BudgetModule` (~886),
+  `dashboard/[slug]/page.tsx` (~800).
+- `luxury-01` e `collage-01` não têm rota de pré-visualização.
+- O modelo `envelope-01` aparece aos casais como "em construção".
+
+---
+
+## Como manter este documento
+
+Atualizar quando mudar algo que estas secções descrevem: um módulo novo, uma
+rota nova, uma tabela nova, um modelo novo. Um módulo novo toca em quatro
+sítios (`lib/modules.ts`, `lib/pricing.ts`, `GROUP_TABS` no painel e a tabela
+da secção 5); um modelo novo em três (`app/[locale]/templates/<id>`, o ramo em
+`invite/[slug]/page.tsx` e, se for público, `AVAILABLE_TEMPLATES`).

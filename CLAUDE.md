@@ -4,6 +4,8 @@
 
 Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router, Turbopack), React 19, TypeScript, **Tailwind CSS v4**, **Supabase** (auth + DB + storage), Framer Motion. i18n PT/EN.
 
+**Mapa completo de funcionalidades, ecrãs, permissões e base de dados: `docs/MAPA-DO-PROJETO.md`** (ler antes de mexer em algo que não se conhece).
+
 ## Deploy (ler primeiro)
 - **Produção = branch `main`** → publica em digitalinvitestudio.com via **Vercel** automaticamente.
 - Branches de feature só geram deploy de *preview* (URL separado) — **não** mudam o site real.
@@ -19,8 +21,8 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 - Cores: bordô `#630100`, creme `#FDFBF7`, dourado `#B8945A` / `#EFDFBB`, tinta `#332E2B`.
 
 ## Onde está o quê
-- Templates de convite: `app/[locale]/templates/<id>/page.tsx` (minimal-01, luxury-01, collage-01, noir-01). O `app/[locale]/invite/[slug]/page.tsx` escolhe o template por `template_id`.
-- Dashboard do evento: `app/[locale]/dashboard/[slug]/page.tsx`. Tem um **hub** com 3 áreas (Convite de casamento / Convidados+Mesas / Momentos) que filtram separadores; os separadores usam módulos em `components/dashboard/*Module.tsx`.
+- Templates de convite: `app/[locale]/templates/<id>/page.tsx` (luxury-01, minimal-01, collage-01, classic-01, noir-01, arch-01, envelope-01). O `app/[locale]/invite/[slug]/page.tsx` escolhe o template por `template_id`. **Templates à medida** (ex.: `envelope-01-jose-e-dalia`): ligados no `invite/[slug]/page.tsx` mas **fora** de `AVAILABLE_TEMPLATES` (em `DesignModule.tsx`), por isso nenhum outro casal os vê; o `DesignModule` esconde o seletor no evento que usa um. Documentação do do José e da Dália: `public/envelope-01-jose-e-dalia/elementos/LEIA-ME.md`.
+- Dashboard do evento: `app/[locale]/dashboard/[slug]/page.tsx`. Tem um **hub** com uma área por módulo vendável (Save the Date / Convite / Convidados+Mesas / Fotos / Livro de visitas) mais **Planeamento** (só contas de agência) e **Conta** (`GROUP_TABS`); as áreas filtram separadores, que usam módulos em `components/dashboard/*Module.tsx`.
 - Lista de eventos: `app/[locale]/dashboard/page.tsx`.
 - i18n: `dictionaries/pt.ts` e `en.ts` (~1135 linhas cada — **editar cirurgicamente com Edit, não ler na íntegra**).
 
