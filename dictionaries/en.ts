@@ -259,6 +259,8 @@ const en = {
     "backToEvents": "My Events",
     "currentProject": "Current project",
     "tabs": {
+      "links": "Links",
+      "invite": "Invitation",
       "design": "Models & identity",
       "content": "Invitation content",
       "savethedate": "Save the Date",
@@ -315,8 +317,46 @@ const en = {
       "guestbook": {
         "title": "Guestbook",
         "desc": "Text, voice and video messages from guests"
+      },
+      "links": {
+        "title": "Links & QR codes",
+        "desc": "All event links and QR codes"
       }
     }
+  },
+  "SetupChecklist": {
+    "title": "What's left to do",
+    "progress": "{done} of {total} steps done",
+    "go": "Go",
+    "allDoneTitle": "Everything is ready to share!",
+    "allDoneDesc": "The essential steps are done. You can always fine-tune everything in the areas below.",
+    "dismiss": "Hide",
+    "items": {
+      "basics": { "label": "Names and wedding date", "hint": "Check the names and date in the Invitation." },
+      "photo": { "label": "Cover photo", "hint": "Choose the photo or video that opens the invitation." },
+      "texts": { "label": "Invitation texts", "hint": "Write your story and the details of the day." },
+      "guests": { "label": "Guest list", "hint": "Add your guests so they can confirm attendance." },
+      "share": { "label": "Share the link", "hint": "Copy the invitation link and send it to your guests." }
+    }
+  },
+  "LinksHub": {
+    "title": "Links & QR codes",
+    "subtitle": "All your event addresses in one place. Copy them, open them or download the QR code to print.",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "open": "Open",
+    "locked": "Module not active",
+    "items": {
+      "invite": { "title": "Invitation", "desc": "The main link — send it to all your guests." },
+      "rsvp": { "title": "RSVP", "desc": "A page just for confirming attendance. Ideal for the QR on a printed invitation." },
+      "seating": { "title": "Seating plan", "desc": "So each guest can find their seat — great as a QR code at the room entrance." },
+      "moments": { "title": "Photo gallery", "desc": "Where guests upload and view photos and videos from the party." },
+      "livewall": { "title": "Live Wall", "desc": "To project on a screen during the party, with photos in real time." },
+      "guestbook": { "title": "Guestbook", "desc": "Text, voice and video messages left by your guests." }
+    },
+    "vendorsTitle": "Vendor links",
+    "vendorsDesc": "Private links for vendors and moodboards are created and managed in Planning › Sharing.",
+    "vendorsBtn": "Manage sharing"
   },
   "SaveTheDateModule": {
     "title": "Save the Date",

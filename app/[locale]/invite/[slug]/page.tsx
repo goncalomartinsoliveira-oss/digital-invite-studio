@@ -9,6 +9,7 @@ import EnvelopeTemplate from "../../templates/envelope-01/page";
 import EnvelopeJoseEDaliaTemplate from "../../templates/envelope-01-jose-e-dalia/page";
 import { EventBrandProvider } from "../../../../components/site/BrandProvider";
 import EventExpiredScreen from "../../../../components/site/EventExpiredScreen";
+import PreviewBridge from "../../../../components/site/PreviewBridge";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis de recuo)
 import pt from "../../../../dictionaries/pt";
@@ -73,6 +74,7 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
   // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO (com a marca do próprio evento)
   return (
     <main>
+      <PreviewBridge />
       <EventBrandProvider brandId={invite.brand_id}>
         {invite.template_id === 'collage-01' ? (
           <CollageTemplate data={invite} />
