@@ -19,6 +19,10 @@ export type GuestLinkRow = {
   token: string;
   display_name: string | null;
   seats_override: number | null;
+  // "Quem já abriu" (migração 0011) — ausentes antes de correr a migração.
+  first_opened_at?: string | null;
+  last_opened_at?: string | null;
+  open_count?: number | null;
 };
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"; // sem 0/O/1/l/I

@@ -10,6 +10,9 @@ import EnvelopeJoseEDaliaTemplate from "../../templates/envelope-01-jose-e-dalia
 import { EventBrandProvider } from "../../../../components/site/BrandProvider";
 import EventExpiredScreen from "../../../../components/site/EventExpiredScreen";
 import PreviewBridge from "../../../../components/site/PreviewBridge";
+import InviteAccessGate from "../../../../components/invite/InviteAccessGate";
+import { cookies } from "next/headers";
+import { accessCookieName, verifyAccessCookie } from "@/lib/inviteAccess";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis de recuo)
 import pt from "../../../../dictionaries/pt";
@@ -69,6 +72,19 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
   if (!invite.unlocked_modules?.includes("invite")) {
     const unavailableDict = dictionaries[locale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
     return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} />;
+  }
+
+  // 7d. Código de acesso (opcional, desligado por omissão): se o administrador
+  // o ligou, sem o cookie de acesso só se mostra o ecrã do código — nenhum
+  // dado do evento sai do servidor. Fica depois das verificações de
+  // expirado/módulo, que também não revelam nada.
+  if (invite.access_code_enabled) {
+    const store = await cookies();
+    const granted = verifyAccessCookie(invite.id, invite.access_code_version ?? 1, store.get(accessCookieName(invite.id))?.value);
+    if (!granted) {
+      const gateDict = dictionaries[locale]?.InviteAccess || dictionaries.pt.InviteAccess;
+      return <InviteAccessGate invitationId={invite.id} dict={gateDict} />;
+    }
   }
 
   // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO (com a marca do próprio evento)

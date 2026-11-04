@@ -74,7 +74,8 @@ depois do evento (campo `invitations.expires_at`).
 desbloqueia módulos) · `contact` (formulário, envia email por Resend) ·
 `admin/business-overview` · `moodboard/unfurl` (pré-visualização de links) ·
 `moodboard/public/<token>` e `…/upload` (escrita no moodboard partilhado) ·
-`guest-link/<token>` (links personalizados: GET devolve o grupo, POST grava o RSVP).
+`guest-link/<token>` (links personalizados: GET devolve o grupo e regista a abertura, POST grava o RSVP) ·
+`invite-access` (verifica o código de acesso ao convite) e `invite-access/preview` (dá o cookie de acesso a quem gere o evento).
 
 ---
 
@@ -238,6 +239,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 |---|---|
 | Eventos e acesso | `invitations`, `invitation_collaborators`, `super_admins` |
 | Convidados e mesas | `guests`, `event_tables`, `guest_links` |
+| Acesso ao convite | `invite_access` (o código), `invite_access_attempts` (limite de tentativas), `invitations.access_code_enabled/_version` |
 | Momentos | `fotos_evento`, `fotos_likes`, `guestbook` |
 | Marcas e dinheiro | `brands`, `brand_members`, `brand_pricing_overrides`, `coupons`, `payments` |
 | Planeamento | `event_costs`, `event_cost_payments`, `event_cost_notes`, `event_tasks`, `event_timeline`, `event_documents`, `agency_vendors` |
@@ -291,8 +293,26 @@ saudação (`GuestGreeting`, hoje só no modelo do José e da Dália) e o RSVP a
 direto no grupo. Sem links gerados, tudo funciona como antes. Regras: lugares =
 adultos + crianças (sem bebés), com correção manual; nome automático pelos
 primeiros nomes, editável; convidado sozinho → "um lugar para si".
-**Fase 3 (por fazer, opcional):** mostrar ao casal que grupos já abriram o convite;
-saudação nos restantes modelos.
+**Quem já abriu (fase 3, feita):** `guest_links` guarda primeira/última abertura e contagem
+(migração `0011`; sem IP nem dados do aparelho). O painel mostra a coluna "Visto", o
+resumo "X de Y já abriram" e um filtro "só os que ainda não abriram". Uma abertura conta
+quando o convite carrega já depois do código de acesso (se houver); abrir o link para
+testar também conta. Por fazer: saudação nos restantes modelos (cada um tem aspeto próprio).
+
+**Código de acesso ao convite** (opcional, desligado por omissão; área "Links e QR codes",
+`InviteAccessCard`): 4 dígitos. `invitations.access_code_enabled/_version` não são secretos
+(a página lê-os); o código fica em `invite_access`, só legível por quem edita o evento.
+Sem o cookie de acesso, `invite/[slug]/page.tsx` mostra só `InviteAccessGate` (sem nomes,
+data nem fotos) — o convite nem chega ao browser. Vale também para links personalizados.
+Cookie assinado (HMAC com chave derivada da `SUPABASE_SERVICE_ROLE_KEY`), 30 dias, invalidado
+ao mudar o código. Limite de tentativas falhadas: 5 por IP em 15 min e 100 por convite em 1 h
+(`lib/inviteAccess.ts`). O painel recebe o cookie por `invite-access/preview` para a
+pré-visualização e "Abrir convite" não pedirem código ao administrador.
+**Limites conhecidos:** 4 dígitos servem para evitar acessos casuais (link reencaminhado,
+pré-visualizações), não são uma palavra-passe. Só o convite pede código — RSVP em página
+própria, mesas, galeria, live wall e livro de visitas continuam abertos. O convite lê os dados
+com a chave pública do Supabase, por isso alguém técnico que fale diretamente com a API
+contornaria o código; fechar isso exige mover a leitura dos convites para o servidor.
 
 **Melhorias de organização sugeridas:**
 Já feitas e em produção:

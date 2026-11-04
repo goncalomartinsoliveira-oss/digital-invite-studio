@@ -26,6 +26,7 @@ type Dict = {
   noLink: string; auto: string; copy: string; copied: string; regenerate: string; revoke: string;
   confirmRegenerate: string; confirmRevoke: string; noGroups: string; error: string; generalNote: string;
   csvHeaders: string[]; seatsHint: string;
+  colSeen: string; notOpened: string; openedSummary: string; onlyUnopened: string; openedTitle: string;
 };
 
 type GuestLike = { id: string; name: string; category: string; status: string; group_id?: string | null };
@@ -47,6 +48,7 @@ export default function GuestLinksPanel({ invitationId, slug, locale, guests, ca
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [onlyUnopened, setOnlyUnopened] = useState(false);
   const [origin, setOrigin] = useState("");
 
   useEffect(() => setOrigin(window.location.origin), []);
@@ -78,6 +80,9 @@ export default function GuestLinksPanel({ invitationId, slug, locale, guests, ca
   const rowByGroup = useMemo(() => new Map(rows.map(r => [r.group_id, r])), [rows]);
   const withLink = groups.filter(g => rowByGroup.has(g.groupId)).length;
   const missing = groups.filter(g => !rowByGroup.has(g.groupId));
+  const opened = groups.filter(g => (rowByGroup.get(g.groupId)?.open_count ?? 0) > 0).length;
+  const visibleGroups = onlyUnopened ? groups.filter(g => rowByGroup.has(g.groupId) && !(rowByGroup.get(g.groupId)?.open_count)) : groups;
+  const fmtDate = (iso?: string | null) => iso ? new Date(iso).toLocaleString(locale === "en" ? "en-GB" : "pt-PT", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
 
   const fail = () => { setError(true); setTimeout(() => setError(false), 4000); };
 
@@ -150,6 +155,7 @@ export default function GuestLinksPanel({ invitationId, slug, locale, guests, ca
           </span>
           <span className="block text-xs text-gray-400 mt-0.5">
             {groups.length > 0 ? dict.summary.replace("{with}", String(withLink)).replace("{total}", String(groups.length)) : dict.noGroups}
+            {withLink > 0 && ` · ${dict.openedSummary.replace("{n}", String(opened)).replace("{total}", String(withLink))}`}
           </span>
         </span>
         <span className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-brand shrink-0">
@@ -182,23 +188,30 @@ export default function GuestLinksPanel({ invitationId, slug, locale, guests, ca
               >
                 <Download size={12} /> {dict.exportCsv}
               </button>
+              {withLink > 0 && (
+                <label className="flex items-center gap-2 text-[11px] text-gray-500 ml-1 cursor-pointer select-none">
+                  <input type="checkbox" checked={onlyUnopened} onChange={e => setOnlyUnopened(e.target.checked)} className="accent-[#630100]" />
+                  {dict.onlyUnopened}
+                </label>
+              )}
               {error && <span className="text-[11px] text-red-500">{dict.error}</span>}
             </div>
           )}
 
           {groups.length > 0 && (
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[720px]">
+              <table className="w-full text-left text-xs min-w-[920px]">
                 <thead>
                   <tr className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
-                    <th className="py-2 pr-3 font-bold">{dict.colGroup}</th>
+                    <th className="py-2 pr-3 font-bold w-44">{dict.colGroup}</th>
                     <th className="py-2 pr-3 font-bold w-48">{dict.colName}</th>
                     <th className="py-2 pr-3 font-bold w-24" title={dict.seatsHint}>{dict.colSeats}</th>
+                    <th className="py-2 pr-3 font-bold w-32">{dict.colSeen}</th>
                     <th className="py-2 font-bold">{dict.colLink}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {groups.map(g => {
+                  {visibleGroups.map(g => {
                     const row = rowByGroup.get(g.groupId);
                     return (
                       <tr key={g.groupId} data-group={g.groupId} className="align-middle">
@@ -238,6 +251,13 @@ export default function GuestLinksPanel({ invitationId, slug, locale, guests, ca
                               }}
                             />
                           ) : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="py-3 pr-3 text-[11px]" data-seen={row?.open_count ? "yes" : "no"}>
+                          {!row ? <span className="text-gray-300">—</span> : row.open_count ? (
+                            <span className="text-gray-600" title={dict.openedTitle.replace("{first}", fmtDate(row.first_opened_at)).replace("{count}", String(row.open_count))}>
+                              {fmtDate(row.last_opened_at)} <span className="text-gray-400">· {row.open_count}×</span>
+                            </span>
+                          ) : <span className="text-gray-400">{dict.notOpened}</span>}
                         </td>
                         <td className="py-3">
                           {row ? (

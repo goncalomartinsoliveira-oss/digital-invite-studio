@@ -324,6 +324,35 @@ const en = {
       }
     }
   },
+  "InviteAccess": {
+    "title": "This invitation is private",
+    "desc": "Enter the code you received to open it.",
+    "label": "Code",
+    "submit": "Enter",
+    "submitting": "Checking...",
+    "wrong": "Wrong code. Please try again.",
+    "tooMany": "Too many attempts. Please try again in a few minutes.",
+    "error": "Could not check the code. Please try again."
+  },
+  "InviteAccessCard": {
+    "title": "Invitation access",
+    "badge": "Optional",
+    "intro": "Ask for a 4-digit code from anyone opening the invitation. Only people with the code can see it, even if the link is going around.",
+    "switchLabel": "Ask for a code to open the invitation",
+    "codeLabel": "Current code",
+    "copyCode": "Copy code",
+    "copyBoth": "Copy link and code",
+    "copied": "Copied",
+    "codeWord": "Code",
+    "change": "Change code",
+    "save": "Save",
+    "random": "Generate another",
+    "confirmChange": "Change the code? Anyone who already got in will have to enter it again.",
+    "scope": "The code applies to the invitation, including personalised links. The gallery, the standalone RSVP page, the seating plan and the guestbook have their own links and do not ask for a code.",
+    "weak": "With 4 digits, the code is meant to prevent casual access, such as a forwarded link. Do not treat it as a password.",
+    "invalid": "The code must be 4 digits.",
+    "error": "Could not save. Please try again."
+  },
   "GuestLink": {
     "seatsOne": "We have reserved 1 seat for you",
     "seatsMany": "We have reserved {n} seats for you",
@@ -356,7 +385,12 @@ const en = {
     "error": "Could not save. Please try again.",
     "generalNote": "The general invitation link keeps working as before, with the name search.",
     "csvHeaders": ["Name", "Seats", "Link"],
-    "seatsHint": "Babies are not counted. You can correct the number."
+    "seatsHint": "Babies are not counted. You can correct the number.",
+    "colSeen": "Seen",
+    "notOpened": "Not opened yet",
+    "openedSummary": "{n} of {total} have opened it",
+    "onlyUnopened": "Only those who have not opened it",
+    "openedTitle": "First opened: {first} · {count} open(s)"
   },
   "SetupChecklist": {
     "title": "What's left to do",

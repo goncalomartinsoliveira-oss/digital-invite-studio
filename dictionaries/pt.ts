@@ -324,6 +324,35 @@ const pt = {
       }
     }
   },
+  "InviteAccess": {
+    "title": "Este convite é privado",
+    "desc": "Introduza o código que recebeu para o abrir.",
+    "label": "Código",
+    "submit": "Entrar",
+    "submitting": "A verificar...",
+    "wrong": "Código incorreto. Tente outra vez.",
+    "tooMany": "Demasiadas tentativas. Tente novamente dentro de alguns minutos.",
+    "error": "Não foi possível verificar o código. Tente outra vez."
+  },
+  "InviteAccessCard": {
+    "title": "Acesso ao convite",
+    "badge": "Opcional",
+    "intro": "Peçam um código de 4 dígitos a quem abre o convite. Só quem o tiver consegue ver o convite, mesmo que o link ande a circular por aí.",
+    "switchLabel": "Pedir código para abrir o convite",
+    "codeLabel": "Código atual",
+    "copyCode": "Copiar código",
+    "copyBoth": "Copiar link e código",
+    "copied": "Copiado",
+    "codeWord": "Código",
+    "change": "Alterar código",
+    "save": "Guardar",
+    "random": "Gerar outro",
+    "confirmChange": "Alterar o código? Quem já entrou terá de voltar a introduzi-lo.",
+    "scope": "O código vale para o convite, incluindo os links personalizados. A galeria, o RSVP em página própria, o plano de mesas e o livro de visitas têm os seus links e não pedem código.",
+    "weak": "Com 4 dígitos, o código serve para evitar acessos casuais, como um link reencaminhado. Não o tratem como uma palavra-passe.",
+    "invalid": "O código tem de ter 4 números.",
+    "error": "Não foi possível guardar. Tentem outra vez."
+  },
   "GuestLink": {
     "seatsOne": "Iremos reservar 1 lugar para vocês",
     "seatsMany": "Iremos reservar {n} lugares para vocês",
@@ -356,7 +385,12 @@ const pt = {
     "error": "Não foi possível guardar. Tentem outra vez.",
     "generalNote": "O link geral do convite continua a funcionar como antes, com a pesquisa por nome.",
     "csvHeaders": ["Nome", "Lugares", "Link"],
-    "seatsHint": "Bebés não contam. Podem corrigir o número."
+    "seatsHint": "Bebés não contam. Podem corrigir o número.",
+    "colSeen": "Visto",
+    "notOpened": "Ainda não abriu",
+    "openedSummary": "{n} de {total} já abriram",
+    "onlyUnopened": "Só os que ainda não abriram",
+    "openedTitle": "Primeira abertura: {first} · {count} abertura(s)"
   },
   "SetupChecklist": {
     "title": "O que falta fazer",

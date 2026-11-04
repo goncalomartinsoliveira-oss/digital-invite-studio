@@ -35,6 +35,7 @@ aplicados.
 | `0008_budget_total.sql` | `invitations.planner_budget_total_cents` — orçamento total por evento (um número, em vez da soma de `event_costs.budgeted_cents`). Faz backfill da soma antiga; a coluna antiga fica na BD sem uso | ☑ |
 | `0009_cost_tiers_and_task_responsible.sql` | `event_costs` — preço por escalão etário (adulto/criança/bebé) e mínimo contratual com preço de excedente, mutuamente exclusivos. `event_tasks.responsible` (agência/noivos/conjunta), com constraint a impor que tarefa não-agência é sempre partilhada | ☑ |
 | `0010_guest_links.sql` | `guest_links` — link personalizado por grupo de convidados (opcional): token por `group_id`, nome e lugares calculados ao vivo, com correções manuais opcionais. Sem política pública: `app/api/guest-link` usa a service_role key e só devolve o grupo do token | ☑ |
+| `0011_invite_access_and_opens.sql` | Código de acesso ao convite (opcional, desligado por omissão): `invitations.access_code_enabled/_version` (não secretos), `invite_access` (o código, só legível por quem gere o evento) e `invite_access_attempts` (limite de tentativas, só servidor). Mais `guest_links.first_opened_at/last_opened_at/open_count` para ver que grupos já abriram o convite | ☐ |
 
 > Marcar a coluna "Aplicado" depois de correr em produção, para não haver
 > dúvidas mais tarde.
