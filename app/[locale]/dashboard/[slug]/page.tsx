@@ -44,6 +44,7 @@ import TasksModule from "@/components/dashboard/TasksModule";
 import TimelineModule from "@/components/dashboard/TimelineModule";
 import SharingModule from "@/components/dashboard/SharingModule";
 import LinksHub from "@/components/dashboard/LinksHub";
+import GuestLinksPanel from "@/components/dashboard/GuestLinksPanel";
 import SetupChecklist, { type ChecklistItem } from "@/components/dashboard/SetupChecklist";
 import MoodboardModule from "@/components/dashboard/MoodboardModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
@@ -735,7 +736,10 @@ export default function Dashboard() {
               {activeTab === 'design' && (isTabLocked('design') ? lockedNotice('design') : <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />)}
               {activeTab === 'content' && (isTabLocked('content') ? lockedNotice('content') : <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />)}
               {activeTab === 'savethedate' && (isTabLocked('savethedate') ? lockedNotice('savethedate') : <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />)}
-              {activeTab === 'guests' && (isTabLocked('guests') ? lockedNotice('guests') : <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} slug={params.slug as string} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />)}
+              {activeTab === 'guests' && (isTabLocked('guests') ? lockedNotice('guests') : <>
+                <GuestLinksPanel invitationId={formData.id} slug={params.slug as string} locale={params.locale as string} guests={guests} canEdit={canEdit} dict={dictionaries[locale]?.GuestLinksPanel || dictionaries.pt.GuestLinksPanel} />
+                <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} slug={params.slug as string} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />
+              </>)}
               {activeTab === 'seating' && (isTabLocked('seating') ? lockedNotice('seating') : <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />)}
               {activeTab === 'photosharing' && (
                 <PhotoSharingModule

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGuestLink, invalidateGuestLink } from "./useGuestLink";
 import pt from "@/dictionaries/pt";
 import en from "@/dictionaries/en";
 
@@ -34,6 +35,23 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
   const [requestMessage, setRequestMessage] = useState("");
 
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+
+  // Link personalizado (?c=...): abre direto no grupo certo e grava pelo
+  // servidor (só o próprio grupo). Num link geral isto fica inativo e tudo
+  // funciona como sempre: pesquisa por nome e gravação direta.
+  const guestLink = useGuestLink(invitationId);
+  const linkData = guestLink.status === "ready" ? guestLink.data : null;
+  const [viaLink, setViaLink] = useState(false);
+  const [linkApplied, setLinkApplied] = useState(false);
+  const guestLinkDict = (dictionaries[locale]?.GuestLink || dictionaries.pt.GuestLink);
+
+  useEffect(() => {
+    if (!linkData || linkApplied) return;
+    setLinkApplied(true);
+    setViaLink(true);
+    setGroupMembers(linkData.members.map(m => ({ ...m })));
+    setStep(1);
+  }, [linkData, linkApplied]);
 
   // Dynamic name search (accent-insensitive)
   useEffect(() => {
@@ -88,6 +106,19 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
 
   const handleSubmitRSVP = async () => {
     setSubmitting(true);
+    if (viaLink && linkData) {
+      const res = await fetch(`/api/guest-link/${encodeURIComponent(linkData.token)}?inv=${encodeURIComponent(invitationId)}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          answers: groupMembers.map(m => ({ id: m.id, status: m.status, dietary_notes: m.dietary_notes, notes: m.notes })),
+        }),
+      }).catch(() => null);
+      if (!res || !res.ok) alert(dict.alerts.saveError);
+      else { invalidateGuestLink(linkData.token, invitationId); setStep(2); }
+      setSubmitting(false);
+      return;
+    }
     const results = await Promise.all(groupMembers.map(member =>
       supabase.from('guests').update({
         status: member.status,
@@ -286,6 +317,17 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
                   {submitting ? s1.savingBtn : s1.confirmBtn}
                 </button>
               </div>
+
+              {viaLink && linkData && (
+                <div className="text-center">
+                  <button
+                    onClick={() => { setViaLink(false); setGroupMembers([]); setStep(0); }}
+                    className="text-xs text-neutral-400 hover:text-black transition-colors underline underline-offset-4 decoration-neutral-200"
+                  >
+                    {guestLinkDict.notYou.replace("{name}", linkData.displayName)}
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -295,7 +337,7 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
               <span className="text-6xl block mb-4">🥂</span>
               <h3 className="font-serif text-3xl uppercase tracking-tighter">{dict.step2.title}</h3>
               <p className="text-sm text-neutral-500 max-w-xs mx-auto italic leading-relaxed">{dict.step2.message}</p>
-              <button onClick={() => setStep(0)} className="text-[9px] uppercase tracking-[0.2em] opacity-30 hover:opacity-100 pt-12 transition-all">{dict.step2.editBtn}</button>
+              <button onClick={() => setStep(viaLink ? 1 : 0)} className="text-[9px] uppercase tracking-[0.2em] opacity-30 hover:opacity-100 pt-12 transition-all">{dict.step2.editBtn}</button>
             </motion.div>
           )}
 

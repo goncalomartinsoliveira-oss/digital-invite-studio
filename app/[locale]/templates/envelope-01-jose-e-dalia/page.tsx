@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cinzel } from "next/font/google";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
+import GuestGreeting from "../../../../components/invite/GuestGreeting";
 
 // A pedido do casal, todo o texto do convite usa Cinzel — contador, história,
 // programa, local, detalhes, formulário de RSVP, rodapé. Só ficam em Pinyon
@@ -273,9 +274,8 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
                 por cima do envelope azul com selo de cera. Sem "Recebeu um
                 convite de", que a maquete não tem. As duas linhas por
                 baixo do envelope na maquete (nome do convidado e "Iremos
-                reservar (2) lugares para vocês") precisam de convites
-                personalizados por convidado, que o sistema ainda não tem —
-                não estão aqui. */}
+                reservar (2) lugares para vocês") só aparecem em links
+                personalizados — ver GuestGreeting abaixo. */}
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -314,11 +314,21 @@ export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params
               />
             </motion.button>
 
+            {/* Link personalizado (?c=...): nome do convidado/grupo e lugares
+                reservados por baixo do envelope, como na maquete. Num link
+                geral não renderiza nada — o ecrã fica como sempre. */}
+            <GuestGreeting
+              invitationId={data?.id || ""}
+              className="mt-7 space-y-2"
+              nameStyle={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(28px, 8vw, 40px)", color: TEXT_BLUE, lineHeight: 1.4 }}
+              lineStyle={{ fontSize: "11px", letterSpacing: "0.12em", color: TEXT_BLUE }}
+            />
+
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className={`${cinzel.className} uppercase mt-9`}
+              className={`${cinzel.className} uppercase mt-7`}
               style={{ fontSize: "11px", letterSpacing: "0.3em", color: TEXT_BLUE }}
             >
               Clique para abrir

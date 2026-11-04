@@ -30,6 +30,8 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 - **Alterações ao esquema vão para `supabase/migrations/`** (ver o LEIA-ME lá dentro), não para o painel do Supabase à mão. As tabelas antigas (invitations, guests, brands, etc.) são anteriores a esta regra e não têm ficheiro.
 - Módulo Wedding Planner (B2B, em piloto): ligado por `brands.planner_plan`; lógica em `lib/planner.ts`; área "Gestão" no painel do evento (`BudgetModule`, `TasksModule`), só visível em contas de agência.
 
+- Links personalizados por grupo de convidados (opcional): tabela `guest_links` (migração `0010`), `lib/guestLinks.ts`, rota `app/api/guest-link/[token]`, painel `GuestLinksPanel`, `GuestGreeting` no convite e `SmartRsvp` com `?c=`. Sem links, o convite e o RSVP funcionam como sempre.
+
 ## Dados
 - Coluna `content` (JSON) da tabela `invitations`: `{ sections_visibility: {...}, content: { <seccao>: {...} } }`. Nos módulos: `dbContent = formData.content`, `content = dbContent.content`. Guardar via `handleSaveDesign()` (faz update em `invitations`). Autosave: `useEffect` com debounce de 1500 ms sobre `formData`.
 - Storage Supabase: bucket `invites` (imagens do convite/Save the Date), `fotos_evento` (galeria/guestbook).

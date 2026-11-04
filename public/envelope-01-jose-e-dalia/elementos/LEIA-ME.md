@@ -47,10 +47,10 @@ invisíveis em fundo claro mas visíveis em alguns visualizadores) foram
 limpos e a imagem recortada ao envelope.
 
 A maquete tem ainda, por baixo do envelope, o nome do convidado ("Ana e
-Tiago") e "Iremos reservar (2) lugares para vocês". Isso exige convites
-personalizados por convidado, que o sistema ainda não tem — hoje os
-convidados confirmam procurando o próprio nome em `SmartRsvp`. Por isso
-essas duas linhas **não estão** no template.
+Tiago") e "Iremos reservar (2) lugares para vocês". Isto só aparece em
+**links personalizados** (`?c=<código>`, gerados no painel de Convidados,
+ver `GuestGreeting`); no link geral o ecrã fica como sempre, sem essas
+linhas, e os convidados confirmam procurando o nome em `SmartRsvp`.
 
 ## Posições
 

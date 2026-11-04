@@ -324,6 +324,40 @@ const en = {
       }
     }
   },
+  "GuestLink": {
+    "seatsOne": "We have reserved 1 seat for you",
+    "seatsMany": "We have reserved {n} seats for you",
+    "seatsSolo": "We have reserved a seat for you",
+    "notYou": "Not {name}? Search for my name"
+  },
+  "GuestLinksPanel": {
+    "title": "Personalised links",
+    "badge": "Optional",
+    "intro": "Instead of a single link for everyone, each group of guests can have its own: the invitation shows their name and the seats reserved, and the RSVP opens straight on the right group. If you prefer, keep using the general link — it does not change.",
+    "open": "Set up",
+    "close": "Close",
+    "summary": "{with} of {total} groups with a link",
+    "generateAll": "Generate missing links",
+    "generating": "Generating...",
+    "exportCsv": "Export list (CSV)",
+    "colGroup": "Group",
+    "colName": "Name on invitation",
+    "colSeats": "Seats",
+    "colLink": "Link",
+    "noLink": "No link",
+    "auto": "Automatic",
+    "copy": "Copy",
+    "copied": "Copied",
+    "regenerate": "New link",
+    "revoke": "Remove",
+    "confirmRegenerate": "Generate a new link for {name}? The current link will stop working.",
+    "confirmRevoke": "Remove the link for {name}? The current link will stop working.",
+    "noGroups": "There are no guests yet. Add them in the list below.",
+    "error": "Could not save. Please try again.",
+    "generalNote": "The general invitation link keeps working as before, with the name search.",
+    "csvHeaders": ["Name", "Seats", "Link"],
+    "seatsHint": "Babies are not counted. You can correct the number."
+  },
   "SetupChecklist": {
     "title": "What's left to do",
     "progress": "{done} of {total} steps done",
