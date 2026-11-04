@@ -34,7 +34,7 @@ aplicados.
 | `0007_moodboard_share.sql` | `moodboard_share_links` — link de partilha do Moodboard (ver + contribuir), sem conta DIS, um por evento. Sem política de leitura/escrita pública: as rotas em `app/api/moodboard/public` usam a service_role key | ☑ |
 | `0008_budget_total.sql` | `invitations.planner_budget_total_cents` — orçamento total por evento (um número, em vez da soma de `event_costs.budgeted_cents`). Faz backfill da soma antiga; a coluna antiga fica na BD sem uso | ☑ |
 | `0009_cost_tiers_and_task_responsible.sql` | `event_costs` — preço por escalão etário (adulto/criança/bebé) e mínimo contratual com preço de excedente, mutuamente exclusivos. `event_tasks.responsible` (agência/noivos/conjunta), com constraint a impor que tarefa não-agência é sempre partilhada | ☑ |
-| `0010_guest_links.sql` | `guest_links` — link personalizado por grupo de convidados (opcional): token por `group_id`, nome e lugares calculados ao vivo, com correções manuais opcionais. Sem política pública: `app/api/guest-link` usa a service_role key e só devolve o grupo do token | ☐ |
+| `0010_guest_links.sql` | `guest_links` — link personalizado por grupo de convidados (opcional): token por `group_id`, nome e lugares calculados ao vivo, com correções manuais opcionais. Sem política pública: `app/api/guest-link` usa a service_role key e só devolve o grupo do token | ☑ |
 
 > Marcar a coluna "Aplicado" depois de correr em produção, para não haver
 > dúvidas mais tarde.
