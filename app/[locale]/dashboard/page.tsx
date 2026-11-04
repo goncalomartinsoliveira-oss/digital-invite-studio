@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store } from "lucide-react";
+import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
@@ -16,6 +16,7 @@ import BrandPricingView from "@/components/dashboard/BrandPricingView";
 import BusinessOverviewView from "@/components/dashboard/BusinessOverviewView";
 import AgencyOverviewView from "@/components/dashboard/AgencyOverviewView";
 import VendorsView from "@/components/dashboard/VendorsView";
+import AdminMenu from "@/components/dashboard/AdminMenu";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -285,52 +286,20 @@ export default function DashboardHub() {
                   <Store size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Vendors' : 'Fornecedores'}</span>
                 </button>
               )}
-              <button
-                onClick={() => setViewMode('admin')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'admin' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-              >
-                <Table size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Management' : 'Gestão'}</span>
-              </button>
-              {canManageMembers && (
-                <button
-                  onClick={() => setViewMode('members')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'members' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-                >
-                  <Users size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Members' : 'Membros'}</span>
-                </button>
-              )}
-              {canManageBrands && (
-                <button
-                  onClick={() => setViewMode('brands')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'brands' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-                >
-                  <Building2 size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Brands' : 'Marcas'}</span>
-                </button>
-              )}
-              {canManageCoupons && (
-                <button
-                  onClick={() => setViewMode('coupons')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'coupons' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-                >
-                  <Ticket size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Coupons' : 'Cupões'}</span>
-                </button>
-              )}
-              {canManagePricing && (
-                <button
-                  onClick={() => setViewMode('pricing')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'pricing' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-                >
-                  <Tag size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Pricing' : 'Preços'}</span>
-                </button>
-              )}
-              {canViewBusiness && (
-                <button
-                  onClick={() => setViewMode('business')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'business' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-                >
-                  <Wallet size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Business' : 'Negócio'}</span>
-                </button>
-              )}
+              <AdminMenu
+                label={locale === 'en' ? 'Administration' : 'Administração'}
+                icon={<ShieldCheck size={12} />}
+                active={viewMode}
+                onSelect={(id) => setViewMode(id)}
+                items={[
+                  { id: 'admin' as const, label: locale === 'en' ? 'Management' : 'Gestão', icon: <Table size={12} /> },
+                  ...(canManageMembers ? [{ id: 'members' as const, label: locale === 'en' ? 'Members' : 'Membros', icon: <Users size={12} /> }] : []),
+                  ...(canManageBrands ? [{ id: 'brands' as const, label: locale === 'en' ? 'Brands' : 'Marcas', icon: <Building2 size={12} /> }] : []),
+                  ...(canManageCoupons ? [{ id: 'coupons' as const, label: locale === 'en' ? 'Coupons' : 'Cupões', icon: <Ticket size={12} /> }] : []),
+                  ...(canManagePricing ? [{ id: 'pricing' as const, label: locale === 'en' ? 'Pricing' : 'Preços', icon: <Tag size={12} /> }] : []),
+                  ...(canViewBusiness ? [{ id: 'business' as const, label: locale === 'en' ? 'Business' : 'Negócio', icon: <Wallet size={12} /> }] : []),
+                ]}
+              />
             </div>
           )}
 

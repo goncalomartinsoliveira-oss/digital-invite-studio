@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -27,7 +27,8 @@ import {
   Clock,
   ClipboardList,
   Share2,
-  Images
+  Images,
+  Link2
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -42,6 +43,8 @@ import BudgetModule from "@/components/dashboard/BudgetModule";
 import TasksModule from "@/components/dashboard/TasksModule";
 import TimelineModule from "@/components/dashboard/TimelineModule";
 import SharingModule from "@/components/dashboard/SharingModule";
+import LinksHub from "@/components/dashboard/LinksHub";
+import SetupChecklist, { type ChecklistItem } from "@/components/dashboard/SetupChecklist";
 import MoodboardModule from "@/components/dashboard/MoodboardModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import BundleOffers from "@/components/dashboard/BundleOffers";
@@ -62,12 +65,12 @@ const dictionaries = {
   en: en
 };
 
-type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'photosharing' | 'guestbook' | 'budget' | 'tasks' | 'timeline' | 'sharing' | 'moodboard' | 'account';
+type DashboardTab = 'design' | 'content' | 'savethedate' | 'guests' | 'seating' | 'photosharing' | 'guestbook' | 'budget' | 'tasks' | 'timeline' | 'sharing' | 'moodboard' | 'links' | 'account';
 // Áreas do hub: uma por módulo vendável (mesmos ids de lib/modules.ts), para
 // que o hub mostre claramente o que está desbloqueado/bloqueado por módulo.
 // "management" é a exceção: não é um módulo à venda ao casal, é a área de
 // gestão das contas de wedding planner (ver lib/planner.ts).
-type EventGroup = 'save_the_date' | 'invite' | 'guests_seating' | 'photo_sharing' | 'guestbook' | 'management' | 'account' | null;
+type EventGroup = 'save_the_date' | 'invite' | 'guests_seating' | 'photo_sharing' | 'guestbook' | 'links' | 'management' | 'account' | null;
 
 const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
   save_the_date: ['savethedate'],
@@ -75,6 +78,7 @@ const GROUP_TABS: Record<Exclude<EventGroup, null>, DashboardTab[]> = {
   guests_seating: ['guests', 'seating'],
   photo_sharing: ['photosharing'],
   guestbook: ['guestbook'],
+  links: ['links'],
   management: ['budget', 'tasks', 'timeline', 'sharing', 'moodboard'],
   account: [],
 };
@@ -92,9 +96,13 @@ export default function Dashboard() {
   const [saving, setSaving] = useState(false);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  // Estado da lista "O que falta fazer" (guardado no browser, como o tour).
+  const [linkShared, setLinkShared] = useState(false);
+  const [checklistHidden, setChecklistHidden] = useState(false);
 
   const [copied, setCopied] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
+  const previewRef = useRef<HTMLIFrameElement>(null);
 
   const [userRole, setUserRole] = useState<"owner" | "editor" | "viewer">("viewer");
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -203,6 +211,10 @@ export default function Dashboard() {
       if (typeof window !== "undefined" && !localStorage.getItem(tourKey)) {
         setShowTour(true);
       }
+      if (typeof window !== "undefined") {
+        setLinkShared(!!localStorage.getItem(`dis_link_shared_${params.slug}`));
+        setChecklistHidden(!!localStorage.getItem(`dis_checklist_hidden_${params.slug}`));
+      }
     }
     loadData();
   }, [params.slug, params.locale, router]);
@@ -214,12 +226,26 @@ export default function Dashboard() {
     }
   };
 
+  const markLinkShared = () => {
+    setLinkShared(true);
+    if (typeof window !== "undefined") localStorage.setItem(`dis_link_shared_${params.slug}`, "1");
+  };
+
+  const hideChecklist = () => {
+    setChecklistHidden(true);
+    if (typeof window !== "undefined") localStorage.setItem(`dis_checklist_hidden_${params.slug}`, "1");
+  };
+
   const handleSaveDesign = async () => {
     setSaving(true);
     const { user_email, ...dataToSave } = formData;
     await supabase.from("invitations").update(dataToSave).eq("id", formData.id);
     setSaving(false);
-    setIframeKey(prev => prev + 1); 
+    // Atualização "suave": o convite refaz só os dados (ver PreviewBridge) e mantém
+    // o estado — envelope aberto, scroll. Sem iframe pronto, recarrega por completo.
+    const target = previewRef.current?.contentWindow;
+    if (target) target.postMessage("dis-preview-refresh", window.location.origin);
+    else setIframeKey(prev => prev + 1);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,6 +264,7 @@ export default function Dashboard() {
   const copyInviteLink = () => {
     const url = `${window.location.origin}/${params.locale}/invite/${formData.slug}`;
     navigator.clipboard.writeText(url);
+    markLinkShared();
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -256,6 +283,7 @@ export default function Dashboard() {
     { id: 'seating', label: dict.tabs.seating, icon: <Grid size={20} /> },
     { id: 'photosharing', label: dict.tabs.photosharing, icon: <Camera size={20} /> },
     { id: 'guestbook', label: dict.tabs.guestbook, icon: <MessageSquareHeart size={20} /> },
+    { id: 'links', label: dict.tabs.links, icon: <Link2 size={20} /> },
     { id: 'budget', label: 'Orçamento', icon: <Wallet size={20} /> },
     { id: 'tasks', label: 'Tarefas', icon: <ListChecks size={20} /> },
     { id: 'timeline', label: 'Cronograma', icon: <Clock size={20} /> },
@@ -263,13 +291,13 @@ export default function Dashboard() {
     { id: 'moodboard', label: 'Inspiração', icon: <Images size={20} /> }
   ] as { id: DashboardTab, label: string, icon: React.ReactNode }[];
 
-  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate' || activeTab === 'budget' || activeTab === 'tasks' || activeTab === 'timeline' || activeTab === 'sharing' || activeTab === 'moodboard';
+  const isFullScreenTab = activeTab === 'guests' || activeTab === 'seating' || activeTab === 'photosharing' || activeTab === 'guestbook' || activeTab === 'account' || activeTab === 'savethedate' || activeTab === 'budget' || activeTab === 'tasks' || activeTab === 'timeline' || activeTab === 'sharing' || activeTab === 'moodboard' || activeTab === 'links';
 
   // "Copiar Link" / "Abrir Convite" apontam para o site do casal
   // (/invite/[slug]) — só fazem sentido nas áreas do próprio convite, não em
   // Planeamento (Orçamento, Tarefas, ...) nem em Minha Conta, que não têm
   // nada a ver com esse site.
-  const showInviteActions = group !== 'management' && activeTab !== 'account';
+  const showInviteActions = group !== 'management' && activeTab !== 'account' && activeTab !== 'links';
 
   // Área de Gestão: existe apenas em eventos de contas de wedding planner.
   // A equipa da agência vê tudo; o casal vê só o que estiver marcado como
@@ -357,6 +385,18 @@ export default function Dashboard() {
     // Orçamento, Tarefas, Cronograma e Partilha só existem em contas de wedding planner.
     .filter(t => showManagement || (t.id !== 'budget' && t.id !== 'tasks' && t.id !== 'timeline' && t.id !== 'sharing' && t.id !== 'moodboard'));
 
+  // "Design" e "Conteúdo" são duas vistas do mesmo módulo (Convite): na navegação
+  // aparecem como uma só entrada; a escolha entre as duas fica num seletor por
+  // cima do editor (ver `inviteSections`). Os ids dos separadores não mudam.
+  const navTabs = visibleTabs
+    .filter(t => t.id !== 'content')
+    .map(t => t.id === 'design' ? { ...t, label: dict.tabs.invite, icon: <Mail size={20} /> } : t);
+  const isNavActive = (id: string) => id === 'design' ? (activeTab === 'design' || activeTab === 'content') : activeTab === id;
+  const inviteSections: { id: 'design' | 'content'; label: string; icon: React.ReactNode }[] = [
+    { id: 'design', label: dict.tabs.design, icon: <PenTool size={14} /> },
+    { id: 'content', label: dict.tabs.content, icon: <FileText size={14} /> },
+  ];
+
   // Abrir uma área a partir do hub → entra no editor no primeiro separador dessa área.
   const openGroup = (g: Exclude<EventGroup, null>) => {
     setGroup(g);
@@ -366,6 +406,21 @@ export default function Dashboard() {
       setActiveTab(GROUP_TABS[g][0]);
     }
   };
+
+  // "O que falta fazer": só passos de módulos que o casal tem ativos, e só
+  // para quem pode editar. Tudo é derivado dos dados do evento.
+  const dbContent = formData.content?.content || {};
+  const goTab = (g: Exclude<EventGroup, null>, tab: DashboardTab) => { setGroup(g); setActiveTab(tab); };
+  const checklistDict = dictionaries[locale]?.SetupChecklist || dictionaries.pt.SetupChecklist;
+  const checklistItems: ChecklistItem[] = canEdit ? [
+    ...(!isTabLocked('design') ? [
+      { id: 'basics', done: !!(formData.groom_name && formData.bride_name && formData.event_date), onGo: () => goTab('invite', 'design') },
+      { id: 'photo', done: !!dbContent.hero?.main_image_url, onGo: () => goTab('invite', 'content') },
+      { id: 'texts', done: !!dbContent.story?.paragraphs?.some((p: string) => p?.trim()), onGo: () => goTab('invite', 'content') },
+    ] : []),
+    ...(!isTabLocked('guests') ? [{ id: 'guests', done: guests.length > 0, onGo: () => goTab('guests_seating', 'guests') }] : []),
+    ...(!isTabLocked('design') ? [{ id: 'share', done: linkShared, onGo: () => goTab('links', 'links') }] : []),
+  ].map(i => ({ ...i, label: checklistDict.items[i.id as keyof typeof checklistDict.items].label, hint: checklistDict.items[i.id as keyof typeof checklistDict.items].hint })) : [];
 
   const projectName = formData.groom_name && formData.bride_name
     ? `${formData.groom_name} & ${formData.bride_name}`
@@ -377,6 +432,7 @@ export default function Dashboard() {
     { id: 'guests_seating' as const, icon: <Users size={26} />, title: dict.groups.guests_seating.title, desc: dict.groups.guests_seating.desc },
     { id: 'photo_sharing' as const, icon: <Camera size={26} />, title: dict.groups.photo_sharing.title, desc: dict.groups.photo_sharing.desc },
     { id: 'guestbook' as const, icon: <MessageSquareHeart size={26} />, title: dict.groups.guestbook.title, desc: dict.groups.guestbook.desc },
+    { id: 'links' as const, icon: <Link2 size={26} />, title: dict.groups.links.title, desc: dict.groups.links.desc },
     ...(showManagement ? [{
       id: 'management' as const,
       icon: <ClipboardList size={26} />,
@@ -388,7 +444,7 @@ export default function Dashboard() {
   // Cada grupo do hub mapeia para um único módulo (mesmo quando agrupa mais
   // do que um separador, como "invite" = design+content), por isso basta
   // verificar o bloqueio do seu primeiro separador.
-  const isGroupLocked = (groupId: Exclude<EventGroup, null | 'account'>) => isTabLocked(GROUP_TABS[groupId][0]);
+  const isGroupLocked = (groupId: Exclude<EventGroup, null | 'account'>) => isTabLocked(GROUP_TABS[groupId][0]); // 'links' não tem módulo → nunca bloqueado
 
   // ── HUB: página-base com as áreas do evento ──────────────────────────
   if (!group) {
@@ -448,6 +504,8 @@ export default function Dashboard() {
               <h2 className="font-serif text-3xl sm:text-4xl text-ink">{dict.hubTitle}</h2>
               <p className="text-gray-400 text-sm mt-2">{dict.hubSubtitle}</p>
             </div>
+
+            {!checklistHidden && <SetupChecklist items={checklistItems} dict={checklistDict} onDismiss={hideChecklist} />}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {groupCards.map(card => (
@@ -555,8 +613,8 @@ export default function Dashboard() {
         </div>
 
         <nav className="px-4 space-y-2">
-          {visibleTabs.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${activeTab === tab.id ? 'bg-brand text-white shadow-lg shadow-brand/30' : 'text-gray-400 hover:bg-gray-50'}`}>
+          {navTabs.map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${isNavActive(tab.id) ? 'bg-brand text-white shadow-lg shadow-brand/30' : 'text-gray-400 hover:bg-gray-50'}`}>
               {tab.icon} {tab.label} {isTabLocked(tab.id) && <Lock size={11} className="ml-auto shrink-0 opacity-60" />}
             </button>
           ))}
@@ -587,7 +645,7 @@ export default function Dashboard() {
               </button>
               <div className="flex flex-col justify-center">
                 <h1 className="hidden sm:block text-lg font-bold text-gray-800 font-montserrat leading-tight">
-                  {activeTab === 'account' ? dict.accountLabel : tabsConfig.find(t => t.id === activeTab)?.label}
+                  {activeTab === 'account' ? dict.accountLabel : (activeTab === 'design' || activeTab === 'content') ? dict.tabs.invite : tabsConfig.find(t => t.id === activeTab)?.label}
                 </h1>
                 {/* Nome do projeto — visível em xs-lg; escondido em xl onde a sidebar já mostra */}
                 <p className="xl:hidden text-[11px] font-serif italic text-brand leading-tight">
@@ -659,6 +717,21 @@ export default function Dashboard() {
                   <span>{dict.expiredBanner.replace("{date}", expiredDateLabel)}</span>
                 </div>
               )}
+              {(activeTab === 'design' || activeTab === 'content') && !isTabLocked('design') && (
+                <div role="tablist" className="mb-6 inline-flex items-center gap-1 bg-white border border-gray-100 rounded-full p-1 shadow-sm">
+                  {inviteSections.map(sec => (
+                    <button
+                      key={sec.id}
+                      role="tab"
+                      aria-selected={activeTab === sec.id}
+                      onClick={() => setActiveTab(sec.id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === sec.id ? 'bg-brand text-white shadow' : 'text-gray-400 hover:text-brand'}`}
+                    >
+                      {sec.icon} {sec.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               {activeTab === 'design' && (isTabLocked('design') ? lockedNotice('design') : <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />)}
               {activeTab === 'content' && (isTabLocked('content') ? lockedNotice('content') : <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />)}
               {activeTab === 'savethedate' && (isTabLocked('savethedate') ? lockedNotice('savethedate') : <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />)}
@@ -727,6 +800,17 @@ export default function Dashboard() {
                   focusSectionId={moodboardFocus}
                 />
               )}
+              {activeTab === 'links' && (
+                <LinksHub
+                  slug={formData.slug}
+                  locale={params.locale as string}
+                  isLocked={moduleId => !(isSuperAdmin || plannerPlan) && !isModuleUnlocked(unlockedModules, moduleId)}
+                  onCopy={key => { if (key === 'invite') markLinkShared(); }}
+                  showVendors={showManagement}
+                  onOpenVendors={() => { setGroup('management'); setActiveTab('sharing'); }}
+                  dict={dictionaries[locale]?.LinksHub || dictionaries.pt.LinksHub}
+                />
+              )}
               {activeTab === 'guestbook' && (
                 <GuestbookModule
                   invitationId={formData.id}
@@ -763,6 +847,7 @@ export default function Dashboard() {
                        <div style={{ width: '395px', height: '815px' }} className="bg-white rounded-[2.5rem] overflow-hidden relative">
                            <iframe 
                               key={iframeKey}
+                              ref={previewRef}
                               src={`/${params.locale}/invite/${formData.slug}`}
                               className="w-full h-full border-none bg-cream"
                               title="Mobile Preview"
@@ -786,8 +871,8 @@ export default function Dashboard() {
 
       {!showMobilePreview && (
         <nav className="xl:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-20 flex justify-around items-center z-[100] px-4 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
-          {[...visibleTabs, { id: 'account', label: dict.accountLabel, icon: <UserCircle size={20} /> }].map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id as DashboardTab)} className={`relative flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'text-brand' : 'text-gray-300'}`}>
+          {[...navTabs, { id: 'account', label: dict.accountLabel, icon: <UserCircle size={20} /> }].map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id as DashboardTab)} className={`relative flex flex-col items-center gap-1 transition-all ${isNavActive(tab.id) ? 'text-brand' : 'text-gray-300'}`}>
               {tab.icon}
               {isTabLocked(tab.id as DashboardTab) && <Lock size={9} className="absolute -top-1 -right-1 opacity-70" />}
               <span className="text-[10px] font-bold tracking-tight text-center leading-tight w-20">{tab.label}</span>

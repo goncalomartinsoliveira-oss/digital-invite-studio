@@ -86,16 +86,36 @@ Duas camadas: **áreas** (uma por módulo vendável) e, dentro de cada uma, os
 | Área | Separadores | Componente |
 |---|---|---|
 | Save the Date | Save the Date | `SaveTheDateModule` |
-| Convite | Design · Conteúdo | `DesignModule` · `ContentModule` |
+| Convite | Uma só entrada "Convite", com um seletor *Modelos e identidade / Conteúdo* por cima | `DesignModule` · `ContentModule` |
 | Convidados e Mesas | Convidados · Mesas | `GuestsModule` · `SeatingModule` |
 | Partilha de fotos | Fotos | `PhotoSharingModule` |
 | Livro de visitas | Livro de visitas | `GuestbookModule` |
+| Links e QR codes | Links | `LinksHub` |
 | Planeamento *(só agências)* | Orçamento · Tarefas · Cronograma · Partilha · Inspiração | ver secção 6 |
 | Conta | Minha conta | `AccountModule` |
 
 Se o módulo não estiver comprado, o separador mostra `LockedModuleNotice` com
 botão de compra direta (`lib/checkout.ts`). O `WelcomeTour` é o tour de
 boas-vindas.
+
+**No topo do hub** está a lista **"O que falta fazer"** (`SetupChecklist`):
+nomes e data, foto de capa, textos, lista de convidados e link partilhado.
+Cada passo é calculado a partir dos dados do evento (nada é guardado à parte,
+exceto "link partilhado" e "esconder lista", no browser) e leva ao sítio certo.
+Só aparece a quem pode editar e só com passos de módulos ativos. Quando está
+tudo feito passa a um aviso que se pode esconder.
+
+**Links e QR codes** (`LinksHub`): convite, RSVP, plano de mesas, galeria, live
+wall e livro de visitas, cada um com copiar, abrir e QR em PNG/SVG. Os módulos
+continuam a mostrar os seus QR; esta área é um atalho central. Os links de
+fornecedor e moodboard têm token próprio e continuam em Planeamento › Partilha
+(há um botão que leva até lá).
+
+**Pré-visualização:** o telemóvel ao lado é um `iframe` do convite real. Depois
+de cada gravação, o painel manda `dis-preview-refresh` e o convite
+(`PreviewBridge`, em `components/site/`) refaz só os dados do servidor com
+`router.refresh()`, sem recarregar — por isso o envelope fica aberto e o scroll
+mantém-se. Só reage dentro de um iframe da mesma origem.
 
 **Como o convite guarda os dados:** a coluna `invitations.content` (JSON) tem
 `sections_visibility` (que secções estão visíveis) e `content.<secção>` (os
@@ -145,7 +165,9 @@ importar esses ficheiros num componente `"use client"`.
 
 ## 7. Administração (só super admin, no domínio da DIS)
 
-Vistas da lista de eventos (`dashboard/page.tsx`, `viewMode`):
+Vistas da lista de eventos (`dashboard/page.tsx`, `viewMode`), reunidas no menu
+**"Administração"** (`AdminMenu`). Agências, que só têm "Gestão", veem o botão
+simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
 
 | Vista | Componente | O que faz |
 |---|---|---|
@@ -266,14 +288,12 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
   gerar) mas ainda não foi decidido nem construído.
 
 **Melhorias de organização sugeridas:**
-1. Fundir "Design" e "Conteúdo" num só "Convite", com pré-visualização ao lado.
-2. Lista "O que falta fazer" para o casal (nomes e data, foto, textos,
-   convidados, link partilhado).
-3. Juntar todos os links num só sítio. Hoje estão espalhados: convite no
-   cabeçalho, QR do RSVP em Convidados, QR e live wall em Fotos, fornecedor e
-   moodboard em Partilha.
-4. Agrupar as 9 vistas de administração da lista de eventos num menu único.
-5. Os separadores de planeamento (Orçamento, Tarefas, Cronograma, Partilha,
+Já feitas (ramo de trabalho, a aguardar aprovação para ir para `main`):
+"Design" + "Conteúdo" num só "Convite", lista "O que falta fazer", área
+"Links e QR codes" e menu "Administração".
+
+Ainda por fazer:
+1. Os separadores de planeamento (Orçamento, Tarefas, Cronograma, Partilha,
    Inspiração) estão em português diretamente no código, fora dos dicionários.
 
 **Limpeza de código:**

@@ -259,6 +259,8 @@ const pt = {
     "backToEvents": "Meus Eventos",
     "currentProject": "Projeto atual",
     "tabs": {
+      "links": "Links",
+      "invite": "Convite",
       "design": "Modelos e identidade",
       "content": "Conteúdo do convite",
       "savethedate": "Save the Date",
@@ -315,8 +317,46 @@ const pt = {
       "guestbook": {
         "title": "Guestbook",
         "desc": "Mensagens de texto, voz e vídeo dos convidados"
+      },
+      "links": {
+        "title": "Links e QR codes",
+        "desc": "Todos os links e QR codes do evento"
       }
     }
+  },
+  "SetupChecklist": {
+    "title": "O que falta fazer",
+    "progress": "{done} de {total} passos concluídos",
+    "go": "Ir",
+    "allDoneTitle": "Está tudo pronto para partilhar!",
+    "allDoneDesc": "Os passos essenciais estão feitos. Podem sempre afinar tudo nas áreas abaixo.",
+    "dismiss": "Esconder",
+    "items": {
+      "basics": { "label": "Nomes e data do casamento", "hint": "Confirmem os nomes e a data no Convite." },
+      "photo": { "label": "Foto de capa", "hint": "Escolham a foto ou vídeo que abre o convite." },
+      "texts": { "label": "Textos do convite", "hint": "Escrevam a vossa história e os detalhes do dia." },
+      "guests": { "label": "Lista de convidados", "hint": "Adicionem os convidados para poderem confirmar presença." },
+      "share": { "label": "Partilhar o link", "hint": "Copiem o link do convite e enviem aos convidados." }
+    }
+  },
+  "LinksHub": {
+    "title": "Links e QR codes",
+    "subtitle": "Todos os endereços do vosso evento num só sítio. Copiem, abram ou descarreguem o QR para imprimir.",
+    "copy": "Copiar link",
+    "copied": "Copiado",
+    "open": "Abrir",
+    "locked": "Módulo por ativar",
+    "items": {
+      "invite": { "title": "Convite", "desc": "O link principal — enviem-no a todos os convidados." },
+      "rsvp": { "title": "Confirmar presença (RSVP)", "desc": "Página só para confirmar presença. Ideal para o QR do convite impresso." },
+      "seating": { "title": "Plano de mesas", "desc": "Para cada convidado encontrar o seu lugar — bom para um QR à entrada da sala." },
+      "moments": { "title": "Galeria de fotos", "desc": "Onde os convidados enviam e veem fotos e vídeos da festa." },
+      "livewall": { "title": "Live Wall", "desc": "Para projetar num ecrã durante a festa, com as fotos em tempo real." },
+      "guestbook": { "title": "Livro de visitas", "desc": "Mensagens de texto, voz e vídeo deixadas pelos convidados." }
+    },
+    "vendorsTitle": "Links de fornecedores",
+    "vendorsDesc": "Os links privados para fornecedores e moodboards são criados e geridos em Planeamento › Partilha.",
+    "vendorsBtn": "Gerir partilhas"
   },
   "SaveTheDateModule": {
     "title": "Save the Date",
