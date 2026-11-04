@@ -324,6 +324,40 @@ const pt = {
       }
     }
   },
+  "GuestLink": {
+    "seatsOne": "Iremos reservar 1 lugar para vocês",
+    "seatsMany": "Iremos reservar {n} lugares para vocês",
+    "seatsSolo": "Iremos reservar um lugar para si",
+    "notYou": "Não é {name}? Procurar o meu nome"
+  },
+  "GuestLinksPanel": {
+    "title": "Links personalizados",
+    "badge": "Opcional",
+    "intro": "Em vez de um só link para todos, cada grupo de convidados pode ter o seu: o convite mostra o nome e os lugares reservados, e o RSVP abre já no grupo certo. Se preferirem, continuem a usar o link geral — esse não muda.",
+    "open": "Configurar",
+    "close": "Fechar",
+    "summary": "{with} de {total} grupos com link",
+    "generateAll": "Gerar links em falta",
+    "generating": "A gerar...",
+    "exportCsv": "Exportar lista (CSV)",
+    "colGroup": "Grupo",
+    "colName": "Nome no convite",
+    "colSeats": "Lugares",
+    "colLink": "Link",
+    "noLink": "Sem link",
+    "auto": "Automático",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "regenerate": "Novo link",
+    "revoke": "Remover",
+    "confirmRegenerate": "Gerar um novo link para {name}? O link atual deixa de funcionar.",
+    "confirmRevoke": "Remover o link de {name}? O link atual deixa de funcionar.",
+    "noGroups": "Ainda não há convidados. Adicionem-nos na lista, mais abaixo.",
+    "error": "Não foi possível guardar. Tentem outra vez.",
+    "generalNote": "O link geral do convite continua a funcionar como antes, com a pesquisa por nome.",
+    "csvHeaders": ["Nome", "Lugares", "Link"],
+    "seatsHint": "Bebés não contam. Podem corrigir o número."
+  },
   "SetupChecklist": {
     "title": "O que falta fazer",
     "progress": "{done} de {total} passos concluídos",

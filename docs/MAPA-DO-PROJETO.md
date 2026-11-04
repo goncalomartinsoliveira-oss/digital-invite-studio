@@ -73,7 +73,8 @@ depois do evento (campo `invitations.expires_at`).
 `checkout` (cria a sessão Stripe) · `stripe/webhook` (regista o pagamento e
 desbloqueia módulos) · `contact` (formulário, envia email por Resend) ·
 `admin/business-overview` · `moodboard/unfurl` (pré-visualização de links) ·
-`moodboard/public/<token>` e `…/upload` (escrita no moodboard partilhado).
+`moodboard/public/<token>` e `…/upload` (escrita no moodboard partilhado) ·
+`guest-link/<token>` (links personalizados: GET devolve o grupo, POST grava o RSVP).
 
 ---
 
@@ -236,7 +237,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 | Tema | Tabelas |
 |---|---|
 | Eventos e acesso | `invitations`, `invitation_collaborators`, `super_admins` |
-| Convidados e mesas | `guests`, `event_tables` |
+| Convidados e mesas | `guests`, `event_tables`, `guest_links` |
 | Momentos | `fotos_evento`, `fotos_likes`, `guestbook` |
 | Marcas e dinheiro | `brands`, `brand_members`, `brand_pricing_overrides`, `coupons`, `payments` |
 | Planeamento | `event_costs`, `event_cost_payments`, `event_cost_notes`, `event_tasks`, `event_timeline`, `event_documents`, `agency_vendors` |
@@ -257,7 +258,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 |---|---|
 | `app/[locale]/…` | Todas as páginas (secção 3). `middleware.ts` trata do idioma: cookie, depois idioma do browser; PT se for português, senão EN. |
 | `components/dashboard/` | Os módulos do painel (secções 4 a 7). |
-| `components/invite/SmartRsvp.tsx` | O formulário de RSVP, **partilhado por todos os modelos**: pesquisa o nome, mostra o grupo, grava o estado. |
+| `components/invite/SmartRsvp.tsx` | O formulário de RSVP, **partilhado por todos os modelos**: pesquisa o nome, mostra o grupo, grava o estado. Com um link personalizado (`?c=`) abre direto no grupo e grava pelo servidor. |
 | `components/site/` | Barra, rodapé, marca (`BrandProvider`), ecrã de expirado. |
 | `lib/` | Regras de negócio: módulos, preços, cupões, planeamento, marcas, Stripe, PDF/QR. |
 | `dictionaries/pt.ts`, `en.ts` | Textos traduzidos (~1500 linhas cada). Editar com cirurgia, não ler inteiros. |
@@ -270,9 +271,10 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 
 - **Produção = `main`.** Mexer só num ramo não altera o site real.
 - Os textos novos devem ir para os dicionários PT e EN, não escritos à mão no componente.
-- O RSVP atual lê a lista de convidados do evento com a chave pública (qualquer
-  pessoa com o link pode, em teoria, ver os nomes). Resolver implica mover o
-  RSVP para o servidor.
+- No **link geral**, o RSVP continua a ler a lista de convidados do evento com a
+  chave pública (qualquer pessoa com o link pode, em teoria, ver os nomes).
+  Nos **links personalizados** isso não acontece: o servidor só devolve o grupo
+  do código. Resolver o geral implicava mover a pesquisa para o servidor.
 - **Cinzel** não existe como fonte global: cada modelo que a usa carrega-a à
   parte. No modelo do José e da Dália todo o texto é Cinzel e só os títulos de
   exibição são Pinyon Script.
@@ -281,14 +283,19 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 
 ## 14. Estado: o que está por arrumar
 
-**Decisões à espera:**
-- **Links personalizados por convidado** (por exemplo "Ana e Tiago — iremos
-  reservar 2 lugares para vocês" no ecrã de entrada). O desenho está discutido
-  (um link por grupo de convidados, tabela nova de links, painel para os
-  gerar) mas ainda não foi decidido nem construído.
+**Links personalizados por convidado** (fases 1 e 2 feitas, opcionais): um link por
+grupo (`guest_links`, migração `0010`), painel "Links personalizados" no topo de
+Convidados (gerar, editar nome/lugares, copiar, novo link, remover, exportar CSV).
+O link tem a forma `/<idioma>/invite/<slug>?c=<código>`; o convite mostra a
+saudação (`GuestGreeting`, hoje só no modelo do José e da Dália) e o RSVP abre
+direto no grupo. Sem links gerados, tudo funciona como antes. Regras: lugares =
+adultos + crianças (sem bebés), com correção manual; nome automático pelos
+primeiros nomes, editável; convidado sozinho → "um lugar para si".
+**Fase 3 (por fazer, opcional):** mostrar ao casal que grupos já abriram o convite;
+saudação nos restantes modelos.
 
 **Melhorias de organização sugeridas:**
-Já feitas (ramo de trabalho, a aguardar aprovação para ir para `main`):
+Já feitas e em produção:
 "Design" + "Conteúdo" num só "Convite", lista "O que falta fazer", área
 "Links e QR codes" e menu "Administração".
 
