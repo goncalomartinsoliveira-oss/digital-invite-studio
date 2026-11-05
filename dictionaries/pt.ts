@@ -7,146 +7,121 @@ const pt = {
   },
   "HomePage": {
     "hero": {
-      "tag": "A Plataforma dos Seus Convidados",
-      "title1": "Um só lugar.",
-      "title2": "Tudo o que os convidados precisam.",
-      "desc": "Site e convite digital, Save the Date, confirmações de presença (RSVP), plano de mesas, fotos partilhadas ao vivo e mensagens dos convidados. Tudo incluído, sem dezenas de conversas dispersas ou folhas de Excel.",
-      "btn1": "Ver Planos",
-      "btn2": "Descobrir Funcionalidades",
-      "floatingBadge": "RSVP Entregue",
-      "floatingText": "A Marta confirmou!"
+      "tag": "Convites digitais de casamento",
+      "title1": "Convites de casamento",
+      "title2": "digitais e inesquecíveis.",
+      "desc": "Um convite elegante que os convidados abrem no telemóvel: o envelope, a vossa história, o programa, o mapa e a confirmação de presença, tudo num único link. Personalizam-no vocês, no editor, ao vosso ritmo.",
+      "btnPrimary": "Criar o nosso convite",
+      "btnSecondary": "Ver um convite ao vivo",
+      "microcopy": ["Sem app", "Funciona em qualquer telemóvel", "Pagamento único"],
+      "floatingBadge": "RSVP",
+      "floatingText": "A Marta confirmou presença"
     },
-    "story": {
-      "tag": "O antes e o depois",
-      "title1": "De dezenas de mensagens",
-      "title2": "a um único link elegante.",
-      "beforeLabel": "Sem organização centralizada",
-      "afterLabel": "Com a Digital Invite Studio",
-      "rows": [
-        { "before": "Dezenas de mensagens de WhatsApp com os convidados", "after": "Um único link com o convite e todas as informações" },
-        { "before": "As mesmas perguntas repetidas: morada, hora, dress code", "after": "Convidados confirmam presença sozinhos, sem perguntas repetidas" },
-        { "before": "Uma folha de Excel para a lista de convidados, outra para as mesas", "after": "Lista de convidados e plano de mesas sempre atualizados, no mesmo painel" },
-        { "before": "Fotos espalhadas por grupos e telemóveis diferentes", "after": "Fotos dos convidados a chegar automaticamente à galeria partilhada" },
-        { "before": "Recados e votos perdidos em conversas soltas", "after": "Mensagens e votos guardados num só lugar, o Guestbook" }
+    "facts": [
+      { "title": "Sem app", "desc": "Abre no browser de qualquer telemóvel." },
+      { "title": "Sempre atualizado", "desc": "O que mudarem, os convidados veem na hora." },
+      { "title": "RSVP incluído", "desc": "Com escolha de menu e restrições alimentares." },
+      { "title": "Pagamento único", "desc": "Por evento, sem mensalidades." }
+    ],
+    "collection": {
+      "tag": "A coleção",
+      "title1": "Modelos desenhados",
+      "title2": "ao pormenor.",
+      "desc": "Cada modelo é uma peça de design pensada para o telemóvel. Escolham o vosso, juntem os vossos textos, fotos e detalhes, e o convite passa a ser só vosso.",
+      "previewBtn": "Ver ao vivo",
+      "useBtn": "Usar este modelo",
+      "soonTitle": "Novo modelo",
+      "soonDesc": "Em breve",
+      "bespokeLink": "Procuram algo só vosso? Conheçam o convite à medida"
+    },
+    "inside": {
+      "tag": "Dentro do convite",
+      "title1": "Tudo o que os convidados",
+      "title2": "precisam de saber.",
+      "desc": "Um convite que responde às perguntas antes de elas chegarem ao vosso WhatsApp.",
+      "items": [
+        { "title": "Abertura com envelope", "desc": "O primeiro momento é uma surpresa, como um convite em papel." },
+        { "title": "Contagem decrescente", "desc": "Os dias, as horas e os minutos até ao «sim»." },
+        { "title": "Programa e mapa", "desc": "Cerimónia, receção e horários, com o caminho a um toque." },
+        { "title": "Dress code e alojamento", "desc": "Paleta de cores, hotéis e informações úteis num só sítio." },
+        { "title": "Presentes", "desc": "Uma mensagem vossa e, se quiserem, o IBAN para contribuições." },
+        { "title": "Confirmação de presença", "desc": "Cada convidado confirma, escolhe o menu e indica alergias." },
+        { "title": "Um link por família", "desc": "Cada grupo recebe o seu link e o RSVP abre já no grupo certo." },
+        { "title": "Código de acesso", "desc": "Se preferirem, só entra quem tiver o código de 4 dígitos." }
       ]
     },
-    "core": {
-      "promo": "[ Imagem Promocional: Mockup de 2 telemóveis a mostrar o design incrível do convite digital ]",
-      "title1": "Um convite que os convidados",
-      "title2": "nunca irão perder.",
-      "desc": "O vosso website de casamento é o \"centro de comando\" do vosso dia. Desenhado com rigor editorial, funciona perfeitamente em qualquer telemóvel e concentra todas as informações vitais num formato elegante.",
-      "features": [
-        { "title": "100% Mobile First", "desc": "Design otimizado para o ecrã onde todos o vão ver." },
-        { "title": "Informação Dinâmica", "desc": "Mapas, dress code e horários atualizáveis a qualquer momento." },
-        { "title": "Eco-Friendly", "desc": "Uma alternativa sustentável e imediata ao papel tradicional." },
-        { "title": "Design Bespoke", "desc": "Tipografia e paletas de cores adaptadas à vossa identidade." }
+    "rsvp": {
+      "tag": "Depois de enviar",
+      "title1": "As respostas chegam",
+      "title2": "sozinhas.",
+      "desc": "Partilham o link pelo WhatsApp, por e-mail ou por SMS. Cada confirmação entra no vosso painel na hora, sem folhas de Excel nem mensagens perdidas.",
+      "bullets": [
+        "Quem confirmou, quem recusou e quem ainda não respondeu",
+        "Adultos, crianças e bebés contados à parte",
+        "Menus e restrições alimentares prontos para o catering"
       ]
     },
-    "eco": {
-      "title1": "Mais do que um convite.",
-      "title2": "Um assistente de organização.",
-      "desc": "Ao adotarem o nosso convite digital, desbloqueiam o acesso a ferramentas exclusivas que poupam dezenas de horas de stress e folhas de cálculo.",
-      "cards": [
-        { "title": "RSVP Integrado", "desc": "Os convidados confirmam presença online, indicam alergias e a sua lista preenche-se sozinha num painel em tempo real." },
-        { "title": "Seating Plan Digital", "desc": "Desenhe a planta da sala e arraste visualmente os seus convidados para as mesas corretas com a nossa ferramenta inteligente." },
-        { "title": "Partilha de Fotos", "desc": "No dia do evento, os convidados usam um QR Code para enviar as fotos que tiram diretamente para o vosso álbum digital." }
+    "journey": {
+      "tag": "Do primeiro anúncio às memórias",
+      "title1": "O convite é o centro.",
+      "title2": "Tudo o resto liga-se a ele.",
+      "desc": "Juntem os módulos de que precisam, quando precisarem. Ficam todos no mesmo painel, com a mesma lista de convidados.",
+      "steps": [
+        { "when": "Meses antes", "title": "Save the Date", "desc": "Um cartão bonito para os convidados guardarem a data." },
+        { "when": "O convite", "title": "Convite e RSVP", "desc": "O coração de tudo: o convite e as confirmações de presença." },
+        { "when": "Semanas antes", "title": "Plano de mesas", "desc": "Desenhem a sala e arrastem os convidados confirmados para as mesas." },
+        { "when": "No dia", "title": "Fotos e Live Wall", "desc": "Os convidados enviam fotos por QR code e elas aparecem no ecrã da festa." },
+        { "when": "Depois", "title": "Livro de visitas", "desc": "Mensagens e votos dos convidados, guardados num só sítio." }
       ],
-      "link": "Ver todas as ferramentas da plataforma"
+      "link": "Ver todas as funcionalidades"
+    },
+    "bespoke": {
+      "tag": "Convite à medida",
+      "title1": "Um convite que só",
+      "title2": "existe para vocês.",
+      "desc": "Querem algo que mais ninguém tenha? Desenhamos um convite exclusivo a partir da vossa história, das vossas cores e do vosso local. O Renaissance Blue nasceu assim, como um convite feito à medida para um casal.",
+      "points": [
+        "Desenho exclusivo, criado de raiz",
+        "Ilustrações, tipografia e animações próprias",
+        "Todas as funcionalidades da plataforma incluídas",
+        "Orçamento à medida de cada projeto"
+      ],
+      "cta": "Pedir proposta"
     },
     "steps": {
-      "title": "A elegância não tem de ser complicada",
+      "title": "Três passos até ao vosso convite",
       "items": [
-        { "step": "01", "title": "Escolha o Design", "desc": "Navegue pela nossa coleção de layouts premium e selecione o que reflete a vossa identidade." },
-        { "step": "02", "title": "Personalização", "desc": "Adicionamos a vossa história, fotografias, cores e todos os detalhes do evento." },
-        { "step": "03", "title": "Envio e Controlo", "desc": "Partilhe o link pelo WhatsApp e veja os convidados a confirmar presença no seu painel." }
+        { "step": "01", "title": "Escolham o modelo", "desc": "Comecem pelo modelo de que mais gostam. Podem trocar mais tarde sem perder o que escreveram." },
+        { "step": "02", "title": "Personalizem no editor", "desc": "Nomes, história, fotos, programa e detalhes. Vejam as alterações ao vivo, ao vosso ritmo." },
+        { "step": "03", "title": "Enviem e acompanhem", "desc": "Partilhem o link e vejam as confirmações a chegar ao vosso painel." }
+      ],
+      "pricingLink": "Ver planos e preços"
+    },
+    "b2b": {
+      "tag": "Para wedding planners e agências",
+      "title": "Todos os vossos casamentos num só painel.",
+      "desc": "Convites com a vossa marca, preços à vossa medida e ferramentas de planeamento: orçamento, tarefas, cronograma e fornecedores.",
+      "cta": "Conhecer a área de parceiros"
+    },
+    "faq": {
+      "title": "Perguntas frequentes",
+      "subtitle": "O que os casais nos perguntam antes de começar.",
+      "items": [
+        { "q": "Os convidados precisam de instalar alguma aplicação?", "a": "Não. O convite abre no browser de qualquer telemóvel ou computador. Basta partilhar o link." },
+        { "q": "Como envio o convite aos convidados?", "a": "Partilham o link onde quiserem: WhatsApp, e-mail, SMS ou redes sociais. Se preferirem, criam um link por família, e o RSVP abre já no grupo certo." },
+        { "q": "Posso alterar o convite depois de o enviar?", "a": "Sim, sempre. O que mudarem no editor fica visível na hora para quem abrir o link." },
+        { "q": "Precisamos de jeito para design ou tecnologia?", "a": "Não. Escolhem o modelo e preenchem os vossos textos e fotos no editor. Se preferirem um convite desenhado por nós, de raiz, existe o convite à medida." },
+        { "q": "E os convidados com menos jeito para tecnologia?", "a": "Conseguem sem problema. Abrem o link, procuram o próprio nome e confirmam em poucos toques, sem criar conta nem palavra-passe." },
+        { "q": "O convite fica disponível depois do casamento?", "a": "Sim, durante algum tempo, para poderem descarregar com calma as fotos e as mensagens que os convidados deixaram." },
+        { "q": "Quanto custa?", "a": "Pagam uma única vez por evento, sem mensalidades. Os valores de cada módulo e dos pacotes estão na página de preços." }
       ]
     },
     "cta": {
-      "title": "O seu grande dia começa com um \"Sim\" digital.",
-      "desc": "Descubra como os nossos convites podem elevar a experiência dos seus convidados desde o primeiro instante.",
-      "btn": "Começar Agora"
-    },
-    "stats": {
-      "items": [
-        { "value": "5", "label": "Módulos à Escolha" },
-        { "value": "60", "label": "Dias de Acesso Incluídos" },
-        { "value": "100%", "label": "Pensado para Telemóvel" },
-        { "value": "1x", "label": "Pagamento Único" }
-      ]
-    },
-    "templateShowcase": {
-      "tag": "Templates Premium",
-      "title1": "Designs criados por",
-      "title2": "artistas editoriais.",
-      "desc": "Cada template é desenvolvido com atenção obsessiva ao detalhe: tipografia cuidada, paletas harmoniosas e secções inteligentes que se adaptam à vossa história.",
-      "previewBtn": "Ver Pré-visualização",
-      "useBtn": "Usar Este Template",
-      "templates": [
-        { "name": "Minimal 01", "id": "minimal-01", "desc": "Elegância minimalista em verde-floresta e dourado." },
-        { "name": "Luxury 01", "id": "luxury-01", "desc": "Grandiosidade clássica com detalhes em bordô e creme." },
-        { "name": "Collage 01", "id": "collage-01", "desc": "Expressão criativa com colagem fotográfica contemporânea." },
-        { "name": "Renaissance Blue", "id": "renaissance-blue-01", "desc": "Envelope azul com selo de cera e colagem de hortênsias, em azul-céu e creme." }
-      ]
-    },
-    "trust": {
-      "title": "Porque escolher a Digital Invite Studio",
-      "subtitle": "Feito para durar da primeira ideia até às memórias depois do grande dia.",
-      "items": [
-        {
-          "title": "Pagamento único, sem surpresas",
-          "desc": "Sem mensalidades escondidas. Paga-se uma vez por evento, e o acesso fica garantido durante todo o período combinado."
-        },
-        {
-          "title": "Os dados dos convidados, protegidos",
-          "desc": "Todas as informações ficam protegidas por regras de acesso rigorosas na base de dados, não só na aparência do site."
-        },
-        {
-          "title": "Tudo no mesmo sítio, do início ao fim",
-          "desc": "Do Save the Date ao dia do casamento e às memórias depois, sem andar a saltar entre ferramentas diferentes."
-        }
-      ]
-    },
-    "faq": {
-      "title": "Perguntas Frequentes",
-      "subtitle": "Tudo o que precisa de saber antes de começar.",
-      "items": [
-        {
-          "q": "Preciso de saber programar para usar a plataforma?",
-          "a": "Não. A nossa plataforma foi desenhada para ser usada por qualquer pessoa. Preenche um formulário, nós tratamos de tudo. Sem código, sem complexidade."
-        },
-        {
-          "q": "Os convidados precisam de instalar uma aplicação?",
-          "a": "Não. O convite é um website que funciona diretamente no browser de qualquer telemóvel ou computador. Basta partilhar o link."
-        },
-        {
-          "q": "Posso atualizar os detalhes do evento depois de enviar os convites?",
-          "a": "Sim, sempre. Qualquer alteração que fizer no painel fica imediatamente visível para todos os convidados que abrirem o link."
-        },
-        {
-          "q": "O que acontece ao site após o casamento?",
-          "a": "O site fica ativo durante o período do vosso plano. Podem também optar por mantê-lo como recordação permanente do vosso grande dia."
-        },
-        {
-          "q": "A plataforma é adequada para wedding planners?",
-          "a": "Absolutamente. Parceiros e agências têm um painel com o portfólio de todos os seus eventos, preços à sua medida e a possibilidade de revender com marca própria."
-        },
-        {
-          "q": "Como funciona o RSVP?",
-          "a": "Os convidados pesquisam o nome na lista, confirmam presença, indicam restrições alimentares e escolhas de menu. Tudo aparece no vosso painel em tempo real."
-        }
-      ]
-    },
-    "b2b": {
-      "tag": "Para Profissionais",
-      "title": "Feito também para Wedding Planners",
-      "desc": "Gira múltiplos projetos num só lugar. Impressiona os clientes com um produto premium. Poupe horas de trabalho operacional em cada casamento.",
-      "features": [
-        "Painel multi-projeto",
-        "Marca própria (white label)",
-        "Ferramentas avançadas de gestão",
-        "Suporte prioritário"
-      ],
-      "cta": "Saber Mais sobre o Plano Pro"
+      "title1": "O vosso «sim» merece",
+      "title2": "um convite à altura.",
+      "desc": "Criem o convite hoje e enviem-no quando estiverem prontos.",
+      "btnPrimary": "Criar o nosso convite",
+      "btnSecondary": "Ver planos e preços"
     }
   },
   "Navbar": {
@@ -160,7 +135,7 @@ const pt = {
     "goToDashboard": "Ir para o Painel"
   },
   "Footer": {
-    "tagline": "O sistema operativo para o seu casamento.",
+    "tagline": "Convites digitais de casamento, e tudo o que vem com eles.",
     "product": "Produto",
     "features": "Funcionalidades",
     "pricing": "Preços",
@@ -1115,7 +1090,8 @@ const pt = {
     "templates": {
       "title": "Templates do Convite",
       "subtitle": "Selecione o design base para o seu convite",
-      "applyBtn": "Aplicar Template"
+      "applyBtn": "Aplicar Template",
+      "comingSoon": "Em breve"
     },
     "identity": {
       "title": "Identidade do Casamento",

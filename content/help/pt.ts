@@ -121,7 +121,7 @@ export const helpPt: HelpContent = {
       slug: "choose-template",
       chapter: "invite",
       title: "Como escolho o modelo e a cor do convite?",
-      summary: "O modelo define o aspeto do convite. Podem experimentar vários até acharem o vosso.",
+      summary: "O modelo define o aspeto do convite. Os lugares marcados **Em breve** são modelos novos que estão a chegar.",
       shots: [
         { file: "invite-design", alt: "Separador “Modelos e identidade” do convite, com a pré-visualização no telemóvel ao lado." },
       ],
@@ -134,6 +134,7 @@ export const helpPt: HelpContent = {
       tips: [
         "Os textos e as fotos que já escreveram não se perdem ao mudar de modelo.",
         "A cor de destaque só existe em alguns modelos. Se a secção não aparecer, o modelo escolhido não a tem.",
+        "Querem um desenho só vosso? Peçam uma proposta de convite à medida em **Contactos**.",
       ],
       related: ["edit-content", "preview"],
     },

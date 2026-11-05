@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { DEFAULT_TEMPLATE_ID } from "@/lib/templates";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Link as LinkIcon } from "lucide-react";
@@ -99,6 +100,7 @@ export default function NovoConvitePage() {
         groom_name: groomName,
         bride_name: brideName,
         event_date: eventDate,
+        template_id: DEFAULT_TEMPLATE_ID,
         brand_id: workingBrand?.id || brand.id
       }]);
 
