@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { Link2, ChevronDown, Copy, Check, RefreshCw, Trash2, Download, Loader2 } from "lucide-react";
+import { Link2, ChevronDown, Copy, Check, RefreshCw, Trash2, Download, Loader2, BellRing } from "lucide-react";
+import RemindPendingModal, { type PendingGroup } from "@/components/dashboard/RemindPendingModal";
 import { supabase } from "@/lib/supabase";
 import {
   type GuestLinkRow,
@@ -27,6 +28,10 @@ type Dict = {
   confirmRegenerate: string; confirmRevoke: string; noGroups: string; error: string; generalNote: string;
   csvHeaders: string[]; seatsHint: string;
   colSeen: string; notOpened: string; openedSummary: string; onlyUnopened: string; openedTitle: string;
+  remindBtn: string; remindTitle: string; remindIntro: string; remindTemplateLabel: string; remindPlaceholders: string;
+  remindDefault: string; remindDeadline: string; remindCopy: string; remindCopied: string;
+  remindRemindedToday: string; remindRemindedOn: string; remindNeverOpened: string; remindOpened: string;
+  remindNoLink: string; remindPending: string; remindNone: string; remindMissingLink: string; remindReset: string;
 };
 
 type GuestLike = { id: string; name: string; category: string; status: string; group_id?: string | null };
@@ -38,17 +43,21 @@ type Props = {
   guests: GuestLike[];
   canEdit: boolean;
   dict: Dict;
+  // Para "Lembrar quem falta": nomes do casal e prazo do RSVP já formatado (ou null).
+  coupleNames?: string;
+  rsvpDeadline?: string | null;
 };
 
 type Group = { groupId: string; members: LinkMember[] };
 
-export default function GuestLinksPanel({ invitationId, slug, locale, guests, canEdit, dict }: Props) {
+export default function GuestLinksPanel({ invitationId, slug, locale, guests, canEdit, dict, coupleNames = "", rsvpDeadline = null }: Props) {
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState<GuestLinkRow[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [onlyUnopened, setOnlyUnopened] = useState(false);
+  const [remindOpen, setRemindOpen] = useState(false);
   const [origin, setOrigin] = useState("");
 
   useEffect(() => setOrigin(window.location.origin), []);
@@ -125,6 +134,28 @@ export default function GuestLinksPanel({ invitationId, slug, locale, guests, ca
     } catch { /* sem permissão — o link está visível no campo */ }
   };
 
+  // Grupos com pelo menos um convidado ainda sem resposta — para "Lembrar quem falta".
+  // Os que nunca abriram o link pessoal primeiro; sem link, usam o link geral.
+  const pendingGroups: PendingGroup[] = useMemo(() => {
+    const pendingBy = new Map<string, number>();
+    for (const g of guests) if (g.group_id && g.status === "pending" && !g.group_id.startsWith("REQ-")) pendingBy.set(g.group_id, (pendingBy.get(g.group_id) || 0) + 1);
+    const rank = (x: PendingGroup) => (x.hasLink && !x.opened ? 0 : !x.hasLink ? 1 : 2);
+    return groups
+      .filter(g => pendingBy.has(g.groupId))
+      .map(g => {
+        const row = rowByGroup.get(g.groupId);
+        return {
+          groupId: g.groupId,
+          displayName: row ? resolveGuestLink(g.members, row).displayName : (autoDisplayName(g.members) || g.members[0]?.name || ""),
+          pendingCount: pendingBy.get(g.groupId) || 0,
+          url: row ? buildGuestLinkUrl(origin, locale, slug, row.token) : `${origin}/${locale}/invite/${slug}`,
+          hasLink: !!row,
+          opened: !!row?.open_count,
+        };
+      })
+      .sort((a, b) => rank(a) - rank(b) || a.displayName.localeCompare(b.displayName, locale));
+  }, [groups, guests, rowByGroup, origin, locale, slug]);
+
   const exportCsv = () => {
     const data = groups.flatMap(g => {
       const row = rowByGroup.get(g.groupId);
@@ -194,8 +225,28 @@ export default function GuestLinksPanel({ invitationId, slug, locale, guests, ca
                   {dict.onlyUnopened}
                 </label>
               )}
+              {pendingGroups.length > 0 && (
+                <button
+                  onClick={() => setRemindOpen(true)}
+                  data-remind-open
+                  className="flex items-center gap-2 bg-white text-brand border border-gold-soft px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand hover:text-white transition-all"
+                >
+                  <BellRing size={12} /> {dict.remindBtn.replace("{n}", String(pendingGroups.length))}
+                </button>
+              )}
               {error && <span className="text-[11px] text-red-500">{dict.error}</span>}
             </div>
+          )}
+          {remindOpen && (
+            <RemindPendingModal
+              invitationId={invitationId}
+              locale={locale}
+              coupleNames={coupleNames}
+              deadline={rsvpDeadline}
+              groups={pendingGroups}
+              dict={{ ...dict, close: dict.close }}
+              onClose={() => setRemindOpen(false)}
+            />
           )}
 
           {groups.length > 0 && (

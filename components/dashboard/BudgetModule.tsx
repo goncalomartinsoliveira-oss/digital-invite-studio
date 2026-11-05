@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Trash2, ChevronDown, Eye, EyeOff, Loader2, MessageSquare, FileText, Upload, Wallet, Images, ChevronRight } from "lucide-react";
+import { Plus, Trash2, ChevronDown, Eye, EyeOff, Loader2, MessageSquare, FileText, Upload, Wallet, Images, ChevronRight, Copy } from "lucide-react";
+import CopyFromEventModal from "@/components/dashboard/CopyFromEventModal";
 import BudgetSummary from "@/components/dashboard/BudgetSummary";
 import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
 import { useSaveStatus } from "@/lib/useSaveStatus";
@@ -90,6 +91,7 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
   const [expanded, setExpanded] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [applyingTemplate, setApplyingTemplate] = useState(false);
+  const [copyOpen, setCopyOpen] = useState(false);
   // Secções da Inspiração com pelo menos uma imagem, para a linha de custo
   // poder oferecer o atalho só quando há mesmo alguma coisa para ver.
   const [sectionsWithItems, setSectionsWithItems] = useState<{ id: string; name: string; count: number }[]>([]);
@@ -416,6 +418,16 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
         <div className="flex justify-between items-center mb-6">
           <h4 className="font-serif text-2xl text-ink">Custos</h4>
           {canEdit && (
+            <div className="flex flex-wrap items-center justify-end gap-2">
+            {isAgency && (
+              <button
+                onClick={() => setCopyOpen(true)}
+                data-costs-copy
+                className="inline-flex items-center gap-2 border border-gray-200 text-gray-500 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:text-brand hover:border-gold-soft transition-all"
+              >
+                <Copy size={13} /> Copiar de outro casamento
+              </button>
+            )}
             <button
               onClick={addCost}
               disabled={adding}
@@ -423,8 +435,20 @@ export default function BudgetModule({ invitationId, brandId, canEdit, isAgency,
             >
               <Plus size={14} /> Adicionar custo
             </button>
+            </div>
           )}
         </div>
+        {copyOpen && (
+          <CopyFromEventModal
+            kind="costs"
+            invitationId={invitationId}
+            brandId={brandId}
+            eventDate={null}
+            startOrder={costs.length}
+            onClose={() => setCopyOpen(false)}
+            onDone={rows => { setCosts(prev => [...prev, ...(rows as EventCost[])]); setCopyOpen(false); }}
+          />
+        )}
 
         {costs.length === 0 ? (
           <div className="py-10 text-center">

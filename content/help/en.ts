@@ -330,6 +330,7 @@ export const helpEn: HelpContent = {
       tips: [
         "The QR code for the standalone confirmation page is in **Guests** and in **Links & QR codes**. It's ideal for a printed invitation.",
         "So guests don't have to look up their name, create personalised links.",
+        "To chase guests who haven't answered, use **Remind who's missing** in **Personalised links**: it gives you a ready message per group.",
       ],
       faq: [
         { q: "Can guests change their answer?", a: "Yes. After saving, a **Change responses** button appears. They can also reopen the RSVP later." },
@@ -356,6 +357,7 @@ export const helpEn: HelpContent = {
       tips: [
         "It's optional. If you prefer, keep sending a single link to everyone, and guests look up their name in the RSVP.",
         "**New link** generates a different link (the old one stops working). **Remove** deletes the group's link.",
+        "**Remind who's missing** (on the same card) lists groups with guests still to answer, those who never opened their link first, each with a ready message (name, personal link and deadline) to copy and send by WhatsApp, text or email. You can edit the message, and the dashboard marks who you've already reminded.",
         "On some templates, the entrance screen shows the group name and “We have reserved 2 seats for you”. On all templates, the RSVP opens straight on the right group.",
       ],
       faq: [
@@ -581,7 +583,27 @@ export const helpEn: HelpContent = {
         "On the events list, the **Wedding Planner** menu has **This week** (every wedding at a glance, with a traffic light, tasks, payments and guest signals) and **Vendors** (the agency's directory, with price history).",
         "These areas only appear on agency accounts (and to the platform administrator). Couples don't see them.",
       ],
-      related: ["this-week", "vendor-sharing"],
+      related: ["this-week", "reuse-planning", "vendor-sharing"],
+    },
+    {
+      slug: "reuse-planning",
+      chapter: "agencies",
+      audience: "agency",
+      title: "How do I reuse the checklist and budget from another wedding?",
+      summary: "Copy from a previous wedding or import from Excel, so you don't start every wedding from scratch.",
+      steps: [
+        "**Copy the checklist:** in **Planeamento** (Planning) › **Tarefas** (Tasks), click **Copiar de outro casamento** (copy from another wedding), choose the wedding and confirm. Tasks go back to “to do” and deadlines count from this wedding's date.",
+        "**Copy the budget:** in **Planeamento** › **Orçamento** (Budget), click **Copiar de outro casamento** (next to **Adicionar custo**). Prices, calculation mode and VAT are copied; the status goes back to “to quote” and payments, notes and documents are not copied.",
+        "**Import the checklist from Excel:** in **Tarefas**, click **Modelo Excel** (Excel template), fill it in (task, days before the wedding or due date, priority, owner, notes) and click **Importar Excel**.",
+        "**Import your vendors:** in **Wedding Planner** › **Vendors**, the same: **Excel template** and then **Import Excel**. Vendors already in the directory (same name) are skipped.",
+      ],
+      tips: [
+        "Copying and importing always add to what's there: they never delete anything.",
+        "Only weddings from the same agency are offered for copying.",
+        "In Excel, headers can be in Portuguese or English. Rows with problems are skipped and the dashboard tells you which ones and why.",
+        "A good habit: set up a “template” wedding with your full method and copy it into every new wedding.",
+      ],
+      related: ["planning-overview", "this-week"],
     },
     {
       slug: "this-week",

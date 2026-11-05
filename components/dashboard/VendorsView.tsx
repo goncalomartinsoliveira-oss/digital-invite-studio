@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import PlannerExcelImport from "@/components/dashboard/PlannerExcelImport";
 import { supabase } from "@/lib/supabase";
 import { ChevronDown, Loader2, Mail, Phone, Globe, Star, Trash2, Plus, ExternalLink } from "lucide-react";
 import {
@@ -143,6 +144,15 @@ export default function VendorsView({ brandId, events, locale, onOpenEvent }: Pr
         >
           <Plus size={14} /> {en ? "Add" : "Adicionar"}
         </button>
+      </div>
+      <div className="mb-8">
+        <PlannerExcelImport
+          kind="vendors"
+          locale={locale}
+          brandId={brandId}
+          existingNames={vendors.map(v => v.name)}
+          onDone={rows => setVendors(prev => [...prev, ...(rows as AgencyVendor[])].sort((a, b) => a.name.localeCompare(b.name)))}
+        />
       </div>
 
       {loading ? (

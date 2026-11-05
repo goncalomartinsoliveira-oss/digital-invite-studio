@@ -328,6 +328,7 @@ export const helpPt: HelpContent = {
       tips: [
         "O QR code da página própria de confirmação está em **Convidados** e em **Links e QR codes**. É ideal para o convite em papel.",
         "Para os convidados não terem de procurar o nome, criem links personalizados.",
+        "Para lembrar quem ainda não respondeu, usem **Lembrar quem falta** em **Links personalizados**: dá uma mensagem pronta por grupo.",
       ],
       faq: [
         { q: "Os convidados podem mudar a resposta?", a: "Sim. Depois de gravarem, aparece o botão **Alterar respostas**. Também podem voltar a abrir o RSVP mais tarde." },
@@ -354,6 +355,7 @@ export const helpPt: HelpContent = {
       tips: [
         "É opcional. Quem preferir pode continuar a enviar um só link para todos, e os convidados procuram o nome no RSVP.",
         "**Novo link** gera um link diferente (o anterior deixa de funcionar). **Remover** apaga o link do grupo.",
+        "**Lembrar quem falta** (no mesmo cartão) lista os grupos com convidados sem resposta, os que nunca abriram o link primeiro, cada um com uma mensagem pronta (nome, link pessoal e prazo) para copiar e enviar por WhatsApp, SMS ou e-mail. Podem editar a mensagem, e o painel marca a quem já lembraram.",
         "Em alguns modelos, o ecrã de entrada mostra o nome do grupo e “Iremos reservar 2 lugares para vocês”. Em todos os modelos, o RSVP abre já no grupo certo.",
       ],
       faq: [
@@ -579,7 +581,27 @@ export const helpPt: HelpContent = {
         "Na lista de eventos, o menu **Wedding Planner** tem **Esta semana** (todos os casamentos num relance, com semáforo, tarefas, pagamentos e sinais dos convidados) e **Fornecedores** (o diretório da agência, com histórico de preços).",
         "Estas áreas só aparecem em contas de agência (e ao administrador da plataforma). Os casais não as veem.",
       ],
-      related: ["this-week", "vendor-sharing"],
+      related: ["this-week", "reuse-planning", "vendor-sharing"],
+    },
+    {
+      slug: "reuse-planning",
+      chapter: "agencies",
+      audience: "agency",
+      title: "Como reaproveito a checklist e o orçamento de outro casamento?",
+      summary: "Copiem de um casamento anterior ou importem do Excel, para não começarem cada casamento do zero.",
+      steps: [
+        "**Copiar a checklist:** em **Planeamento** › **Tarefas**, carreguem em **Copiar de outro casamento**, escolham o casamento e confirmem. As tarefas voltam a “por fazer” e os prazos passam a contar a partir da data deste casamento.",
+        "**Copiar o orçamento:** em **Planeamento** › **Orçamento**, carreguem em **Copiar de outro casamento** (junto a **Adicionar custo**). Copiam-se preços, modo de cálculo e IVA; o estado volta a “a orçar” e não se copiam pagamentos, notas nem documentos.",
+        "**Importar a checklist do Excel:** em **Tarefas**, carreguem em **Modelo Excel**, preencham (tarefa, dias antes do casamento ou data limite, prioridade, responsável, notas) e carreguem em **Importar Excel**.",
+        "**Importar os fornecedores:** em **Wedding Planner** › **Fornecedores**, o mesmo: **Modelo Excel** e depois **Importar Excel**. Os que já estão no diretório (mesmo nome) são ignorados.",
+      ],
+      tips: [
+        "Copiar e importar acrescentam sempre ao que já existe: nunca apagam nada.",
+        "Só aparecem casamentos da mesma agência para copiar.",
+        "No Excel, os cabeçalhos podem estar em português ou inglês. As linhas com problemas são ignoradas e o painel diz quais foram e porquê.",
+        "Um bom hábito: montem um casamento “modelo” com o vosso método completo e copiem-no para cada casamento novo.",
+      ],
+      related: ["planning-overview", "this-week"],
     },
     {
       slug: "this-week",

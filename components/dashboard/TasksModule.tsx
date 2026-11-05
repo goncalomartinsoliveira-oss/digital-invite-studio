@@ -3,7 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import SaveStatusBadge from "@/components/dashboard/SaveStatusBadge";
 import { useSaveStatus } from "@/lib/useSaveStatus";
-import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check, Flag, ListChecks } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, Loader2, CalendarClock, Check, Flag, ListChecks, Copy } from "lucide-react";
+import CopyFromEventModal from "@/components/dashboard/CopyFromEventModal";
+import PlannerExcelImport from "@/components/dashboard/PlannerExcelImport";
 import {
   dueDateFromOffset, isOverdue, TASK_PRIORITIES, TASK_PRIORITY_LABELS,
   TASK_RESPONSIBLES, TASK_RESPONSIBLE_LABELS,
@@ -22,6 +24,8 @@ interface Props {
   canEdit: boolean;
   /** Equipa da agência vê tudo; o casal só vê as tarefas partilhadas. */
   isAgency: boolean;
+  /** Marca do evento — "Copiar de outro casamento" só lista casamentos da mesma marca. */
+  brandId?: string | null;
 }
 
 const STATUS_ORDER: TaskStatus[] = ["todo", "doing", "done"];
@@ -35,7 +39,7 @@ const RESPONSIBLE_COLOR: Record<TaskResponsible, string> = {
   both: "text-amber-600 bg-amber-50 border-amber-200",
 };
 
-export default function TasksModule({ invitationId, eventDate, canEdit, isAgency }: Props) {
+export default function TasksModule({ invitationId, eventDate, canEdit, isAgency, brandId = null }: Props) {
   const [tasks, setTasks] = useState<EventTask[]>([]);
   const [loading, setLoading] = useState(true);
   const { status: saveStatus, track } = useSaveStatus("TasksModule");
@@ -44,6 +48,7 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
   const [recalculating, setRecalculating] = useState(false);
   const [applyingTemplate, setApplyingTemplate] = useState(false);
   const [filter, setFilter] = useState<TaskResponsible | "all">("all");
+  const [copyOpen, setCopyOpen] = useState(false);
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -203,6 +208,37 @@ export default function TasksModule({ invitationId, eventDate, canEdit, isAgency
             )}
           </div>
         </div>
+
+        {/* Reaproveitar o método da agência: copiar de outro casamento ou importar do Excel. */}
+        {canEdit && isAgency && (
+          <div data-tasks-tools className="flex flex-wrap items-start gap-2 mb-6 pb-6 border-b border-gray-50">
+            <button
+              onClick={() => setCopyOpen(true)}
+              className="inline-flex items-center gap-2 border border-gray-200 text-gray-500 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:text-brand hover:border-gold-soft transition-all"
+            >
+              <Copy size={13} /> Copiar de outro casamento
+            </button>
+            <PlannerExcelImport
+              kind="tasks"
+              invitationId={invitationId}
+              eventDate={eventDate}
+              startOrder={tasks.length}
+              isAgency={isAgency}
+              onDone={rows => setTasks(prev => [...prev, ...(rows as EventTask[])])}
+            />
+          </div>
+        )}
+        {copyOpen && (
+          <CopyFromEventModal
+            kind="tasks"
+            invitationId={invitationId}
+            brandId={brandId}
+            eventDate={eventDate}
+            startOrder={tasks.length}
+            onClose={() => setCopyOpen(false)}
+            onDone={rows => { setTasks(prev => [...prev, ...(rows as EventTask[])]); setCopyOpen(false); }}
+          />
+        )}
 
         {tasks.length > 0 && (
           <div className="flex items-center gap-1 bg-cream rounded-full p-1 border border-gold-soft/50 w-fit mb-6">
