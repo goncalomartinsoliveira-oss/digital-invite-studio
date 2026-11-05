@@ -11,7 +11,7 @@ function seed() {
   for (const k of Object.keys(T)) delete T[k];
   T.invitations = [{
     id: INV, slug: "joana-e-rui", user_email: "test@example.com", groom_name: "Rui", bride_name: "Joana",
-    event_date: "2027-06-12T16:00:00", template_id: "minimal-01", brand_id: null, expires_at: null,
+    event_date: "2027-06-12T16:00:00", template_id: "renaissance-blue-01", brand_id: null, expires_at: null,
     access_code_enabled: false, access_code_version: 1,
     unlocked_modules: ["save_the_date", "invite", "guests_seating", "photo_sharing", "guestbook"],
     dietary_tags: "Vegetariano,Sem glúten,Sem lactose",

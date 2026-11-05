@@ -49,6 +49,8 @@ depois do evento (campo `invitations.expires_at`).
 `/` · `/features` · `/features/<slug>` · `/help` · `/help/<slug>` · `/pricing` · `/partners` · `/contact`
 · `/login` · `/reset-password` · `/terms` · `/privacy` · `/cookies`
 
+Página inicial (`app/[locale]/page.tsx`, textos em `HomePage` nos dicionários): o **convite digital é o produto principal**. Ordem: hero com o convite → factos → coleção de modelos (lê `lib/templates.ts`, com lugares "Em breve") → dentro do convite → RSVP e painel → "a viagem" (os outros módulos, com ligação a `/features/<slug>`) → **convite à medida** (`#a-medida`, botão "Pedir proposta" → `/contact?assunto=medida`, que pré-seleciona "Pedido de Orçamento Personalizado") → como funciona → faixa de parceiros → FAQ → CTA. Sem preços (estão em `/pricing`) nem prazo de disponibilidade.
+
 ### Painel (precisa de login)
 | Rota | O que é |
 |---|---|
@@ -67,7 +69,7 @@ depois do evento (campo `invitations.expires_at`).
 | `/guestbook/<slug>` | Livro de visitas. |
 | `/fornecedor/<token>` | Portal de um fornecedor (só leitura). |
 | `/moodboard/<token>` | Moodboard partilhado (ver e acrescentar imagens, não apagar). |
-| `/preview/<modelo>` | Página de exemplo de um modelo, com dados de demonstração (existe para 6: minimal-01, classic-01, noir-01, arch-01, envelope-01 e renaissance-blue-01). A montra da página inicial liga a estas páginas — **luxury-01 e collage-01 estão na montra mas não têm página de exemplo (dão 404)**. |
+| `/preview/<modelo>` | Página de exemplo de um modelo, com dados de demonstração (hoje só `renaissance-blue-01`; cada modelo novo traz a sua). A montra da página inicial e o botão "Ver um convite ao vivo" ligam aqui. |
 
 ### API (`app/api`)
 `checkout` (cria a sessão Stripe) · `stripe/webhook` (regista o pagamento e
@@ -239,20 +241,21 @@ simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
 
 ## 10. Modelos de convite
 
-Escolha em `DesignModule` (lista `AVAILABLE_TEMPLATES`); o convite público
-escolhe o modelo por `template_id` e, se não reconhecer, usa o Luxury.
+**Registo único: `lib/templates.ts`.** A montra da página inicial, o seletor do
+editor (`DesignModule`) e a criação de um evento novo (`DEFAULT_TEMPLATE_ID`,
+gravado em `dashboard/new-invite`) leem todos daqui. O ficheiro explica no topo
+os 5 passos para pôr um modelo novo no ar. `COMING_SOON_SLOTS` mostra lugares
+"Em breve" na montra e no seletor enquanto os próximos modelos não chegam (5 em
+nov. 2026; baixar à medida que entram).
 
-| `template_id` | Nome no seletor | Cor de destaque editável | Pré-visualização |
-|---|---|---|---|
-| `luxury-01` | Classic Luxury | não | não |
-| `minimal-01` | Modern Minimal | não | sim |
-| `collage-01` | Editorial Collage | não | não |
-| `classic-01` | Clássico | sim | sim |
-| `noir-01` | Editorial Noir | sim | sim |
-| `arch-01` | Romântico | sim | sim |
-| `envelope-01` | Envelope (em construção) | não | sim |
-| `renaissance-blue-01` | Renaissance Blue | não (a paleta azul é a identidade) | sim (também na montra da página inicial) |
-| `envelope-01-jose-e-dalia` | *(id antigo de Renaissance Blue, só no evento da Dália e do José)* | n/a | não |
+| `template_id` | Nome | Estado |
+|---|---|---|
+| `renaissance-blue-01` | Renaissance Blue | **único modelo público** (seletor, montra, `/preview/renaissance-blue-01`, modelo dos eventos novos) |
+| `envelope-01-jose-e-dalia` | *(id antigo de Renaissance Blue, só no evento da Dália e do José)* | tratado como Renaissance Blue (`LEGACY_TEMPLATE_IDS`) |
+| `luxury-01`, `minimal-01`, `collage-01`, `classic-01`, `noir-01`, `arch-01`, `envelope-01` | — | **retirados** (nov. 2026, `RETIRED_TEMPLATE_IDS`): fora do seletor, da montra e sem página de exemplo. O código em `app/[locale]/templates/` continua para os convites que já os usam não deixarem de abrir; esses eventos continuam a ver o seletor e podem mudar para o Renaissance Blue. Apagar o código só depois de confirmar na base de dados que nenhum evento os usa: `select template_id, count(*) from invitations group by 1;` |
+
+O convite público escolhe o modelo por `template_id`; sem id (eventos antigos,
+de antes de `DEFAULT_TEMPLATE_ID`) ainda cai no Luxury.
 
 **Renaissance Blue** (envelope azul com selo de cera, colagem de flores, Cinzel e
 Pinyon Script) foi feito à medida do casamento da Dália e do José (cópia do
@@ -261,12 +264,12 @@ ainda grava o id antigo `envelope-01-jose-e-dalia`: o convite público
 (`invite/[slug]/page.tsx`) e o `DesignModule` (`LEGACY_TEMPLATE_IDS`)
 tratam-no como o mesmo modelo, por isso não foi preciso mexer na base de dados. A
 documentação (elementos, posições lidas do SVG, fontes, ecrã de entrada) está em
-`public/renaissance-blue-01/elementos/LEIA-ME.md`. Está na montra de modelos da página inicial (`templateShowcase` nos dicionários + `public/home/tpl-<id>.jpg`, captura 480×984 do ecrã de entrada) com página de exemplo em `app/[locale]/preview/renaissance-blue-01`. Suporta a saudação dos links
+`public/renaissance-blue-01/elementos/LEIA-ME.md`. Está na montra da página inicial (`lib/templates.ts` + `public/home/tpl-<id>.jpg`, captura 480×984 do ecrã de entrada) com página de exemplo em `app/[locale]/preview/renaissance-blue-01`; a página inicial usa ainda `public/home/rb-open.jpg` (convite aberto), `rb-scroll.webp` (convite inteiro, a deslizar no telemóvel) e `bespoke-*.webp` (colagem do convite à medida, a partir de `elementos/`). Suporta a saudação dos links
 pessoais (`GuestGreeting`) e os textos são fixos em português, como nos outros modelos.
 O convite é lido do evento, nada é específico do casal original.
 
 **Modelos à medida:** um `template_id` que está ligado em
-`app/[locale]/invite/[slug]/page.tsx` mas **não** está em `AVAILABLE_TEMPLATES`
+`app/[locale]/invite/[slug]/page.tsx` mas **não** está em `lib/templates.ts` (nem em `RETIRED_TEMPLATE_IDS`)
 fica invisível para os outros casais, e o `DesignModule` esconde o seletor no
 evento que o usa. É a receita para um próximo casal que peça um desenho próprio.
 
@@ -371,8 +374,8 @@ Ainda por fazer:
 - `components/dashboard/EventModule.tsx` não é usado em lado nenhum.
 - Ficheiros muito grandes: `GuestsModule` (~985 linhas), `BudgetModule` (~886),
   `dashboard/[slug]/page.tsx` (~800).
-- `luxury-01` e `collage-01` não têm rota de pré-visualização, **mas a montra da página inicial liga a `/preview/luxury-01` e `/preview/collage-01`: esses dois botões "Ver Pré-visualização" dão 404** (por corrigir: criar as páginas de exemplo ou tirá-los da montra).
-- O modelo `envelope-01` aparece aos casais como "em construção".
+- Os modelos retirados (secção 10) ainda têm código em `app/[locale]/templates/`; apagar quando a base de dados confirmar que nenhum evento os usa.
+- O prazo do convite depois do casamento é 60 dias (`expires_at`, termos, ajuda); o dono do produto falou em 6 meses. Por decidir; a página inicial não indica prazo.
 
 ---
 
@@ -421,5 +424,4 @@ barra lateral do editor e no sitemap.
 Atualizar quando mudar algo que estas secções descrevem: um módulo novo, uma
 rota nova, uma tabela nova, um modelo novo. Um módulo novo toca em quatro
 sítios (`lib/modules.ts`, `lib/pricing.ts`, `GROUP_TABS` no painel e a tabela
-da secção 5) **e um artigo no centro de ajuda (`content/help`, PT e EN)**; um modelo novo em três (`app/[locale]/templates/<id>`, o ramo em
-`invite/[slug]/page.tsx` e, se for público, `AVAILABLE_TEMPLATES`).
+da secção 5) **e um artigo no centro de ajuda (`content/help`, PT e EN)**; um modelo novo segue os 5 passos no topo de `lib/templates.ts`.

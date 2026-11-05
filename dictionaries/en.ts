@@ -7,146 +7,121 @@ const en = {
   },
   "HomePage": {
     "hero": {
-      "tag": "The Platform for Your Guests",
-      "title1": "One place.",
-      "title2": "Everything your guests need.",
-      "desc": "Wedding website and digital invitation, Save the Date, RSVP, seating plan, live shared photos and guest messages. All included, with no more scattered chats or spreadsheets.",
-      "btn1": "View Plans",
-      "btn2": "Discover Features",
-      "floatingBadge": "RSVP Delivered",
-      "floatingText": "Marta has confirmed!"
+      "tag": "Digital wedding invitations",
+      "title1": "Wedding invitations,",
+      "title2": "digital and unforgettable.",
+      "desc": "An elegant invitation your guests open on their phone: the envelope, your story, the schedule, the map and the RSVP, all in a single link. You personalise it yourselves in the editor, at your own pace.",
+      "btnPrimary": "Create our invitation",
+      "btnSecondary": "See a live invitation",
+      "microcopy": ["No app", "Works on any phone", "One-time payment"],
+      "floatingBadge": "RSVP",
+      "floatingText": "Marta is coming!"
     },
-    "story": {
-      "tag": "The before and after",
-      "title1": "From dozens of messages",
-      "title2": "to one elegant link.",
-      "beforeLabel": "Without central organization",
-      "afterLabel": "With Digital Invite Studio",
-      "rows": [
-        { "before": "Dozens of WhatsApp messages with guests", "after": "One link with the invitation and every detail" },
-        { "before": "The same questions, again and again: address, time, dress code", "after": "Guests confirm attendance themselves, no repeated questions" },
-        { "before": "A spreadsheet for the guest list, another for the seating plan", "after": "Guest list and seating plan always up to date, in the same dashboard" },
-        { "before": "Photos scattered across different group chats and phones", "after": "Guest photos arriving automatically in the shared gallery" },
-        { "before": "Messages and wishes lost in scattered conversations", "after": "Messages and wishes kept in one place, the Guestbook" }
+    "facts": [
+      { "title": "No app", "desc": "Opens in the browser of any phone." },
+      { "title": "Always up to date", "desc": "Whatever you change, guests see it right away." },
+      { "title": "RSVP included", "desc": "With menu choices and dietary requirements." },
+      { "title": "One-time payment", "desc": "Per event, no subscriptions." }
+    ],
+    "collection": {
+      "tag": "The collection",
+      "title1": "Designs crafted",
+      "title2": "down to the detail.",
+      "desc": "Each design is made for the phone screen. Pick yours, add your words, photos and details, and the invitation becomes yours alone.",
+      "previewBtn": "See it live",
+      "useBtn": "Use this design",
+      "soonTitle": "New design",
+      "soonDesc": "Coming soon",
+      "bespokeLink": "Looking for something of your own? Discover our bespoke invitation"
+    },
+    "inside": {
+      "tag": "Inside the invitation",
+      "title1": "Everything your guests",
+      "title2": "need to know.",
+      "desc": "An invitation that answers the questions before they reach your WhatsApp.",
+      "items": [
+        { "title": "Envelope opening", "desc": "The first moment is a surprise, just like a paper invitation." },
+        { "title": "Countdown", "desc": "The days, hours and minutes until the big “yes”." },
+        { "title": "Schedule and map", "desc": "Ceremony, reception and times, with directions one tap away." },
+        { "title": "Dress code and stay", "desc": "Colour palette, hotels and useful information in one place." },
+        { "title": "Gifts", "desc": "A message from you and, if you like, your IBAN for contributions." },
+        { "title": "RSVP", "desc": "Each guest confirms, chooses a menu and mentions allergies." },
+        { "title": "A link per family", "desc": "Each group gets its own link and the RSVP opens on the right group." },
+        { "title": "Access code", "desc": "If you prefer, only guests with the 4-digit code can get in." }
       ]
     },
-    "core": {
-      "promo": "[ Promotional Image: Mockup of 2 smartphones showing the incredible digital invite design ]",
-      "title1": "An invitation your guests",
-      "title2": "will never lose.",
-      "desc": "Your wedding website is the \"command center\" of your day. Designed with editorial rigor, it works perfectly on any smartphone and centralizes all vital information in an elegant format.",
-      "features": [
-        { "title": "100% Mobile First", "desc": "Optimized design for the screen where everyone will see it." },
-        { "title": "Dynamic Information", "desc": "Maps, dress code, and schedules that can be updated anytime." },
-        { "title": "Eco-Friendly", "desc": "A sustainable and immediate alternative to traditional paper." },
-        { "title": "Bespoke Design", "desc": "Typography and color palettes tailored to your identity." }
+    "rsvp": {
+      "tag": "After you send it",
+      "title1": "Replies arrive",
+      "title2": "on their own.",
+      "desc": "Share the link on WhatsApp, by email or by text. Every reply lands in your dashboard instantly, with no spreadsheets and no lost messages.",
+      "bullets": [
+        "Who is coming, who declined and who hasn't replied yet",
+        "Adults, children and babies counted separately",
+        "Menus and dietary requirements ready for the caterer"
       ]
     },
-    "eco": {
-      "title1": "More than an invitation.",
-      "title2": "An organization assistant.",
-      "desc": "By adopting our digital invitation, you unlock access to exclusive tools that save dozens of hours of stress and spreadsheets.",
-      "cards": [
-        { "title": "Integrated RSVP", "desc": "Guests confirm their attendance online, indicate allergies, and your list populates itself in a real-time dashboard." },
-        { "title": "Digital Seating Plan", "desc": "Draw your room layout and visually drag your guests to the correct tables with our smart tool." },
-        { "title": "Photo Sharing", "desc": "On the event day, guests use a QR Code to send the photos they take directly to your digital album." }
+    "journey": {
+      "tag": "From the first announcement to the memories",
+      "title1": "The invitation is the centre.",
+      "title2": "Everything else connects to it.",
+      "desc": "Add the modules you need, when you need them. They all live in the same dashboard, with the same guest list.",
+      "steps": [
+        { "when": "Months before", "title": "Save the Date", "desc": "A beautiful card so guests can keep the date free." },
+        { "when": "The invitation", "title": "Invitation and RSVP", "desc": "The heart of it all: the invitation and the replies." },
+        { "when": "Weeks before", "title": "Seating plan", "desc": "Draw the room and drag confirmed guests onto the tables." },
+        { "when": "On the day", "title": "Photos and Live Wall", "desc": "Guests upload photos via QR code and they appear on the party screen." },
+        { "when": "Afterwards", "title": "Guestbook", "desc": "Your guests' messages and wishes, kept in one place." }
       ],
-      "link": "See all platform tools"
+      "link": "See all features"
+    },
+    "bespoke": {
+      "tag": "Bespoke invitation",
+      "title1": "An invitation that exists",
+      "title2": "only for you.",
+      "desc": "Want something nobody else has? We design an exclusive invitation from your story, your colours and your venue. Renaissance Blue was born this way, as a bespoke invitation for one couple.",
+      "points": [
+        "An exclusive design, created from scratch",
+        "Custom illustrations, typography and animations",
+        "Every platform feature included",
+        "A quote tailored to each project"
+      ],
+      "cta": "Request a proposal"
     },
     "steps": {
-      "title": "Elegance doesn't have to be complicated",
+      "title": "Three steps to your invitation",
       "items": [
-        { "step": "01", "title": "Choose the Design", "desc": "Browse our premium layout collection and select the one that reflects your identity." },
-        { "step": "02", "title": "Customization", "desc": "We add your story, photos, colors, and all event details." },
-        { "step": "03", "title": "Send and Control", "desc": "Share the link via WhatsApp and watch guests confirm attendance on your dashboard." }
+        { "step": "01", "title": "Choose the design", "desc": "Start with the design you love most. You can switch later without losing what you wrote." },
+        { "step": "02", "title": "Personalise it in the editor", "desc": "Names, story, photos, schedule and details. See your changes live, at your own pace." },
+        { "step": "03", "title": "Send it and follow along", "desc": "Share the link and watch the replies arrive in your dashboard." }
+      ],
+      "pricingLink": "See plans and pricing"
+    },
+    "b2b": {
+      "tag": "For wedding planners and agencies",
+      "title": "All your weddings in one dashboard.",
+      "desc": "Invitations with your brand, your own pricing and planning tools: budget, tasks, timeline and vendors.",
+      "cta": "Discover the partner area"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "What couples ask us before they start.",
+      "items": [
+        { "q": "Do guests need to install an app?", "a": "No. The invitation opens in the browser of any phone or computer. Just share the link." },
+        { "q": "How do I send the invitation to my guests?", "a": "Share the link wherever you like: WhatsApp, email, text or social media. If you prefer, create one link per family and the RSVP opens on the right group." },
+        { "q": "Can I change the invitation after sending it?", "a": "Yes, any time. Whatever you change in the editor is visible right away to anyone who opens the link." },
+        { "q": "Do we need design or tech skills?", "a": "No. Pick the design and fill in your words and photos in the editor. If you'd rather have an invitation we design from scratch, there's the bespoke invitation." },
+        { "q": "What about guests who aren't comfortable with technology?", "a": "They'll be fine. They open the link, look up their name and confirm in a few taps, with no account or password." },
+        { "q": "Does the invitation stay online after the wedding?", "a": "Yes, for a while, so you can calmly download the photos and messages your guests left." },
+        { "q": "How much does it cost?", "a": "You pay once per event, with no subscriptions. Prices for each module and bundle are on the pricing page." }
       ]
     },
     "cta": {
-      "title": "Your big day starts with a digital \"Yes\".",
-      "desc": "Discover how our invitations can elevate your guests' experience from the very first moment.",
-      "btn": "Start Now"
-    },
-    "stats": {
-      "items": [
-        { "value": "5", "label": "Modules to Choose From" },
-        { "value": "60", "label": "Days of Access Included" },
-        { "value": "100%", "label": "Mobile-First" },
-        { "value": "1x", "label": "One-Time Payment" }
-      ]
-    },
-    "templateShowcase": {
-      "tag": "Premium Templates",
-      "title1": "Designs crafted by",
-      "title2": "editorial artists.",
-      "desc": "Every template is developed with obsessive attention to detail: thoughtful typography, harmonious palettes, and smart sections that adapt to your unique story.",
-      "previewBtn": "See Preview",
-      "useBtn": "Use This Template",
-      "templates": [
-        { "name": "Minimal 01", "id": "minimal-01", "desc": "Minimalist elegance in forest green and gold." },
-        { "name": "Luxury 01", "id": "luxury-01", "desc": "Classic grandeur with burgundy and cream details." },
-        { "name": "Collage 01", "id": "collage-01", "desc": "Creative expression with contemporary photo collage." },
-        { "name": "Renaissance Blue", "id": "renaissance-blue-01", "desc": "A blue wax-sealed envelope and a collage of hydrangeas, in sky blue and cream." }
-      ]
-    },
-    "trust": {
-      "title": "Why choose Digital Invite Studio",
-      "subtitle": "Built to last from the first idea all the way to the memories after the big day.",
-      "items": [
-        {
-          "title": "One-time payment, no surprises",
-          "desc": "No hidden monthly fees. You pay once per event, and access is guaranteed for the whole agreed period."
-        },
-        {
-          "title": "Guest data, actually protected",
-          "desc": "Every piece of information is protected by strict access rules at the database level, not just how the site looks."
-        },
-        {
-          "title": "Everything in one place, start to finish",
-          "desc": "From the Save the Date to the wedding day and the memories afterwards, with no jumping between different tools."
-        }
-      ]
-    },
-    "faq": {
-      "title": "Frequently Asked Questions",
-      "subtitle": "Everything you need to know before getting started.",
-      "items": [
-        {
-          "q": "Do I need to know how to code to use the platform?",
-          "a": "No. Our platform was designed to be used by anyone. You fill in a form, we take care of everything else. No code, no complexity."
-        },
-        {
-          "q": "Do guests need to install an app?",
-          "a": "No. The invitation is a website that works directly in any browser on any smartphone or computer. Just share the link."
-        },
-        {
-          "q": "Can I update event details after sending the invitations?",
-          "a": "Yes, always. Any change you make in the dashboard is immediately visible to all guests who open the link."
-        },
-        {
-          "q": "What happens to the site after the wedding?",
-          "a": "The site stays active for the duration of your plan. You can also choose to keep it as a permanent memory of your big day."
-        },
-        {
-          "q": "Is the platform suitable for wedding planners?",
-          "a": "Absolutely. Partners and agencies get a dashboard with their whole event portfolio, pricing tailored to them, and the option to resell under their own brand."
-        },
-        {
-          "q": "How does RSVP work?",
-          "a": "Guests search for their name on the list, confirm attendance, indicate dietary restrictions, and menu choices. Everything appears on your dashboard in real time."
-        }
-      ]
-    },
-    "b2b": {
-      "tag": "For Professionals",
-      "title": "Built for Wedding Planners too",
-      "desc": "Manage multiple projects in one place. Impress clients with a premium product. Save hours of operational work on every wedding.",
-      "features": [
-        "Multi-project dashboard",
-        "Your own brand (white label)",
-        "Advanced management tools",
-        "Priority support"
-      ],
-      "cta": "Learn More about the Pro Plan"
+      "title1": "Your “yes” deserves",
+      "title2": "an invitation to match.",
+      "desc": "Create your invitation today and send it whenever you're ready.",
+      "btnPrimary": "Create our invitation",
+      "btnSecondary": "See plans and pricing"
     }
   },
   "Navbar": {
@@ -160,7 +135,7 @@ const en = {
     "goToDashboard": "Go to Dashboard"
   },
   "Footer": {
-    "tagline": "The operating system for your wedding.",
+    "tagline": "Digital wedding invitations, and everything that comes with them.",
     "product": "Product",
     "features": "Features",
     "pricing": "Pricing",
@@ -1115,7 +1090,8 @@ const en = {
     "templates": {
       "title": "Invitation Templates",
       "subtitle": "Select the base design for your invitation",
-      "applyBtn": "Apply Template"
+      "applyBtn": "Apply Template",
+      "comingSoon": "Coming soon"
     },
     "identity": {
       "title": "Wedding Identity",

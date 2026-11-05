@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Lock } from "lucide-react";
+import { Lock, Sparkles } from "lucide-react";
+import { INVITE_TEMPLATES as AVAILABLE_TEMPLATES, COMING_SOON_SLOTS, RETIRED_TEMPLATE_IDS, resolveTemplateId } from "@/lib/templates";
 
 interface DesignModuleProps {
   formData: any;
@@ -10,25 +11,11 @@ interface DesignModuleProps {
   saving: boolean;
   canEdit: boolean;
   dict: {
-    templates: { title: string; subtitle: string; applyBtn: string };
+    templates: { title: string; subtitle: string; applyBtn: string; comingSoon: string };
     identity: { title: string; subtitle: string; person1Label: string; person2Label: string; dateLabel: string; person1Placeholder: string; person2Placeholder: string; dateLockedNote: string };
     theme: { title: string; subtitle: string; customLabel: string };
   };
 }
-
-// ids antigos que apontam para um modelo que entretanto passou a estar no seletor.
-const LEGACY_TEMPLATE_IDS: Record<string, string> = { 'envelope-01-jose-e-dalia': 'renaissance-blue-01' };
-
-const AVAILABLE_TEMPLATES = [
-  { id: 'luxury-01', name: 'Classic Luxury', preview: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400' },
-  { id: 'minimal-01', name: 'Modern Minimal', preview: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=400' },
-  { id: 'collage-01', name: 'Editorial Collage', preview: '/collage-01/envelope-closed.png' },
-  { id: 'classic-01', name: 'Clássico', preview: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400', supportsTheme: true },
-  { id: 'noir-01', name: 'Editorial Noir', preview: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&sat=-100', supportsTheme: true },
-  { id: 'arch-01', name: 'Romântico', preview: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400', supportsTheme: true },
-  { id: 'renaissance-blue-01', name: 'Renaissance Blue', preview: '/renaissance-blue-01/preview.webp' },
-  { id: 'envelope-01', name: 'Envelope (em construção)', preview: '/envelope-01/envelope.webp' },
-];
 
 // Cor de destaque: só os modelos com `supportsTheme` usam um único token de
 // cor em todos os detalhes (títulos, linhas, botões) — por isso só nesses
@@ -64,13 +51,15 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
   const dbContent = formData.content || {};
   // O modelo "Renaissance Blue" nasceu à medida de um casal e o evento dele ainda
   // grava o id antigo — conta como o mesmo modelo (ver invite/[slug]/page.tsx).
-  const currentTemplateId: string = LEGACY_TEMPLATE_IDS[formData.template_id] ?? formData.template_id;
+  const currentTemplateId: string = resolveTemplateId(formData.template_id) ?? "";
   const activeTemplate = AVAILABLE_TEMPLATES.find(t => t.id === currentTemplateId);
   // Um template_id que não está na lista de opções é um modelo à medida,
   // feito fora do seletor de propósito (ver AVAILABLE_TEMPLATES) — ninguém
   // devia conseguir trocá-lo por engano a clicar na grelha. Sem isto, o
   // dono do evento continuava a ver e a poder escolher os outros modelos.
-  const isCustomTemplate = !!formData.template_id && !activeTemplate;
+  // Os modelos retirados (lib/templates.ts) não contam como à medida: esses
+  // eventos continuam a ver o seletor para poderem mudar de modelo.
+  const isCustomTemplate = !!formData.template_id && !activeTemplate && !RETIRED_TEMPLATE_IDS.includes(formData.template_id);
   const accent = dbContent.theme?.accent || "";
 
   const setAccent = (hex: string) => {
@@ -123,7 +112,7 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
             >
               <div className="relative overflow-hidden rounded-2xl mb-4 shadow-sm aspect-[4/3]">
                 <img
-                  src={t.preview}
+                  src={t.thumb}
                   className={`w-full h-full object-cover transition-transform duration-500 ${currentTemplateId === t.id ? 'scale-110' : 'group-hover:scale-105'}`}
                   alt={t.name}
                 />
@@ -138,6 +127,15 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
               <p className={`text-[11px] font-bold text-center uppercase tracking-widest ${currentTemplateId === t.id ? 'text-brand' : 'text-gray-400'}`}>
                 {t.name}
               </p>
+            </div>
+          ))}
+          {/* Lugares dos próximos modelos (COMING_SOON_SLOTS em lib/templates.ts) */}
+          {Array.from({ length: COMING_SOON_SLOTS }).map((_, i) => (
+            <div key={`soon-${i}`} aria-hidden className="p-3 rounded-3xl border-2 border-transparent opacity-60 cursor-default">
+              <div className="rounded-2xl mb-4 aspect-[4/3] border border-dashed border-gold-soft bg-cream flex items-center justify-center text-gold">
+                <Sparkles size={18} />
+              </div>
+              <p className="text-[11px] font-bold text-center uppercase tracking-widest text-gray-300">{dict.templates.comingSoon}</p>
             </div>
           ))}
         </div>

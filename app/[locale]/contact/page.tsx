@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Camera, Phone, Send, Loader2, CheckCircle2 } from "lucide-react";
@@ -27,6 +27,11 @@ export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState(dict.form.options[0]);
+  // "Pedir proposta" do convite à medida (página inicial) chega com ?assunto=medida
+  // e já abre com "Pedido de Orçamento Personalizado" escolhido.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("assunto") === "medida") setSubject(dict.form.options[1]);
+  }, [dict]);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 

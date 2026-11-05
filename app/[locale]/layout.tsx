@@ -15,12 +15,12 @@ import { resolveBrand } from "../../lib/brands";
 
 const HOME_SEO = {
   pt: {
-    title: "Digital Invite Studio | Convite Digital, RSVP, Convidados, Mesas e Fotos",
-    description: "A plataforma que os vossos convidados vão usar do início ao fim: convite digital, RSVP inteligente, lista de convidados e plano de mesas, partilha de fotos e guestbook, tudo num único link.",
+    title: "Convites Digitais de Casamento | Digital Invite Studio",
+    description: "Convites de casamento digitais e elegantes, com confirmação de presença (RSVP) incluída. Personalizem no editor e partilhem por WhatsApp. Save the Date, plano de mesas, fotos e livro de visitas no mesmo painel.",
   },
   en: {
-    title: "Digital Invite Studio | Digital Invitation, RSVP, Guests, Seating & Photos",
-    description: "The platform your guests will actually use, start to finish: digital invitation, smart RSVP, guest list and seating chart, photo sharing and guestbook, all in one link.",
+    title: "Digital Wedding Invitations | Digital Invite Studio",
+    description: "Elegant digital wedding invitations with RSVP included. Personalise them in the editor and share on WhatsApp. Save the Date, seating plan, photos and guestbook in the same dashboard.",
   },
 };
 

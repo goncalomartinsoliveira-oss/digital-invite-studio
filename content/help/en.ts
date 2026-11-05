@@ -123,7 +123,7 @@ export const helpEn: HelpContent = {
       slug: "choose-template",
       chapter: "invite",
       title: "How do I choose the template and colour?",
-      summary: "The template sets the look of the invitation. Try a few until you find yours.",
+      summary: "The template sets the look of the invitation. Slots marked **Coming soon** are new templates on their way.",
       shots: [
         { file: "invite-design", alt: "The “Models & identity” tab of the invitation, with the phone preview alongside." },
       ],
@@ -136,6 +136,7 @@ export const helpEn: HelpContent = {
       tips: [
         "The texts and photos you've already added aren't lost when you change template.",
         "The accent colour only exists on some templates. If the section doesn't appear, the chosen template doesn't have it.",
+        "Want a design of your own? Request a bespoke invitation proposal from **Contact**.",
       ],
       related: ["edit-content", "preview"],
     },
