@@ -152,6 +152,7 @@ const en = {
     "features": "Features",
     "pricing": "Pricing",
     "contact": "Contact",
+    "help": "Help",
     "login": "Login",
     "startNow": "Start Now",
     "language": "Language",
@@ -165,6 +166,7 @@ const en = {
     "partners": "Agencies & Partners",
     "company": "Company",
     "contact": "Contact",
+    "help": "Help centre",
     "legal": "Legal",
     "privacy": "Privacy",
     "copyright": "Digital Invite Studio."
@@ -255,6 +257,7 @@ const en = {
     "mobilePreview": "View Preview",
     "mobilePreviewLabel": "Real Mobile View",
     "mobilePreviewSub": "Updates upon saving",
+    "helpCenter": "Help centre",
     "accountLabel": "My Account",
     "backToEvents": "My Events",
     "currentProject": "Current project",

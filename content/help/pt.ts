@@ -1,0 +1,562 @@
+import type { HelpContent } from "./types";
+
+// Centro de ajuda — português. Os nomes de botões e separadores (a negrito) têm
+// de coincidir com o painel (dictionaries/pt.ts). Se mudarem lá, mudam aqui.
+
+export const helpPt: HelpContent = {
+  ui: {
+    eyebrow: "Ajuda",
+    title: "Centro de ajuda",
+    subtitle: "Respostas passo a passo para cada parte da plataforma, do primeiro convite ao dia do casamento.",
+    searchPlaceholder: "Pesquisar, por exemplo: convidados, QR, mesas…",
+    searchLabel: "Pesquisar na ajuda",
+    noResults: "Não encontrámos nada para “{q}”. Tentem outras palavras ou escolham um capítulo.",
+    resultsCount: "{n} resultado(s)",
+    articlesCount: "{n} artigos",
+    popularTitle: "Comecem por aqui",
+    stepsTitle: "Passo a passo",
+    tipsTitle: "Dicas",
+    faqTitle: "Perguntas frequentes",
+    relatedTitle: "Ver também",
+    inThisChapter: "Neste capítulo",
+    backToHelp: "Centro de ajuda",
+    stillNeedHelp: "Ainda com dúvidas?",
+    stillNeedHelpDesc: "Escrevam-nos e respondemos o mais depressa possível.",
+    contactBtn: "Falar connosco",
+    forAgenciesBadge: "Para agências",
+    metaTitleSuffix: "Centro de ajuda",
+    metaDescription: "Guias passo a passo para criar o convite digital, gerir convidados e mesas, partilhar fotos e muito mais.",
+  },
+
+  chapters: [
+    { id: "start", title: "Primeiros passos", desc: "Do evento criado ao convite enviado, e como o painel está organizado." },
+    { id: "invite", title: "Convite de casamento", desc: "Modelo, cores, textos, fotos e acesso ao convite." },
+    { id: "save_the_date", title: "Save the Date", desc: "O cartão para anunciar a data aos convidados." },
+    { id: "guests", title: "Convidados e mesas", desc: "Lista, confirmações de presença, links personalizados e plano de mesas." },
+    { id: "photos", title: "Fotos e Live Wall", desc: "Os convidados partilham fotos e vídeos; vocês projetam-nos na festa." },
+    { id: "guestbook", title: "Livro de visitas", desc: "Mensagens de texto, voz e vídeo dos convidados." },
+    { id: "share", title: "Partilhar e enviar", desc: "Todos os links e QR codes e como chegar aos convidados." },
+    { id: "account", title: "Conta e pagamentos", desc: "Módulos, equipa, password e prazos." },
+    { id: "agencies", title: "Para agências", desc: "A área de Planeamento para wedding planners e agências." },
+  ],
+
+  articles: [
+    // ───────────── PRIMEIROS PASSOS ─────────────
+    {
+      slug: "first-steps",
+      chapter: "start",
+      popular: true,
+      title: "Do zero ao convite enviado: os 5 passos",
+      summary: "O caminho mais curto para ter o convite pronto e nas mãos dos convidados.",
+      steps: [
+        "**Criem o evento** com os nomes, a data e o link do convite (ver “Como crio o meu evento?”).",
+        "**Preencham o convite:** escolham o modelo e escrevam os textos e as fotos na área **Convite de casamento**.",
+        "**Adicionem os convidados** na área **Convidados e mesas**, organizados em grupos (famílias ou casais).",
+        "**Confirmem tudo na pré-visualização** do telemóvel, ao lado do editor, e abram o convite para o verem como os convidados o vão ver.",
+        "**Partilhem o link.** Está na área **Links e QR codes**.",
+      ],
+      tips: [
+        "A lista **O que falta fazer**, no topo da página inicial do painel, acompanha estes passos e leva-vos direto a cada um.",
+        "Os textos e as fotos podem ser alterados depois de enviarem o link: quem abrir o convite vê sempre a versão mais recente.",
+      ],
+      faq: [
+        { q: "Tenho de fazer tudo de uma vez?", a: "Não. O painel grava sozinho e podem voltar quando quiserem." },
+        { q: "Os convidados precisam de instalar alguma aplicação?", a: "Não. O convite é um site que abre no browser de qualquer telemóvel ou computador." },
+      ],
+      related: ["create-event", "panel-overview", "send-invite"],
+    },
+    {
+      slug: "create-event",
+      chapter: "start",
+      popular: true,
+      title: "Como crio o meu evento?",
+      summary: "Um evento é o vosso casamento: tem um convite, uma lista de convidados e um painel de gestão.",
+      steps: [
+        "Entrem na vossa conta (ou criem uma em **Criar conta aqui**) e abram **Os Meus Projetos**.",
+        "Carreguem em **Novo Evento**.",
+        "Escrevam os dois nomes e a **Data do Casamento**.",
+        "Escolham o **Link Personalizado**, por exemplo `joana-e-rui`. É o endereço que os convidados vão receber.",
+        "Carreguem em **Gerar o meu Convite Digital**.",
+      ],
+      tips: [
+        "O link não se pode repetir. Se já estiver a ser usado, juntem um número ou mudem uma palavra.",
+        "Escolham um link curto e fácil de ler: vai ser enviado a toda a gente.",
+        "Cada evento fica em **Os Meus Projetos**. Os eventos que outras pessoas partilharam convosco aparecem em **Partilhados Comigo**.",
+      ],
+      faq: [
+        { q: "Posso mudar o link depois de criar o evento?", a: "O link fica definido na criação, por isso escolham-no com calma. Se precisarem mesmo de o mudar, falem connosco." },
+        { q: "Posso alterar a data mais tarde?", a: "Sim, enquanto não houver nenhum módulo ativo. Ver “Posso alterar a data do casamento?”." },
+      ],
+      related: ["panel-overview", "change-date"],
+    },
+    {
+      slug: "panel-overview",
+      chapter: "start",
+      title: "Como está organizado o painel?",
+      summary: "Uma página inicial com uma área para cada parte do casamento.",
+      steps: [
+        "Ao abrirem um evento vêm a página **O que quer gerir?**, com um cartão por área: **Save the Date**, **Convite de casamento**, **Convidados e mesas**, **Photo Sharing & Live Wall**, **Guestbook** e **Links e QR codes**.",
+        "No topo, a lista **O que falta fazer** mostra os passos que ainda faltam e leva-vos a cada um.",
+        "Carreguem num cartão para entrar nessa área. Lá dentro, o menu à esquerda muda de separador e **Áreas** volta à página inicial. Em ecrãs pequenos o menu fica em baixo.",
+        "No **Convite**, o telemóvel à direita mostra o convite como os convidados o vão ver e atualiza sozinho depois de gravar.",
+        "**Minha Conta**, no fundo do menu, tem a vossa equipa, as compras e a password.",
+      ],
+      tips: [
+        "Um cartão com o selo **Bloqueado** é um módulo que ainda não foi ativado. Ao abrirem essa área podem ativá-lo.",
+        "O botão **?**, no canto superior direito da página inicial, repete o tour de boas-vindas.",
+        "As alterações gravam-se sozinhas. O estado aparece no topo: **A guardar...** e depois **Guardado**.",
+      ],
+      related: ["first-steps", "buy-modules", "links-qr"],
+    },
+
+    // ───────────── CONVITE ─────────────
+    {
+      slug: "choose-template",
+      chapter: "invite",
+      title: "Como escolho o modelo e a cor do convite?",
+      summary: "O modelo define o aspeto do convite. Podem experimentar vários até acharem o vosso.",
+      steps: [
+        "Abram **Convite de casamento** e, no seletor por cima do editor, escolham **Modelos e identidade**.",
+        "Em **Templates do Convite**, carreguem no modelo de que gostam.",
+        "Carreguem em **Aplicar Template**. O telemóvel ao lado mostra logo o resultado.",
+        "Nos modelos que o permitem, ajustem a **Cor de Destaque**. Também podem escolher uma cor **Personalizada**.",
+      ],
+      tips: [
+        "Os textos e as fotos que já escreveram não se perdem ao mudar de modelo.",
+        "A cor de destaque só existe em alguns modelos. Se a secção não aparecer, o modelo escolhido não a tem.",
+      ],
+      related: ["edit-content", "preview"],
+    },
+    {
+      slug: "edit-content",
+      chapter: "invite",
+      popular: true,
+      title: "Como edito os textos e as fotos do convite?",
+      summary: "O editor tem uma secção por cada parte do convite. O telemóvel ao lado mostra o resultado.",
+      steps: [
+        "Abram **Convite de casamento** e, no seletor por cima do editor, escolham **Conteúdo do convite**.",
+        "O editor tem uma secção por cada parte do convite, por esta ordem: **Capa (Hero)**, **Contador Regressivo**, **A Nossa História**, **Galeria Editorial**, **Cronograma**, **Locais do Evento**, **Detalhes do Evento**, **Confirmação (RSVP)** e **Rodapé & Contactos**. Carreguem numa para a abrir.",
+        "Escrevam os textos e carreguem as fotos. Na capa podem usar uma foto ou um vídeo `.mp4`; na galeria, até 5 fotos.",
+        "Não há botão de gravar: o painel grava sozinho segundos depois de pararem de escrever. Em cima aparece **Guardado**.",
+        "Vejam o resultado no telemóvel ao lado.",
+      ],
+      tips: [
+        "Em **Locais do Evento** podem pôr o **Link Google Maps** da cerimónia e da receção.",
+        "Em **Detalhes do Evento** há **Logística & Estacionamento**, **Alojamento**, **Dress Code & Cores** e **Presentes & IBAN**. O botão do IBAN só aparece se o ativarem.",
+        "Para esconder uma secção sem a apagar, ver “Como escondo uma secção do convite?”.",
+      ],
+      faq: [
+        { q: "Tenho de carregar num botão para guardar?", a: "Não. O painel grava sozinho. Se virem **A guardar...** no topo, é só esperar um instante." },
+        { q: "Posso alterar os textos depois de enviar o link?", a: "Sim. Quem abrir o convite passa a ver a versão nova." },
+      ],
+      related: ["hide-sections", "preview", "choose-template"],
+    },
+    {
+      slug: "hide-sections",
+      chapter: "invite",
+      title: "Como escondo uma secção do convite?",
+      summary: "Cada secção do convite pode ser mostrada ou escondida sem perder o que escreveram.",
+      steps: [
+        "Abram **Convite de casamento** › **Conteúdo do convite**.",
+        "Cada secção tem um interruptor **Visível / Oculto** ao lado do título.",
+        "Desliguem as que não querem mostrar (por exemplo, a **Galeria Editorial**).",
+        "A secção desaparece do convite de imediato.",
+      ],
+      tips: ["O que escreveram nessa secção fica guardado. Podem voltar a ligá-la quando quiserem."],
+      related: ["edit-content"],
+    },
+    {
+      slug: "preview",
+      chapter: "invite",
+      title: "Como vejo o convite como os convidados o vão ver?",
+      summary: "A pré-visualização mostra o convite verdadeiro, no formato de um telemóvel.",
+      steps: [
+        "No **Convite de casamento**, o telemóvel à direita mostra o convite real e atualiza depois de cada gravação.",
+        "Em ecrãs pequenos, carreguem em **Ver Preview**, no topo, para o abrir.",
+        "Para o ver em ecrã inteiro, carreguem em **Abrir Convite**, no canto superior direito.",
+        "Abram também o link no vosso telemóvel para testarem como um convidado.",
+      ],
+      tips: [
+        "Se ligarem o código de acesso, a pré-visualização e o botão **Abrir Convite** abrem sem o pedir. Só os convidados o precisam.",
+        "Na pré-visualização o convite mantém-se onde estava (por exemplo, o envelope aberto) quando guardam uma alteração.",
+      ],
+      related: ["edit-content", "access-code"],
+    },
+    {
+      slug: "access-code",
+      chapter: "invite",
+      title: "Como protejo o convite com um código?",
+      summary: "Um código de 4 números pedido a quem abre o convite, para o link poder circular sem o convite ficar aberto a todos.",
+      steps: [
+        "Abram **Links e QR codes**.",
+        "No cartão **Acesso ao convite**, liguem o interruptor. É gerado um código de 4 números.",
+        "Se preferirem outro, escrevam-no em **Alterar código** e carreguem em **Guardar**.",
+        "Para enviarem, usem **Copiar link e código**.",
+      ],
+      tips: [
+        "O código está desligado por definição. Só passa a ser pedido quando o ligarem.",
+        "Mudar o código obriga quem já tinha entrado a voltar a introduzi-lo.",
+        "O código vale para o convite, incluindo os links personalizados. A galeria, o RSVP em página própria, o plano de mesas e o livro de visitas têm os seus links e não pedem código.",
+        "Com 4 números, o código serve para evitar acessos casuais, como um link reencaminhado. Não o tratem como uma palavra-passe.",
+      ],
+      faq: [
+        { q: "O que vê quem não tem o código?", a: "Só uma página a pedir o código, sem nomes, data nem fotos." },
+        { q: "E se alguém tentar adivinhar?", a: "Depois de 5 tentativas falhadas, essa pessoa tem de esperar cerca de 15 minutos." },
+        { q: "O código impede que os convidados reencaminhem o convite?", a: "Não impede, mas quem receber o link sem o código não consegue abrir o convite." },
+      ],
+      related: ["send-invite", "personal-links"],
+    },
+    {
+      slug: "change-date",
+      chapter: "invite",
+      title: "Posso alterar a data do casamento?",
+      summary: "Podem, enquanto ainda não houver nenhum módulo ativo. Depois da primeira compra a data fica bloqueada.",
+      steps: [
+        "Abram **Convite de casamento** › **Modelos e identidade**.",
+        "Em **Identidade do Casamento**, alterem a **Data do Grande Dia**.",
+      ],
+      tips: [
+        "Depois da primeira compra aparece a nota “Data bloqueada após a primeira compra”. Se precisarem de a alterar, falem connosco.",
+        "É aí também que se corrigem os nomes dos noivos.",
+      ],
+      related: ["create-event", "buy-modules"],
+    },
+
+    // ───────────── SAVE THE DATE ─────────────
+    {
+      slug: "save-the-date",
+      chapter: "save_the_date",
+      title: "Como crio e descarrego o Save the Date?",
+      summary: "Um cartão elegante com a vossa foto e os nomes, pronto a enviar por mensagem ou a imprimir.",
+      steps: [
+        "Abram a área **Save the Date**.",
+        "Escolham o **Modelo** do cartão.",
+        "Carreguem a vossa foto em **Carregar foto**. Uma foto vertical resulta melhor.",
+        "Se for preciso, usem **Ajustar enquadramento**: arrastem a foto e usem o cursor para a ampliar.",
+        "Escrevam a **Cidade / Local**.",
+        "Vejam o resultado em **Pré-visualização** e carreguem em **Descarregar PDF**.",
+      ],
+      tips: [
+        "Os nomes e a data vêm do evento, por isso não os escrevem aqui. Para os mudar, ver “Posso alterar a data do casamento?”.",
+        "Se a foto ficar mal enquadrada, **Repor centrado** volta ao início.",
+      ],
+      faq: [{ q: "Em que formato recebo o cartão?", a: "Num ficheiro PDF, pronto a enviar ou a imprimir." }],
+      related: ["change-date", "send-invite"],
+    },
+
+    // ───────────── CONVIDADOS E MESAS ─────────────
+    {
+      slug: "add-guests",
+      chapter: "guests",
+      popular: true,
+      title: "Como adiciono convidados e grupos?",
+      summary: "Os convidados são organizados em grupos (uma família, um casal). É o grupo que responde ao RSVP.",
+      steps: [
+        "Abram **Convidados e mesas** e o separador **Convidados**.",
+        "Em **Adicionar à Lista**, escrevam o **Nome** e escolham a **Categoria** (**Adulto**, **Criança** ou **Bebé**), o **Sexo** e o **Lado**.",
+        "Se forem uma família ou um casal, escrevam uma **Etiqueta do Grupo** (por exemplo, *Família Silva*) e carreguem em **Adicionar Outro no Grupo** para juntar mais pessoas ao mesmo grupo.",
+        "Carreguem em **Gravar Convidado(s)**.",
+        "Podem juntar **Restrições Alimentares** e **Observações** a cada pessoa.",
+      ],
+      tips: [
+        "Quando um convidado confirma presença, vê o seu grupo todo e responde por cada pessoa.",
+        "Para editar ou apagar alguém, usem os ícones no fim de cada linha da tabela.",
+        "O quadro **Resumo RSVP** mostra o total previsto, os **Confirmados**, os **Pendentes** e os **Recusados**.",
+        "Podem criar as vossas próprias etiquetas de lado e de restrições alimentares em **Gerir Etiquetas**.",
+      ],
+      faq: [
+        { q: "Os bebés contam como lugar?", a: "Nas estatísticas aparecem em **Bebés**. Nos links personalizados, os lugares reservados contam adultos e crianças, não bebés, e podem corrigir o número." },
+        { q: "Posso adicionar uma lista inteira de uma vez?", a: "Sim, importando um ficheiro Excel. Ver “Como importo e exporto a lista de convidados?”." },
+      ],
+      related: ["import-export", "rsvp", "seating"],
+    },
+    {
+      slug: "import-export",
+      chapter: "guests",
+      title: "Como importo e exporto a lista de convidados?",
+      summary: "Podem trazer a vossa lista de um ficheiro Excel e levá-la de volta em Excel ou PDF.",
+      steps: [
+        "Em **Convidados e mesas** › **Convidados**, abram **Ferramentas de Dados**.",
+        "Para importar: carreguem em **Baixar Modelo**, preencham o ficheiro Excel e carreguem em **Importar Excel**.",
+        "Para exportar: escolham **Excel Total** ou **Exportar PDF**. No PDF podem escolher **Apenas Confirmados**, **Conf. + Pendentes** ou **Lista Total Ativa**.",
+      ],
+      tips: [
+        "Usem sempre o modelo para a importação funcionar à primeira.",
+        "O PDF de confirmados é útil para enviar ao espaço ou ao catering.",
+      ],
+      related: ["add-guests", "rsvp"],
+    },
+    {
+      slug: "rsvp",
+      chapter: "guests",
+      popular: true,
+      title: "Como confirmam os convidados a presença?",
+      summary: "Os convidados procuram o nome, escolhem Vou ou Não vou por cada pessoa do grupo, e as respostas chegam ao vosso painel.",
+      steps: [
+        "Os convidados abrem o convite e vão à secção de confirmação (**RSVP**), ou usam a página própria de confirmação, a que se chega por QR code.",
+        "Escrevem o nome (3 letras ou mais) e escolhem-se na lista.",
+        "Veem o grupo todo e, para cada pessoa, escolhem **Vou!** ou **Não vou**. Podem indicar restrições alimentares e observações.",
+        "As respostas aparecem em **Convidados e mesas** › **Convidados**, com o estado **Confirmado** ou **Recusado**.",
+        "Quem não encontra o nome pode pedir acesso. Os pedidos aparecem em **Pedidos de Acesso**, onde podem **Aprovar** (a pessoa entra na lista) ou **Ignorar**.",
+      ],
+      tips: [
+        "O QR code da página própria de confirmação está em **Convidados** e em **Links e QR codes**. É ideal para o convite em papel.",
+        "Para os convidados não terem de procurar o nome, criem links personalizados.",
+      ],
+      faq: [
+        { q: "Os convidados podem mudar a resposta?", a: "Sim. Depois de gravarem, aparece o botão **Alterar respostas**. Também podem voltar a abrir o RSVP mais tarde." },
+        { q: "Preciso do módulo Convite para usar o RSVP?", a: "A página própria de confirmação só precisa de **Convidados e mesas**. Dentro do convite, a confirmação faz parte dele." },
+      ],
+      related: ["personal-links", "add-guests", "links-qr"],
+    },
+    {
+      slug: "personal-links",
+      chapter: "guests",
+      popular: true,
+      title: "Como crio links personalizados por convidado?",
+      summary: "Um link por grupo: o RSVP abre já no grupo certo e, em alguns modelos, o convite mostra o nome e os lugares reservados.",
+      steps: [
+        "Abram **Convidados e mesas** e, no topo, o cartão **Links personalizados**. Carreguem em **Configurar**.",
+        "Carreguem em **Gerar links em falta**. Cada grupo fica com o seu link.",
+        "Se quiserem, corrijam o que aparece no ecrã de entrada em **Nome no convite** e **Lugares**. Por omissão, o nome vem dos primeiros nomes do grupo e os lugares contam adultos e crianças.",
+        "Copiem o link de cada grupo ou carreguem em **Exportar lista (CSV)** para terem nome e link numa folha de cálculo.",
+        "Enviem a cada grupo o seu link.",
+      ],
+      tips: [
+        "É opcional. Quem preferir pode continuar a enviar um só link para todos, e os convidados procuram o nome no RSVP.",
+        "**Novo link** gera um link diferente (o anterior deixa de funcionar). **Remover** apaga o link do grupo.",
+        "Em alguns modelos, o ecrã de entrada mostra o nome do grupo e “Iremos reservar 2 lugares para vocês”. Em todos os modelos, o RSVP abre já no grupo certo.",
+      ],
+      faq: [
+        { q: "E se eu mudar o grupo depois de enviar o link?", a: "O link continua a funcionar e mostra sempre os dados atuais do grupo." },
+        { q: "Os links pessoais pedem o código de acesso?", a: "Sim, se o código estiver ligado. Quem abre um link pessoal também tem de o introduzir." },
+        { q: "Os convidados novos ficam sem link?", a: "Sim, até carregarem outra vez em **Gerar links em falta**, que só cria os que faltam." },
+      ],
+      related: ["track-opens", "access-code", "send-invite"],
+    },
+    {
+      slug: "track-opens",
+      chapter: "guests",
+      title: "Como sei quem já abriu o convite?",
+      summary: "Com links personalizados, o painel mostra que grupos já abriram o convite e quando.",
+      steps: [
+        "Em **Convidados e mesas**, abram **Links personalizados**.",
+        "A coluna **Visto** mostra a última abertura de cada grupo e quantas vezes abriu. O resumo no topo diz quantos grupos já abriram.",
+        "Marquem **Só os que ainda não abriram** para verem a quem lembrar.",
+      ],
+      tips: [
+        "Só funciona para quem usa o link personalizado. No link geral não dá para saber quem abriu.",
+        "Guardamos apenas datas e contagem, sem identificar a pessoa nem o aparelho.",
+        "Se abrirem o link para testar, também conta como uma abertura.",
+      ],
+      related: ["personal-links"],
+    },
+    {
+      slug: "seating",
+      chapter: "guests",
+      title: "Como organizo as mesas?",
+      summary: "Desenhem a planta da sala, sentem os convidados arrastando-os e partilhem a mesa de cada um por QR code.",
+      steps: [
+        "Abram **Convidados e mesas** e o separador **Mesas**.",
+        "Em **Adicionar Mesas**, escolham uma mesa **Redonda**, **Quadrada** ou **Longa**. A mesa fica selecionada para lhe darem o nome e o número de lugares.",
+        "Arrastem as mesas para o sítio certo da **Planta da Sala**.",
+        "Arrastem os convidados de **Convidados por Sentar** para cima de uma mesa. Usem a pesquisa para os encontrar.",
+        "Acompanhem o progresso em **Sentados** e **Sem Mesa**. O separador **Relatório Organizacional** lista quem está em cada mesa.",
+        "Exportem tudo em **Exportar PDF Premium**.",
+      ],
+      tips: [
+        "Quando uma mesa está cheia não aceita mais ninguém (aparece o aviso “Mesa cheia!”).",
+        "Arrastar funciona com o rato e com o dedo, no telemóvel ou no tablet.",
+        "O QR code da **Planta de Sala Digital** deixa os convidados consultarem a sua mesa no telemóvel à entrada, sem aglomerados junto ao placar.",
+      ],
+      related: ["add-guests", "links-qr"],
+    },
+
+    // ───────────── FOTOS E LIVE WALL ─────────────
+    {
+      slug: "photo-sharing",
+      chapter: "photos",
+      title: "Como funciona a partilha de fotos e o Live Wall?",
+      summary: "Os convidados enviam fotos e vídeos por QR code e vocês projetam-nos na festa em tempo real.",
+      steps: [
+        "Abram **Photo Sharing & Live Wall**.",
+        "Copiem o link da **Página Pública de Photo Sharing** ou descarreguem o QR code (PNG ou SVG) para imprimir e pôr nas mesas.",
+        "Os convidados leem o QR code com o telemóvel e enviam as fotos e os vídeos que tiraram.",
+        "Para a festa, abram o **Live Wall** num ecrã ou projetor: mostra os momentos à medida que vão chegando.",
+      ],
+      tips: [
+        "O link do **Live Wall** é diferente do da galeria. Cada um tem o seu **Copiar Link** e o seu **Abrir Direto**.",
+        "Em **Gestão de Conteúdos** podem personalizar a foto de perfil das galerias.",
+      ],
+      related: ["manage-photos", "links-qr"],
+    },
+    {
+      slug: "manage-photos",
+      chapter: "photos",
+      title: "Como descarrego ou apago as fotos dos convidados?",
+      summary: "Tudo o que os convidados enviam fica no painel, para guardarem ou limparem.",
+      steps: [
+        "Abram **Photo Sharing & Live Wall** e vão à **Grelha de Momentos**.",
+        "Para descarregar tudo, carreguem em **ZIP**.",
+        "Para guardar só uma, abram a foto e carreguem em **Guardar**.",
+        "Para apagar um ficheiro, usem o ícone do caixote do lixo e confirmem.",
+      ],
+      tips: ["Apagar remove o ficheiro definitivamente. Descarreguem primeiro o que quiserem manter."],
+      related: ["photo-sharing"],
+    },
+
+    // ───────────── LIVRO DE VISITAS ─────────────
+    {
+      slug: "guestbook",
+      chapter: "guestbook",
+      title: "Como funciona o livro de visitas?",
+      summary: "Os convidados deixam uma mensagem em texto, voz ou vídeo, e vocês guardam-nas como recordação.",
+      steps: [
+        "Abram **Guestbook**.",
+        "Copiem o link da **Página de Guestbook** ou descarreguem o QR code (PNG ou SVG) para imprimir.",
+        "Os convidados abrem a página e deixam a mensagem em texto, áudio ou vídeo.",
+        "Em **Mensagens dos Convidados** leiam tudo, nos separadores **Textos**, **Áudios** e **Vídeos**.",
+        "Para guardar, carreguem em **ZIP da aba**. Para apagar uma mensagem, usem o ícone de apagar e confirmem.",
+      ],
+      related: ["links-qr"],
+    },
+
+    // ───────────── PARTILHAR E ENVIAR ─────────────
+    {
+      slug: "links-qr",
+      chapter: "share",
+      title: "Onde encontro todos os links e QR codes?",
+      summary: "A área Links e QR codes junta todos os endereços do evento num só sítio.",
+      steps: [
+        "Abram **Links e QR codes** na página inicial do painel.",
+        "Vão encontrar seis cartões: **Convite**, **Confirmar presença (RSVP)**, **Plano de mesas**, **Galeria de fotos**, **Live Wall** e **Livro de visitas**.",
+        "Cada cartão tem **Copiar link**, **Abrir** e o QR code, que podem descarregar em **PNG** ou **SVG**.",
+        "Um cartão com **Módulo por ativar** pertence a um módulo que ainda não está ativo.",
+      ],
+      tips: [
+        "Para a impressão (convites, cartões nas mesas), prefiram o SVG: não perde qualidade a nenhum tamanho.",
+        "O cartão **Acesso ao convite**, no topo, liga e desliga o código do convite.",
+      ],
+      related: ["send-invite", "access-code"],
+    },
+    {
+      slug: "send-invite",
+      chapter: "share",
+      popular: true,
+      title: "Como envio o convite aos convidados?",
+      summary: "Há três formas de fazer o convite chegar a cada pessoa. Podem combiná-las.",
+      steps: [
+        "**Um só link para todos:** em **Links e QR codes**, carreguem em **Copiar link** no cartão **Convite** e enviem por mensagem ou e-mail. Os convidados procuram o nome no RSVP.",
+        "**Um link por grupo:** criem **Links personalizados** (ver o artigo) e enviem a cada grupo o seu link, ou exportem a lista em CSV.",
+        "**Em papel:** imprimam o QR code do RSVP (ou do convite) no convite físico.",
+        "Se tiverem ligado o **código de acesso**, usem **Copiar link e código** para enviar os dois de uma vez.",
+      ],
+      tips: [
+        "Antes de enviar, abram o link no vosso telemóvel para testarem como um convidado.",
+        "Podem corrigir textos e fotos depois de enviarem: quem abrir o link vê sempre a versão mais recente.",
+      ],
+      related: ["personal-links", "access-code", "links-qr"],
+    },
+
+    // ───────────── CONTA E PAGAMENTOS ─────────────
+    {
+      slug: "buy-modules",
+      chapter: "account",
+      audience: "dis",
+      title: "Como compro módulos e pacotes?",
+      summary: "Cada área do painel é um módulo que se ativa à peça ou em pacote, com desconto.",
+      steps: [
+        "Um módulo por ativar mostra o selo **Bloqueado**. Abram a área e carreguem em **Comprar**.",
+        "Se tiverem um código promocional, carreguem em **Tenho um código promocional** e escrevam-no antes de pagar.",
+        "O pagamento faz-se num ecrã seguro. Quando termina, o módulo fica ativo.",
+        "Para comprar vários de uma vez, mais barato, usem **Poupe com um pacote**, na página inicial do painel, e **Comprar pacote**.",
+        "O histórico de pagamentos está em **Minha Conta** › **Histórico de Compras**.",
+      ],
+      tips: [
+        "Os preços atuais estão na página **Preços**.",
+        "O módulo do convite inclui sempre **Convidados e mesas**, porque o RSVP precisa da lista de convidados.",
+        "Depois da primeira compra, a data do casamento fica bloqueada.",
+      ],
+      faq: [{ q: "Fica registada a compra?", a: "Sim. Cada pagamento aparece em **Histórico de Compras**, com o estado **Pago**, **Pendente**, **Falhou** ou **Reembolsado**." }],
+      related: ["change-date", "panel-overview"],
+    },
+    {
+      slug: "collaborators",
+      chapter: "account",
+      title: "Como dou acesso a outra pessoa?",
+      summary: "Podem partilhar o evento com o vosso par, a família ou um wedding planner.",
+      steps: [
+        "Abram **Minha Conta** e vão a **Colaboradores**.",
+        "Escrevam o e-mail da pessoa.",
+        "Escolham **Pode Editar** (mexe em tudo) ou **Apenas Leitura** (só vê).",
+        "Carreguem em **Convidar**.",
+      ],
+      tips: [
+        "A pessoa entra com esse e-mail e vê o evento em **Partilhados Comigo**. Se ainda não tiver conta, cria uma com o mesmo e-mail.",
+        "Para retirar o acesso, removam a pessoa da lista de colaboradores.",
+      ],
+      related: ["login-password"],
+    },
+    {
+      slug: "login-password",
+      chapter: "account",
+      title: "Como recupero ou altero a password?",
+      summary: "Se se esqueceram, recebem um link por e-mail. Se só querem mudar, fazem-no na conta.",
+      steps: [
+        "**Esqueci-me:** no ecrã de login, carreguem em **Esqueceu-se?**, escrevam o e-mail e carreguem em **Enviar Link de Recuperação**.",
+        "Abram o e-mail (vejam também o SPAM) e sigam o link para escolher uma nova password.",
+        "**Quero mudar:** em **Minha Conta**, escrevam a **Nova Password** (mínimo 6 caracteres) e gravem.",
+      ],
+      related: ["collaborators"],
+    },
+    {
+      slug: "expiry",
+      chapter: "account",
+      title: "Até quando fica o convite online?",
+      summary: "O convite fica disponível até cerca de 60 dias depois do casamento.",
+      steps: [
+        "Passada essa data, quem abre o convite vê a mensagem “Este convite já não está disponível”.",
+        "O painel passa a modo de leitura: continuam a ver tudo, mas já não editam.",
+      ],
+      tips: ["Se precisarem de renovar o acesso, falem connosco. Descarreguem antes as fotos, a lista de convidados e as mensagens que queiram guardar."],
+      related: ["manage-photos", "import-export"],
+    },
+
+    // ───────────── PARA AGÊNCIAS ─────────────
+    {
+      slug: "planning-overview",
+      chapter: "agencies",
+      audience: "agency",
+      title: "O que é a área de Planeamento?",
+      summary: "Uma área só para contas de agência, para gerir o orçamento, as tarefas e os fornecedores de cada casamento.",
+      steps: [
+        "Dentro de um evento, abram **Planeamento**.",
+        "**Orçamento:** custos por fornecedor, escalões por adulto, criança e bebé, pagamentos, contratos, notas e documentos.",
+        "**Tarefas:** a checklist do evento. As datas recalculam-se se a data do casamento mudar.",
+        "**Cronograma:** o horário do dia. A agência pode esconder blocos do casal (por exemplo, surpresas).",
+        "**Partilha:** os links para fornecedores e para o moodboard.",
+        "**Inspiração:** o moodboard, partilhado com o casal e organizado em secções.",
+      ],
+      tips: [
+        "Na lista de eventos, a vista **Tarefas** mostra o que precisa de atenção esta semana em todos os casamentos, e **Fornecedores** é o diretório da agência, com histórico de preços.",
+        "Estas áreas só aparecem em contas de agência. Os casais não as veem.",
+      ],
+      related: ["vendor-sharing"],
+    },
+    {
+      slug: "vendor-sharing",
+      chapter: "agencies",
+      audience: "agency",
+      title: "Como partilho informação com fornecedores e com o casal?",
+      summary: "Links sem conta para os fornecedores e para o moodboard, geridos num só sítio.",
+      steps: [
+        "Abram **Planeamento** › **Partilha**.",
+        "Criem o link do portal de um fornecedor. Quem o recebe só consegue ler a informação que a agência partilhou.",
+        "Criem o link do moodboard. Quem o recebe pode ver e acrescentar imagens, mas não apagar.",
+        "Para o casal ver só o que querem, escondam em **Cronograma** os blocos que não devem aparecer.",
+      ],
+      tips: ["Os links não precisam de conta. Quem tem o link tem acesso, por isso partilhem-nos só com quem devem."],
+      related: ["planning-overview"],
+    },
+  ],
+};

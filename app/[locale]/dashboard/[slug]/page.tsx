@@ -22,6 +22,7 @@ import {
   Lock,
   MessageSquareHeart,
   HelpCircle,
+  LifeBuoy,
   Wallet,
   ListChecks,
   Clock,
@@ -499,6 +500,14 @@ export default function Dashboard() {
             >
               <HelpCircle size={16} />
             </button>
+            <Link
+              href={`/${locale}/help`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all"
+            >
+              <LifeBuoy size={14} /> {dict.helpCenter}
+            </Link>
             <button
               onClick={copyInviteLink}
               className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-4 sm:px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all active:scale-95"
@@ -580,6 +589,14 @@ export default function Dashboard() {
               >
                 <UserCircle size={16} /> {dict.accountLabel}
               </button>
+              <Link
+                href={`/${locale}/help`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-3 flex items-center gap-2.5 px-6 py-3 rounded-full border border-gray-200 bg-white text-gray-500 text-[11px] font-bold uppercase tracking-widest hover:text-brand hover:border-gold-soft transition-all"
+              >
+                <LifeBuoy size={16} /> {dict.helpCenter}
+              </Link>
             </div>
           </div>
         </main>
@@ -646,7 +663,15 @@ export default function Dashboard() {
           ))}
         </nav>
 
-        <div className="mt-auto px-4 pb-10 pt-4 border-t border-gray-50">
+        <div className="mt-auto px-4 pb-10 pt-4 border-t border-gray-50 space-y-1">
+           <Link
+             href={`/${locale}/help`}
+             target="_blank"
+             rel="noopener noreferrer"
+             className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all font-bold text-[12px] text-gray-400 hover:bg-gray-50 hover:text-brand"
+           >
+              <LifeBuoy size={18} /> {dict.helpCenter}
+           </Link>
            <button 
              onClick={() => setActiveTab('account')} 
              className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-bold text-[13px] ${activeTab === 'account' ? 'bg-ink text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50'}`}

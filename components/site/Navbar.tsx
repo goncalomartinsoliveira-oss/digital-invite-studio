@@ -43,6 +43,7 @@ export default function Navbar({ brand }: { brand?: Brand }) {
 
   const navLinks = [
     { name: dict.features, href: `/${locale}/features`, external: false },
+    { name: dict.help, href: `/${locale}/help`, external: false },
     // Preços é conteúdo da DIS — não faz sentido num domínio de parceiro.
     ...(isDisBrand ? [{ name: dict.pricing, href: `/${locale}/pricing`, external: false }] : []),
     // Contacto: parceiros (com contactUrl) remetem para o seu próprio site
