@@ -579,7 +579,7 @@ export const helpEn: HelpContent = {
       ],
       tips: [
         "On the events list, the **Tarefas** (Tasks) view shows what needs attention this week across all weddings, and **Fornecedores** (Vendors) is the agency's directory, with price history.",
-        "These areas only appear on agency accounts. Couples don't see them.",
+        "These areas only appear on agency accounts (and to the platform administrator). Couples don't see them.",
       ],
       related: ["vendor-sharing"],
     },

@@ -577,7 +577,7 @@ export const helpPt: HelpContent = {
       ],
       tips: [
         "Na lista de eventos, a vista **Tarefas** mostra o que precisa de atenção esta semana em todos os casamentos, e **Fornecedores** é o diretório da agência, com histórico de preços.",
-        "Estas áreas só aparecem em contas de agência. Os casais não as veem.",
+        "Estas áreas só aparecem em contas de agência (e ao administrador da plataforma). Os casais não as veem.",
       ],
       related: ["vendor-sharing"],
     },

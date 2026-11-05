@@ -223,6 +223,9 @@ export default function DashboardHub() {
 
   // Painel de gestão: disponível a super-admins e membros de agência.
   const canManage = isSuperAdmin || isAgencyMember;
+  // Vista "Tarefas": a agência vê os eventos da sua marca; o super-admin, sem plano
+  // de agência, vê todos os que a vista de Gestão lhe mostra (no DIS, todos).
+  const planningEvents = plannerPlan && isAgencyMember ? agencyInvites : adminInvites;
   const showBrandColumn = isSuperAdmin && brand.id === "dis";
 
   // Gestão de membros/marcas: função central → só no site master (DIS) e a super-admins.
@@ -270,7 +273,7 @@ export default function DashboardHub() {
               >
                 <LayoutGrid size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Events' : 'Eventos'}</span>
               </button>
-              {plannerPlan && (
+              {(plannerPlan || isSuperAdmin) && (
                 <button
                   onClick={() => setViewMode('planning')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'planning' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
@@ -320,9 +323,9 @@ export default function DashboardHub() {
       {/* ÁREA PRINCIPAL */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-12 sm:py-20">
 
-        {viewMode === 'planning' && plannerPlan ? (
+        {viewMode === 'planning' && (plannerPlan || isSuperAdmin) ? (
           <AgencyOverviewView
-            events={agencyInvites}
+            events={planningEvents}
             locale={locale}
             onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
           />

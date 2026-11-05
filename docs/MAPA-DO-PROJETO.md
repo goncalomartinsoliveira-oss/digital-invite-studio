@@ -149,6 +149,12 @@ Registo fixo em `lib/modules.ts`; preços e pacotes em `lib/pricing.ts`.
 Ligado por `brands.planner_plan`; lógica e limites em `lib/planner.ts`. Os
 dados escrevem diretamente nas suas tabelas (não pelo `handleSaveDesign`).
 
+**Super admin:** vê sempre a área de Planeamento em qualquer evento (`showManagement`
+= plano da marca **ou** super admin) e a vista "Tarefas" na lista de eventos, com todos
+os eventos que a vista de Gestão lhe mostra. A vista "Fornecedores" continua a exigir
+plano de agência, porque o diretório é por marca (no DIS ficaria vazio). A base de dados
+já lhe dava acesso (`dis_is_super_admin()` em todas as políticas).
+
 | Separador / vista | Componente | O que faz |
 |---|---|---|
 | Orçamento | `BudgetModule`, `BudgetSummary` | Custos, escalões por adulto/criança/bebé, pagamentos, contratos, notas, documentos. |
