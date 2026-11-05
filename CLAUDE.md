@@ -38,6 +38,7 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 
 ## Dados
 - Coluna `content` (JSON) da tabela `invitations`: `{ sections_visibility: {...}, content: { <seccao>: {...} } }`. Nos módulos: `dbContent = formData.content`, `content = dbContent.content`. Guardar via `handleSaveDesign()` (faz update em `invitations`). Autosave: `useEffect` com debounce de 1500 ms sobre `formData`.
+- **Colunas geridas fora dos editores** (`unlocked_modules`, `date_locked_at`: Conta › Módulos do Evento e webhook do Stripe): o `handleSaveDesign()` **não** as grava (senão o autosave, a partir de uma cópia local desatualizada, desfazia ativações). Quem as altera avisa o painel (`onModulesChange` do `AccountModule`). Nova coluna assim → excluí-la também no `handleSaveDesign`.
 - Storage Supabase: bucket `invites` (imagens do convite/Save the Date), `fotos_evento` (galeria/guestbook).
 - Nomes/data do evento vêm dos campos `bride_name`, `groom_name`, `event_date`.
 

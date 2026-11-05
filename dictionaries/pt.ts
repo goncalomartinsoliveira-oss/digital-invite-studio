@@ -1091,7 +1091,8 @@ const pt = {
       "lockedNote": "A data do evento está bloqueada porque já tem pelo menos um módulo ativo.",
       "unlockedNote": "Sem módulos ativos — a data do evento continua editável pelos noivos.",
       "dateLockedSince": "Bloqueada desde",
-      "paymentPrompt": "Valor pago (€) — deixe em branco para não registar na receita:"
+      "paymentPrompt": "Valor pago (€) — deixe em branco para não registar na receita:",
+      "saveError": "Não foi possível guardar a alteração do módulo. Tente novamente; se continuar a falhar, é provável que a base de dados esteja a recusar a escrita (permissões)."
     },
     "history": {
       "title": "Histórico de Compras",
