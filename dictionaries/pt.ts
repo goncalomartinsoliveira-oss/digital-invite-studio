@@ -1003,7 +1003,9 @@ const pt = {
         "subtitleLabel": "Título Secundário",
         "mainTitleLabel": "Título Principal",
         "deadlineLabel": "Data Limite (Texto)",
-        "deadlinePlaceholder": "Ex: 15 | 08 | 2026"
+        "deadlinePlaceholder": "Ex: 15 | 08 | 2026",
+        "deadlineDateLabel": "Data Limite (para os avisos)",
+        "deadlineDateHint": "Opcional. Não aparece no convite: serve para avisar quando o prazo do RSVP se aproxima e ainda faltam respostas."
       },
       "footer": {
         "title": "09. Rodapé & Contactos",

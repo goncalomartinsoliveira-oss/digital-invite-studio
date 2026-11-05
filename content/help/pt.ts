@@ -576,10 +576,31 @@ export const helpPt: HelpContent = {
         "**Inspiração:** o moodboard, partilhado com o casal e organizado em secções.",
       ],
       tips: [
-        "Na lista de eventos, a vista **Tarefas** mostra o que precisa de atenção esta semana em todos os casamentos, e **Fornecedores** é o diretório da agência, com histórico de preços.",
+        "Na lista de eventos, o menu **Wedding Planner** tem **Esta semana** (todos os casamentos num relance, com semáforo, tarefas, pagamentos e sinais dos convidados) e **Fornecedores** (o diretório da agência, com histórico de preços).",
         "Estas áreas só aparecem em contas de agência (e ao administrador da plataforma). Os casais não as veem.",
       ],
-      related: ["vendor-sharing"],
+      related: ["this-week", "vendor-sharing"],
+    },
+    {
+      slug: "this-week",
+      chapter: "agencies",
+      audience: "agency",
+      title: "Como uso o ecrã Esta semana?",
+      summary: "O ecrã de manhã do wedding planner: todos os casamentos num relance, o que está atrasado, o que aí vem e o que os convidados estão a fazer.",
+      steps: [
+        "Na lista de eventos, abram o menu **Wedding Planner** e escolham **Esta semana**.",
+        "Em **Os vossos casamentos**, cada casamento tem um semáforo. **Vermelho**: algo já falhou (tarefa ou pagamento em atraso, orçamento acima de 100%, prazo do RSVP passado com convidados sem resposta). **Amarelo**: pede atenção em breve (orçamento a 85% ou mais, RSVP a fechar com poucas respostas, pedidos de acesso, prazos nos próximos 7 dias). **Verde**: em dia. Os vermelhos aparecem primeiro.",
+        "Em **Tarefas da agência** e **Pagamentos a fornecedores**, marquem como feita ou paga sem sair da lista. Se foi engano, carreguem em **Anular**.",
+        "Carreguem numa tarefa ou num pagamento para abrir o casamento já no separador certo (Tarefas ou Orçamento).",
+        "Em **Sinais dos convidados** vejam o RSVP a fechar, as respostas novas das últimas 24 horas, os grupos que ainda não abriram o link pessoal e os pedidos de acesso por aprovar.",
+        "Em **À espera dos noivos** estão as tarefas cujo responsável é o casal, em atraso ou a vencer nos próximos 14 dias: é a lista do que há a cobrar.",
+      ],
+      tips: [
+        "Para os avisos de RSVP funcionarem, preencham a **Data Limite (para os avisos)** em **Convite de casamento** › **Conteúdo do convite** › **Confirmação (RSVP)**. Não aparece no convite.",
+        "Os sinais de links por abrir só aparecem em casamentos com **Links personalizados**, e depois de pelo menos um grupo ter aberto o seu.",
+        "Os casamentos já realizados continuam aqui 30 dias, porque os pagamentos finais vencem muitas vezes depois do dia.",
+      ],
+      related: ["planning-overview", "personal-links", "track-opens"],
     },
     {
       slug: "vendor-sharing",
