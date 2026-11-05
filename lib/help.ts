@@ -1,13 +1,10 @@
 import type { HelpArticle, HelpChapter, HelpContent } from "@/content/help/types";
-import { helpPt } from "@/content/help/pt";
-import { helpEn } from "@/content/help/en";
 
-// Centro de ajuda: acesso ao conteúdo, filtro por marca e pesquisa.
-// Parte comum a servidor e cliente (sem dependências de servidor).
-
-export function getHelp(locale: string): HelpContent {
-  return locale === "en" ? helpEn : helpPt;
-}
+// Centro de ajuda: filtro por marca, pesquisa e mapeamentos. Parte comum a
+// servidor e cliente. NÃO importa o conteúdo (content/help/*.ts), para os
+// componentes de cliente não levarem os textos dos dois idiomas no bundle —
+// quem precisa do conteúdo usa lib/helpContent.ts (servidor) ou um import
+// dinâmico (gaveta do painel).
 
 // Num domínio de parceiro os artigos de preços e compras não se aplicam (o
 // parceiro trata disso com o casal) — ficam escondidos.
@@ -66,3 +63,31 @@ export function faqJsonLd(faq: { q: string; a: string }[]) {
     })),
   };
 }
+
+// Ajuda contextual no painel: que artigo abre o botão "Como funciona?" em cada
+// separador, e que artigo acompanha cada passo da lista "O que falta fazer".
+// Os slugs têm de existir em content/help (o teste de coerência verifica-o).
+export const TAB_HELP: Record<string, string> = {
+  design: "choose-template",
+  content: "edit-content",
+  savethedate: "save-the-date",
+  guests: "add-guests",
+  seating: "seating",
+  photosharing: "photo-sharing",
+  guestbook: "guestbook",
+  links: "links-qr",
+  account: "collaborators",
+  budget: "planning-overview",
+  tasks: "planning-overview",
+  timeline: "planning-overview",
+  sharing: "vendor-sharing",
+  moodboard: "planning-overview",
+};
+
+export const CHECKLIST_HELP: Record<string, string> = {
+  basics: "change-date",
+  photo: "edit-content",
+  texts: "edit-content",
+  guests: "add-guests",
+  share: "send-invite",
+};

@@ -1,5 +1,5 @@
 "use client";
-import { Check, ChevronRight, PartyPopper, X } from "lucide-react";
+import { Check, ChevronRight, HelpCircle, PartyPopper, X } from "lucide-react";
 
 // "O que falta fazer": progresso de preparação do convite, no topo do hub.
 // Cada passo é calculado a partir de dados que já existem (nomes, foto,
@@ -12,6 +12,7 @@ export type ChecklistItem = {
   hint: string;
   done: boolean;
   onGo: () => void;
+  helpSlug?: string; // artigo de ajuda que explica este passo
 };
 
 type Dict = {
@@ -21,15 +22,17 @@ type Dict = {
   allDoneTitle: string;
   allDoneDesc: string;
   dismiss: string;
+  howBtn?: string;
 };
 
 type Props = {
   items: ChecklistItem[];
   dict: Dict;
   onDismiss: () => void;
+  onHelp?: (slug: string) => void;
 };
 
-export default function SetupChecklist({ items, dict, onDismiss }: Props) {
+export default function SetupChecklist({ items, dict, onDismiss, onHelp }: Props) {
   if (items.length === 0) return null;
   const done = items.filter(i => i.done).length;
   const total = items.length;
@@ -67,10 +70,10 @@ export default function SetupChecklist({ items, dict, onDismiss }: Props) {
 
       <ul className="divide-y divide-gray-50">
         {items.map(item => (
-          <li key={item.id} data-item={item.id} data-done={item.done}>
+          <li key={item.id} data-item={item.id} data-done={item.done} className="flex items-center gap-2">
             <button
               onClick={item.onGo}
-              className="w-full flex items-center gap-4 py-3.5 text-left group"
+              className="flex-1 min-w-0 flex items-center gap-4 py-3.5 text-left group"
             >
               <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 border transition-colors ${item.done ? "bg-brand border-brand text-white" : "border-gray-200 text-transparent group-hover:border-brand"}`}>
                 <Check size={13} />
@@ -85,6 +88,14 @@ export default function SetupChecklist({ items, dict, onDismiss }: Props) {
                 </span>
               )}
             </button>
+            {!item.done && item.helpSlug && onHelp && dict.howBtn && (
+              <button
+                onClick={() => onHelp(item.helpSlug!)}
+                className="shrink-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand border border-gray-200 hover:border-gold-soft rounded-full px-3 py-1.5 transition-all"
+              >
+                <HelpCircle size={12} /> {dict.howBtn}
+              </button>
+            )}
           </li>
         ))}
       </ul>

@@ -262,7 +262,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 | `components/dashboard/` | Os módulos do painel (secções 4 a 7). |
 | `components/invite/SmartRsvp.tsx` | O formulário de RSVP, **partilhado por todos os modelos**: pesquisa o nome, mostra o grupo, grava o estado. Com um link personalizado (`?c=`) abre direto no grupo e grava pelo servidor. |
 | `components/site/` | Barra, rodapé, marca (`BrandProvider`), ecrã de expirado. |
-| `content/help/`, `lib/help.ts`, `components/help/` | Centro de ajuda (secção 15). |
+| `content/help/`, `lib/help.ts`, `lib/helpContent.ts`, `components/help/`, `public/help/`, `scripts/help-screenshots/` | Centro de ajuda e as suas capturas (secção 15). |
 | `lib/` | Regras de negócio: módulos, preços, cupões, planeamento, marcas, Stripe, PDF/QR. |
 | `dictionaries/pt.ts`, `en.ts` | Textos traduzidos (~1500 linhas cada). Editar com cirurgia, não ler inteiros. |
 | `public/<modelo>/` | Imagens dos modelos. |
@@ -351,9 +351,25 @@ barra lateral do editor e no sitemap.
   etiqueta). O filtro por marca está em `lib/help.ts` (`visibleArticles`).
 - **Páginas:** servidor (`app/[locale]/help/…`), com `FAQPage` em JSON-LD por artigo;
   a pesquisa (`HelpBrowser`) corre no browser, sem servidor, ignora acentos.
-- **Por fazer (fase 2):** botão "Como funciona?" em cada área do painel a abrir o
-  artigo certo (ou numa gaveta), ligações a partir dos ecrãs vazios e da lista
-  "O que falta fazer", capturas de ecrã reais, "Isto ajudou?".
+- **Ajuda dentro do painel** (`HelpDrawer`): o botão **"Como funciona?"**, no
+  cabeçalho do editor, abre numa gaveta o artigo do separador onde se está, sem
+  sair do editor (Esc ou clique fora fecha; "Ver também" muda de artigo; link
+  para a página completa). Também abrem a gaveta o **"Como fazer?"** de cada passo
+  pendente de "O que falta fazer" e o aviso "Ainda não há convidados". Que artigo
+  abre em cada sítio está em `TAB_HELP` e `CHECKLIST_HELP` (`lib/help.ts`); um
+  separador novo no painel precisa de entrada ali.
+- **Peso:** `lib/help.ts` **não pode importar o conteúdo** (`content/help`): os
+  componentes de cliente levariam os textos dos dois idiomas. O servidor usa
+  `lib/helpContent.ts`; a gaveta importa o conteúdo do idioma **só ao abrir**
+  (cerca de 30 KB, num bloco à parte).
+- **Capturas de ecrã:** `public/help/<idioma>/*.webp`, referidas por `shots` nos
+  artigos e geradas por `scripts/help-screenshots` (ver o README lá). Têm de ser
+  refeitas quando um ecrã mudar de aspeto. Coerência a verificar ao mexer no
+  conteúdo: slugs e ordem iguais em PT e EN; todos os slugs de `TAB_HELP` /
+  `CHECKLIST_HELP` e de `related` existem; cada imagem referida existe nos dois
+  idiomas e nenhuma sobra. **Há um verificador:** `npx tsx scripts/check-help-content.ts`.
+- **Por fazer:** "Isto ajudou?" em cada artigo; artigos novos à medida que as
+  funcionalidades crescem.
 
 ---
 

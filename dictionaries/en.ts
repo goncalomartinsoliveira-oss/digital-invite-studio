@@ -258,6 +258,10 @@ const en = {
     "mobilePreviewLabel": "Real Mobile View",
     "mobilePreviewSub": "Updates upon saving",
     "helpCenter": "Help centre",
+    "helpHow": "How it works",
+    "guestsEmptyTitle": "No guests yet",
+    "guestsEmptyDesc": "Add your guests in groups (families or couples). See how in two minutes.",
+    "guestsEmptyBtn": "How to add guests",
     "accountLabel": "My Account",
     "backToEvents": "My Events",
     "currentProject": "Current project",
@@ -396,6 +400,7 @@ const en = {
     "openedTitle": "First opened: {first} · {count} open(s)"
   },
   "SetupChecklist": {
+    "howBtn": "How to?",
     "title": "What's left to do",
     "progress": "{done} of {total} steps done",
     "go": "Go",

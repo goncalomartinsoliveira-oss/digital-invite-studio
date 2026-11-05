@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { headers, cookies } from "next/headers";
 import Link from "next/link";
 import { resolveBrand } from "@/lib/brands";
-import { getHelp, chaptersWithArticles, visibleArticles, buildSearchIndex } from "@/lib/help";
+import { chaptersWithArticles, visibleArticles, buildSearchIndex } from "@/lib/help";
+import { getHelp } from "@/lib/helpContent";
 import HelpBrowser from "@/components/help/HelpBrowser";
 import { Eyebrow } from "@/components/site/Eyebrow";
 
