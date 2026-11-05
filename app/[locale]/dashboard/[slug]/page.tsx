@@ -846,7 +846,20 @@ export default function Dashboard() {
                     </button>
                   </div>
                 )}
-                <GuestLinksPanel invitationId={formData.id} slug={params.slug as string} locale={params.locale as string} guests={guests} canEdit={canEdit} dict={dictionaries[locale]?.GuestLinksPanel || dictionaries.pt.GuestLinksPanel} />
+                <GuestLinksPanel
+                  invitationId={formData.id}
+                  slug={params.slug as string}
+                  locale={params.locale as string}
+                  guests={guests}
+                  canEdit={canEdit}
+                  coupleNames={[formData.bride_name, formData.groom_name].filter(Boolean).join(" & ")}
+                  rsvpDeadline={(() => {
+                    const r = formData.content?.content?.rsvp || {};
+                    if (r.deadline_date) return new Date(r.deadline_date).toLocaleDateString(locale === 'en' ? 'en-GB' : 'pt-PT', { day: 'numeric', month: 'long' });
+                    return r.text_limit_date_fixed || null;
+                  })()}
+                  dict={dictionaries[locale]?.GuestLinksPanel || dictionaries.pt.GuestLinksPanel}
+                />
                 <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} slug={params.slug as string} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />
               </>)}
               {activeTab === 'seating' && (isTabLocked('seating') ? lockedNotice('seating') : <SeatingModule invitationId={formData.id} canEdit={canEdit} dict={dictionaries[locale]?.SeatingModule || dictionaries.pt.SeatingModule} />)}
@@ -877,6 +890,7 @@ export default function Dashboard() {
               {activeTab === 'tasks' && showManagement && (
                 <TasksModule
                   invitationId={formData.id}
+                  brandId={formData.brand_id ?? null}
                   eventDate={formData.event_date}
                   canEdit={canEdit}
                   isAgency={isAgencyStaff || isSuperAdmin}

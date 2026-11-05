@@ -159,6 +159,23 @@ limite do RSVP para os avisos é `content.rsvp.deadline_date` (campo de data no 
 do convite continua em `text_limit_date_fixed`). "Respostas nas últimas 24 h" precisa da
 migração `0012` (`guests.responded_at`, preenchida por trigger).
 
+**Reaproveitar o método da agência:** em Tarefas e em Orçamento, **Copiar de outro casamento**
+(`CopyFromEventModal` + `lib/plannerCopy.ts`: só casamentos da mesma marca; tarefas voltam a "por
+fazer" com os prazos recalculados para a data nova; custos voltam a "a orçar", sem pagamentos/notas/
+documentos, e o fornecedor só se mantém na mesma marca). **Importar Excel** com modelo para
+descarregar, na checklist e no diretório de Fornecedores (`PlannerExcelImport` + `lib/plannerImport.ts`:
+cabeçalhos PT ou EN, linhas inválidas ignoradas com motivo, fornecedores repetidos ignorados).
+Acrescentam sempre, nunca apagam.
+
+**Lembrar quem falta** (cartão Links personalizados, `RemindPendingModal`): grupos com convidados
+sem resposta, os que nunca abriram o link primeiro, com mensagem editável por grupo (nome, link
+pessoal ou geral, prazo do RSVP) para copiar. Modelo da mensagem e "lembrado a" ficam no browser.
+
+**Piloto Wedding Planner** (Administração › Gestão, só super-admin no DIS, `PlannerPilotCard`): por
+agência com plano — eventos, eventos com Planeamento, última atividade, itens criados ou alterados
+nos últimos 7/30 dias, fornecedores; expande por evento. Usa `updated_at` (migração `0013`) e, sem ela,
+só as datas de criação.
+
 **Super admin:** vê sempre a área de Planeamento em qualquer evento (`showManagement`
 = plano da marca **ou** super admin) e "Esta semana" na lista de eventos, com todos
 os eventos que a vista de Gestão lhe mostra. "Fornecedores" continua a exigir

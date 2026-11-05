@@ -17,6 +17,7 @@ import BusinessOverviewView from "@/components/dashboard/BusinessOverviewView";
 import AgencyOverviewView from "@/components/dashboard/AgencyOverviewView";
 import VendorsView from "@/components/dashboard/VendorsView";
 import AdminMenu from "@/components/dashboard/AdminMenu";
+import PlannerPilotCard from "@/components/dashboard/PlannerPilotCard";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -336,6 +337,9 @@ export default function DashboardHub() {
             onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
           />
         ) : viewMode === 'admin' && canManage ? (
+          <>
+          {/* Medir o piloto: só super-admin no DIS. */}
+          {canViewBusiness && <PlannerPilotCard locale={locale} />}
           <AdminManagementView
             events={adminInvites}
             guestCounts={guestCounts}
@@ -344,6 +348,7 @@ export default function DashboardHub() {
             locale={locale}
             onOpen={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
           />
+          </>
         ) : viewMode === 'members' && canManageMembers ? (
           <MembersManagementView
             brands={manageableBrands}
