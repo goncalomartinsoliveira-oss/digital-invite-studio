@@ -250,6 +250,22 @@ export default function Dashboard() {
     loadData();
   }, [params.slug, params.locale, router]);
 
+  // Ligação direta a um separador (ex.: "Esta semana" abre `?tab=tasks`): depois
+  // de carregar, entra na área certa em vez do hub. Só uma vez, e limpa o
+  // parâmetro do URL para não "prender" o separador ao recarregar.
+  const [deepLinkDone, setDeepLinkDone] = useState(false);
+  useEffect(() => {
+    if (loading || deepLinkDone || typeof window === "undefined") return;
+    setDeepLinkDone(true);
+    const tab = new URLSearchParams(window.location.search).get("tab") as DashboardTab | null;
+    if (!tab) return;
+    const g = (Object.keys(GROUP_TABS) as Exclude<EventGroup, null>[]).find(k => GROUP_TABS[k].includes(tab));
+    if (!g || (g === "management" && !(plannerPlan || isSuperAdmin))) return;
+    setGroup(g);
+    setActiveTab(tab);
+    window.history.replaceState(null, "", window.location.pathname);
+  }, [loading, deepLinkDone, plannerPlan, isSuperAdmin]);
+
   const dismissTour = () => {
     setShowTour(false);
     if (typeof window !== "undefined") {

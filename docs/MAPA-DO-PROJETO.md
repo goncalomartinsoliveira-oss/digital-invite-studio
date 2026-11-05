@@ -149,9 +149,19 @@ Registo fixo em `lib/modules.ts`; preços e pacotes em `lib/pricing.ts`.
 Ligado por `brands.planner_plan`; lógica e limites em `lib/planner.ts`. Os
 dados escrevem diretamente nas suas tabelas (não pelo `handleSaveDesign`).
 
+**Menu Wedding Planner** (lista de eventos, `AdminMenu` com `singleShowsMenuLabel`): "Esta
+semana" e "Fornecedores". **Semáforo** (regras e limiares em `lib/plannerOverview.ts`):
+vermelho = algo já falhou (tarefa/pagamento em atraso, orçamento > 100%, prazo do RSVP
+passado com pendentes); amarelo = atenção em breve (orçamento ≥ 85%, RSVP a fechar com < 80%
+de respostas, casamento a ≤ 30 dias com < 90%, pedidos de acesso, prazos a ≤ 7 dias). O
+orçamento usa o mesmo cálculo do separador Orçamento (`budgetTotals`/`budgetHealth`). A data
+limite do RSVP para os avisos é `content.rsvp.deadline_date` (campo de data no editor; o texto
+do convite continua em `text_limit_date_fixed`). "Respostas nas últimas 24 h" precisa da
+migração `0012` (`guests.responded_at`, preenchida por trigger).
+
 **Super admin:** vê sempre a área de Planeamento em qualquer evento (`showManagement`
-= plano da marca **ou** super admin) e a vista "Tarefas" na lista de eventos, com todos
-os eventos que a vista de Gestão lhe mostra. A vista "Fornecedores" continua a exigir
+= plano da marca **ou** super admin) e "Esta semana" na lista de eventos, com todos
+os eventos que a vista de Gestão lhe mostra. "Fornecedores" continua a exigir
 plano de agência, porque o diretório é por marca (no DIS ficaria vazio). A base de dados
 já lhe dava acesso (`dis_is_super_admin()` em todas as políticas).
 
@@ -162,8 +172,8 @@ já lhe dava acesso (`dis_is_super_admin()` em todas as políticas).
 | Cronograma | `TimelineModule` | Horário do dia; a agência pode esconder blocos (ex.: surpresas) do casal. |
 | Partilha | `SharingModule` | Todos os links partilháveis: portal do fornecedor e moodboard. |
 | Inspiração | `MoodboardModule` | Mural partilhado com o casal, por secções. |
-| Vista "Tarefas" (na lista de eventos) | `AgencyOverviewView` | O que precisa de atenção esta semana, em todos os casamentos. |
-| Vista "Fornecedores" (na lista de eventos) | `VendorsView` | Diretório de fornecedores da agência, com histórico de preços. |
+| Wedding Planner › **Esta semana** (lista de eventos) | `AgencyOverviewView` + `lib/plannerOverview.ts` | O ecrã de manhã: (1) um casamento por linha com semáforo e razões; (2) tarefas da agência e pagamentos a fornecedores, com "feita"/"pago" na própria lista (e "Anular") e ligação ao separador certo (`?tab=tasks|budget|guests`); (3) sinais dos convidados (RSVP a fechar, respostas nas últimas 24 h, links pessoais por abrir, pedidos de acesso); (4) à espera dos noivos (tarefas do casal em atraso ou a ≤ 14 dias). |
+| Wedding Planner › **Fornecedores** (lista de eventos) | `VendorsView` | Diretório de fornecedores da agência, com histórico de preços. Só com plano de agência. |
 
 Os links de fornecedor e do moodboard têm **token** e correm no servidor com a
 chave de serviço (`lib/vendorPortal.ts`, `lib/moodboardShare.ts`); nunca

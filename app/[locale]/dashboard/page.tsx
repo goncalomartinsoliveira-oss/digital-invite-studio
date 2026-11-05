@@ -273,21 +273,20 @@ export default function DashboardHub() {
               >
                 <LayoutGrid size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Events' : 'Eventos'}</span>
               </button>
+              {/* Wedding Planner: "Esta semana" (agências e super-admin) e "Fornecedores"
+                  (só com plano de agência — o diretório é da marca). */}
               {(plannerPlan || isSuperAdmin) && (
-                <button
-                  onClick={() => setViewMode('planning')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'planning' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-                >
-                  <CalendarClock size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Tasks' : 'Tarefas'}</span>
-                </button>
-              )}
-              {plannerPlan && (
-                <button
-                  onClick={() => setViewMode('vendors')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'vendors' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
-                >
-                  <Store size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Vendors' : 'Fornecedores'}</span>
-                </button>
+                <AdminMenu
+                  label="Wedding Planner"
+                  icon={<CalendarClock size={12} />}
+                  active={viewMode}
+                  onSelect={(id) => setViewMode(id)}
+                  singleShowsMenuLabel
+                  items={[
+                    { id: 'planning' as const, label: locale === 'en' ? 'This week' : 'Esta semana', icon: <CalendarClock size={12} /> },
+                    ...(plannerPlan ? [{ id: 'vendors' as const, label: locale === 'en' ? 'Vendors' : 'Fornecedores', icon: <Store size={12} /> }] : []),
+                  ]}
+                />
               )}
               <AdminMenu
                 label={locale === 'en' ? 'Administration' : 'Administração'}
@@ -327,7 +326,7 @@ export default function DashboardHub() {
           <AgencyOverviewView
             events={planningEvents}
             locale={locale}
-            onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+            onOpenEvent={(slug, tab) => router.push(`/${params.locale}/dashboard/${slug}${tab ? `?tab=${tab}` : ''}`)}
           />
         ) : viewMode === 'vendors' && plannerPlan ? (
           <VendorsView

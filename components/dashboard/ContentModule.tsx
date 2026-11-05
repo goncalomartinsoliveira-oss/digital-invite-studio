@@ -18,7 +18,7 @@ interface ContentModuleDict {
       dresscode: { title: string; titleLabel: string; messageLabel: string; paletteLabel: string };
       gifts: { title: string; titleLabel: string; messageLabel: string; ibanToggleLabel: string; ibanBtnLabel: string; ibanBtnPlaceholder: string; ibanHoldersLabel: string; ibanValueLabel: string; ibanValuePlaceholder: string };
     };
-    rsvp: { title: string; subtitleLabel: string; mainTitleLabel: string; deadlineLabel: string; deadlinePlaceholder: string };
+    rsvp: { title: string; subtitleLabel: string; mainTitleLabel: string; deadlineLabel: string; deadlinePlaceholder: string; deadlineDateLabel: string; deadlineDateHint: string };
     footer: { title: string; showContactsLabel: string; contact1NameLabel: string; contact1PhoneLabel: string; contact1NamePlaceholder: string; contact1PhonePlaceholder: string; contact2NameLabel: string; contact2PhoneLabel: string; contact2NamePlaceholder: string; contact2PhonePlaceholder: string; subtitleLabel: string; mainTitleLabel: string; locationLabel: string; locationPlaceholder: string; photoLabel: string; photoEmpty: string; changePhoto: string };
   };
 }
@@ -454,6 +454,9 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
             <div><label className={labelClass}>{s.rsvp.subtitleLabel}</label><input className={inputClass} value={content.rsvp?.title_please ?? ''} onChange={e => handleTextChange('rsvp', 'title_please', e.target.value)} /></div>
             <div><label className={labelClass}>{s.rsvp.mainTitleLabel}</label><input className={inputClass} value={content.rsvp?.title_confirm ?? ''} onChange={e => handleTextChange('rsvp', 'title_confirm', e.target.value)} /></div>
             <div><label className={labelClass}>{s.rsvp.deadlineLabel}</label><input className={inputClass} value={content.rsvp?.text_limit_date_fixed ?? ''} onChange={e => handleTextChange('rsvp', 'text_limit_date_fixed', e.target.value)} placeholder={s.rsvp.deadlinePlaceholder} /></div>
+            {/* Data verdadeira do prazo (o campo acima é texto livre, para o convite).
+                Alimenta os avisos de "RSVP a fechar" no Wedding Planner › Esta semana. */}
+            <div><label className={labelClass}>{s.rsvp.deadlineDateLabel}</label><input type="date" className={inputClass} value={content.rsvp?.deadline_date ?? ''} onChange={e => handleTextChange('rsvp', 'deadline_date', e.target.value)} /><p className="text-[10px] text-gray-400 mt-1.5">{s.rsvp.deadlineDateHint}</p></div>
           </div>
         </AccordionItem>
 

@@ -578,10 +578,31 @@ export const helpEn: HelpContent = {
         "**Inspiração** (Inspiration): the moodboard, shared with the couple and organised in sections.",
       ],
       tips: [
-        "On the events list, the **Tarefas** (Tasks) view shows what needs attention this week across all weddings, and **Fornecedores** (Vendors) is the agency's directory, with price history.",
+        "On the events list, the **Wedding Planner** menu has **This week** (every wedding at a glance, with a traffic light, tasks, payments and guest signals) and **Vendors** (the agency's directory, with price history).",
         "These areas only appear on agency accounts (and to the platform administrator). Couples don't see them.",
       ],
-      related: ["vendor-sharing"],
+      related: ["this-week", "vendor-sharing"],
+    },
+    {
+      slug: "this-week",
+      chapter: "agencies",
+      audience: "agency",
+      title: "How do I use the This week screen?",
+      summary: "The wedding planner's morning screen: every wedding at a glance, what is late, what is coming and what the guests are doing.",
+      steps: [
+        "On the events list, open the **Wedding Planner** menu and choose **This week**.",
+        "Under **Your weddings**, each wedding has a traffic light. **Red**: something is already late (overdue task or payment, budget over 100%, RSVP deadline passed with guests still to answer). **Amber**: needs attention soon (budget at 85% or more, RSVP closing with few answers, access requests, deadlines in the next 7 days). **Green**: on track. Red ones come first.",
+        "Under **Agency tasks** and **Payments to vendors**, mark items as done or paid without leaving the list. If it was a mistake, click **Undo**.",
+        "Click a task or a payment to open the wedding straight on the right tab (Tasks or Budget).",
+        "Under **Guest signals**, see RSVPs closing, new answers from the last 24 hours, groups that haven't opened their personal link and access requests waiting for approval.",
+        "Under **Waiting on the couple** are the tasks whose owner is the couple, overdue or due within 14 days: your list of things to chase.",
+      ],
+      tips: [
+        "For the RSVP warnings to work, fill in **Deadline (for reminders)** under **Wedding invitation** › **Invitation content** › **RSVP Confirmation**. It isn't shown on the invitation.",
+        "Unopened-link signals only appear for weddings with **Personalised links**, and once at least one group has opened theirs.",
+        "Past weddings stay here for 30 days, because final payments are often due after the day.",
+      ],
+      related: ["planning-overview", "personal-links", "track-opens"],
     },
     {
       slug: "vendor-sharing",

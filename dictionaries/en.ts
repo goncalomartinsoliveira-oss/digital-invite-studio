@@ -1003,7 +1003,9 @@ const en = {
         "subtitleLabel": "Secondary Title",
         "mainTitleLabel": "Main Title",
         "deadlineLabel": "Deadline (Text)",
-        "deadlinePlaceholder": "e.g., 08 | 15 | 2026"
+        "deadlinePlaceholder": "e.g., 08 | 15 | 2026",
+        "deadlineDateLabel": "Deadline (for reminders)",
+        "deadlineDateHint": "Optional. Not shown on the invitation: used to warn you when the RSVP deadline is close and answers are still missing."
       },
       "footer": {
         "title": "09. Footer & Contacts",

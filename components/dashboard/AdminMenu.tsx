@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
-// Menu "Administração" da lista de eventos: junta num só botão as vistas que
+// Menu da lista de eventos (usado em "Administração" e "Wedding Planner"). Em "Administração" junta num só botão as vistas que
 // antes eram 6 botões lado a lado (Gestão, Membros, Marcas, Cupões, Preços,
 // Negócio). Com um único item disponível (agências, que só vêem "Gestão")
 // mostra o botão simples — um menu com uma só opção seria ruído.
@@ -19,6 +19,9 @@ type Props<Id extends string> = {
   items: AdminMenuItem<Id>[];
   active: string;
   onSelect: (id: Id) => void;
+  // Com um só item, mostrar o nome do menu (ex.: "Wedding Planner") em vez do
+  // nome do item. Por omissão mostra o item (ex.: agências só com "Gestão").
+  singleShowsMenuLabel?: boolean;
 };
 
 const pillBase =
@@ -26,7 +29,7 @@ const pillBase =
 const pillOn = "bg-brand text-white";
 const pillOff = "text-gray-400 hover:text-brand";
 
-export default function AdminMenu<Id extends string>({ label, icon, items, active, onSelect }: Props<Id>) {
+export default function AdminMenu<Id extends string>({ label, icon, items, active, onSelect, singleShowsMenuLabel }: Props<Id>) {
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +55,7 @@ export default function AdminMenu<Id extends string>({ label, icon, items, activ
     const only = items[0];
     return (
       <button onClick={() => onSelect(only.id)} className={`${pillBase} ${active === only.id ? pillOn : pillOff}`}>
-        {only.icon} <span className="hidden sm:inline">{only.label}</span>
+        {singleShowsMenuLabel ? icon : only.icon} <span className="hidden sm:inline">{singleShowsMenuLabel ? label : only.label}</span>
       </button>
     );
   }
