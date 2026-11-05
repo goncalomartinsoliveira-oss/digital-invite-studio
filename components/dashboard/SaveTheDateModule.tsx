@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Cinzel } from "next/font/google";
+import { cinzelStd } from "@/lib/fonts/cinzel";
 import { supabase } from "@/lib/supabase";
 import { Download, ImagePlus, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { fillStdTemplate } from "@/lib/svgTemplate";
@@ -9,7 +9,6 @@ import { loadImageForPdf } from "@/lib/pdfLogo";
 
 // Só usada no template "Moldura Preta" (nomes do casal); carregada aqui e
 // exposta como variável CSS, referenciada diretamente no SVG do template.
-const cinzelStd = Cinzel({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-cinzel-std" });
 
 // Foto genérica só para as miniaturas do carrossel de modelos parecerem um
 // cartão real antes de terem foto própria. Nunca é usada no PDF descarregado.

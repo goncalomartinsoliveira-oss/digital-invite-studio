@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Jost, Pinyon_Script } from "next/font/google";
+import { cormorant, jostFont as jost, pinyon } from "@/lib/fonts/layout";
 import { headers, cookies } from "next/headers";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "../globals.css";
@@ -10,24 +10,8 @@ import Footer from "../../components/site/Footer";
 import { BrandProvider } from "../../components/site/BrandProvider";
 import { resolveBrand } from "../../lib/brands";
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-cormorant",
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
 
-const jost = Jost({
-  subsets: ["latin"],
-  variable: "--font-jost",
-  weight: ["300", "400", "500", "600", "700"],
-});
 
-const pinyon = Pinyon_Script({
-  subsets: ["latin"],
-  weight: "400", 
-  variable: "--font-pinyon",
-});
 
 const HOME_SEO = {
   pt: {

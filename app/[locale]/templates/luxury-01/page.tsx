@@ -1,21 +1,12 @@
 "use client";
 import { motion, Variants } from "framer-motion";
-import { Passions_Conflict, Cinzel } from "next/font/google";
+import { passionsConflict } from "@/lib/fonts/passions-conflict";
+import { cinzelFont as cinzel } from "@/lib/fonts/cinzel";
 import { useState, useEffect } from "react";
 
 import SmartRsvp from "../../../../components/invite/SmartRsvp"; 
 
-const passionsConflict = Passions_Conflict({ 
-  weight: "400", 
-  subsets: ["latin"],
-  display: 'swap',
-});
 
-const cinzel = Cinzel({ 
-  weight: ["400", "500"], 
-  subsets: ["latin"],
-  display: 'swap',
-});
 
 const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000";
 const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=2000&auto=format&fit=crop";

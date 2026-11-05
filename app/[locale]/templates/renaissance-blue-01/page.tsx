@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cinzel } from "next/font/google";
+import { cinzelFont as cinzel } from "@/lib/fonts/cinzel";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
 import GuestGreeting from "../../../../components/invite/GuestGreeting";
 
@@ -12,7 +12,6 @@ import GuestGreeting from "../../../../components/invite/GuestGreeting";
 // globais do site (essas são Cormorant/Jost/Pinyon, no layout.tsx), mas já é
 // usada noutros modelos (minimal-01, luxury-01), carregada aqui à parte.
 // Cinzel só tem 400 e 600 e não tem itálico: não usar `italic`/`font-light`.
-const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600"], display: "swap" });
 
 // Modelo "Renaissance Blue" (template_id "renaissance-blue-01"), disponível a
 // todos os casais no seletor do painel (AVAILABLE_TEMPLATES, em

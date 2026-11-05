@@ -320,6 +320,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
   chave pública (qualquer pessoa com o link pode, em teoria, ver os nomes).
   Nos **links personalizados** isso não acontece: o servidor só devolve o grupo
   do código. Resolver o geral implicava mover a pesquisa para o servidor.
+- **As letras do site são locais** (`lib/fonts`, `public/fonts`, aliases em `app/globals.css`): com `next/font/google` o build de produção no Vercel falhava de forma intermitente ("npm run build exited with 1", ~30 s, até em commits só de documentação) quando o pedido ao Google Fonts falhava; passava num Redeploy. Verificado: `next build` com a rede bloqueada compila. Detalhes e armadilhas em `lib/fonts/README.md`. (O `collage-01` ainda importa a *Lavishly Yours* do Google, mas no browser, em runtime — não afeta o build.)
 - **Cinzel** não existe como fonte global: cada modelo que a usa carrega-a à
   parte. No Renaissance Blue todo o texto é Cinzel e só os títulos de
   exibição são Pinyon Script.
