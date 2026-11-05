@@ -14,6 +14,7 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 - Env vars (Vercel/local): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Para testar `next build` localmente sem Supabase real, usar valores fictícios (senão dá "supabaseUrl is required").
 
 ## Fontes & marca
+- **As letras são locais** (`lib/fonts/*.ts` + `public/fonts/*.woff2`), **não** `next/font/google`: o build do Vercel falhava de forma intermitente quando o pedido ao Google Fonts falhava. Não reintroduzir `next/font/google`; ver `lib/fonts/README.md` (preload, aliases dos SVG do Save the Date, nomes dos exports).
 - Títulos (h1–h4, aplicado global em `app/globals.css`): **Cormorant Garamond** — `--font-cormorant` / classe `font-serif`.
 - Corpo e UI: **Jost** — `--font-jost` / `font-sans`.
 - Script decorativa: **Pinyon Script** — `--font-pinyon` / `font-script`.

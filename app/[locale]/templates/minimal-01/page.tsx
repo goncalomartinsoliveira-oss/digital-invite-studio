@@ -1,27 +1,13 @@
 "use client";
 import { motion, type Variants } from "framer-motion";
-import { Cormorant_Garamond, Cinzel, Great_Vibes } from "next/font/google";
+import { cormorant } from "@/lib/fonts/layout";
+import { cinzelFont as cinzel } from "@/lib/fonts/cinzel";
+import { greatVibes } from "@/lib/fonts/great-vibes";
 import { useState, useEffect } from "react";
 import { MapPin, Clock, ChevronDown } from "lucide-react";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
 import { useBrand } from "../../../../components/site/BrandProvider";
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  display: "swap",
-});
-const greatVibes = Great_Vibes({
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
 
 const DEFAULT_HERO_MEDIA =
   "https://anvqtinrmgkfjadsftlj.supabase.co/storage/v1/object/public/invites/wedding-dream.mp4";
