@@ -51,6 +51,10 @@ depois do evento (campo `invitations.expires_at`).
 
 Página inicial (`app/[locale]/page.tsx`, textos em `HomePage` nos dicionários): o **convite digital é o produto principal**. Ordem: hero com o convite → factos → coleção de modelos (lê `lib/templates.ts`, com lugares "Em breve") → dentro do convite → RSVP e painel → "a viagem" (os outros módulos, com ligação a `/features/<slug>`) → **convite à medida** (`#a-medida`, botão "Pedir proposta" → `/contact?assunto=medida`, que pré-seleciona "Pedido de Orçamento Personalizado") → como funciona → faixa de parceiros → FAQ → CTA. Sem preços (estão em `/pricing`) nem prazo de disponibilidade.
 
+Funcionalidades (`/features`, textos em `DetailedFeaturesPage`): o convite em destaque, os outros quatro módulos "à volta do convite", "tudo ligado", convite à medida e CTA. Detalhe (`/features/<slug>`, textos em `FeatureDetailPage.modules`): passo a passo com imagens, secções (só convite), à medida (só convite), o que inclui, na prática. **As imagens estão listadas em `app/[locale]/features/images.ts`** (versões PT/EN que existem de cada ficheiro em `public/features/<slug>/`); uma imagem nova só aparece depois de entrar nessa lista. As do convite (`convite-de-casamento/`) são composições do Renaissance Blue e do editor.
+
+O convite fica disponível até 60 dias depois do casamento (`expires_at`; decidido manter em nov. 2026).
+
 ### Painel (precisa de login)
 | Rota | O que é |
 |---|---|
@@ -375,7 +379,6 @@ Ainda por fazer:
 - Ficheiros muito grandes: `GuestsModule` (~985 linhas), `BudgetModule` (~886),
   `dashboard/[slug]/page.tsx` (~800).
 - Os modelos retirados (secção 10) ainda têm código em `app/[locale]/templates/` e ainda há eventos neles (luxury-01 20, envelope-01 2, minimal-01 1, a 5/11/2026); apagar só quando a contagem chegar a zero.
-- O prazo do convite depois do casamento é 60 dias (`expires_at`, termos, ajuda); o dono do produto falou em 6 meses. Por decidir; a página inicial não indica prazo.
 
 ---
 

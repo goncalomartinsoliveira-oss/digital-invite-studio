@@ -493,15 +493,39 @@ const en = {
   },
   "DetailedFeaturesPage": {
     "hero": {
-      "badge": "All in one place",
-      "title1": "The operating system for",
-      "title2": "your luxury wedding.",
-      "desc": "From the first save the date sent to the last photo shared on the dance floor. Five modules designed to eliminate the stress of planning and elevate your guests' experience."
+      "badge": "Features",
+      "title1": "The invitation at the centre.",
+      "title2": "And everything that comes with it.",
+      "desc": "The digital invitation is where it all starts: it's what your guests open and where they RSVP. Around it, add the modules you need, all in the same dashboard and with the same guest list."
+    },
+    "jumpLabel": "Jump to",
+    "invite": {
+      "detailBtn": "Everything about the invitation",
+      "liveBtn": "See a live invitation"
+    },
+    "around": {
+      "tag": "Around the invitation",
+      "title": "Modules you add when you need them",
+      "desc": "Each one takes care of a moment of the wedding, from the first announcement to the memories after the party."
+    },
+    "connected": {
+      "title": "All connected, no double work",
+      "items": [
+        { "title": "One guest list", "desc": "Whoever RSVPs on the invitation is ready to be seated at a table, with nothing to copy." },
+        { "title": "One dashboard", "desc": "Invitation, guests, tables, photos and messages in one place, shared with whoever helps you." },
+        { "title": "Pay only for what you use", "desc": "Buy each module on its own or in a bundle, with a one-time payment per event." }
+      ]
+    },
+    "bespoke": {
+      "title": "Want an invitation all your own?",
+      "desc": "We also design exclusive invitations from scratch, based on your story.",
+      "link": "Discover the bespoke invitation"
     },
     "discoverMore": "Discover more",
     "cta": {
-      "title": "Ready to elevate your event?",
-      "btn": "View Packages & Pricing"
+      "title": "Start with the invitation.",
+      "btn": "See plans and pricing",
+      "btnPrimary": "Create our invitation"
     }
   },
   "FeatureDetailPage": {
@@ -510,8 +534,10 @@ const en = {
     "examplesTitle": "In practice",
     "otherFeaturesTitle": "Other features",
     "ctaTitle": "Ready to get started?",
-    "ctaPricing": "View Pricing",
-    "ctaStart": "Start Now",
+    "ctaPricing": "See plans and pricing",
+    "ctaStart": "Create our invitation",
+    "liveBtn": "See a live invitation",
+    "bespoke": { "title": "Want a design all your own?", "desc": "Besides our designs, we create exclusive invitations from scratch for each couple, with all these features included.", "link": "Discover the bespoke invitation" },
     "modules": {
       "save_the_date": {
         "tag": "Before the Big Day",
@@ -556,11 +582,11 @@ const en = {
       },
       "invite": {
         "tag": "The Heart of the Invitation",
-        "title": "A complete wedding website, ready in minutes",
+        "title": "A complete wedding invitation, in a single link",
         "summary": "Your digital invitation: a professional template, personalised content and built-in smart RSVP, all in a single link.",
-        "desc": "It's the foundation of everything: an elegant, responsive wedding website that's entirely yours. Choose from several design templates, customise colours, text and photos, and share a single link with every guest. Always includes the Guests & Seating module, because smart RSVP needs to know who's confirming.",
+        "desc": "It's the foundation of everything: an elegant wedding invitation, made for the phone and entirely yours. Pick the design, personalise the text, photos and details, and share a single link with every guest. Always includes the Guests & Seating module, because smart RSVP needs to know who's confirming.",
         "includes": [
-          "Several design templates to choose from, from classic to contemporary",
+          "Designs crafted down to the detail, with new designs on the way",
           "Full customisation of text, photos and event details",
           "Smart RSVP: guests search their name, confirm attendance and note dietary restrictions",
           "Fully responsive site, designed mobile-first",
@@ -582,7 +608,7 @@ const en = {
             },
             {
               "title": "It's ready as a single link",
-              "desc": "Your wedding website goes live, responsive and elegant, ready to open on any phone or computer."
+              "desc": "Your invitation goes live, responsive and elegant, ready to open on any phone or computer."
             },
             {
               "title": "Share it with every guest",
@@ -597,8 +623,8 @@ const en = {
         },
         "sectionsBlock": {
           "tag": "Modular, your way",
-          "title": "Every section your site can have, and you choose which show",
-          "intro": "Your website includes all of these sections out of the box. Each one turns on or off with a single click in the dashboard, so you show only what makes sense for your wedding, with no empty spaces or clutter.",
+          "title": "Every section your invitation can have, and you choose which show",
+          "intro": "Your invitation includes all of these sections out of the box. Each one turns on or off with a single click in the dashboard, so you show only what makes sense for your wedding, with no empty spaces or clutter.",
           "sections": [
             { "key": "hero", "name": "Cover", "desc": "The first impression: your names, the date, and a full-screen photo or video." },
             { "key": "countdown", "name": "Countdown", "desc": "A counter showing how many days are left until the big day, updated automatically." },
@@ -613,7 +639,7 @@ const en = {
             { "key": "rsvp", "name": "RSVP", "desc": "Guests find their name, confirm attendance and flag restrictions, with a deadline. It all lands in your dashboard." },
             { "key": "footer", "name": "Footer & contacts", "desc": "A closing message and, if it helps, the organisers' contacts for last-minute questions." }
           ],
-          "footnote": "Turning a section off never deletes what you wrote: you can switch it back on at any time. And every section exists in each of the design templates."
+          "footnote": "Turning a section off never deletes what you wrote: you can switch it back on at any time. And if you switch design, what you wrote comes with you."
         }
       },
       "guests_seating": {

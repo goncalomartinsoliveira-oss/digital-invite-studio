@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
 import { FEATURE_SLUGS, moduleIdFromSlug } from "../slugs";
+import { FEATURE_IMAGES, featureImageSrc } from "../images";
+import { INVITE_TEMPLATES } from "@/lib/templates";
 import { Eyebrow } from "@/components/site/Eyebrow";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
@@ -45,42 +47,6 @@ const INVITE_SECTION_ICONS: Record<string, React.ReactNode> = {
   footer: <Phone size={18} />,
 };
 
-// Imagens do "como funciona": algumas variam por idioma (mostram texto do
-// interface, ex.: um print do painel ou de um telemóvel), outras são a
-// mesma para PT/EN (ex.: uma foto do QR code numa mesa do evento).
-const HOW_IT_WORKS_IMAGES: Partial<Record<ModuleId, { file: string; perLocale: boolean }[]>> = {
-  photo_sharing: [
-    { file: "01-dashboard", perLocale: true },
-    { file: "02-qr-evento", perLocale: false },
-    { file: "03-mobile-galeria", perLocale: true },
-    { file: "04-live-wall", perLocale: true },
-  ],
-  guestbook: [
-    { file: "01-dashboard", perLocale: true },
-    { file: "02-qr-evento", perLocale: false },
-    { file: "03-convidado-mensagem", perLocale: false },
-    { file: "04-casal-em-casa", perLocale: false },
-  ],
-  save_the_date: [
-    { file: "01-dashboard", perLocale: true },
-    { file: "02-cartao-gerado", perLocale: true },
-    { file: "03-partilhar", perLocale: false },
-    { file: "04-recebido", perLocale: false },
-  ],
-  invite: [
-    { file: "01-dashboard", perLocale: true },
-    { file: "02-website", perLocale: true },
-    { file: "03-partilhar", perLocale: false },
-    { file: "04-rsvp", perLocale: true },
-  ],
-  guests_seating: [
-    { file: "01-dashboard", perLocale: true },
-    { file: "02-mesas", perLocale: true },
-    { file: "03-rsvp-sincroniza", perLocale: true },
-    { file: "04-encontra-mesa", perLocale: true },
-  ],
-};
-
 export default function FeatureDetailPage() {
   const params = useParams();
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -109,7 +75,7 @@ export default function FeatureDetailPage() {
 
         <Link
           href={`/${locale}/features`}
-          className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#722F37] transition-colors mb-10"
+          className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand transition-colors mb-10"
         >
           <ArrowLeft size={14} /> {dict.backLink}
         </Link>
@@ -120,7 +86,7 @@ export default function FeatureDetailPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-20"
         >
-          <div className="w-16 h-16 rounded-2xl bg-white shadow-md border border-gray-100 flex items-center justify-center text-[#722F37] mb-6">
+          <div className="w-16 h-16 rounded-2xl bg-white shadow-md border border-gray-100 flex items-center justify-center text-brand mb-6">
             {MODULE_ICONS[moduleId]}
           </div>
           <div className="mb-4"><Eyebrow align="left">{m.tag}</Eyebrow></div>
@@ -130,6 +96,22 @@ export default function FeatureDetailPage() {
           <p className="text-gray-500 text-lg leading-relaxed max-w-2xl">
             {m.desc}
           </p>
+          {moduleId === "invite" && INVITE_TEMPLATES[0] && (
+            <div className="flex flex-col sm:flex-row gap-4 mt-8">
+              <Link
+                href={`/${locale}/dashboard/new-invite`}
+                className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-full bg-brand text-gold-soft text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-brand-dark transition-colors"
+              >
+                {dict.ctaStart}
+              </Link>
+              <Link
+                href={`/${locale}/preview/${INVITE_TEMPLATES[0].id}`}
+                className="inline-flex items-center justify-center gap-2 h-12 px-6 text-[10px] font-bold uppercase tracking-widest text-ink hover:text-brand transition-colors"
+              >
+                {dict.liveBtn} <ArrowRight size={14} />
+              </Link>
+            </div>
+          )}
         </motion.div>
 
         {/* COMO FUNCIONA, PASSO A PASSO (com imagens) */}
@@ -141,41 +123,24 @@ export default function FeatureDetailPage() {
             className="mb-24"
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold mb-3">{m.howItWorks.tag}</p>
-            <h2 className="font-serif text-2xl md:text-3xl text-[#722F37] mb-14 max-w-2xl">{m.howItWorks.title}</h2>
+            <h2 className="font-serif text-2xl md:text-3xl text-brand mb-14 max-w-2xl">{m.howItWorks.title}</h2>
 
             <div className="space-y-16">
               {m.howItWorks.steps.map((step, i) => {
-                const img = HOW_IT_WORKS_IMAGES[moduleId]?.[i];
-                const src = img ? `/features/${slug}/${img.file}${img.perLocale ? `-${locale}` : ""}.jpg` : null;
+                const src = featureImageSrc(moduleId, FEATURE_IMAGES[moduleId].steps[i], locale);
                 return (
                   <div
                     key={step.title}
                     className={`grid md:grid-cols-2 gap-8 md:gap-14 items-center ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}
                   >
-                    <div className="relative rounded-[2rem] overflow-hidden border border-gray-100 shadow-md aspect-[4/3] bg-cream flex items-center justify-center text-[#722F37]/20">
+                    <div className="relative rounded-[2rem] overflow-hidden border border-gray-100 shadow-md aspect-[4/3] bg-cream flex items-center justify-center text-brand/20">
                       {MODULE_ICONS[moduleId]}
                       {src && (
-                        <img
-                          src={src}
-                          alt={step.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          onError={(e) => {
-                            // Enquanto não houver as duas versões de uma imagem, tenta a do
-                            // outro idioma antes de desistir (nos dois sentidos, PT↔EN).
-                            const target = e.currentTarget;
-                            if (img?.perLocale && !target.dataset.fallbackTried) {
-                              target.dataset.fallbackTried = "1";
-                              const otherLocale = locale === "pt" ? "en" : "pt";
-                              target.src = `/features/${slug}/${img.file}-${otherLocale}.jpg`;
-                              return;
-                            }
-                            target.style.display = "none";
-                          }}
-                        />
+                        <img src={src} alt={step.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
                       )}
                     </div>
                     <div>
-                      <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[#722F37] text-white font-serif text-sm mb-5">
+                      <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-brand text-white font-serif text-sm mb-5">
                         {i + 1}
                       </span>
                       <h3 className="font-serif text-xl md:text-2xl text-gray-900 mb-3">{step.title}</h3>
@@ -203,13 +168,13 @@ export default function FeatureDetailPage() {
             className="mb-24"
           >
             <div className="mb-3"><Eyebrow align="left">{m.sectionsBlock.tag}</Eyebrow></div>
-            <h2 className="font-serif text-2xl md:text-3xl text-[#722F37] mb-4 max-w-2xl">{m.sectionsBlock.title}</h2>
+            <h2 className="font-serif text-2xl md:text-3xl text-brand mb-4 max-w-2xl">{m.sectionsBlock.title}</h2>
             <p className="text-gray-500 leading-relaxed max-w-2xl mb-12">{m.sectionsBlock.intro}</p>
 
             <div className="grid sm:grid-cols-2 gap-4">
               {m.sectionsBlock.sections.map((sec) => (
                 <div key={sec.key} className="flex items-start gap-4 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                  <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-xl bg-[#722F37]/5 border border-gold-soft/50 text-[#722F37] flex items-center justify-center">
+                  <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-xl bg-brand/5 border border-gold-soft/50 text-brand flex items-center justify-center">
                     {INVITE_SECTION_ICONS[sec.key] ?? <Check size={16} />}
                   </div>
                   <div>
@@ -221,12 +186,25 @@ export default function FeatureDetailPage() {
             </div>
 
             <div className="flex items-start gap-3 mt-8 bg-cream rounded-2xl px-6 py-5 border border-gold-soft/60 max-w-3xl">
-              <div className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-[#722F37]/10 text-[#722F37] flex items-center justify-center">
+              <div className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-brand/10 text-brand flex items-center justify-center">
                 <Check size={11} strokeWidth={4} />
               </div>
               <p className="text-sm text-ink/80 leading-relaxed">{m.sectionsBlock.footnote}</p>
             </div>
           </motion.div>
+        )}
+
+        {/* CONVITE À MEDIDA (só no convite) */}
+        {moduleId === "invite" && (
+          <div className="mb-24 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-gold-soft/25 border border-gold-soft rounded-[2rem] px-8 py-7">
+            <div>
+              <h3 className="font-serif text-2xl text-ink">{dict.bespoke.title}</h3>
+              <p className="text-sm text-gray-600 leading-relaxed mt-2 max-w-xl">{dict.bespoke.desc}</p>
+            </div>
+            <Link href={`/${locale}#a-medida`} className="shrink-0 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-brand hover:text-ink transition-colors border-b border-brand pb-1">
+              {dict.bespoke.link} <ArrowRight size={14} />
+            </Link>
+          </div>
         )}
 
         {/* O QUE INCLUI */}
@@ -236,11 +214,11 @@ export default function FeatureDetailPage() {
           viewport={{ once: true }}
           className="mb-20"
         >
-          <h2 className="font-serif text-2xl md:text-3xl text-[#722F37] mb-8">{dict.includesTitle}</h2>
+          <h2 className="font-serif text-2xl md:text-3xl text-brand mb-8">{dict.includesTitle}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {m.includes.map((item) => (
               <div key={item} className="flex items-start gap-4 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                <div className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-[#722F37]/10 text-[#722F37] flex items-center justify-center">
+                <div className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-brand/10 text-brand flex items-center justify-center">
                   <Check size={11} strokeWidth={4} />
                 </div>
                 <span className="text-sm text-gray-600 leading-relaxed">{item}</span>
@@ -256,11 +234,11 @@ export default function FeatureDetailPage() {
           viewport={{ once: true }}
           className="mb-24"
         >
-          <h2 className="font-serif text-2xl md:text-3xl text-[#722F37] mb-8">{dict.examplesTitle}</h2>
+          <h2 className="font-serif text-2xl md:text-3xl text-brand mb-8">{dict.examplesTitle}</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {m.examples.map((ex, i) => (
               <div key={ex.title} className="bg-white rounded-[2rem] p-7 border border-gray-100 shadow-sm">
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#722F37] text-white font-serif text-sm mb-5">
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-brand text-white font-serif text-sm mb-5">
                   {i + 1}
                 </span>
                 <h4 className="font-serif text-lg text-gray-800 mb-2">{ex.title}</h4>
@@ -283,7 +261,7 @@ export default function FeatureDetailPage() {
               <Link
                 key={id}
                 href={`/${locale}/features/${FEATURE_SLUGS[id]}`}
-                className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-600 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest hover:border-[#722F37] hover:text-[#722F37] transition-all"
+                className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-600 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest hover:border-brand hover:text-brand transition-all"
               >
                 {(moduleNames as Record<string, string>)[id]}
               </Link>
@@ -298,17 +276,17 @@ export default function FeatureDetailPage() {
           viewport={{ once: true }}
           className="text-center"
         >
-          <h2 className="text-3xl font-serif text-[#722F37] mb-8">{dict.ctaTitle}</h2>
+          <h2 className="text-3xl font-serif text-brand mb-8">{dict.ctaTitle}</h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href={`/${locale}/pricing`}
-              className="inline-flex items-center gap-2 h-14 px-8 rounded-full bg-[#722F37] text-white text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-[#5a252b] hover:scale-105 transition-all"
+              className="inline-flex items-center gap-2 h-14 px-8 rounded-full bg-brand text-white text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-brand-dark hover:scale-105 transition-all"
             >
               {dict.ctaPricing} <ArrowRight size={14} />
             </Link>
             <Link
-              href={`/${locale}/dashboard`}
-              className="inline-flex items-center h-14 px-8 rounded-full border border-gray-200 text-gray-700 text-[10px] font-bold uppercase tracking-widest hover:border-[#722F37] hover:text-[#722F37] transition-all"
+              href={`/${locale}/dashboard/new-invite`}
+              className="inline-flex items-center h-14 px-8 rounded-full border border-gray-200 text-gray-700 text-[10px] font-bold uppercase tracking-widest hover:border-brand hover:text-brand transition-all"
             >
               {dict.ctaStart}
             </Link>
