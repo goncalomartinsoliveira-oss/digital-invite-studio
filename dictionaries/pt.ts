@@ -493,15 +493,39 @@ const pt = {
   },
   "DetailedFeaturesPage": {
     "hero": {
-      "badge": "Tudo num só lugar",
-      "title1": "O sistema operativo para",
-      "title2": "o seu casamento de luxo.",
-      "desc": "Desde o primeiro anúncio da data até à última fotografia partilhada na pista de dança. Cinco módulos pensados para eliminar o stress da organização e elevar a experiência dos vossos convidados."
+      "badge": "Funcionalidades",
+      "title1": "O convite no centro.",
+      "title2": "E tudo o que vem com ele.",
+      "desc": "O convite digital é onde tudo começa: é ele que os convidados abrem e é nele que confirmam presença. À volta, juntem os módulos de que precisam, todos no mesmo painel e com a mesma lista de convidados."
+    },
+    "jumpLabel": "Ir para",
+    "invite": {
+      "detailBtn": "Ver tudo sobre o convite",
+      "liveBtn": "Ver um convite ao vivo"
+    },
+    "around": {
+      "tag": "À volta do convite",
+      "title": "Os módulos que juntam quando precisarem",
+      "desc": "Cada um resolve um momento do casamento, do primeiro anúncio às memórias depois da festa."
+    },
+    "connected": {
+      "title": "Tudo ligado, sem trabalho a dobrar",
+      "items": [
+        { "title": "Uma só lista de convidados", "desc": "Quem confirma no convite fica logo pronto para sentar nas mesas, sem copiar nada." },
+        { "title": "Um só painel", "desc": "Convite, convidados, mesas, fotos e mensagens no mesmo sítio, partilhado com quem vos ajuda." },
+        { "title": "Paguem só o que usam", "desc": "Cada módulo compra-se à parte ou em pacote, com pagamento único por evento." }
+      ]
+    },
+    "bespoke": {
+      "title": "Querem um convite só vosso?",
+      "desc": "Também desenhamos convites exclusivos, de raiz, a partir da vossa história.",
+      "link": "Conhecer o convite à medida"
     },
     "discoverMore": "Descobrir mais",
     "cta": {
-      "title": "Pronto para elevar o seu evento?",
-      "btn": "Ver Pacotes e Preços"
+      "title": "Comecem pelo convite.",
+      "btn": "Ver planos e preços",
+      "btnPrimary": "Criar o nosso convite"
     }
   },
   "FeatureDetailPage": {
@@ -509,9 +533,11 @@ const pt = {
     "includesTitle": "O que inclui",
     "examplesTitle": "Na prática",
     "otherFeaturesTitle": "Outras funcionalidades",
-    "ctaTitle": "Pronto para começar?",
-    "ctaPricing": "Ver Preços",
-    "ctaStart": "Começar Agora",
+    "ctaTitle": "Prontos para começar?",
+    "ctaPricing": "Ver planos e preços",
+    "ctaStart": "Criar o nosso convite",
+    "liveBtn": "Ver um convite ao vivo",
+    "bespoke": { "title": "Querem um desenho só vosso?", "desc": "Além dos modelos, desenhamos convites exclusivos, criados de raiz para cada casal, com todas estas funcionalidades incluídas.", "link": "Conhecer o convite à medida" },
     "modules": {
       "save_the_date": {
         "tag": "Antes do Grande Dia",
@@ -556,11 +582,11 @@ const pt = {
       },
       "invite": {
         "tag": "O Coração do Convite",
-        "title": "Um website de casamento completo, pronto em minutos",
+        "title": "Um convite de casamento completo, num único link",
         "summary": "O vosso convite digital, com modelo profissional, conteúdo personalizado e RSVP inteligente integrado, tudo num único link.",
-        "desc": "É a base de tudo: um website de casamento elegante, responsivo e totalmente vosso. Escolham entre vários modelos de design, personalizem cores, textos e fotografias, e partilhem um único link com todos os convidados. Inclui sempre o módulo de Convidados & Mesas, porque o RSVP inteligente precisa de saber quem confirma.",
+        "desc": "É a base de tudo: um convite de casamento elegante, pensado para o telemóvel e totalmente vosso. Escolham o modelo, personalizem textos, fotografias e detalhes, e partilhem um único link com todos os convidados. Inclui sempre o módulo de Convidados & Mesas, porque o RSVP inteligente precisa de saber quem confirma.",
         "includes": [
-          "Vários modelos de design à escolha, do clássico ao contemporâneo",
+          "Modelos desenhados ao pormenor, com novos modelos a chegar",
           "Personalização completa de textos, fotografias e detalhes do evento",
           "RSVP inteligente: o convidado procura o nome, confirma presença e indica restrições alimentares",
           "Site totalmente responsivo, pensado primeiro para telemóvel",
@@ -582,7 +608,7 @@ const pt = {
             },
             {
               "title": "Fica pronto num único link",
-              "desc": "O vosso website de casamento fica online, responsivo e elegante, pronto a abrir em qualquer telemóvel ou computador."
+              "desc": "O vosso convite fica online, responsivo e elegante, pronto a abrir em qualquer telemóvel ou computador."
             },
             {
               "title": "Partilham com todos os convidados",
@@ -597,8 +623,8 @@ const pt = {
         },
         "sectionsBlock": {
           "tag": "Modular à vossa medida",
-          "title": "Todas as secções do site, e vocês escolhem quais aparecem",
-          "intro": "O vosso website inclui todas estas secções de raiz. Cada uma liga-se ou desliga-se com um clique no painel, por isso mostram só o que faz sentido para o vosso casamento, sem nunca ficar com espaços vazios ou informação a mais.",
+          "title": "Todas as secções do convite, e vocês escolhem quais aparecem",
+          "intro": "O vosso convite inclui todas estas secções de raiz. Cada uma liga-se ou desliga-se com um clique no painel, por isso mostram só o que faz sentido para o vosso casamento, sem nunca ficar com espaços vazios ou informação a mais.",
           "sections": [
             { "key": "hero", "name": "Capa", "desc": "A primeira impressão: os vossos nomes, a data e uma fotografia ou vídeo a ocupar o ecrã inteiro." },
             { "key": "countdown", "name": "Contagem decrescente", "desc": "Um contador que mostra quantos dias faltam para o grande dia, atualizado automaticamente." },
@@ -613,7 +639,7 @@ const pt = {
             { "key": "rsvp", "name": "Confirmação (RSVP)", "desc": "Os convidados procuram o nome, confirmam presença e indicam restrições, com data limite. Tudo cai no vosso painel." },
             { "key": "footer", "name": "Rodapé e contactos", "desc": "Uma mensagem de despedida e, se fizer sentido, os contactos de quem organiza para dúvidas de última hora." }
           ],
-          "footnote": "Desligar uma secção nunca apaga o que lá escreveram: podem voltar a ativá-la a qualquer momento. E todas existem em qualquer um dos modelos de design."
+          "footnote": "Desligar uma secção nunca apaga o que lá escreveram: podem voltar a ativá-la a qualquer momento. E se mudarem de modelo, o que escreveram vem convosco."
         }
       },
       "guests_seating": {
