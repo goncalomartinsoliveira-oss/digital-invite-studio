@@ -12,6 +12,9 @@ interface AccountModuleProps {
   isSuperAdmin?: boolean;
   moduleNames?: Record<string, string>;
   bundleNames?: Record<string, string>;
+  // Avisa o painel do evento quando os módulos mudam, para a cópia dele não ficar
+  // desatualizada (senão o autosave voltava a gravar a lista antiga).
+  onModulesChange?: (modules: string[], dateLockedAt: string | null) => void;
   dict: {
     profile: {
       title: string; subtitle: string; logoutBtn: string; emailLabel: string;
@@ -30,7 +33,7 @@ interface AccountModuleProps {
       title: string; subtitle: string;
       items: Record<ModuleId, string>;
       lockedNote: string; unlockedNote: string; dateLockedSince: string;
-      paymentPrompt: string;
+      paymentPrompt: string; saveError: string;
     };
     history: {
       title: string; subtitle: string; emptyState: string;
@@ -40,7 +43,7 @@ interface AccountModuleProps {
   };
 }
 
-export default function AccountModule({ userEmail, invitationId, isSuperAdmin, moduleNames, bundleNames, dict }: AccountModuleProps) {
+export default function AccountModule({ userEmail, invitationId, isSuperAdmin, moduleNames, bundleNames, onModulesChange, dict }: AccountModuleProps) {
   const router = useRouter();
   const params = useParams();
   const locale = (params?.locale as string) || "pt";
@@ -109,6 +112,10 @@ export default function AccountModule({ userEmail, invitationId, isSuperAdmin, m
     if (!error && data) {
       setUnlockedModules(data.unlocked_modules || []);
       setDateLockedAt(data.date_locked_at || null);
+      onModulesChange?.(data.unlocked_modules || [], data.date_locked_at || null);
+    } else {
+      console.error("toggleModule:", error);
+      window.alert(dict.modules.saveError);
     }
     setTogglingModule(null);
 

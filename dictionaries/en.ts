@@ -1091,7 +1091,8 @@ const en = {
       "lockedNote": "The event date is locked because at least one module is already active.",
       "unlockedNote": "No active modules — the event date is still editable by the couple.",
       "dateLockedSince": "Locked since",
-      "paymentPrompt": "Amount paid (€) — leave blank to not record any revenue:"
+      "paymentPrompt": "Amount paid (€) — leave blank to not record any revenue:",
+      "saveError": "Could not save the module change. Please try again; if it keeps failing, the database is probably refusing the write (permissions)."
     },
     "history": {
       "title": "Purchase History",

@@ -285,7 +285,10 @@ export default function Dashboard() {
 
   const handleSaveDesign = async () => {
     setSaving(true);
-    const { user_email, ...dataToSave } = formData;
+    // unlocked_modules e date_locked_at são geridos fora dos editores (Conta ›
+    // Módulos do Evento e webhook do Stripe). Não os regravar a partir da cópia
+    // local, que pode estar desatualizada e desfazia ativações.
+    const { user_email, unlocked_modules, date_locked_at, ...dataToSave } = formData;
     await supabase.from("invitations").update(dataToSave).eq("id", formData.id);
     setSaving(false);
     // Atualização "suave": o convite refaz só os dados (ver PreviewBridge) e mantém
@@ -962,7 +965,7 @@ export default function Dashboard() {
                   dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />
               )}
-              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} moduleNames={moduleNamesDict} bundleNames={bundleNamesDict} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
+              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} moduleNames={moduleNamesDict} bundleNames={bundleNamesDict} onModulesChange={(modules, lockedAt) => setFormData((f: any) => ({ ...f, unlocked_modules: modules, date_locked_at: lockedAt }))} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
             </div>
             </EventBrandProvider>
           </main>
