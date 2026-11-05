@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { headers, cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, ChevronDown, Lightbulb } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { resolveBrand } from "@/lib/brands";
-import { getHelp, visibleArticles, faqJsonLd } from "@/lib/help";
+import { visibleArticles, faqJsonLd } from "@/lib/help";
+import { getHelp } from "@/lib/helpContent";
 import RichText from "@/components/help/RichText";
+import ArticleBody from "@/components/help/ArticleBody";
 
 async function currentBrand() {
   const h = await headers();
@@ -78,50 +80,7 @@ export default async function HelpArticlePage({ params }: { params: Promise<{ lo
           <h1 className="font-serif text-4xl md:text-5xl text-ink leading-tight mb-4">{plain(article.title)}</h1>
           <p className="text-lg text-gray-500 leading-relaxed mb-10"><RichText text={article.summary} /></p>
 
-          {article.steps && article.steps.length > 0 && (
-            <section className="mb-10">
-              <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand mb-5">{ui.stepsTitle}</h2>
-              <ol className="space-y-4">
-                {article.steps.map((s, i) => (
-                  <li key={i} className="flex gap-4">
-                    <span className="w-8 h-8 rounded-full bg-brand text-white text-sm font-semibold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-                    <p className="text-[15px] text-gray-600 leading-relaxed pt-1"><RichText text={s} /></p>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )}
-
-          {article.tips && article.tips.length > 0 && (
-            <section className="mb-10 bg-white border border-gold-soft/70 rounded-2xl p-6">
-              <h2 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-brand mb-4"><Lightbulb size={14} /> {ui.tipsTitle}</h2>
-              <ul className="space-y-3">
-                {article.tips.map((t, i) => (
-                  <li key={i} className="flex gap-3 text-[14px] text-gray-600 leading-relaxed">
-                    <span className="mt-2 w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
-                    <span><RichText text={t} /></span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {article.faq && article.faq.length > 0 && (
-            <section className="mb-10">
-              <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand mb-4">{ui.faqTitle}</h2>
-              <div className="space-y-3">
-                {article.faq.map((f, i) => (
-                  <details key={i} className="group bg-white border border-gray-100 rounded-2xl px-6 py-4 open:shadow-sm">
-                    <summary className="flex items-center justify-between gap-4 cursor-pointer list-none font-semibold text-ink text-[15px]">
-                      <span><RichText text={f.q} /></span>
-                      <ChevronDown size={16} className="text-brand shrink-0 transition-transform group-open:rotate-180" />
-                    </summary>
-                    <p className="text-[14px] text-gray-600 leading-relaxed mt-3"><RichText text={f.a} /></p>
-                  </details>
-                ))}
-              </div>
-            </section>
-          )}
+          <ArticleBody article={article} ui={ui} locale={locale} />
 
           {related.length > 0 && (
             <section className="mb-12">

@@ -26,6 +26,10 @@ export const helpPt: HelpContent = {
     forAgenciesBadge: "Para agências",
     metaTitleSuffix: "Centro de ajuda",
     metaDescription: "Guias passo a passo para criar o convite digital, gerir convidados e mesas, partilhar fotos e muito mais.",
+    drawerClose: "Fechar ajuda",
+    drawerOpenInCenter: "Abrir no centro de ajuda",
+    drawerLoading: "A carregar...",
+    drawerMissing: "Este artigo não está disponível.",
   },
 
   chapters: [
@@ -94,6 +98,9 @@ export const helpPt: HelpContent = {
       chapter: "start",
       title: "Como está organizado o painel?",
       summary: "Uma página inicial com uma área para cada parte do casamento.",
+      shots: [
+        { file: "hub", alt: "Página inicial do painel, com a lista “O que falta fazer” e os cartões de cada área." },
+      ],
       steps: [
         "Ao abrirem um evento vêm a página **O que quer gerir?**, com um cartão por área: **Save the Date**, **Convite de casamento**, **Convidados e mesas**, **Photo Sharing & Live Wall**, **Guestbook** e **Links e QR codes**.",
         "No topo, a lista **O que falta fazer** mostra os passos que ainda faltam e leva-vos a cada um.",
@@ -115,6 +122,9 @@ export const helpPt: HelpContent = {
       chapter: "invite",
       title: "Como escolho o modelo e a cor do convite?",
       summary: "O modelo define o aspeto do convite. Podem experimentar vários até acharem o vosso.",
+      shots: [
+        { file: "invite-design", alt: "Separador “Modelos e identidade” do convite, com a pré-visualização no telemóvel ao lado." },
+      ],
       steps: [
         "Abram **Convite de casamento** e, no seletor por cima do editor, escolham **Modelos e identidade**.",
         "Em **Templates do Convite**, carreguem no modelo de que gostam.",
@@ -133,6 +143,9 @@ export const helpPt: HelpContent = {
       popular: true,
       title: "Como edito os textos e as fotos do convite?",
       summary: "O editor tem uma secção por cada parte do convite. O telemóvel ao lado mostra o resultado.",
+      shots: [
+        { file: "invite-content", alt: "Editor de conteúdo do convite, com as secções à esquerda e a pré-visualização no telemóvel." },
+      ],
       steps: [
         "Abram **Convite de casamento** e, no seletor por cima do editor, escolham **Conteúdo do convite**.",
         "O editor tem uma secção por cada parte do convite, por esta ordem: **Capa (Hero)**, **Contador Regressivo**, **A Nossa História**, **Galeria Editorial**, **Cronograma**, **Locais do Evento**, **Detalhes do Evento**, **Confirmação (RSVP)** e **Rodapé & Contactos**. Carreguem numa para a abrir.",
@@ -187,6 +200,10 @@ export const helpPt: HelpContent = {
       chapter: "invite",
       title: "Como protejo o convite com um código?",
       summary: "Um código de 4 números pedido a quem abre o convite, para o link poder circular sem o convite ficar aberto a todos.",
+      shots: [
+        { file: "access-card", alt: "O cartão “Acesso ao convite” com o código ligado." },
+        { file: "access-gate", alt: "O que vê quem abre o convite sem o código: só um pedido de código, sem dados do evento." },
+      ],
       steps: [
         "Abram **Links e QR codes**.",
         "No cartão **Acesso ao convite**, liguem o interruptor. É gerado um código de 4 números.",
@@ -251,6 +268,9 @@ export const helpPt: HelpContent = {
       popular: true,
       title: "Como adiciono convidados e grupos?",
       summary: "Os convidados são organizados em grupos (uma família, um casal). É o grupo que responde ao RSVP.",
+      shots: [
+        { file: "guests-list", alt: "Separador Convidados: ferramentas de dados, formulário “Adicionar à Lista” e tabela de convidados." },
+      ],
       steps: [
         "Abram **Convidados e mesas** e o separador **Convidados**.",
         "Em **Adicionar à Lista**, escrevam o **Nome** e escolham a **Categoria** (**Adulto**, **Criança** ou **Bebé**), o **Sexo** e o **Lado**.",
@@ -275,6 +295,9 @@ export const helpPt: HelpContent = {
       chapter: "guests",
       title: "Como importo e exporto a lista de convidados?",
       summary: "Podem trazer a vossa lista de um ficheiro Excel e levá-la de volta em Excel ou PDF.",
+      shots: [
+        { file: "guests-tools", alt: "A barra “Ferramentas de Dados”, com as opções de exportar (PDF e Excel) e de importar." },
+      ],
       steps: [
         "Em **Convidados e mesas** › **Convidados**, abram **Ferramentas de Dados**.",
         "Para importar: carreguem em **Baixar Modelo**, preencham o ficheiro Excel e carreguem em **Importar Excel**.",
@@ -292,6 +315,9 @@ export const helpPt: HelpContent = {
       popular: true,
       title: "Como confirmam os convidados a presença?",
       summary: "Os convidados procuram o nome, escolhem Vou ou Não vou por cada pessoa do grupo, e as respostas chegam ao vosso painel.",
+      shots: [
+        { file: "rsvp-group", alt: "O que o convidado vê ao abrir o link do seu grupo: cada pessoa escolhe “Vou!” ou “Não vou”." },
+      ],
       steps: [
         "Os convidados abrem o convite e vão à secção de confirmação (**RSVP**), ou usam a página própria de confirmação, a que se chega por QR code.",
         "Escrevem o nome (3 letras ou mais) e escolhem-se na lista.",
@@ -315,6 +341,9 @@ export const helpPt: HelpContent = {
       popular: true,
       title: "Como crio links personalizados por convidado?",
       summary: "Um link por grupo: o RSVP abre já no grupo certo e, em alguns modelos, o convite mostra o nome e os lugares reservados.",
+      shots: [
+        { file: "guest-links", alt: "O cartão “Links personalizados”, com o link de cada grupo e a coluna “Visto”." },
+      ],
       steps: [
         "Abram **Convidados e mesas** e, no topo, o cartão **Links personalizados**. Carreguem em **Configurar**.",
         "Carreguem em **Gerar links em falta**. Cada grupo fica com o seu link.",
@@ -356,6 +385,9 @@ export const helpPt: HelpContent = {
       chapter: "guests",
       title: "Como organizo as mesas?",
       summary: "Desenhem a planta da sala, sentem os convidados arrastando-os e partilhem a mesa de cada um por QR code.",
+      shots: [
+        { file: "seating-plan", alt: "Separador Mesas: a planta da sala com as mesas e os convidados por sentar." },
+      ],
       steps: [
         "Abram **Convidados e mesas** e o separador **Mesas**.",
         "Em **Adicionar Mesas**, escolham uma mesa **Redonda**, **Quadrada** ou **Longa**. A mesa fica selecionada para lhe darem o nome e o número de lugares.",
@@ -427,6 +459,9 @@ export const helpPt: HelpContent = {
       chapter: "share",
       title: "Onde encontro todos os links e QR codes?",
       summary: "A área Links e QR codes junta todos os endereços do evento num só sítio.",
+      shots: [
+        { file: "links-hub", alt: "A área “Links e QR codes”, com um cartão para cada endereço do evento." },
+      ],
       steps: [
         "Abram **Links e QR codes** na página inicial do painel.",
         "Vão encontrar seis cartões: **Convite**, **Confirmar presença (RSVP)**, **Plano de mesas**, **Galeria de fotos**, **Live Wall** e **Livro de visitas**.",
@@ -485,6 +520,9 @@ export const helpPt: HelpContent = {
       chapter: "account",
       title: "Como dou acesso a outra pessoa?",
       summary: "Podem partilhar o evento com o vosso par, a família ou um wedding planner.",
+      shots: [
+        { file: "collaborators", alt: "O cartão “Colaboradores” em Minha Conta, com o e-mail, a permissão e a lista de pessoas com acesso." },
+      ],
       steps: [
         "Abram **Minha Conta** e vão a **Colaboradores**.",
         "Escrevam o e-mail da pessoa.",

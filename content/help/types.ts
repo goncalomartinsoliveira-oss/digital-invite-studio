@@ -25,6 +25,9 @@ export type HelpArticle = {
   faq?: { q: string; a: string }[];
   related?: string[]; // slugs
   popular?: boolean;  // aparece em "Comecem por aqui"
+  // Capturas de ecrã (geradas por scripts/help-screenshots): `file` é o nome
+  // sem extensão; o ficheiro vive em public/help/<idioma>/<file>.webp.
+  shots?: { file: string; alt: string; caption?: string }[];
 };
 
 export type HelpChapter = { id: HelpChapterId; title: string; desc: string; audience?: HelpAudience };
@@ -35,6 +38,8 @@ export type HelpUi = {
   stepsTitle: string; tipsTitle: string; faqTitle: string; relatedTitle: string; inThisChapter: string;
   backToHelp: string; stillNeedHelp: string; stillNeedHelpDesc: string; contactBtn: string; forAgenciesBadge: string;
   metaTitleSuffix: string; metaDescription: string;
+  // Gaveta de ajuda dentro do painel
+  drawerClose: string; drawerOpenInCenter: string; drawerLoading: string; drawerMissing: string;
 };
 
 export type HelpContent = { ui: HelpUi; chapters: HelpChapter[]; articles: HelpArticle[] };

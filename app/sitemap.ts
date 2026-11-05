@@ -2,7 +2,8 @@ import type { MetadataRoute } from "next";
 import { headers } from "next/headers";
 import { resolveBrand } from "@/lib/brands";
 import { FEATURE_SLUGS } from "./[locale]/features/slugs";
-import { getHelp, visibleArticles } from "@/lib/help";
+import { visibleArticles } from "@/lib/help";
+import { getHelp } from "@/lib/helpContent";
 
 const LOCALES = ["pt", "en"] as const;
 

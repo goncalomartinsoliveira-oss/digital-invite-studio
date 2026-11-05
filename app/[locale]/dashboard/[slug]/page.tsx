@@ -48,6 +48,8 @@ import LinksHub from "@/components/dashboard/LinksHub";
 import GuestLinksPanel from "@/components/dashboard/GuestLinksPanel";
 import InviteAccessCard from "@/components/dashboard/InviteAccessCard";
 import SetupChecklist, { type ChecklistItem } from "@/components/dashboard/SetupChecklist";
+import HelpDrawer from "@/components/help/HelpDrawer";
+import { TAB_HELP, CHECKLIST_HELP } from "@/lib/help";
 import MoodboardModule from "@/components/dashboard/MoodboardModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import BundleOffers from "@/components/dashboard/BundleOffers";
@@ -121,6 +123,8 @@ export default function Dashboard() {
   // Estado da lista "O que falta fazer" (guardado no browser, como o tour).
   const [linkShared, setLinkShared] = useState(false);
   const [checklistHidden, setChecklistHidden] = useState(false);
+  // Ajuda contextual: slug do artigo aberto na gaveta (null = fechada).
+  const [helpSlug, setHelpSlug] = useState<string | null>(null);
 
   const [copied, setCopied] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
@@ -447,7 +451,7 @@ export default function Dashboard() {
     ] : []),
     ...(!isTabLocked('guests') ? [{ id: 'guests', done: guests.length > 0, onGo: () => goTab('guests_seating', 'guests') }] : []),
     ...(!isTabLocked('design') ? [{ id: 'share', done: linkShared, onGo: () => goTab('links', 'links') }] : []),
-  ].map(i => ({ ...i, label: checklistDict.items[i.id as keyof typeof checklistDict.items].label, hint: checklistDict.items[i.id as keyof typeof checklistDict.items].hint })) : [];
+  ].map(i => ({ ...i, helpSlug: CHECKLIST_HELP[i.id], label: checklistDict.items[i.id as keyof typeof checklistDict.items].label, hint: checklistDict.items[i.id as keyof typeof checklistDict.items].hint })) : [];
 
   const projectName = formData.groom_name && formData.bride_name
     ? `${formData.groom_name} & ${formData.bride_name}`
@@ -472,6 +476,17 @@ export default function Dashboard() {
   // do que um separador, como "invite" = design+content), por isso basta
   // verificar o bloqueio do seu primeiro separador.
   const isGroupLocked = (groupId: Exclude<EventGroup, null | 'account'>) => isTabLocked(GROUP_TABS[groupId][0]); // 'links' não tem módulo → nunca bloqueado
+
+  // Gaveta de ajuda (partilhada pelo hub e pelo editor).
+  const helpDrawer = (
+    <HelpDrawer
+      slug={helpSlug}
+      locale={locale}
+      brandId={isPartnerBrand ? "partner" : "dis"}
+      onClose={() => setHelpSlug(null)}
+      onNavigate={setHelpSlug}
+    />
+  );
 
   // ── HUB: página-base com as áreas do evento ──────────────────────────
   if (!group) {
@@ -526,6 +541,7 @@ export default function Dashboard() {
         </header>
 
         {showTour && dict.tour && <WelcomeTour dict={dict.tour} onClose={dismissTour} />}
+        {helpDrawer}
 
         <main className="flex-1 px-6 py-14 sm:py-20">
           <div className="max-w-5xl mx-auto">
@@ -540,7 +556,7 @@ export default function Dashboard() {
               <p className="text-gray-400 text-sm mt-2">{dict.hubSubtitle}</p>
             </div>
 
-            {!checklistHidden && <SetupChecklist items={checklistItems} dict={checklistDict} onDismiss={hideChecklist} />}
+            {!checklistHidden && <SetupChecklist items={checklistItems} dict={checklistDict} onDismiss={hideChecklist} onHelp={setHelpSlug} />}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {groupCards.map(card => (
@@ -606,6 +622,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-cream text-[#2D3748] overflow-hidden font-sans">
+      {helpDrawer}
       
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r border-gray-100 hidden xl:flex flex-col z-30 shadow-sm shrink-0">
@@ -717,6 +734,16 @@ export default function Dashboard() {
             </div>
             
             <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+               {TAB_HELP[activeTab] && (
+                 <button
+                   onClick={() => setHelpSlug(TAB_HELP[activeTab])}
+                   data-help-open
+                   className="flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all"
+                 >
+                    <HelpCircle size={14} /> <span className="hidden sm:inline">{dict.helpHow}</span>
+                 </button>
+               )}
+
                <div className="hidden md:flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
                   {saving ? (
                       <>
@@ -787,6 +814,18 @@ export default function Dashboard() {
               {activeTab === 'content' && (isTabLocked('content') ? lockedNotice('content') : <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />)}
               {activeTab === 'savethedate' && (isTabLocked('savethedate') ? lockedNotice('savethedate') : <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />)}
               {activeTab === 'guests' && (isTabLocked('guests') ? lockedNotice('guests') : <>
+                {guests.length === 0 && (
+                  <div data-guests-empty className="mb-6 bg-white border border-gold-soft/70 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <span className="w-11 h-11 rounded-2xl bg-cream border border-gold-soft/70 flex items-center justify-center text-brand shrink-0"><Users size={18} /></span>
+                    <div className="flex-1">
+                      <h3 className="font-serif text-lg text-ink">{dict.guestsEmptyTitle}</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">{dict.guestsEmptyDesc}</p>
+                    </div>
+                    <button onClick={() => setHelpSlug('add-guests')} className="flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-dark transition-all shrink-0">
+                      <HelpCircle size={13} /> {dict.guestsEmptyBtn}
+                    </button>
+                  </div>
+                )}
                 <GuestLinksPanel invitationId={formData.id} slug={params.slug as string} locale={params.locale as string} guests={guests} canEdit={canEdit} dict={dictionaries[locale]?.GuestLinksPanel || dictionaries.pt.GuestLinksPanel} />
                 <GuestsModule guests={guests} setGuests={setGuests} invitationId={formData.id} slug={params.slug as string} groomName={formData.groom_name} brideName={formData.bride_name} canEdit={canEdit} dict={dictionaries[locale]?.GuestsModule || dictionaries.pt.GuestsModule} />
               </>)}

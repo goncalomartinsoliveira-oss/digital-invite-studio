@@ -258,6 +258,10 @@ const pt = {
     "mobilePreviewLabel": "Vista Mobile Real",
     "mobilePreviewSub": "Atualiza ao guardar",
     "helpCenter": "Centro de ajuda",
+    "helpHow": "Como funciona?",
+    "guestsEmptyTitle": "Ainda não há convidados",
+    "guestsEmptyDesc": "Adicionem os convidados em grupos (famílias ou casais). Vejam como em dois minutos.",
+    "guestsEmptyBtn": "Como adicionar convidados",
     "accountLabel": "Minha Conta",
     "backToEvents": "Meus Eventos",
     "currentProject": "Projeto atual",
@@ -396,6 +400,7 @@ const pt = {
     "openedTitle": "Primeira abertura: {first} · {count} abertura(s)"
   },
   "SetupChecklist": {
+    "howBtn": "Como fazer?",
     "title": "O que falta fazer",
     "progress": "{done} de {total} passos concluídos",
     "go": "Ir",

@@ -28,6 +28,10 @@ export const helpEn: HelpContent = {
     forAgenciesBadge: "For agencies",
     metaTitleSuffix: "Help centre",
     metaDescription: "Step-by-step guides to create your digital invitation, manage guests and tables, share photos and more.",
+    drawerClose: "Close help",
+    drawerOpenInCenter: "Open in the help centre",
+    drawerLoading: "Loading...",
+    drawerMissing: "This article is not available.",
   },
 
   chapters: [
@@ -96,6 +100,9 @@ export const helpEn: HelpContent = {
       chapter: "start",
       title: "How is the dashboard organised?",
       summary: "A home page with one area for each part of the wedding.",
+      shots: [
+        { file: "hub", alt: "Home page of the dashboard, with the “What’s left to do” list and a card for each area." },
+      ],
       steps: [
         "When you open an event you land on **What would you like to manage?**, with one card per area: **Save the Date**, **Wedding invitation**, **Guests & tables**, **Photo Sharing & Live Wall**, **Guestbook** and **Links & QR codes**.",
         "At the top, the **What's left to do** list shows the steps still missing and takes you to each one.",
@@ -117,6 +124,9 @@ export const helpEn: HelpContent = {
       chapter: "invite",
       title: "How do I choose the template and colour?",
       summary: "The template sets the look of the invitation. Try a few until you find yours.",
+      shots: [
+        { file: "invite-design", alt: "The “Models & identity” tab of the invitation, with the phone preview alongside." },
+      ],
       steps: [
         "Open **Wedding invitation** and, in the switch above the editor, pick **Models & identity**.",
         "Under **Invitation Templates**, click the template you like.",
@@ -135,6 +145,9 @@ export const helpEn: HelpContent = {
       popular: true,
       title: "How do I edit the invitation texts and photos?",
       summary: "The editor has one section for each part of the invitation. The phone next to it shows the result.",
+      shots: [
+        { file: "invite-content", alt: "The invitation content editor, with the sections on the left and the phone preview." },
+      ],
       steps: [
         "Open **Wedding invitation** and, in the switch above the editor, pick **Invitation content**.",
         "The editor has one section for each part of the invitation, in this order: **Cover (Hero)**, **Countdown**, **Our Story**, **Editorial Gallery**, **Schedule**, **Event Venues**, **Event Details**, **RSVP Confirmation** and **Footer & Contacts**. Click one to open it.",
@@ -189,6 +202,10 @@ export const helpEn: HelpContent = {
       chapter: "invite",
       title: "How do I protect the invitation with a code?",
       summary: "A 4-digit code asked of anyone opening the invitation, so the link can go around without the invitation being open to everyone.",
+      shots: [
+        { file: "access-card", alt: "The “Invitation access” card with the code switched on." },
+        { file: "access-gate", alt: "What someone opening the invitation without the code sees: just a code prompt, with no event details." },
+      ],
       steps: [
         "Open **Links & QR codes**.",
         "On the **Invitation access** card, turn the switch on. A 4-digit code is generated.",
@@ -253,6 +270,9 @@ export const helpEn: HelpContent = {
       popular: true,
       title: "How do I add guests and groups?",
       summary: "Guests are organised in groups (a family, a couple). It's the group that answers the RSVP.",
+      shots: [
+        { file: "guests-list", alt: "The Guests tab: data tools, the “Add to List” form and the guest table." },
+      ],
       steps: [
         "Open **Guests & tables** and the **Guests** tab.",
         "Under **Add to List**, enter the **Name** and choose the **Category** (**Adult**, **Child** or **Baby**), the **Gender** and the **Side**.",
@@ -277,6 +297,9 @@ export const helpEn: HelpContent = {
       chapter: "guests",
       title: "How do I import and export the guest list?",
       summary: "You can bring your list in from an Excel file and take it back out as Excel or PDF.",
+      shots: [
+        { file: "guests-tools", alt: "The “Data Tools” bar, with the export (PDF and Excel) and import options." },
+      ],
       steps: [
         "In **Guests & tables** › **Guests**, open **Data Tools**.",
         "To import: click **Download Template**, fill in the Excel file and click **Import Excel**.",
@@ -294,6 +317,9 @@ export const helpEn: HelpContent = {
       popular: true,
       title: "How do guests confirm attendance?",
       summary: "Guests look up their name, choose Attending or Not attending for each person in the group, and the answers reach your dashboard.",
+      shots: [
+        { file: "rsvp-group", alt: "What a guest sees when opening their group’s link: each person chooses “Attending!” or “Not attending”." },
+      ],
       steps: [
         "Guests open the invitation and go to the confirmation section (**RSVP**), or use the standalone confirmation page, reached by QR code.",
         "They type their name (3 letters or more) and pick themselves from the list.",
@@ -317,6 +343,9 @@ export const helpEn: HelpContent = {
       popular: true,
       title: "How do I create personalised links for each guest?",
       summary: "One link per group: the RSVP opens straight on the right group and, on some templates, the invitation shows the name and the seats reserved.",
+      shots: [
+        { file: "guest-links", alt: "The “Personalised links” card, with each group’s link and the “Seen” column." },
+      ],
       steps: [
         "Open **Guests & tables** and, at the top, the **Personalised links** card. Click **Set up**.",
         "Click **Generate missing links**. Each group gets its own link.",
@@ -358,6 +387,9 @@ export const helpEn: HelpContent = {
       chapter: "guests",
       title: "How do I organise the tables?",
       summary: "Design the floor plan, seat guests by dragging them, and share each person's table by QR code.",
+      shots: [
+        { file: "seating-plan", alt: "The Tables tab: the floor plan with the tables and the guests still to seat." },
+      ],
       steps: [
         "Open **Guests & tables** and the **Tables** tab.",
         "Under **Add Tables**, choose a **Round**, **Square** or **Long** table. The table is selected so you can give it a name and number of seats.",
@@ -429,6 +461,9 @@ export const helpEn: HelpContent = {
       chapter: "share",
       title: "Where do I find all the links and QR codes?",
       summary: "The Links & QR codes area gathers all the event's addresses in one place.",
+      shots: [
+        { file: "links-hub", alt: "The “Links & QR codes” area, with a card for each event address." },
+      ],
       steps: [
         "Open **Links & QR codes** on the dashboard home page.",
         "You'll find six cards: **Invitation**, **RSVP**, **Seating plan**, **Photo gallery**, **Live Wall** and **Guestbook**.",
@@ -487,6 +522,9 @@ export const helpEn: HelpContent = {
       chapter: "account",
       title: "How do I give someone else access?",
       summary: "You can share the event with your partner, family or a wedding planner.",
+      shots: [
+        { file: "collaborators", alt: "The “Collaborators” card in My Account, with the email, the permission and the list of people with access." },
+      ],
       steps: [
         "Open **My Account** and go to **Collaborators**.",
         "Enter the person's email.",
