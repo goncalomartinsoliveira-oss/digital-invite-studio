@@ -333,7 +333,11 @@ export default function Dashboard() {
   // Área de Gestão: existe apenas em eventos de contas de wedding planner.
   // A equipa da agência vê tudo; o casal vê só o que estiver marcado como
   // partilhado (imposto pelo Supabase, não aqui).
-  const showManagement = !!plannerPlan;
+  // O super-admin vê sempre a área de Planeamento, em qualquer evento — o plano
+  // de wedding planner é da marca (ver lib/planner.ts) e a marca DIS nunca o tem.
+  // A base de dados já lhe dá acesso (dis_is_super_admin) e os módulos tratam-no
+  // como equipa (isAgency).
+  const showManagement = !!plannerPlan || isSuperAdmin;
   const confirmedGuestsList = guests.filter((g: any) => g.status === 'confirmed');
   const confirmedGuests = confirmedGuestsList.length;
   // Por escalão etário — alimenta o Orçamento (preço por adulto/criança/bebé,

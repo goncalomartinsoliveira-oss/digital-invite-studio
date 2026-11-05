@@ -22,7 +22,7 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 
 ## Onde está o quê
 - Templates de convite: `app/[locale]/templates/<id>/page.tsx` (luxury-01, minimal-01, collage-01, classic-01, noir-01, arch-01, envelope-01). O `app/[locale]/invite/[slug]/page.tsx` escolhe o template por `template_id`. **Templates à medida** (ex.: `envelope-01-jose-e-dalia`): ligados no `invite/[slug]/page.tsx` mas **fora** de `AVAILABLE_TEMPLATES` (em `DesignModule.tsx`), por isso nenhum outro casal os vê; o `DesignModule` esconde o seletor no evento que usa um. Documentação do do José e da Dália: `public/envelope-01-jose-e-dalia/elementos/LEIA-ME.md`.
-- Dashboard do evento: `app/[locale]/dashboard/[slug]/page.tsx`. Tem um **hub** (com a lista "O que falta fazer" no topo) com uma área por módulo vendável (Save the Date / Convite / Convidados+Mesas / Fotos / Livro de visitas) mais **Links e QR codes** (`LinksHub`), **Planeamento** (só contas de agência) e **Conta** (`GROUP_TABS`); as áreas filtram separadores, que usam módulos em `components/dashboard/*Module.tsx`.
+- Dashboard do evento: `app/[locale]/dashboard/[slug]/page.tsx`. Tem um **hub** (com a lista "O que falta fazer" no topo) com uma área por módulo vendável (Save the Date / Convite / Convidados+Mesas / Fotos / Livro de visitas) mais **Links e QR codes** (`LinksHub`), **Planeamento** (contas de agência e super admins) e **Conta** (`GROUP_TABS`); as áreas filtram separadores, que usam módulos em `components/dashboard/*Module.tsx`.
 - Lista de eventos: `app/[locale]/dashboard/page.tsx`.
 - i18n: `dictionaries/pt.ts` e `en.ts` (~1135 linhas cada — **editar cirurgicamente com Edit, não ler na íntegra**).
 
