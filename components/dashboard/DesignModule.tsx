@@ -16,6 +16,9 @@ interface DesignModuleProps {
   };
 }
 
+// ids antigos que apontam para um modelo que entretanto passou a estar no seletor.
+const LEGACY_TEMPLATE_IDS: Record<string, string> = { 'envelope-01-jose-e-dalia': 'renaissance-blue-01' };
+
 const AVAILABLE_TEMPLATES = [
   { id: 'luxury-01', name: 'Classic Luxury', preview: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400' },
   { id: 'minimal-01', name: 'Modern Minimal', preview: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=400' },
@@ -23,6 +26,7 @@ const AVAILABLE_TEMPLATES = [
   { id: 'classic-01', name: 'Clássico', preview: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400', supportsTheme: true },
   { id: 'noir-01', name: 'Editorial Noir', preview: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&sat=-100', supportsTheme: true },
   { id: 'arch-01', name: 'Romântico', preview: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400', supportsTheme: true },
+  { id: 'renaissance-blue-01', name: 'Renaissance Blue', preview: '/renaissance-blue-01/preview.webp' },
   { id: 'envelope-01', name: 'Envelope (em construção)', preview: '/envelope-01/envelope.webp' },
 ];
 
@@ -58,7 +62,10 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
 
   const dateLocked = !!formData.date_locked_at;
   const dbContent = formData.content || {};
-  const activeTemplate = AVAILABLE_TEMPLATES.find(t => t.id === formData.template_id);
+  // O modelo "Renaissance Blue" nasceu à medida de um casal e o evento dele ainda
+  // grava o id antigo — conta como o mesmo modelo (ver invite/[slug]/page.tsx).
+  const currentTemplateId: string = LEGACY_TEMPLATE_IDS[formData.template_id] ?? formData.template_id;
+  const activeTemplate = AVAILABLE_TEMPLATES.find(t => t.id === currentTemplateId);
   // Um template_id que não está na lista de opções é um modelo à medida,
   // feito fora do seletor de propósito (ver AVAILABLE_TEMPLATES) — ninguém
   // devia conseguir trocá-lo por engano a clicar na grelha. Sem isto, o
@@ -109,7 +116,7 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
               key={t.id}
               onClick={() => { if(canEdit) setFormData({...formData, template_id: t.id}) }}
               className={`group cursor-pointer p-3 rounded-3xl border-2 transition-all duration-300 ${
-                formData.template_id === t.id
+                currentTemplateId === t.id
                 ? 'border-brand bg-brand/5 shadow-inner'
                 : 'border-transparent opacity-60 hover:opacity-100 hover:border-gray-200'
               }`}
@@ -117,10 +124,10 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
               <div className="relative overflow-hidden rounded-2xl mb-4 shadow-sm aspect-[4/3]">
                 <img
                   src={t.preview}
-                  className={`w-full h-full object-cover transition-transform duration-500 ${formData.template_id === t.id ? 'scale-110' : 'group-hover:scale-105'}`}
+                  className={`w-full h-full object-cover transition-transform duration-500 ${currentTemplateId === t.id ? 'scale-110' : 'group-hover:scale-105'}`}
                   alt={t.name}
                 />
-                {formData.template_id === t.id && (
+                {currentTemplateId === t.id && (
                   <div className="absolute inset-0 bg-brand/20 flex items-center justify-center backdrop-blur-[2px]">
                     <div className="bg-cream text-brand p-3 rounded-full shadow-xl">
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -128,7 +135,7 @@ export default function DesignModule({ formData, setFormData, handleSaveDesign, 
                   </div>
                 )}
               </div>
-              <p className={`text-[11px] font-bold text-center uppercase tracking-widest ${formData.template_id === t.id ? 'text-brand' : 'text-gray-400'}`}>
+              <p className={`text-[11px] font-bold text-center uppercase tracking-widest ${currentTemplateId === t.id ? 'text-brand' : 'text-gray-400'}`}>
                 {t.name}
               </p>
             </div>

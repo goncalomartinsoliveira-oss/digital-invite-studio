@@ -6,7 +6,7 @@ import ClassicTemplate from "../../templates/classic-01/page";
 import NoirTemplate from "../../templates/noir-01/page";
 import ArchTemplate from "../../templates/arch-01/page";
 import EnvelopeTemplate from "../../templates/envelope-01/page";
-import EnvelopeJoseEDaliaTemplate from "../../templates/envelope-01-jose-e-dalia/page";
+import RenaissanceBlueTemplate from "../../templates/renaissance-blue-01/page";
 import { EventBrandProvider } from "../../../../components/site/BrandProvider";
 import EventExpiredScreen from "../../../../components/site/EventExpiredScreen";
 import PreviewBridge from "../../../../components/site/PreviewBridge";
@@ -104,8 +104,9 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
           <ArchTemplate data={invite} params={params} />
         ) : invite.template_id === 'envelope-01' ? (
           <EnvelopeTemplate data={invite} params={params} />
-        ) : invite.template_id === 'envelope-01-jose-e-dalia' ? (
-          <EnvelopeJoseEDaliaTemplate data={invite} params={params} />
+        ) : invite.template_id === 'renaissance-blue-01' || invite.template_id === 'envelope-01-jose-e-dalia' ? (
+          // 'envelope-01-jose-e-dalia' é o id antigo, ainda gravado no evento da Dália e do José.
+          <RenaissanceBlueTemplate data={invite} params={params} />
         ) : (
           <LuxuryTemplate data={invite} params={params} />
         )}

@@ -251,15 +251,24 @@ escolhe o modelo por `template_id` e, se não reconhecer, usa o Luxury.
 | `noir-01` | Editorial Noir | sim | sim |
 | `arch-01` | Romântico | sim | sim |
 | `envelope-01` | Envelope (em construção) | não | sim |
-| `envelope-01-jose-e-dalia` | *(fora do seletor de propósito)* | n/a | não |
+| `renaissance-blue-01` | Renaissance Blue | não (a paleta azul é a identidade) | não |
+| `envelope-01-jose-e-dalia` | *(id antigo de Renaissance Blue, só no evento da Dália e do José)* | n/a | não |
+
+**Renaissance Blue** (envelope azul com selo de cera, colagem de flores, Cinzel e
+Pinyon Script) foi feito à medida do casamento da Dália e do José (cópia do
+`envelope-01`) e passou a ser um modelo normal do seletor. O evento deles
+ainda grava o id antigo `envelope-01-jose-e-dalia`: o convite público
+(`invite/[slug]/page.tsx`) e o `DesignModule` (`LEGACY_TEMPLATE_IDS`)
+tratam-no como o mesmo modelo, por isso não foi preciso mexer na base de dados. A
+documentação (elementos, posições lidas do SVG, fontes, ecrã de entrada) está em
+`public/renaissance-blue-01/elementos/LEIA-ME.md`. Suporta a saudação dos links
+pessoais (`GuestGreeting`) e os textos são fixos em português, como nos outros modelos.
+O convite é lido do evento, nada é específico do casal original.
 
 **Modelos à medida:** um `template_id` que está ligado em
 `app/[locale]/invite/[slug]/page.tsx` mas **não** está em `AVAILABLE_TEMPLATES`
 fica invisível para os outros casais, e o `DesignModule` esconde o seletor no
-evento que o usa. Foi assim que se fez o do José e da Dália (cópia do
-`envelope-01`). A documentação dele está em
-`public/envelope-01-jose-e-dalia/elementos/LEIA-ME.md` (elementos, posições
-lidas do SVG, fontes, ecrã de entrada).
+evento que o usa. É a receita para um próximo casal que peça um desenho próprio.
 
 ---
 
@@ -312,7 +321,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
   Nos **links personalizados** isso não acontece: o servidor só devolve o grupo
   do código. Resolver o geral implicava mover a pesquisa para o servidor.
 - **Cinzel** não existe como fonte global: cada modelo que a usa carrega-a à
-  parte. No modelo do José e da Dália todo o texto é Cinzel e só os títulos de
+  parte. No Renaissance Blue todo o texto é Cinzel e só os títulos de
   exibição são Pinyon Script.
 
 ---
@@ -323,7 +332,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 grupo (`guest_links`, migração `0010`), painel "Links personalizados" no topo de
 Convidados (gerar, editar nome/lugares, copiar, novo link, remover, exportar CSV).
 O link tem a forma `/<idioma>/invite/<slug>?c=<código>`; o convite mostra a
-saudação (`GuestGreeting`, hoje só no modelo do José e da Dália) e o RSVP abre
+saudação (`GuestGreeting`, hoje só no Renaissance Blue) e o RSVP abre
 direto no grupo. Sem links gerados, tudo funciona como antes. Regras: lugares =
 adultos + crianças (sem bebés), com correção manual; nome automático pelos
 primeiros nomes, editável; convidado sozinho → "um lugar para si".

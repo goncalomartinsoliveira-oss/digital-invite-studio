@@ -1,6 +1,12 @@
-# Elementos da hero redesenhada (Dália & José, nov/2026)
+# Renaissance Blue — elementos do modelo (nov/2026)
 
-Hero em colagem totalmente refeita a pedido do casal — layout, elementos e
+Modelo `renaissance-blue-01`, disponível no seletor do painel. Foi desenhado à
+medida do casamento da Dália e do José (o evento deles ainda grava o id antigo
+`envelope-01-jose-e-dalia`, tratado como o mesmo modelo) e depois aberto a todos
+os casais. `preview.webp` é a miniatura do seletor, composta a partir do fundo
+e do envelope do ecrã de entrada (sem nomes).
+
+Hero em colagem totalmente refeita a pedido desse casal — layout, elementos e
 posições diferentes do "envelope-01" original (ver pasta `public/envelope-01/`
 para os elementos desse modelo, que continua inalterado para os outros
 casais). Estes ficheiros chegaram como SVG com as imagens embutidas
