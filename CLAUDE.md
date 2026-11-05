@@ -32,6 +32,7 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 
 - Links personalizados por grupo de convidados (opcional): tabela `guest_links` (migração `0010`), `lib/guestLinks.ts`, rota `app/api/guest-link/[token]`, painel `GuestLinksPanel`, `GuestGreeting` no convite e `SmartRsvp` com `?c=`. Sem links, o convite e o RSVP funcionam como sempre.
 - Código de acesso ao convite (opcional, desligado por omissão): migração `0011`, `lib/inviteAccess.ts` (cookie assinado + limites), rotas `app/api/invite-access` e `…/preview`, `InviteAccessGate` (ecrã de código, mostrado pelo `invite/[slug]/page.tsx`) e `InviteAccessCard` (painel, área Links). O código fica em `invite_access`, nunca em `invitations`.
+- Centro de ajuda (`/help`, PT/EN): conteúdo em `content/help/pt.ts` e `en.ts` (não nos dicionários), `lib/help.ts`, `components/help/`. **Uma funcionalidade nova ou alterada pede o artigo correspondente nos dois idiomas** (mesmos `slug` e ordem; nomes de botões a **negrito**, iguais aos do painel). Artigos `audience: "dis"` não aparecem em domínios de parceiros.
 
 ## Dados
 - Coluna `content` (JSON) da tabela `invitations`: `{ sections_visibility: {...}, content: { <seccao>: {...} } }`. Nos módulos: `dbContent = formData.content`, `content = dbContent.content`. Guardar via `handleSaveDesign()` (faz update em `invitations`). Autosave: `useEffect` com debounce de 1500 ms sobre `formData`.

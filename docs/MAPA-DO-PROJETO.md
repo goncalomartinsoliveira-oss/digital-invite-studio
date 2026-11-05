@@ -46,7 +46,7 @@ depois do evento (campo `invitations.expires_at`).
 ## 3. Mapa de ecrãs (rotas)
 
 ### Site de marketing (público)
-`/` · `/features` · `/features/<slug>` · `/pricing` · `/partners` · `/contact`
+`/` · `/features` · `/features/<slug>` · `/help` · `/help/<slug>` · `/pricing` · `/partners` · `/contact`
 · `/login` · `/reset-password` · `/terms` · `/privacy` · `/cookies`
 
 ### Painel (precisa de login)
@@ -262,6 +262,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 | `components/dashboard/` | Os módulos do painel (secções 4 a 7). |
 | `components/invite/SmartRsvp.tsx` | O formulário de RSVP, **partilhado por todos os modelos**: pesquisa o nome, mostra o grupo, grava o estado. Com um link personalizado (`?c=`) abre direto no grupo e grava pelo servidor. |
 | `components/site/` | Barra, rodapé, marca (`BrandProvider`), ecrã de expirado. |
+| `content/help/`, `lib/help.ts`, `components/help/` | Centro de ajuda (secção 15). |
 | `lib/` | Regras de negócio: módulos, preços, cupões, planeamento, marcas, Stripe, PDF/QR. |
 | `dictionaries/pt.ts`, `en.ts` | Textos traduzidos (~1500 linhas cada). Editar com cirurgia, não ler inteiros. |
 | `public/<modelo>/` | Imagens dos modelos. |
@@ -332,10 +333,34 @@ Ainda por fazer:
 
 ---
 
+## 15. Centro de ajuda (`/help`)
+
+Guias passo a passo para casais (e um capítulo para agências), em PT e EN, em
+`/<idioma>/help` (índice com pesquisa) e `/<idioma>/help/<slug>` (artigo).
+Ligado no menu, no rodapé, na página inicial do painel (cabeçalho e fundo), na
+barra lateral do editor e no sitemap.
+
+- **Conteúdo:** `content/help/pt.ts` e `en.ts` (tipos em `types.ts`), **fora dos
+  dicionários** de propósito. Cada artigo tem `slug`, `chapter`, `title` (em forma
+  de pergunta), `summary`, `steps`, `tips`, `faq`, `related`, e opcionalmente
+  `popular` (aparece em "Comecem por aqui") e `audience`. Os **slugs e a ordem têm
+  de ser iguais nos dois idiomas**. Nos textos, `**negrito**` marca nomes de
+  botões e separadores, **exatamente como aparecem no painel**.
+- **Audiência:** `dis` = só no domínio da DIS (preços e compras; um parceiro trata
+  disso com o casal), `agency` = capítulo "Para agências" (visível a todos, com
+  etiqueta). O filtro por marca está em `lib/help.ts` (`visibleArticles`).
+- **Páginas:** servidor (`app/[locale]/help/…`), com `FAQPage` em JSON-LD por artigo;
+  a pesquisa (`HelpBrowser`) corre no browser, sem servidor, ignora acentos.
+- **Por fazer (fase 2):** botão "Como funciona?" em cada área do painel a abrir o
+  artigo certo (ou numa gaveta), ligações a partir dos ecrãs vazios e da lista
+  "O que falta fazer", capturas de ecrã reais, "Isto ajudou?".
+
+---
+
 ## Como manter este documento
 
 Atualizar quando mudar algo que estas secções descrevem: um módulo novo, uma
 rota nova, uma tabela nova, um modelo novo. Um módulo novo toca em quatro
 sítios (`lib/modules.ts`, `lib/pricing.ts`, `GROUP_TABS` no painel e a tabela
-da secção 5); um modelo novo em três (`app/[locale]/templates/<id>`, o ramo em
+da secção 5) **e um artigo no centro de ajuda (`content/help`, PT e EN)**; um modelo novo em três (`app/[locale]/templates/<id>`, o ramo em
 `invite/[slug]/page.tsx` e, se for público, `AVAILABLE_TEMPLATES`).
