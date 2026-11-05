@@ -252,7 +252,7 @@ nov. 2026; baixar à medida que entram).
 |---|---|---|
 | `renaissance-blue-01` | Renaissance Blue | **único modelo público** (seletor, montra, `/preview/renaissance-blue-01`, modelo dos eventos novos) |
 | `envelope-01-jose-e-dalia` | *(id antigo de Renaissance Blue, só no evento da Dália e do José)* | tratado como Renaissance Blue (`LEGACY_TEMPLATE_IDS`) |
-| `luxury-01`, `minimal-01`, `collage-01`, `classic-01`, `noir-01`, `arch-01`, `envelope-01` | — | **retirados** (nov. 2026, `RETIRED_TEMPLATE_IDS`): fora do seletor, da montra e sem página de exemplo. O código em `app/[locale]/templates/` continua para os convites que já os usam não deixarem de abrir; esses eventos continuam a ver o seletor e podem mudar para o Renaissance Blue. Apagar o código só depois de confirmar na base de dados que nenhum evento os usa: `select template_id, count(*) from invitations group by 1;` |
+| `luxury-01`, `minimal-01`, `collage-01`, `classic-01`, `noir-01`, `arch-01`, `envelope-01` | — | **retirados** (nov. 2026, `RETIRED_TEMPLATE_IDS`): fora do seletor, da montra e sem página de exemplo. O código em `app/[locale]/templates/` continua para os convites que já os usam não deixarem de abrir; esses eventos continuam a ver o seletor e podem mudar para o Renaissance Blue. **Não apagar:** a 5/11/2026 ainda havia eventos neles (`luxury-01` 20, `envelope-01` 2, `minimal-01` 1; ver com `select template_id, count(*) from invitations group by 1;`). Só quando a contagem destes ids chegar a zero. |
 
 O convite público escolhe o modelo por `template_id`; sem id (eventos antigos,
 de antes de `DEFAULT_TEMPLATE_ID`) ainda cai no Luxury.
@@ -374,7 +374,7 @@ Ainda por fazer:
 - `components/dashboard/EventModule.tsx` não é usado em lado nenhum.
 - Ficheiros muito grandes: `GuestsModule` (~985 linhas), `BudgetModule` (~886),
   `dashboard/[slug]/page.tsx` (~800).
-- Os modelos retirados (secção 10) ainda têm código em `app/[locale]/templates/`; apagar quando a base de dados confirmar que nenhum evento os usa.
+- Os modelos retirados (secção 10) ainda têm código em `app/[locale]/templates/` e ainda há eventos neles (luxury-01 20, envelope-01 2, minimal-01 1, a 5/11/2026); apagar só quando a contagem chegar a zero.
 - O prazo do convite depois do casamento é 60 dias (`expires_at`, termos, ajuda); o dono do produto falou em 6 meses. Por decidir; a página inicial não indica prazo.
 
 ---
