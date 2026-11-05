@@ -37,7 +37,7 @@ aplicados.
 | `0010_guest_links.sql` | `guest_links` — link personalizado por grupo de convidados (opcional): token por `group_id`, nome e lugares calculados ao vivo, com correções manuais opcionais. Sem política pública: `app/api/guest-link` usa a service_role key e só devolve o grupo do token | ☑ |
 | `0011_invite_access_and_opens.sql` | Código de acesso ao convite (opcional, desligado por omissão): `invitations.access_code_enabled/_version` (não secretos), `invite_access` (o código, só legível por quem gere o evento) e `invite_access_attempts` (limite de tentativas, só servidor). Mais `guest_links.first_opened_at/last_opened_at/open_count` para ver que grupos já abriram o convite | ☑ |
 | `0012_guest_responded_at.sql` | `guests.responded_at` + trigger que a preenche quando o estado passa a confirmado/recusado (qualquer caminho). Alimenta "respostas novas nas últimas 24 h" em Wedding Planner › Esta semana; sem ela, esse sinal não aparece | ☑ |
-| `0013_planner_updated_at.sql` | `updated_at` + trigger nas tabelas do Planeamento (tarefas, custos, pagamentos, notas, documentos, cronograma, moodboard, fornecedores). Alimenta o cartão "Piloto Wedding Planner" (última atividade real de cada agência); sem ela o cartão usa só as datas de criação | ☐ |
+| `0013_planner_updated_at.sql` | `updated_at` + trigger nas tabelas do Planeamento (tarefas, custos, pagamentos, notas, documentos, cronograma, moodboard, fornecedores). Alimenta o cartão "Piloto Wedding Planner" (última atividade real de cada agência); sem ela o cartão usa só as datas de criação | ☑ |
 
 > Marcar a coluna "Aplicado" depois de correr em produção, para não haver
 > dúvidas mais tarde.
