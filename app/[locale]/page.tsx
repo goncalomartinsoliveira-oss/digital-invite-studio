@@ -84,7 +84,7 @@ export default function HomePage() {
           >
             <Eyebrow align="left">{dict.hero.tag}</Eyebrow>
 
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-[4.25rem] leading-[1.08] text-ink tracking-tight">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-[3.1rem] xl:text-[3.9rem] leading-[1.08] text-ink tracking-tight">
               {dict.hero.title1} <br className="hidden md:block" />
               <span className="italic text-brand">{dict.hero.title2}</span>
             </h1>
