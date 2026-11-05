@@ -186,7 +186,7 @@ export default function HomePage() {
             <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">{dict.templateShowcase.desc}</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
             {(dict.templateShowcase.templates as any[]).map((tpl: any, i: number) => (
               <motion.div
                 key={i}
@@ -211,7 +211,7 @@ export default function HomePage() {
                 <div className="p-6 space-y-3">
                   <h3 className="font-bold text-white text-sm uppercase tracking-widest">{tpl.name}</h3>
                   <p className="text-gray-400 text-xs leading-relaxed">{tpl.desc}</p>
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row xl:flex-col gap-3 pt-2">
                     <Link
                       href={`/${locale}/preview/${tpl.id}`}
                       className="flex-1 text-center text-[10px] font-bold uppercase tracking-widest py-2.5 rounded-full border border-gold-soft/20 text-gold-soft/70 hover:border-gold-soft/50 hover:text-gold-soft transition-colors"

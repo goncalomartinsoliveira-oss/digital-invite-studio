@@ -84,7 +84,8 @@ const en = {
       "templates": [
         { "name": "Minimal 01", "id": "minimal-01", "desc": "Minimalist elegance in forest green and gold." },
         { "name": "Luxury 01", "id": "luxury-01", "desc": "Classic grandeur with burgundy and cream details." },
-        { "name": "Collage 01", "id": "collage-01", "desc": "Creative expression with contemporary photo collage." }
+        { "name": "Collage 01", "id": "collage-01", "desc": "Creative expression with contemporary photo collage." },
+        { "name": "Renaissance Blue", "id": "renaissance-blue-01", "desc": "A blue wax-sealed envelope and a collage of hydrangeas, in sky blue and cream." }
       ]
     },
     "trust": {

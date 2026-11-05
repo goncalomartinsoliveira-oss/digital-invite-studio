@@ -84,7 +84,8 @@ const pt = {
       "templates": [
         { "name": "Minimal 01", "id": "minimal-01", "desc": "Elegância minimalista em verde-floresta e dourado." },
         { "name": "Luxury 01", "id": "luxury-01", "desc": "Grandiosidade clássica com detalhes em bordô e creme." },
-        { "name": "Collage 01", "id": "collage-01", "desc": "Expressão criativa com colagem fotográfica contemporânea." }
+        { "name": "Collage 01", "id": "collage-01", "desc": "Expressão criativa com colagem fotográfica contemporânea." },
+        { "name": "Renaissance Blue", "id": "renaissance-blue-01", "desc": "Envelope azul com selo de cera e colagem de hortênsias, em azul-céu e creme." }
       ]
     },
     "trust": {

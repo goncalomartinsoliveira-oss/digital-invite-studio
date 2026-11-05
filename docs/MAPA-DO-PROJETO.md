@@ -67,7 +67,7 @@ depois do evento (campo `invitations.expires_at`).
 | `/guestbook/<slug>` | Livro de visitas. |
 | `/fornecedor/<token>` | Portal de um fornecedor (só leitura). |
 | `/moodboard/<token>` | Moodboard partilhado (ver e acrescentar imagens, não apagar). |
-| `/preview/<modelo>` | Pré-visualização dos modelos (só existe para 5 deles). |
+| `/preview/<modelo>` | Página de exemplo de um modelo, com dados de demonstração (existe para 6: minimal-01, classic-01, noir-01, arch-01, envelope-01 e renaissance-blue-01). A montra da página inicial liga a estas páginas — **luxury-01 e collage-01 estão na montra mas não têm página de exemplo (dão 404)**. |
 
 ### API (`app/api`)
 `checkout` (cria a sessão Stripe) · `stripe/webhook` (regista o pagamento e
@@ -251,15 +251,24 @@ escolhe o modelo por `template_id` e, se não reconhecer, usa o Luxury.
 | `noir-01` | Editorial Noir | sim | sim |
 | `arch-01` | Romântico | sim | sim |
 | `envelope-01` | Envelope (em construção) | não | sim |
-| `envelope-01-jose-e-dalia` | *(fora do seletor de propósito)* | n/a | não |
+| `renaissance-blue-01` | Renaissance Blue | não (a paleta azul é a identidade) | sim (também na montra da página inicial) |
+| `envelope-01-jose-e-dalia` | *(id antigo de Renaissance Blue, só no evento da Dália e do José)* | n/a | não |
+
+**Renaissance Blue** (envelope azul com selo de cera, colagem de flores, Cinzel e
+Pinyon Script) foi feito à medida do casamento da Dália e do José (cópia do
+`envelope-01`) e passou a ser um modelo normal do seletor. O evento deles
+ainda grava o id antigo `envelope-01-jose-e-dalia`: o convite público
+(`invite/[slug]/page.tsx`) e o `DesignModule` (`LEGACY_TEMPLATE_IDS`)
+tratam-no como o mesmo modelo, por isso não foi preciso mexer na base de dados. A
+documentação (elementos, posições lidas do SVG, fontes, ecrã de entrada) está em
+`public/renaissance-blue-01/elementos/LEIA-ME.md`. Está na montra de modelos da página inicial (`templateShowcase` nos dicionários + `public/home/tpl-<id>.jpg`, captura 480×984 do ecrã de entrada) com página de exemplo em `app/[locale]/preview/renaissance-blue-01`. Suporta a saudação dos links
+pessoais (`GuestGreeting`) e os textos são fixos em português, como nos outros modelos.
+O convite é lido do evento, nada é específico do casal original.
 
 **Modelos à medida:** um `template_id` que está ligado em
 `app/[locale]/invite/[slug]/page.tsx` mas **não** está em `AVAILABLE_TEMPLATES`
 fica invisível para os outros casais, e o `DesignModule` esconde o seletor no
-evento que o usa. Foi assim que se fez o do José e da Dália (cópia do
-`envelope-01`). A documentação dele está em
-`public/envelope-01-jose-e-dalia/elementos/LEIA-ME.md` (elementos, posições
-lidas do SVG, fontes, ecrã de entrada).
+evento que o usa. É a receita para um próximo casal que peça um desenho próprio.
 
 ---
 
@@ -312,7 +321,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
   Nos **links personalizados** isso não acontece: o servidor só devolve o grupo
   do código. Resolver o geral implicava mover a pesquisa para o servidor.
 - **Cinzel** não existe como fonte global: cada modelo que a usa carrega-a à
-  parte. No modelo do José e da Dália todo o texto é Cinzel e só os títulos de
+  parte. No Renaissance Blue todo o texto é Cinzel e só os títulos de
   exibição são Pinyon Script.
 
 ---
@@ -323,7 +332,7 @@ com RLS ativada; as tabelas antigas não têm ficheiro.
 grupo (`guest_links`, migração `0010`), painel "Links personalizados" no topo de
 Convidados (gerar, editar nome/lugares, copiar, novo link, remover, exportar CSV).
 O link tem a forma `/<idioma>/invite/<slug>?c=<código>`; o convite mostra a
-saudação (`GuestGreeting`, hoje só no modelo do José e da Dália) e o RSVP abre
+saudação (`GuestGreeting`, hoje só no Renaissance Blue) e o RSVP abre
 direto no grupo. Sem links gerados, tudo funciona como antes. Regras: lugares =
 adultos + crianças (sem bebés), com correção manual; nome automático pelos
 primeiros nomes, editável; convidado sozinho → "um lugar para si".
@@ -361,7 +370,7 @@ Ainda por fazer:
 - `components/dashboard/EventModule.tsx` não é usado em lado nenhum.
 - Ficheiros muito grandes: `GuestsModule` (~985 linhas), `BudgetModule` (~886),
   `dashboard/[slug]/page.tsx` (~800).
-- `luxury-01` e `collage-01` não têm rota de pré-visualização.
+- `luxury-01` e `collage-01` não têm rota de pré-visualização, **mas a montra da página inicial liga a `/preview/luxury-01` e `/preview/collage-01`: esses dois botões "Ver Pré-visualização" dão 404** (por corrigir: criar as páginas de exemplo ou tirá-los da montra).
 - O modelo `envelope-01` aparece aos casais como "em construção".
 
 ---

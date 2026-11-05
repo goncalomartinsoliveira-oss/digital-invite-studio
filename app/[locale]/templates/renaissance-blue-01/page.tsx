@@ -14,13 +14,17 @@ import GuestGreeting from "../../../../components/invite/GuestGreeting";
 // Cinzel só tem 400 e 600 e não tem itálico: não usar `italic`/`font-light`.
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600"], display: "swap" });
 
-// Duplicado de "envelope-01" (template_id "envelope-01-jose-e-dalia") — à
-// medida do evento de Dália & José, para abrir espaço a alterações profundas
-// sem tocar no modelo original que os outros casais continuam a usar.
-// Fora do seletor de propósito (não entra em AVAILABLE_TEMPLATES, em
-// DesignModule.tsx): fica acessível só a quem tiver este id gravado no
-// template_id do evento. Exatamente a mesma receita do template anterior,
-// só que agora a partir de um modelo existente em vez de um desenho de raiz.
+// Modelo "Renaissance Blue" (template_id "renaissance-blue-01"), disponível a
+// todos os casais no seletor do painel (AVAILABLE_TEMPLATES, em
+// DesignModule.tsx). Nasceu como uma cópia de "envelope-01" feita à medida
+// do casamento de Dália & José, que ainda grava o id antigo
+// "envelope-01-jose-e-dalia" — o convite público trata os dois ids como o
+// mesmo modelo (ver invite/[slug]/page.tsx), por isso esse evento não precisou
+// de nenhuma alteração na base de dados.
+//
+// Tudo o que é do casal vem do evento (nomes, data, fotos, textos); os
+// elementos desenhados vivem em public/renaissance-blue-01/elementos, com
+// LEIA-ME próprio. Textos fixos em português, como nos outros modelos.
 //
 // Os comentários abaixo são os originais de "envelope-01" — deixados tal e
 // qual para não perder o porquê de cada escolha; passam a descrever este
@@ -37,8 +41,8 @@ const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600"], display: "sw
 
 // Layout da hero redesenhado a pedido do casal (nov/2026) — elementos novos,
 // próprios deste evento, já não os do "envelope-01" original. Pasta e
-// LEIA-ME próprios: ver public/envelope-01-jose-e-dalia/elementos/LEIA-ME.md.
-const EL = "/envelope-01-jose-e-dalia/elementos";
+// LEIA-ME próprios: ver public/renaissance-blue-01/elementos/LEIA-ME.md.
+const EL = "/renaissance-blue-01/elementos";
 
 const DEFAULT_FOOTER_IMAGE = "https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=2000&auto=format&fit=crop";
 // Visual por omissão do forro do envelope, enquanto os noivos não carregam
@@ -189,7 +193,7 @@ function Countdown({ date }: { date: string }) {
   );
 }
 
-export default function EnvelopeJoseEDaliaTemplate({ data }: { data: any; params?: any }) {
+export default function RenaissanceBlueTemplate({ data }: { data: any; params?: any }) {
   const [opened, setOpened] = useState(false);
 
   const dbContent = data?.content || {};
