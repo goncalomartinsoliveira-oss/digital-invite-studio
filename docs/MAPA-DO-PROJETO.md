@@ -67,7 +67,7 @@ depois do evento (campo `invitations.expires_at`).
 | `/guestbook/<slug>` | Livro de visitas. |
 | `/fornecedor/<token>` | Portal de um fornecedor (só leitura). |
 | `/moodboard/<token>` | Moodboard partilhado (ver e acrescentar imagens, não apagar). |
-| `/preview/<modelo>` | Pré-visualização dos modelos (só existe para 5 deles). |
+| `/preview/<modelo>` | Página de exemplo de um modelo, com dados de demonstração (existe para 6: minimal-01, classic-01, noir-01, arch-01, envelope-01 e renaissance-blue-01). A montra da página inicial liga a estas páginas — **luxury-01 e collage-01 estão na montra mas não têm página de exemplo (dão 404)**. |
 
 ### API (`app/api`)
 `checkout` (cria a sessão Stripe) · `stripe/webhook` (regista o pagamento e
@@ -251,7 +251,7 @@ escolhe o modelo por `template_id` e, se não reconhecer, usa o Luxury.
 | `noir-01` | Editorial Noir | sim | sim |
 | `arch-01` | Romântico | sim | sim |
 | `envelope-01` | Envelope (em construção) | não | sim |
-| `renaissance-blue-01` | Renaissance Blue | não (a paleta azul é a identidade) | não |
+| `renaissance-blue-01` | Renaissance Blue | não (a paleta azul é a identidade) | sim (também na montra da página inicial) |
 | `envelope-01-jose-e-dalia` | *(id antigo de Renaissance Blue, só no evento da Dália e do José)* | n/a | não |
 
 **Renaissance Blue** (envelope azul com selo de cera, colagem de flores, Cinzel e
@@ -261,7 +261,7 @@ ainda grava o id antigo `envelope-01-jose-e-dalia`: o convite público
 (`invite/[slug]/page.tsx`) e o `DesignModule` (`LEGACY_TEMPLATE_IDS`)
 tratam-no como o mesmo modelo, por isso não foi preciso mexer na base de dados. A
 documentação (elementos, posições lidas do SVG, fontes, ecrã de entrada) está em
-`public/renaissance-blue-01/elementos/LEIA-ME.md`. Suporta a saudação dos links
+`public/renaissance-blue-01/elementos/LEIA-ME.md`. Está na montra de modelos da página inicial (`templateShowcase` nos dicionários + `public/home/tpl-<id>.jpg`, captura 480×984 do ecrã de entrada) com página de exemplo em `app/[locale]/preview/renaissance-blue-01`. Suporta a saudação dos links
 pessoais (`GuestGreeting`) e os textos são fixos em português, como nos outros modelos.
 O convite é lido do evento, nada é específico do casal original.
 
@@ -370,7 +370,7 @@ Ainda por fazer:
 - `components/dashboard/EventModule.tsx` não é usado em lado nenhum.
 - Ficheiros muito grandes: `GuestsModule` (~985 linhas), `BudgetModule` (~886),
   `dashboard/[slug]/page.tsx` (~800).
-- `luxury-01` e `collage-01` não têm rota de pré-visualização.
+- `luxury-01` e `collage-01` não têm rota de pré-visualização, **mas a montra da página inicial liga a `/preview/luxury-01` e `/preview/collage-01`: esses dois botões "Ver Pré-visualização" dão 404** (por corrigir: criar as páginas de exemplo ou tirá-los da montra).
 - O modelo `envelope-01` aparece aos casais como "em construção".
 
 ---
