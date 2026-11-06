@@ -89,5 +89,6 @@ export const CHECKLIST_HELP: Record<string, string> = {
   photo: "edit-content",
   texts: "edit-content",
   guests: "add-guests",
+  publish: "buy-modules",
   share: "send-invite",
 };

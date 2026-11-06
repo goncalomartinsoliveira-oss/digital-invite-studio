@@ -12,7 +12,8 @@ import EventExpiredScreen from "../../../../components/site/EventExpiredScreen";
 import PreviewBridge from "../../../../components/site/PreviewBridge";
 import InviteAccessGate from "../../../../components/invite/InviteAccessGate";
 import { cookies } from "next/headers";
-import { accessCookieName, verifyAccessCookie } from "@/lib/inviteAccess";
+import { accessCookieName, verifyAccessCookie, ownerPreviewCookieName, OWNER_PREVIEW_VERSION } from "@/lib/inviteAccess";
+import { InviteModeProvider } from "../../../../components/invite/InviteMode";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis de recuo)
 import pt from "../../../../dictionaries/pt";
@@ -68,11 +69,19 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
     return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} />;
   }
 
-  // 7c. Bloqueio por módulo: o site do convite só existe depois de o módulo "invite" ser comprado.
-  if (!invite.unlocked_modules?.includes("invite")) {
-    const unavailableDict = dictionaries[locale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
-    return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} />;
+  // 7c. Convite por publicar (Plano Completo por pagar): os convidados veem
+  // "ainda não foi publicado"; quem gere o evento, com o cookie de
+  // pré-visualização (api/invite-access/preview), vê o convite completo.
+  const unpublished = !invite.unlocked_modules?.includes("invite");
+  if (unpublished) {
+    const store = await cookies();
+    const ownerPreview = verifyAccessCookie(invite.id, OWNER_PREVIEW_VERSION, store.get(ownerPreviewCookieName(invite.id))?.value);
+    if (!ownerPreview) {
+      const unpublishedDict = dictionaries[locale]?.InviteUnpublished || dictionaries.pt.InviteUnpublished;
+      return <EventExpiredScreen title={unpublishedDict.title} desc={unpublishedDict.desc} />;
+    }
   }
+  const unpublishedLabel = (dictionaries[locale]?.InviteUnpublished || dictionaries.pt.InviteUnpublished).previewBadge;
 
   // 7d. Código de acesso (opcional, desligado por omissão): se o administrador
   // o ligou, sem o cookie de acesso só se mostra o ecrã do código — nenhum
@@ -91,6 +100,7 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
   return (
     <main>
       <PreviewBridge />
+      <InviteModeProvider unpublished={unpublished} label={unpublishedLabel}>
       <EventBrandProvider brandId={invite.brand_id}>
         {invite.template_id === 'collage-01' ? (
           <CollageTemplate data={invite} />
@@ -111,6 +121,7 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
           <LuxuryTemplate data={invite} params={params} />
         )}
       </EventBrandProvider>
+      </InviteModeProvider>
     </main>
   );
 }

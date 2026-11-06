@@ -110,7 +110,7 @@ export const helpPt: HelpContent = {
         "**Minha Conta**, no fundo do menu, tem a vossa equipa, as compras e a password.",
       ],
       tips: [
-        "Um cartão com o selo **Bloqueado** é um módulo que ainda não foi ativado. Ao abrirem essa área podem ativá-lo.",
+        "Podem preparar tudo antes de pagar. Para os convidados abrirem o convite, carreguem em **Publicar convite**.",
         "O botão **?**, no canto superior direito da página inicial, repete o tour de boas-vindas.",
         "As alterações gravam-se sozinhas. O estado aparece no topo: **A guardar...** e depois **Guardado**.",
       ],
@@ -470,7 +470,7 @@ export const helpPt: HelpContent = {
         "Abram **Links e QR codes** na página inicial do painel.",
         "Vão encontrar seis cartões: **Convite**, **Confirmar presença (RSVP)**, **Plano de mesas**, **Galeria de fotos**, **Live Wall** e **Livro de visitas**.",
         "Cada cartão tem **Copiar link**, **Abrir** e o QR code, que podem descarregar em **PNG** ou **SVG**.",
-        "Um cartão com **Módulo por ativar** pertence a um módulo que ainda não está ativo.",
+        "Um cartão com **Disponível depois de publicar** só funciona depois de carregarem em **Publicar convite**.",
       ],
       tips: [
         "Para a impressão (convites, cartões nas mesas), prefiram o SVG: não perde qualidade a nenhum tamanho.",
@@ -502,12 +502,14 @@ export const helpPt: HelpContent = {
       slug: "buy-modules",
       chapter: "account",
       audience: "dis",
-      title: "Como ativo o Plano Completo?",
-      summary: "Um só pagamento desbloqueia todas as funcionalidades do evento: convite, RSVP, convidados e mesas, Save the Date, fotos e livro de visitas.",
+      title: "Quando pago? Como publico o convite?",
+      summary: "Preparar é grátis e sem prazo. Pagam uma vez, quando publicarem o convite: o Plano Completo desbloqueia tudo.",
       steps: [
-        "Na página inicial do painel, em **Desbloqueiem tudo**, carreguem em **Ativar Plano Completo**. Também o podem fazer a partir de qualquer área com o selo **Bloqueado**.",
+        "Enquanto preparam, podem usar todo o painel sem pagar: convite, convidados, mesas, Save the Date (com marca d'água) e, para experimentar, até 5 fotos e 5 mensagens no livro de visitas.",
+        "O botão **Pré-visualizar** mostra-vos o convite completo. Os convidados só o conseguem abrir depois de publicado.",
+        "Quando estiver tudo pronto, carreguem em **Publicar convite** (no topo do painel ou em **Prontos para enviar?**, na página inicial do painel).",
         "Se tiverem um código promocional, carreguem em **Tenho um código promocional** e escrevam-no antes de pagar.",
-        "O pagamento faz-se num ecrã seguro. Quando termina, ficam todas as áreas ativas.",
+        "O pagamento faz-se num ecrã seguro. Quando termina, o convite fica publicado e tudo desbloqueado: RSVP, Save the Date sem marca d'água, fotos e mensagens sem limite.",
         "O histórico de pagamentos está em **Minha Conta** › **Histórico de Compras**.",
       ],
       tips: [

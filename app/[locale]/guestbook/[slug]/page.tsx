@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
+import { trialRemaining, TRIAL_LIMIT } from "@/lib/trial";
 import { useParams } from 'next/navigation';
 import { useBrand } from "@/components/site/BrandProvider";
 import { resolveBrandById } from "@/lib/brands";
@@ -141,7 +142,17 @@ export default function IsolatedGuestbookPage() {
     clearInterval(timerRef.current); 
   };
 
+  // Modo de experiência (lib/trial.ts): sem o Plano Completo, no máximo
+  // TRIAL_LIMIT.guestbook mensagens por evento.
+  const trialBlocked = async () => {
+    if ((await trialRemaining(invitation.id, 'guestbook')) > 0) return false;
+    const t = dictionaries[currentLocale]?.Trial || dictionaries.pt.Trial;
+    alert(t.limitReached.replace("{n}", String(TRIAL_LIMIT.guestbook)).replace("{items}", t.messages));
+    return true;
+  };
+
   const uploadGuestbookMedia = async (blob: Blob, type: string) => {
+    if (await trialBlocked()) return;
     setUploading(true);
     const fileName = `private_gb_${type}_${Date.now()}.${type === 'video' ? 'mp4' : 'webm'}`;
     const path = `${invitation.id}/${fileName}`;
@@ -161,6 +172,7 @@ export default function IsolatedGuestbookPage() {
 
   const enviarTexto = async () => {
     if (!textoMensagem || !invitation) return;
+    if (await trialBlocked()) return;
     setUploading(true);
     await supabase.from('guestbook').insert([{ invitation_id: invitation.id, tipo: 'texto', conteudo: textoMensagem, autor: autor || 'Anónimo' }]);
     setUploading(false);
@@ -177,11 +189,6 @@ export default function IsolatedGuestbookPage() {
     return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
   }
 
-  if (!invitation?.unlocked_modules?.includes('guestbook')) {
-    const unavailableDict = dictionaries[currentLocale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
-    const footerText = (dictionaries[currentLocale]?.EventExpired || dictionaries.pt.EventExpired).footerText;
-    return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} footerText={footerText} brandName={eventBrand?.name ?? brand.name} />;
-  }
 
   return (
     // 🔒 RESOLUÇÃO NAVBAR/FOOTER: z-[9999] garante que fica por cima de qualquer componente global do Next.js

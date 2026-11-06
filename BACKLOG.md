@@ -54,6 +54,9 @@ Documento de estratégia: https://claude.ai/code/artifact/af5b0757-a3b7-470e-9b8
 - [x] Lista de eventos com separadores Ativos/Arquivados (arquiva no dia seguinte ao casamento); Gestão do super admin com os mesmos separadores e data de expiração
 - [x] Limpeza de conteúdo pelo super admin depois dos 60 dias (Gestão › Arquivados, por evento ou todos os expirados): ficheiros + dados pessoais; mantém evento, pagamentos e Planeamento. Aviso aos noivos no painel desde o dia seguinte ao casamento e por e-mail (botão do super admin). Migração `0014`
 - [ ] Limpeza/aviso automáticos (hoje são manuais), se o volume o justificar
+- [x] Modelo de pagamento "grátis para preparar, paga-se para publicar" (sem prazo): painel todo editável, pré-visualização só para quem gere, Save the Date com marca d'água, fotos/livro de visitas com limite de 5, botão Publicar convite
+- [ ] Link de pré-visualização para os noivos mostrarem o convite à família antes de pagar (faixa, sem RSVP, válido alguns dias)
+- [ ] Lembretes por e-mail a quem prepara e não publica (3 dias, 2 semanas) e medição do funil no GA4 (evento criado → convite editado → Publicar → pago)
 
 ## Marketing / Crescimento
 - [x] Melhorar SEO das páginas de marketing — `sitemap.xml` e `robots.txt` dinâmicos (adaptados ao domínio, PT+EN, com as páginas privadas/dashboard bloqueadas), `metadataBase`, e título+descrição próprios por página (home, preços, parceiros, contacto, termos, privacidade, cookies, e cada uma das 5 páginas de funcionalidades)

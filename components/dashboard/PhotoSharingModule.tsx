@@ -14,7 +14,9 @@ import { isModuleUnlocked } from '@/lib/modules';
 import { downloadQRAsPng, downloadQRAsSvg } from '@/lib/qrDownload';
 import { fullPlanPriceFor, FULL_PLAN_ID, type PricingOverrides } from '@/lib/pricing';
 import { startBundleCheckout, formatPriceCents } from '@/lib/checkout';
-import LockedModuleNotice from './LockedModuleNotice';
+import { TRIAL_LIMIT } from '@/lib/trial';
+import pt from '@/dictionaries/pt';
+import en from '@/dictionaries/en';
 import { useBrand } from '@/components/site/BrandProvider';
 
 interface PhotoSharingModuleDict {
@@ -50,7 +52,9 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
   const locale = (params?.locale as string) || 'pt';
   const brand = useBrand();
   const contactUrl = brand.contactUrl ?? `/${locale}/contact`;
-  const locked = !isSuperAdmin && !isPlannerAccount && !isModuleUnlocked(unlockedModules, 'photo_sharing');
+  // Antes do Plano Completo: modo de experiência (lib/trial.ts) — o módulo
+  // funciona, com um limite de {TRIAL_LIMIT.photo_sharing} conteúdos.
+  const trial = !isSuperAdmin && !isPlannerAccount && !isModuleUnlocked(unlockedModules, 'photo_sharing');
   const [buying, setBuying] = useState(false);
 
   const handleBuy = async (couponCode?: string) => {
@@ -76,7 +80,7 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
   const urlPublica = `${origin}/${locale}/moments/${slug}`;
   const urlLiveWall = `${origin}/${locale}/live-wall/${slug}`;
 
-  useEffect(() => { if (!locked) fetchTudo(); else setLoading(false); }, [invitationId, locked]);
+  useEffect(() => { fetchTudo(); }, [invitationId]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -164,27 +168,24 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
   const goNext = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex + 1) % fotos.length); };
   const goPrev = () => { if (selectedIndex !== null) setSelectedIndex((selectedIndex - 1 + fotos.length) % fotos.length); };
 
-  if (locked) {
-    return (
-      <LockedModuleNotice
-        title={dict.locked.title}
-        message={isPartnerBrand ? (dict.locked.messagePartner || dict.locked.message) : dict.locked.message}
-        contactUrl={contactUrl}
-        contactLabel={dict.locked.contactBtn}
-        buyLabel={isPartnerBrand ? undefined : dict.locked.buyBtn}
-        priceLabel={isPartnerBrand ? undefined : formatPriceCents(fullPlanPriceFor(unlockedModules || [], overrides).cents, locale)}
-        onBuy={isPartnerBrand ? undefined : handleBuy}
-        buying={buying}
-        couponToggleLabel={isPartnerBrand ? undefined : dict.locked.couponToggleLabel}
-        couponPlaceholder={isPartnerBrand ? undefined : dict.locked.couponPlaceholder}
-      />
-    );
-  }
-
   if (loading) return <div className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-brand" size={32} /></div>;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 font-montserrat pb-20">
+      {trial && (() => {
+        const t = (locale === 'en' ? en : pt).Trial;
+        const used = Math.min(fotos.filter((f: any) => !String(f.name || '').startsWith('private_')).length, TRIAL_LIMIT.photo_sharing);
+        return (
+          <div className="bg-gold-soft/30 border border-gold-soft rounded-2xl px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-xs text-ink">{t.banner.replace("{used}", String(used)).replace("{n}", String(TRIAL_LIMIT.photo_sharing)).replace("{items}", t.photos)}</p>
+            {!isPartnerBrand && (
+              <button onClick={() => handleBuy()} disabled={buying} className="shrink-0 bg-brand text-gold-soft px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-brand-dark disabled:opacity-60">
+                {t.bannerBtn}
+              </button>
+            )}
+          </div>
+        );
+      })()}
 
       {/* QUICK ACCESS CARDS: GALERIA + LIVE WALL */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

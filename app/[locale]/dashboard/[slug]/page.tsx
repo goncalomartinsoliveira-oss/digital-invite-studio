@@ -29,7 +29,8 @@ import {
   ClipboardList,
   Share2,
   Images,
-  Link2
+  Link2,
+  Send, Loader2
 } from "lucide-react";
 
 import DesignModule from "@/components/dashboard/DesignModule";
@@ -220,7 +221,9 @@ export default function Dashboard() {
       });
 
       // Código de acesso ligado → dar ao administrador o cookie e recarregar a pré-visualização.
-      if (invite.access_code_enabled) {
+      // Código de acesso ligado, ou convite ainda por publicar → quem gere o
+      // evento recebe o cookie de pré-visualização e o iframe recarrega.
+      if (invite.access_code_enabled || !(invite.unlocked_modules || []).includes('invite')) {
         grantPreviewAccess(invite.id).then(gated => { if (gated) setIframeKey(k => k + 1); });
       }
 
@@ -412,12 +415,12 @@ export default function Dashboard() {
   // não se vendem à parte. Para todos os outros, um separador cujo módulo
   // não esteja em unlocked_modules aparece bloqueado.
   const unlockedModules: string[] = formData.unlocked_modules || [];
-  const isTabLocked = (tabId: DashboardTab) => {
-    const moduleId = TAB_MODULE[tabId];
-    if (!moduleId) return false;
-    if (isSuperAdmin || plannerPlan) return false;
-    return !isModuleUnlocked(unlockedModules, moduleId);
-  };
+  // "Grátis para preparar, paga-se para publicar" (nov. 2026): nada no painel
+  // fica bloqueado antes do pagamento. O que o Plano Completo desbloqueia é o
+  // lado dos convidados (convite publicado, RSVP), o Save the Date sem marca
+  // d'água e as fotos / livro de visitas sem o limite de experiência.
+  const isTabLocked = (_tabId: DashboardTab) => false;
+  const invitePublished = isModuleUnlocked(unlockedModules, 'invite');
   const moduleNamesDict = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
   const bundleOffersDict = dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers;
   const bundleNamesDict = Object.fromEntries(
@@ -441,6 +444,23 @@ export default function Dashboard() {
       setBuyingModule(null);
     }
   };
+  // Publicar = ativar o Plano Completo. Eventos de parceiros publicam pelo
+  // parceiro; o super admin ativa em Conta › Módulos do Evento.
+  const handlePublish = () => {
+    if (isSuperAdmin) { setGroup('account'); setActiveTab('account'); return; }
+    if (isPartnerBrand) { window.open(partnerContactUrl, '_blank'); return; }
+    handleBuyModule('invite');
+  };
+  const publishButton = (compact: boolean) => (
+    <button
+      onClick={handlePublish}
+      disabled={buyingModule !== null}
+      className={`flex items-center gap-2 bg-brand text-gold-soft ${compact ? 'px-4 sm:px-5' : 'px-5'} py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md hover:bg-brand-dark transition-all active:scale-95 disabled:opacity-60`}
+    >
+      {buyingModule ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+      <span className="hidden sm:inline">{dict.publishBtn}</span>
+    </button>
+  );
   const lockedNotice = (tabId: DashboardTab) => {
     const moduleId = TAB_MODULE[tabId];
     const moduleName = moduleId ? moduleNamesDict[moduleId] : "";
@@ -504,7 +524,8 @@ export default function Dashboard() {
       { id: 'texts', done: !!dbContent.story?.paragraphs?.some((p: string) => p?.trim()), onGo: () => goTab('invite', 'content') },
     ] : []),
     ...(!isTabLocked('guests') ? [{ id: 'guests', done: guests.length > 0, onGo: () => goTab('guests_seating', 'guests') }] : []),
-    ...(!isTabLocked('design') ? [{ id: 'share', done: linkShared, onGo: () => goTab('links', 'links') }] : []),
+    { id: 'publish', done: invitePublished, onGo: handlePublish },
+    ...(invitePublished ? [{ id: 'share', done: linkShared, onGo: () => goTab('links', 'links') }] : []),
   ].map(i => ({ ...i, helpSlug: CHECKLIST_HELP[i.id], label: checklistDict.items[i.id as keyof typeof checklistDict.items].label, hint: checklistDict.items[i.id as keyof typeof checklistDict.items].hint })) : [];
 
   const projectName = formData.groom_name && formData.bride_name
@@ -577,18 +598,20 @@ export default function Dashboard() {
             >
               <LifeBuoy size={14} /> {dict.helpCenter}
             </Link>
-            <button
-              onClick={copyInviteLink}
-              className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-4 sm:px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all active:scale-95"
-            >
-              {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-              <span className="hidden sm:inline">{copied ? dict.copied : dict.copyLink}</span>
-            </button>
+            {invitePublished ? (
+              <button
+                onClick={copyInviteLink}
+                className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-4 sm:px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all active:scale-95"
+              >
+                {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                <span className="hidden sm:inline">{copied ? dict.copied : dict.copyLink}</span>
+              </button>
+            ) : canEdit && publishButton(true)}
             <button
               onClick={() => window.open(`/${params.locale}/invite/${params.slug}`, '_blank')}
-              className="flex items-center gap-2 bg-brand text-white px-4 sm:px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md hover:bg-brand-dark transition-all active:scale-95"
+              className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 ${invitePublished ? 'bg-brand text-white shadow-md hover:bg-brand-dark' : 'bg-white text-gray-600 border border-gray-200 hover:text-brand'}`}
             >
-              <span className="hidden sm:inline">{dict.openInvite}</span>
+              <span className="hidden sm:inline">{invitePublished ? dict.openInvite : dict.previewInvite}</span>
               <ExternalLink size={14} />
             </button>
           </div>
@@ -807,7 +830,7 @@ export default function Dashboard() {
                   )}
                </div>
 
-               {showInviteActions && (
+               {showInviteActions && (invitePublished ? (
                  <button
                    onClick={copyInviteLink}
                    className="flex items-center gap-2 bg-white text-gray-600 border border-gray-200 px-5 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-brand transition-all active:scale-95"
@@ -815,7 +838,7 @@ export default function Dashboard() {
                     {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
                     <span className="hidden sm:inline">{copied ? dict.copied : dict.copyLink}</span>
                  </button>
-               )}
+               ) : canEdit && publishButton(false))}
 
                {!isFullScreenTab && (
                  <button onClick={() => setShowMobilePreview(!showMobilePreview)} className="lg:hidden bg-gray-100 text-gray-600 px-4 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest">
@@ -826,9 +849,9 @@ export default function Dashboard() {
                {showInviteActions && (
                  <button
                    onClick={() => window.open(`/${params.locale}/invite/${params.slug}`, '_blank')}
-                   className="flex items-center gap-2 bg-brand text-white px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md hover:bg-brand-dark transition-all active:scale-95"
+                   className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 ${invitePublished ? 'bg-brand text-white shadow-md hover:bg-brand-dark' : 'bg-white text-gray-600 border border-gray-200 hover:text-brand'}`}
                  >
-                    <span className="hidden sm:inline">{dict.openInvite}</span>
+                    <span className="hidden sm:inline">{invitePublished ? dict.openInvite : dict.previewInvite}</span>
                     <ExternalLink size={14} />
                  </button>
                )}
@@ -856,7 +879,7 @@ export default function Dashboard() {
               )}
               {activeTab === 'design' && (isTabLocked('design') ? lockedNotice('design') : <DesignModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} handleImageUpload={handleImageUpload} canEdit={canEdit} dict={dictionaries[locale]?.DesignModule || dictionaries.pt.DesignModule} />)}
               {activeTab === 'content' && (isTabLocked('content') ? lockedNotice('content') : <ContentModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.ContentModule || dictionaries.pt.ContentModule} />)}
-              {activeTab === 'savethedate' && (isTabLocked('savethedate') ? lockedNotice('savethedate') : <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />)}
+              {activeTab === 'savethedate' && (isTabLocked('savethedate') ? lockedNotice('savethedate') : <SaveTheDateModule formData={formData} setFormData={setFormData} handleSaveDesign={handleSaveDesign} saving={saving} canEdit={canEdit} watermark={!(isSuperAdmin || plannerPlan) && !isModuleUnlocked(unlockedModules, 'save_the_date') ? { text: dict.stdWatermark, note: dict.stdWatermarkNote, unlockLabel: isPartnerBrand ? undefined : dict.publishPlanBtn, onUnlock: isPartnerBrand ? undefined : () => handleBuyModule('save_the_date') } : undefined} dict={dictionaries[locale]?.SaveTheDateModule || dictionaries.pt.SaveTheDateModule} />)}
               {activeTab === 'guests' && (isTabLocked('guests') ? lockedNotice('guests') : <>
                 {guests.length === 0 && (
                   <div data-guests-empty className="mb-6 bg-white border border-gold-soft/70 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center gap-4">
@@ -966,7 +989,9 @@ export default function Dashboard() {
                 <LinksHub
                   slug={formData.slug}
                   locale={params.locale as string}
-                  isLocked={moduleId => !(isSuperAdmin || plannerPlan) && !isModuleUnlocked(unlockedModules, moduleId)}
+                  // Fotos e livro de visitas funcionam antes de pagar (modo de
+                  // experiência, lib/trial.ts); convite, RSVP e mesas só depois de publicar.
+                  isLocked={moduleId => !(isSuperAdmin || plannerPlan) && moduleId !== 'photo_sharing' && moduleId !== 'guestbook' && !isModuleUnlocked(unlockedModules, moduleId)}
                   onCopy={key => { if (key === 'invite') markLinkShared(); }}
                   showVendors={showManagement}
                   onOpenVendors={() => { setGroup('management'); setActiveTab('sharing'); }}

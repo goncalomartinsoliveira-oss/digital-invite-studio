@@ -112,7 +112,7 @@ export const helpEn: HelpContent = {
         "**My Account**, at the bottom of the menu, has your team, purchases and password.",
       ],
       tips: [
-        "A card with the **Locked** badge is a module that hasn't been activated yet. When you open that area you can activate it.",
+        "You can prepare everything before paying. For guests to open the invitation, click **Publish invitation**.",
         "The **?** button, at the top right of the home page, replays the welcome tour.",
         "Changes save on their own. The status shows at the top: **Saving...** and then **Saved**.",
       ],
@@ -472,7 +472,7 @@ export const helpEn: HelpContent = {
         "Open **Links & QR codes** on the dashboard home page.",
         "You'll find six cards: **Invitation**, **RSVP**, **Seating plan**, **Photo gallery**, **Live Wall** and **Guestbook**.",
         "Each card has **Copy link**, **Open** and the QR code, which you can download as **PNG** or **SVG**.",
-        "A card marked **Module not active** belongs to a module that isn't active yet.",
+        "A card marked **Available once published** only works after you click **Publish invitation**.",
       ],
       tips: [
         "For printing (invitations, table cards), prefer the SVG: it stays sharp at any size.",
@@ -504,12 +504,14 @@ export const helpEn: HelpContent = {
       slug: "buy-modules",
       chapter: "account",
       audience: "dis",
-      title: "How do I get the Full Plan?",
-      summary: "A single payment unlocks every feature of the event: invitation, RSVP, guests and seating, Save the Date, photos and guestbook.",
+      title: "When do I pay? How do I publish the invitation?",
+      summary: "Preparing is free with no time limit. You pay once, when you publish the invitation: the Full Plan unlocks everything.",
       steps: [
-        "On the dashboard home page, under **Unlock everything**, click **Get the Full Plan**. You can also do it from any area with the **Locked** badge.",
+        "While you prepare, you can use the whole dashboard without paying: invitation, guests, seating, Save the Date (with a watermark) and, to try them out, up to 5 photos and 5 guestbook messages.",
+        "The **Preview** button shows you the full invitation. Guests can only open it once it's published.",
+        "When everything is ready, click **Publish invitation** (at the top of the dashboard or under **Ready to send?** on the dashboard home page).",
         "If you have a promo code, click **I have a promo code** and enter it before paying.",
-        "Payment is made on a secure screen. When it finishes, every area is active.",
+        "Payment is made on a secure screen. When it finishes, the invitation is published and everything is unlocked: RSVP, Save the Date without watermark, unlimited photos and messages.",
         "Your payment history is under **My Account** › **Purchase History**.",
       ],
       tips: [

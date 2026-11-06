@@ -68,6 +68,8 @@ interface SaveTheDateModuleProps {
   saving: boolean;
   canEdit: boolean;
   dict: SaveTheDateModuleDict;
+  // Antes do Plano Completo o cartão (pré-visualização e PDF) leva marca d'água.
+  watermark?: { text: string; note: string; unlockLabel?: string; onUnlock?: () => void };
 }
 
 export default function SaveTheDateModule({
@@ -76,6 +78,7 @@ export default function SaveTheDateModule({
   handleSaveDesign,
   canEdit,
   dict,
+  watermark,
 }: SaveTheDateModuleProps) {
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -474,10 +477,24 @@ export default function SaveTheDateModule({
             tamanho. */}
         <div
           ref={cardRef}
-          className="[&>svg]:w-full [&>svg]:h-full [&>svg]:block"
+          className="relative overflow-hidden"
           style={{ width: 340, height: 640, boxShadow: "0 20px 50px rgba(0,0,0,0.15)" }}
-          dangerouslySetInnerHTML={{ __html: activeMarkup }}
-        />
+        >
+          <div
+            className="absolute inset-0 [&>svg]:w-full [&>svg]:h-full [&>svg]:block"
+            dangerouslySetInnerHTML={{ __html: activeMarkup }}
+          />
+          {/* Marca d'água (antes do Plano Completo) — entra também no PDF. */}
+          {watermark && (
+            <div className="absolute inset-0 pointer-events-none flex flex-col justify-center items-center gap-16" style={{ transform: "rotate(-30deg) scale(1.4)" }}>
+              {[0, 1, 2, 3, 4].map(i => (
+                <span key={i} style={{ color: "rgba(51,46,43,0.22)", fontSize: 15, fontWeight: 700, letterSpacing: "0.25em", whiteSpace: "nowrap", fontFamily: "var(--font-jost), sans-serif" }}>
+                  {watermark.text}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
         <button
           onClick={handleDownload}
@@ -487,6 +504,16 @@ export default function SaveTheDateModule({
           {generating ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
           {generating ? dict.generating : dict.downloadBtn}
         </button>
+        {watermark && (
+          <div className="max-w-[340px] text-center space-y-2">
+            <p className="text-[11px] text-gray-500 leading-relaxed">{watermark.note}</p>
+            {watermark.onUnlock && watermark.unlockLabel && (
+              <button onClick={watermark.onUnlock} className="text-[10px] font-bold uppercase tracking-widest text-brand border-b border-brand pb-0.5 hover:text-ink">
+                {watermark.unlockLabel}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

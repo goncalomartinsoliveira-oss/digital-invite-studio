@@ -243,9 +243,28 @@ simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
   pagamentos e cupões antigos. Preços por parceiro (`brand_pricing_overrides`)
   continuam a funcionar sobre o plano.
 
+**Quando se paga: "grátis para preparar, paga-se para publicar" (nov. 2026), sem prazo.**
+- Antes de pagar, o painel está todo editável (`isTabLocked` devolve sempre
+  `false`): convite, convidados, mesas, Save the Date, fotos e livro de visitas.
+- O convite público só abre aos convidados depois de publicado (`invite` em
+  `unlocked_modules`); até lá mostra "Este convite ainda não foi publicado".
+  Quem gere o evento recebe um cookie de pré-visualização
+  (`api/invite-access/preview`, `ownerPreviewCookieName`) e vê o convite com a
+  faixa "Pré-visualização" e o RSVP inativo (`components/invite/InviteMode.tsx`).
+- Save the Date com marca d'água (pré-visualização e PDF) até pagar.
+- Fotos, Live Wall e livro de visitas em **modo de experiência**: no máximo
+  5 fotos e 5 mensagens por evento (`lib/trial.ts`, verificado antes de cada
+  envio através de `api/trial`). O painel mostra "Modo de experiência: X de 5".
+- RSVP standalone (`/rsvp`) e plano de mesas público (`/seating`) só depois de
+  publicar. Em **Links e QR codes** esses cartões dizem "Disponível depois de publicar".
+- Botão **Publicar convite** (topo do painel, lista "O que falta fazer",
+  cartão "Prontos para enviar?" no hub) = checkout do Plano Completo. Eventos de
+  parceiros publicam pelo parceiro; o super admin em Conta › Módulos do Evento.
+
 **Fluxo:**
-1. O casal carrega em **Ativar Plano Completo** no hub (`BundleOffers`) ou num
-   separador bloqueado (`LockedModuleNotice`), via `lib/checkout.ts`.
+1. O casal carrega em **Publicar convite** (topo do painel ou cartão no hub,
+   `BundleOffers`), ou em **Ativar Plano Completo** nas fotos / livro de visitas /
+   Save the Date, via `lib/checkout.ts`.
 2. `api/checkout` calcula o preço (ou a diferença), cria a sessão no Stripe, já
    com o cupão aplicado.
 3. Quando o pagamento termina, `api/stripe/webhook` (evento
