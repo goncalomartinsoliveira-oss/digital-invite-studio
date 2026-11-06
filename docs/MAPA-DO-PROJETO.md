@@ -51,6 +51,8 @@ depois do evento (campo `invitations.expires_at`).
 
 Página inicial (`app/[locale]/page.tsx`, textos em `HomePage` nos dicionários): o **convite digital é o produto principal**. Ordem: hero com o convite → factos → coleção de modelos (lê `lib/templates.ts`, com lugares "Em breve") → dentro do convite → RSVP e painel → "a viagem" (os outros módulos, com ligação a `/features/<slug>`) → **convite à medida** (`#a-medida`, botão "Pedir proposta" → `/contact?assunto=medida`, que pré-seleciona "Pedido de Orçamento Personalizado") → como funciona → faixa de parceiros → FAQ → CTA. Sem preços (estão em `/pricing`) nem prazo de disponibilidade.
 
+Parceiros (`/partners`, textos em `PartnersPage`): página de venda para wedding planners e agências — Planeamento com capturas reais (`public/partners/*.jpg`, geradas no simulador com a agência fictícia "Atelier Lua"), o que os noivos recebem, marca própria (Domínio Próprio / Parceiro Leve), planos mensais com preços (de `lib/planner.ts`, IVA incluído), FAQ e "Marcar uma demonstração" (`/contact?assunto=parceria`).
+
 Funcionalidades (`/features`, textos em `DetailedFeaturesPage`): o convite em destaque, os outros quatro módulos "à volta do convite", "tudo ligado", convite à medida e CTA. Detalhe (`/features/<slug>`, textos em `FeatureDetailPage.modules`): passo a passo com imagens, secções (só convite), à medida (só convite), o que inclui, na prática. **As imagens estão listadas em `app/[locale]/features/images.ts`** (versões PT/EN que existem de cada ficheiro em `public/features/<slug>/`); uma imagem nova só aparece depois de entrar nessa lista. As do convite (`convite-de-casamento/`) são composições do Renaissance Blue e do editor.
 
 O convite fica disponível até 60 dias depois do casamento (`expires_at`; decidido manter em nov. 2026).
@@ -235,7 +237,9 @@ simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
 - **Convite à medida:** a partir de 699 € (`BESPOKE_FROM_CENTS`), sem checkout;
   "Pedir proposta" → `/contact?assunto=medida`.
 - **Wedding planners:** planos mensais em `lib/planner.ts` (Solo 39 €/6, Profissional
-  89 €/15, Agência 169 €/35 convites ativos; anual com 2 meses grátis). Ainda
+  89 €/15, Agência 169 €/35 convites ativos; anual com 2 meses grátis; IVA
+  incluído). Mostrados na página de parceiros (`/partners`), não em `/pricing`
+  (que só tem uma faixa a encaminhar para lá). Ainda
   sem subscrição automática: ativados à mão em Parceiros. Regra da vaga: um
   convite deixa de contar como ativo no dia seguinte ao casamento.
 - Os módulos continuam a existir por dentro (`unlocked_modules`), mas já não se

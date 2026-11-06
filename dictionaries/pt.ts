@@ -1672,21 +1672,10 @@ const pt = {
       "cta": "Pedir proposta"
     },
     "wp": {
-      "tag": "Para wedding planners",
-      "title": "Planos mensais para agências",
-      "desc": "Todos os convites dos vossos casamentos com o Plano Completo, mais as ferramentas de planeamento: orçamento, tarefas, cronograma, fornecedores e a vista «Esta semana».",
-      "perMonth": "/mês",
-      "events": "{n} convites ativos",
-      "plans": {
-        "solo": "Para quem organiza até cerca de 5 casamentos por ano.",
-        "profissional": "Para quem organiza até cerca de 12 casamentos por ano.",
-        "agencia": "Para equipas com até cerca de 30 casamentos por ano."
-      },
-      "popular": "Mais escolhido",
-      "slotNote": "Cada convite ocupa uma vaga até ao dia do casamento. No dia seguinte, a vaga fica livre para o próximo.",
-      "annual": "No plano anual, 2 meses grátis.",
-      "cta": "Falar connosco",
-      "partnersLink": "Conhecer a área de parceiros"
+      "tag": "Para wedding planners e agências",
+      "title": "Gerem todos os vossos casamentos num só painel",
+      "desc": "Orçamento, fornecedores, tarefas e cronograma, e convites com a vossa marca para cada casal.",
+      "cta": "Conhecer a área para profissionais"
     },
     "faq": {
       "title": "Perguntas sobre preços",
@@ -1702,14 +1691,44 @@ const pt = {
   },
   "PartnersPage": {
     "hero": {
-      "tag": "Para agências e wedding planners",
-      "title": "Leve a Digital Invite Studio para a sua marca",
-      "desc": "Ofereça aos seus clientes convites digitais, RSVP inteligente, plano de mesas, partilha de fotos e guestbook, tudo com a identidade da vossa agência. Depois, giram todos os eventos dos vossos clientes a partir de um único painel.",
-      "ctaPrimary": "Falar com a equipa",
-      "ctaSecondary": "Ver os módulos disponíveis"
+      "tag": "Para wedding planners e agências",
+      "title": "Os vossos casamentos, organizados num só sítio.",
+      "titleAccent": "E convites com a vossa marca.",
+      "desc": "Orçamento, fornecedores, tarefas e cronograma de todos os casamentos num só painel, e cada casal com o convite digital completo, RSVP, mesas, fotos e livro de visitas.",
+      "ctaPrimary": "Marcar uma demonstração",
+      "ctaSecondary": "Ver planos e preços"
     },
-    "modelsTitle": "Dois modelos de parceria",
-    "modelsSubtitle": "Escolha o que melhor se adapta à dimensão da sua agência",
+    "planning": {
+      "tag": "O dia a dia da agência",
+      "title": "Tudo o que gerem, num só painel",
+      "desc": "Feito para quem acompanha vários casamentos ao mesmo tempo e precisa de saber, de manhã, o que está atrasado.",
+      "items": [
+        { "key": "week", "title": "Esta semana", "desc": "Todos os casamentos num relance, com semáforo: o que já falhou, o que vence nos próximos dias e como estão as confirmações dos convidados." },
+        { "key": "orcamento", "title": "Orçamento e pagamentos", "desc": "Custos por fornecedor com IVA, preço fixo ou por pessoa, sinais e restantes com datas, e um aviso quando o orçamento começa a apertar." },
+        { "key": "tarefas", "title": "Tarefas com prazos", "desc": "A checklist de cada casamento, separada entre agência, noivos e tarefas conjuntas. Copiem de outro casamento ou importem do Excel." },
+        { "key": "vendors", "title": "Fornecedores e histórico de preços", "desc": "Um diretório único para todos os casamentos, com avaliação e o preço médio que cada fornecedor vos fez." },
+        { "key": "cronograma", "title": "Cronograma do dia", "desc": "O alinhamento minuto a minuto, com o fornecedor de cada momento, em PDF ou partilhado com quem precisa." }
+      ]
+    },
+    "extras": {
+      "title": "E ainda",
+      "items": [
+        "Portal do fornecedor: um link só de leitura com o cronograma, sem criar conta",
+        "Moodboard partilhado com os noivos",
+        "Vocês escolhem o que os noivos veem: tarefas, custos e cronograma",
+        "Equipa com acessos próprios, como administrador ou editor",
+        "Mensagem pronta para lembrar quem ainda não confirmou presença",
+        "Convidados, tarefas e fornecedores importados do Excel"
+      ]
+    },
+    "couples": {
+      "tag": "O que os vossos noivos recebem",
+      "title": "O Plano Completo, em cada casamento",
+      "desc": "Convite digital, RSVP com menus e restrições alimentares, plano de mesas, Save the Date, fotos com Live Wall e livro de visitas. Incluído no vosso plano: os noivos não pagam nada à parte.",
+      "cta": "Ver um convite ao vivo"
+    },
+    "modelsTitle": "Dois modelos para terem a vossa marca",
+    "modelsSubtitle": "Escolham o que melhor se adapta à vossa agência",
     "models": {
       "domain": {
         "title": "Domínio Próprio",
@@ -1732,34 +1751,38 @@ const pt = {
         ]
       }
     },
-    "featuresTitle": "O que ganha como parceiro",
-    "features": {
-      "dashboard": {
-        "title": "Painel centralizado",
-        "desc": "Veja todos os eventos dos vossos clientes num único lugar: noivos, datas, convidados confirmados e estado de cada projeto."
+    "plans": {
+      "tag": "Planos e preços",
+      "title": "Um plano mensal, à medida do vosso volume",
+      "perMonth": "/mês",
+      "vat": "IVA incluído",
+      "events": "{n} convites ativos",
+      "perInvite": "cerca de {v} por convite ativo",
+      "popular": "Mais escolhido",
+      "descs": {
+        "solo": "Para quem organiza até cerca de 5 casamentos por ano.",
+        "profissional": "Para quem organiza até cerca de 12 casamentos por ano.",
+        "agencia": "Para equipas com até cerca de 30 casamentos por ano."
       },
-      "team": {
-        "title": "Equipa com acessos próprios",
-        "desc": "Adicione a vossa equipa com papéis de administrador ou editor, e controlem quem gere cada evento."
-      },
-      "fullProduct": {
-        "title": "Produto completo incluído",
-        "desc": "Cada evento criado tem acesso a todos os módulos: convite, RSVP inteligente, plano de mesas, photo sharing e guestbook."
-      },
-      "branding": {
-        "title": "A vossa marca em todo o lado",
-        "desc": "Painel, convite, guestbook e galeria mostram sempre o vosso logótipo, nunca o nosso."
-      }
+      "includesAll": "Todos os planos incluem o Planeamento completo, a vossa marca e o Plano Completo em cada convite.",
+      "slotNote": "Cada convite ocupa uma vaga até ao dia do casamento. No dia seguinte, a vaga fica livre para o próximo.",
+      "annual": "No plano anual, 2 meses grátis.",
+      "cta": "Marcar uma demonstração"
     },
-    "audienceTitle": "Para quem é",
-    "audience": [
-      "Organizadores independentes que querem oferecer uma experiência premium sem construir tecnologia própria",
-      "Agências em crescimento que gerem vários casamentos em simultâneo",
-      "Produtoras e agências maiores que precisam de gerir equipas e vários eventos ativos"
-    ],
-    "pricingTitle": "Condições comerciais vantajosas",
-    "pricingDesc": "Trabalhamos com condições especiais para parceiros, adaptadas ao número de eventos que gerem. Sem mensalidades escondidas nem letras pequenas.",
-    "finalCta": "Fale connosco"
+    "faq": {
+      "title": "Perguntas frequentes",
+      "items": [
+        { "q": "O que conta como convite ativo?", "a": "Cada casamento conta desde que o criam no painel até ao dia do casamento. No dia seguinte, a vaga fica livre para outro casamento." },
+        { "q": "O que acontece ao orçamento e aos fornecedores depois do casamento?", "a": "Ficam sempre guardados. Mesmo quando as fotos e a lista de convidados são apagadas, depois dos 60 dias, o orçamento, os fornecedores, os valores e as tarefas continuam disponíveis para consulta e para o histórico de preços." },
+        { "q": "Os noivos pagam alguma coisa?", "a": "Não. Cada convite dos vossos casamentos tem o Plano Completo incluído no vosso plano." },
+        { "q": "Posso mudar de plano?", "a": "Sim. Se o número de casamentos crescer, passam para o plano seguinte. Falem connosco." },
+        { "q": "Já tenho tudo em Excel. Tenho de começar do zero?", "a": "Não. Convidados, tarefas e fornecedores importam-se a partir do Excel, com um modelo pronto a preencher." },
+        { "q": "Posso usar a minha própria marca?", "a": "Sim. No modelo Domínio Próprio, a plataforma corre num endereço vosso com o vosso logótipo; no Parceiro Leve, o vosso logótipo aparece nos eventos que gerem." }
+      ]
+    },
+    "finalTitle": "Vamos mostrar-vos como funciona",
+    "finalDesc": "Uma demonstração curta, com os vossos casamentos em mente.",
+    "finalCta": "Marcar uma demonstração"
   },
   "SeatingPublic": {
     "notFound": "Evento não encontrado",
