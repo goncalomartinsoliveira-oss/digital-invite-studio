@@ -195,6 +195,11 @@ const en = {
       ],
       "labelMessage": "Message",
       "placeholderMessage": "How can we help?",
+      "partnerTypes": {
+        "recomendar": "I'd like to receive the terms for referring Digital Invite Studio (referral programme).",
+        "revender": "I'd like to receive the terms for reselling Digital Invite Studio to my clients.",
+        "wedding-planner": "I'd like to receive the partnership terms for wedding planners (resale, Planning and own brand)."
+      },
       "btnSubmit": "Send Message",
       "btnSending": "Sending...",
       "errorMessage": "Could not send the message. Please try again or email hello@digitalinvitestudio.com."
@@ -253,6 +258,11 @@ const en = {
     "openInvite": "Open Invite",
     "previewInvite": "Preview",
     "publishBtn": "Publish invitation",
+    "payer": {
+      "title": "Who pays to publish this invitation?",
+      "partner": { "label": "The agency", "desc": "You publish it at your partner price and include the invitation in your service." },
+      "couple": { "label": "The couple", "desc": "The couple publishes it from their dashboard, at the normal price." }
+    },
     "publishPlanBtn": "Get the Full Plan",
     "stdWatermark": "PREVIEW · DIGITAL INVITE STUDIO",
     "stdWatermarkNote": "Until you get the Full Plan, the card is downloaded with a watermark.",
@@ -809,6 +819,8 @@ const en = {
     "subtitle": "Prepare everything at your own pace, for free. When you're ready, one payment publishes the invitation and unlocks everything.",
     "buyBtn": "Publish invitation",
     "launchLabel": "Launch price",
+    "partnerLabel": "Partner price",
+    "volumeLabel": "Volume price",
     "upgradeNote": "You already have some modules: you only pay the difference. One-time payment, VAT included.",
     "oneTime": "One-time payment per event, VAT included.",
     "couponToggleLabel": "I have a promo code",
@@ -1695,8 +1707,8 @@ const en = {
       "title": "All your weddings, organised in one place.",
       "titleAccent": "And invitations with your brand.",
       "desc": "Budget, vendors, tasks and timeline for every wedding in one dashboard, and every couple with the full digital invitation, RSVP, seating, photos and guestbook.",
-      "ctaPrimary": "Book a demo",
-      "ctaSecondary": "See plans and pricing"
+      "ctaPrimary": "Request terms",
+      "ctaSecondary": "See partnership options"
     },
     "planning": {
       "tag": "Your agency's day-to-day",
@@ -1724,7 +1736,7 @@ const en = {
     "couples": {
       "tag": "What your couples get",
       "title": "The Full Plan, for every wedding",
-      "desc": "Digital invitation, RSVP with menus and dietary requirements, seating plan, Save the Date, photos with Live Wall and guestbook. Included in your plan: couples pay nothing extra.",
+      "desc": "Digital invitation, RSVP with menus and dietary requirements, seating plan, Save the Date, photos with Live Wall and guestbook. You decide whether to include it in your service or let the couple pay.",
       "cta": "See a live invitation"
     },
     "modelsTitle": "Two ways to use your own brand",
@@ -1751,38 +1763,30 @@ const en = {
         ]
       }
     },
-    "plans": {
-      "tag": "Plans and pricing",
-      "title": "A monthly plan that fits your volume",
-      "perMonth": "/month",
-      "vat": "VAT included",
-      "events": "{n} active invitations",
-      "perInvite": "about {v} per active invitation",
-      "popular": "Most popular",
-      "descs": {
-        "solo": "For planners with up to about 5 weddings a year.",
-        "profissional": "For planners with up to about 12 weddings a year.",
-        "agencia": "For teams with up to about 30 weddings a year."
-      },
-      "includesAll": "Every plan includes full Planning, your brand and the Full Plan on every invitation.",
-      "slotNote": "Each invitation takes a slot until the wedding day. The next day, the slot is free for the next one.",
-      "annual": "On the yearly plan, 2 months free.",
-      "cta": "Book a demo"
+    "ways": {
+      "tag": "Ways to work with us",
+      "title": "Choose the partnership that makes sense for you",
+      "desc": "We'll send you the terms for the kind of partnership you're interested in. No commitment.",
+      "cta": "Request terms",
+      "items": [
+        { "key": "recomendar", "title": "Refer", "who": "Photographers, venues, stationery companies, wedding planners", "desc": "Recommend Digital Invite Studio to your couples with your own link and code, and earn a commission for every couple who publishes their invitation. Track everything in your own area." },
+        { "key": "revender", "title": "Resell", "who": "Stationery companies, wedding planners", "desc": "Get special terms for the events you manage and include the digital invitation in your service, at whatever price you set for your clients." },
+        { "key": "wedding-planner", "title": "Wedding planner", "who": "Agencies and wedding planners", "desc": "Everything in reselling, plus full Planning (budget, vendors, tasks, timeline, This week) and, if you like, your own brand on the product. No subscriptions." }
+      ]
     },
     "faq": {
       "title": "Frequently asked questions",
       "items": [
-        { "q": "What counts as an active invitation?", "a": "Each wedding counts from when you create it in the dashboard until the wedding day. The next day, the slot is free for another wedding." },
+        { "q": "How much does it cost?", "a": "It depends on the type of partnership. Request the terms and we'll send everything that applies to you. There are no subscriptions: you pay per wedding." },
+        { "q": "Do couples pay anything?", "a": "You decide, wedding by wedding: include the invitation in your service, or let the couple publish it from their own dashboard." },
         { "q": "What happens to the budget and vendors after the wedding?", "a": "They're always kept. Even when photos and the guest list are deleted, after 60 days, the budget, vendors, amounts and tasks remain available to view and for price history." },
-        { "q": "Do couples pay anything?", "a": "No. Every invitation for your weddings includes the Full Plan as part of your plan." },
-        { "q": "Can I change plans?", "a": "Yes. If your number of weddings grows, you move up to the next plan. Talk to us." },
         { "q": "I have everything in Excel. Do I start from scratch?", "a": "No. Guests, tasks and vendors can be imported from Excel, with a ready-to-fill template." },
         { "q": "Can I use my own brand?", "a": "Yes. With Your Own Domain, the platform runs on your own address with your logo; as a Lightweight Partner, your logo shows on the events you manage." }
       ]
     },
-    "finalTitle": "Let us show you how it works",
-    "finalDesc": "A short demo, with your weddings in mind.",
-    "finalCta": "Book a demo"
+    "finalTitle": "Let's talk?",
+    "finalDesc": "Tell us what kind of partnership you're interested in and we'll send you the terms.",
+    "finalCta": "Request terms"
   },
   "SeatingPublic": {
     "notFound": "Event not found",

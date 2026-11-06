@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Check, Loader2, Sparkles, Tag } from "lucide-react";
-import { FULL_PLAN, FULL_PLAN_LIST_PRICE_CENTS, fullPlanPriceFor, isLaunchPrice, type PricingOverrides } from "@/lib/pricing";
-import { startBundleCheckout, formatPriceCents } from "@/lib/checkout";
+import { FULL_PLAN, FULL_PLAN_LIST_PRICE_CENTS, isLaunchPrice } from "@/lib/pricing";
+import { startBundleCheckout, formatPriceCents, type ClientPlanQuote } from "@/lib/checkout";
 import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
 
 interface BundleOffersDict {
@@ -10,6 +10,8 @@ interface BundleOffersDict {
   subtitle: string;
   buyBtn: string;
   launchLabel: string;
+  partnerLabel: string;
+  volumeLabel: string;
   upgradeNote: string;
   oneTime: string;
   bundles: Record<string, { name: string; desc: string }>;
@@ -25,15 +27,16 @@ interface BundleOffersProps {
   isSuperAdmin: boolean;
   isPartnerBrand?: boolean;
   moduleNames: Record<ModuleId, string>;
-  overrides?: PricingOverrides;
+  quote: ClientPlanQuote | null; // preço vindo do servidor (api/checkout/quote)
   dict: BundleOffersDict;
 }
 
 // Cartão do Plano Completo na página inicial do painel — o único produto à
-// venda (lib/pricing.ts). Desaparece quando o evento já tem tudo. Quem já
-// comprou módulos à peça vê o preço da diferença (fullPlanPriceFor).
+// venda (lib/pricing.ts). Desaparece quando o evento já tem tudo. O preço vem
+// do servidor (preço normal, de parceiro ou de volume; diferença para quem já
+// tinha módulos à peça).
 // Eventos de parceiros não têm checkout self-service (ver dashboard/[slug]).
-export default function BundleOffers({ invitationId, slug, locale, unlockedModules, isSuperAdmin, isPartnerBrand, moduleNames, overrides, dict }: BundleOffersProps) {
+export default function BundleOffers({ invitationId, slug, locale, unlockedModules, isSuperAdmin, isPartnerBrand, moduleNames, quote, dict }: BundleOffersProps) {
   const [buying, setBuying] = useState(false);
   const [couponVisible, setCouponVisible] = useState(false);
   const [couponCode, setCouponCode] = useState("");
@@ -41,9 +44,10 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
   if (isSuperAdmin || isPartnerBrand) return null;
   if (ALL_MODULE_IDS.every(m => unlockedModules.includes(m))) return null;
 
-  const { cents, isUpgrade } = fullPlanPriceFor(unlockedModules, overrides);
-  const hasOverride = overrides?.bundles[FULL_PLAN.id] !== undefined;
-  const showLaunch = !isUpgrade && !hasOverride && isLaunchPrice();
+  if (!quote || !quote.canBuy || quote.cents == null) return null;
+  const cents = quote.cents;
+  const isUpgrade = !!quote.isUpgrade;
+  const showLaunch = !isUpgrade && !quote.partnerPrice && isLaunchPrice();
   const meta = dict.bundles[FULL_PLAN.id];
 
   const handleBuy = async () => {
@@ -78,8 +82,10 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
         <div className="flex flex-wrap items-end gap-x-3 gap-y-1 mb-1">
           {showLaunch && <span className="font-serif text-xl text-gray-400 line-through">{formatPriceCents(FULL_PLAN_LIST_PRICE_CENTS, locale)}</span>}
           <span className="font-serif text-4xl text-brand">{formatPriceCents(cents, locale)}</span>
-          {showLaunch && (
-            <span className="text-[10px] font-bold uppercase tracking-widest text-green-700 bg-green-50 px-2.5 py-1 rounded-md mb-1.5">{dict.launchLabel}</span>
+          {(showLaunch || quote.partnerPrice) && (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-green-700 bg-green-50 px-2.5 py-1 rounded-md mb-1.5">
+              {quote.partnerPrice ? (quote.volume ? dict.volumeLabel : dict.partnerLabel) : dict.launchLabel}
+            </span>
           )}
         </div>
         <p className="text-[11px] text-gray-400 mb-5">{isUpgrade ? dict.upgradeNote : dict.oneTime}</p>
@@ -91,7 +97,7 @@ export default function BundleOffers({ invitationId, slug, locale, unlockedModul
           {buying ? <Loader2 size={15} className="animate-spin" /> : null}
           {dict.buyBtn}
         </button>
-        {dict.couponToggleLabel && (
+        {dict.couponToggleLabel && !quote.partnerPrice && (
           couponVisible ? (
             <input
               value={couponCode}

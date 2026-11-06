@@ -18,11 +18,11 @@ export type PlannerPlanInfo = {
   priceCentsMonthly: number | null;
 };
 
-// Vaga: um convite conta como ativo até ao dia do casamento e deixa de contar
-// no dia seguinte (decidido em nov. 2026), mesmo continuando online mais 60 dias.
-// Preços (IVA incluído) mostrados na página de parceiros, /partners; a
-// cobrança automática (subscrição
-// Stripe) ainda não existe.
+// Nov. 2026: os planos mensais (Solo/Profissional/Agência, com vagas) foram
+// abandonados antes de serem cobrados. O Planeamento é um interruptor por
+// parceiro, sem mensalidade (qualquer valor de planner_plan = ligado; o super
+// admin grava "piloto"). O parceiro paga por casamento (preço de parceiro,
+// lib/partnerPricing.ts). Os escalões abaixo ficam só por compatibilidade.
 //
 // Dimensionados a partir do pipeline real: um casamento entra na plataforma
 // 12-18 meses antes de acontecer, por isso os eventos ativos em simultâneo são

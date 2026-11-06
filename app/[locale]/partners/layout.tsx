@@ -3,8 +3,8 @@ import { headers, cookies } from "next/headers";
 import { resolveBrand } from "@/lib/brands";
 
 const SEO = {
-  pt: { title: "Para Wedding Planners e Agências | Digital Invite Studio", desc: "Orçamento, fornecedores, tarefas e cronograma de todos os casamentos num só painel, e convites digitais com a vossa marca para cada casal. Planos mensais a partir de 39 €." },
-  en: { title: "For Wedding Planners and Agencies | Digital Invite Studio", desc: "Budget, vendors, tasks and timeline for every wedding in one dashboard, and digital invitations with your brand for every couple. Monthly plans from €39." },
+  pt: { title: "Para Wedding Planners e Agências | Digital Invite Studio", desc: "Orçamento, fornecedores, tarefas e cronograma de todos os casamentos num só painel, e convites digitais com a vossa marca para cada casal. Recomendação, revenda e marca própria, sem mensalidades." },
+  en: { title: "For Wedding Planners and Agencies | Digital Invite Studio", desc: "Budget, vendors, tasks and timeline for every wedding in one dashboard, and digital invitations with your brand for every couple. Referrals, resale and your own brand, no subscriptions." },
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
