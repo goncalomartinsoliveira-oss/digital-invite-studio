@@ -1605,7 +1605,7 @@ const pt = {
   },
   "TermsPage": {
     "title": "Termos e Condições",
-    "lastUpdate": "Última atualização: 18 de julho de 2026",
+    "lastUpdate": "Última atualização: 7 de novembro de 2026",
     "intro": "Bem-vindo à Digital Invite Studio. Ao criar uma conta ou utilizar a nossa plataforma, concorda com os seguintes termos. Por favor, leia-os com atenção.",
     "sections": {
       "s1_title": "1. Objeto do Serviço",
@@ -1629,8 +1629,10 @@ const pt = {
       "s6_suffix": ". A partir desse prazo, os conteúdos do evento (fotografias, vídeos, mensagens, lista de convidados e textos do convite) podem ser eliminados definitivamente, depois de os noivos serem avisados. Mantêm-se o registo do evento, os dados de faturação e os dados de planeamento geridos por agências parceiras.",
       "s7_title": "7. Parceiros e Marca Branca",
       "s7_desc": "Alguns eventos são geridos através de agências ou wedding planners parceiros, sob a marca desses parceiros (\"white label\"). Nestes casos, estes Termos continuam a aplicar-se integralmente entre a Digital Invite Studio e o utilizador final, independentemente da marca visível no serviço.",
-      "s8_title": "8. Lei Aplicável",
-      "s8_desc": "Estes termos são regidos pela lei portuguesa. Para a resolução de qualquer litígio, as partes submetem-se ao foro da comarca de Lisboa."
+      "s8_title": "8. Programa de Parceiros",
+      "s8_desc": "Os parceiros (wedding planners, agências e outras empresas do setor) têm condições próprias, acordadas com a Digital Invite Studio e visíveis na sua área de parceiro. Na recomendação, o parceiro recebe uma comissão sobre o valor pago pelos noivos, sem IVA, por cada evento que recomendou e que foi publicado; a comissão fica aprovada 14 dias após o pagamento, é paga por transferência mensal mediante fatura ou recibo do parceiro, e é cancelada se o pagamento for reembolsado na totalidade. Na revenda, o parceiro paga o preço de parceiro pelos eventos que gere e define livremente o preço para os seus clientes. Um mesmo evento nunca dá direito a comissão e a preço de parceiro, nem há comissão em eventos do próprio parceiro.",
+      "s9_title": "9. Lei Aplicável",
+      "s9_desc": "Estes termos são regidos pela lei portuguesa. Para a resolução de qualquer litígio, as partes submetem-se ao foro da comarca de Lisboa."
     },
     "footerBox": {
       "title": "Dúvidas?",

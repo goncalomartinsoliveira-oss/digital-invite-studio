@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, Archive, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store, ShieldCheck } from "lucide-react";
+import { Plus, Calendar, Archive, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store, ShieldCheck, Handshake } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
@@ -17,6 +17,8 @@ import BusinessOverviewView from "@/components/dashboard/BusinessOverviewView";
 import AgencyOverviewView from "@/components/dashboard/AgencyOverviewView";
 import VendorsView from "@/components/dashboard/VendorsView";
 import AdminMenu from "@/components/dashboard/AdminMenu";
+import PartnerAreaView from "@/components/dashboard/PartnerAreaView";
+import CommissionsView from "@/components/dashboard/CommissionsView";
 import PlannerPilotCard from "@/components/dashboard/PlannerPilotCard";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
@@ -50,7 +52,9 @@ export default function DashboardHub() {
   const [plannerPlan, setPlannerPlan] = useState<PlannerPlan | null>(null);
   // Separador da lista de eventos: ativos ou arquivados (casamento já passou).
   const [listTab, setListTab] = useState<'active' | 'archived'>('active');
-  const [viewMode, setViewMode] = useState<'events' | 'planning' | 'vendors' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business'>('events');
+  const [viewMode, setViewMode] = useState<'events' | 'planning' | 'vendors' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business' | 'partner' | 'commissions'>('events');
+  // Área "Parceiro": membros de um parceiro com recomendação ou preço de parceiro ligados.
+  const [hasPartnerArea, setHasPartnerArea] = useState(false);
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -109,6 +113,10 @@ export default function DashboardHub() {
       const agencyMember = !!membership;
       setIsAgencyMember(agencyMember);
       setAgencyRole((membership as any)?.role ?? null);
+      if (agencyMember && effBrandId !== "dis") {
+        const { data: pa } = await supabase.from("partner_accounts").select("referral_enabled, partner_price_enabled").eq("brand_id", effBrandId).maybeSingle();
+        setHasPartnerArea(!!(pa && ((pa as any).referral_enabled || (pa as any).partner_price_enabled)));
+      }
 
       // Super-admin (DIS) → vê todas as marcas no painel de gestão.
       const { data: sa } = await supabase
@@ -284,6 +292,14 @@ export default function DashboardHub() {
               >
                 <LayoutGrid size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Events' : 'Eventos'}</span>
               </button>
+              {hasPartnerArea && (
+                <button
+                  onClick={() => setViewMode('partner')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all ${viewMode === 'partner' ? 'bg-brand text-white' : 'text-gray-400 hover:text-brand'}`}
+                >
+                  <Handshake size={12} /> <span className="hidden sm:inline">{locale === 'en' ? 'Partner' : 'Parceiro'}</span>
+                </button>
+              )}
               {/* Wedding Planner: "Esta semana" (agências e super-admin) e "Fornecedores"
                   (só com plano de agência — o diretório é da marca). */}
               {(plannerPlan || isSuperAdmin) && (
@@ -310,6 +326,7 @@ export default function DashboardHub() {
                   ...(canManageBrands ? [{ id: 'brands' as const, label: locale === 'en' ? 'Partners' : 'Parceiros', icon: <Building2 size={12} /> }] : []),
                   ...(canManageCoupons ? [{ id: 'coupons' as const, label: locale === 'en' ? 'Coupons' : 'Cupões', icon: <Ticket size={12} /> }] : []),
                   ...(canViewBusiness ? [{ id: 'business' as const, label: locale === 'en' ? 'Business' : 'Negócio', icon: <Wallet size={12} /> }] : []),
+                  ...(canViewBusiness ? [{ id: 'commissions' as const, label: locale === 'en' ? 'Commissions' : 'Comissões', icon: <Handshake size={12} /> }] : []),
                 ]}
               />
             </div>
@@ -332,7 +349,11 @@ export default function DashboardHub() {
       {/* ÁREA PRINCIPAL */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-12 sm:py-20">
 
-        {viewMode === 'planning' && (plannerPlan || isSuperAdmin) ? (
+        {viewMode === 'partner' && hasPartnerArea ? (
+          <PartnerAreaView locale={locale} onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)} />
+        ) : viewMode === 'commissions' && canViewBusiness ? (
+          <CommissionsView locale={locale} />
+        ) : viewMode === 'planning' && (plannerPlan || isSuperAdmin) ? (
           <AgencyOverviewView
             events={planningEvents}
             locale={locale}

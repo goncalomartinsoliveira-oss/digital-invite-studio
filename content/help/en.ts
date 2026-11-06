@@ -573,6 +573,27 @@ export const helpEn: HelpContent = {
 
     // ───────────── FOR AGENCIES ─────────────
     {
+      slug: "partner-area",
+      chapter: "agencies",
+      audience: "agency",
+      title: "How does the Partner area work?",
+      summary: "Your terms, your referral link and code, your commissions and the events you manage, in one place.",
+      steps: [
+        "On the events list, click **Partner**.",
+        "Under **Your terms** you can see what you have active: the referral commission, the partner price (and from which wedding the volume price applies), Planning and your own brand.",
+        "Under **Your referrals** you'll find your link and your code, with **Copy** and the QR code. Couples who arrive through your link, or type your code when they pay, are linked to you.",
+        "The table shows each referred couple who has published: the wedding date, the amount paid and the commission, with its status (**Pending**, **Approved**, **Paid** or **Cancelled**).",
+        "Under **Your events** are the weddings you manage, with who pays to publish and how much it cost.",
+        "In one of your events, choose under **Who pays to publish this invitation?** whether you publish it (**The agency**, at your partner price) or **The couple** does.",
+      ],
+      tips: [
+        "A commission is approved 14 days after the payment and paid by bank transfer once a month. You need to send us an invoice or receipt.",
+        "There's no commission on your own events: for those, you publish at your partner price.",
+        "To change your billing details (VAT no., IBAN), contact us.",
+      ],
+      related: ["planning-overview"],
+    },
+    {
       slug: "planning-overview",
       chapter: "agencies",
       audience: "agency",

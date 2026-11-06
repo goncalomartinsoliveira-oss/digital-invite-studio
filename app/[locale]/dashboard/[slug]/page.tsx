@@ -229,6 +229,19 @@ export default function Dashboard() {
       });
 
       // Código de acesso ligado → dar ao administrador o cookie e recarregar a pré-visualização.
+      // Recomendação de parceiro (link /r/CODIGO, cookie): o dono do evento liga-a
+      // ao evento, se ainda não tiver uma (api/referral/attach, lib/referrals.ts).
+      if (isOwner && !invite.referred_by_brand_id) {
+        supabase.auth.getSession().then(({ data }) => {
+          if (!data.session) return;
+          fetch("/api/referral/attach", {
+            method: "POST",
+            headers: { "content-type": "application/json", authorization: `Bearer ${data.session.access_token}` },
+            body: JSON.stringify({ invitationId: invite.id }),
+          }).catch(() => {});
+        });
+      }
+
       // Código de acesso ligado, ou convite ainda por publicar → quem gere o
       // evento recebe o cookie de pré-visualização e o iframe recarrega.
       if (invite.access_code_enabled || !(invite.unlocked_modules || []).includes('invite')) {

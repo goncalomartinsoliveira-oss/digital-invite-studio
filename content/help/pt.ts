@@ -571,6 +571,27 @@ export const helpPt: HelpContent = {
 
     // ───────────── PARA AGÊNCIAS ─────────────
     {
+      slug: "partner-area",
+      chapter: "agencies",
+      audience: "agency",
+      title: "Como funciona a área de Parceiro?",
+      summary: "As vossas condições, o link e o código de recomendação, as comissões e os eventos que gerem, num só sítio.",
+      steps: [
+        "Na lista de eventos, carreguem em **Parceiro**.",
+        "Em **As vossas condições** vêem o que têm ativo: a comissão de recomendação, o preço de parceiro (e a partir de que casamento passa ao preço de volume), o Planeamento e a marca própria.",
+        "Em **As vossas recomendações** estão o vosso link e o vosso código, com **Copiar** e o QR code. Os noivos que chegam pelo link, ou que escrevem o código quando pagam, ficam associados a vocês.",
+        "A tabela mostra cada casal recomendado que já publicou: a data do casamento, o valor pago e a comissão, com o estado (**Pendente**, **Aprovada**, **Paga** ou **Cancelada**).",
+        "Em **Os vossos eventos** estão os casamentos que gerem, com quem paga a publicação e quanto custou.",
+        "Num evento vosso, escolham em **Quem paga a publicação deste convite?** se publicam vocês (**A agência**, ao preço de parceiro) ou se são **Os noivos**.",
+      ],
+      tips: [
+        "Uma comissão fica aprovada 14 dias depois do pagamento e é paga por transferência, uma vez por mês. Precisam de nos enviar fatura ou recibo.",
+        "Não há comissão nos vossos próprios eventos: nesses, publicam ao preço de parceiro.",
+        "Para alterar os dados de faturação (NIF, IBAN), falem connosco.",
+      ],
+      related: ["planning-overview"],
+    },
+    {
       slug: "planning-overview",
       chapter: "agencies",
       audience: "agency",
