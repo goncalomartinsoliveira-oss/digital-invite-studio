@@ -15,7 +15,7 @@ const MODULE_NAMES: Record<ModuleId, string> = {
 const BUNDLE_NAMES: Record<string, string> = {
   convite: "Pacote Convite",
   momentos: "Pacote Momentos",
-  completo: "Pacote Completo",
+  completo: "Plano Completo",
 };
 
 // Ponto de confiança único: só aqui (código de servidor, com a service_role

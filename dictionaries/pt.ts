@@ -65,7 +65,7 @@ const pt = {
       "tag": "Do primeiro anúncio às memórias",
       "title1": "O convite é o centro.",
       "title2": "Tudo o resto liga-se a ele.",
-      "desc": "Juntem os módulos de que precisam, quando precisarem. Ficam todos no mesmo painel, com a mesma lista de convidados.",
+      "desc": "Vem tudo incluído no mesmo plano e fica no mesmo painel, com a mesma lista de convidados.",
       "steps": [
         { "when": "Meses antes", "title": "Save the Date", "desc": "Um cartão bonito para os convidados guardarem a data." },
         { "when": "O convite", "title": "Convite e RSVP", "desc": "O coração de tudo: o convite e as confirmações de presença." },
@@ -113,7 +113,7 @@ const pt = {
         { "q": "Precisamos de jeito para design ou tecnologia?", "a": "Não. Escolhem o modelo e preenchem os vossos textos e fotos no editor. Se preferirem um convite desenhado por nós, de raiz, existe o convite à medida." },
         { "q": "E os convidados com menos jeito para tecnologia?", "a": "Conseguem sem problema. Abrem o link, procuram o próprio nome e confirmam em poucos toques, sem criar conta nem palavra-passe." },
         { "q": "O convite fica disponível depois do casamento?", "a": "Sim, durante algum tempo, para poderem descarregar com calma as fotos e as mensagens que os convidados deixaram." },
-        { "q": "Quanto custa?", "a": "Pagam uma única vez por evento, sem mensalidades. Os valores de cada módulo e dos pacotes estão na página de preços." }
+        { "q": "Quanto custa?", "a": "Um só preço, com tudo incluído, pago uma única vez por evento e sem mensalidades. O valor está na página de preços." }
       ]
     },
     "cta": {
@@ -235,13 +235,15 @@ const pt = {
     "readOnly": "Apenas Leitura",
     "expiredBadge": "Evento Expirado",
     "expiredBanner": "Este evento expirou a {date} — o painel ficou em modo de leitura. Contacte-nos para renovar o acesso.",
+    "availableUntilBanner": "O casamento já aconteceu! As fotos, os vídeos e as mensagens dos convidados ficam disponíveis até {date}. Descarreguem tudo antes dessa data: depois o conteúdo é apagado.",
+    "purgedBanner": "O conteúdo deste evento (fotos, vídeos, mensagens e lista de convidados) foi apagado a {date}, depois do fim do prazo.",
     "moduleLockedTitle": "{module} ainda não está ativo",
-    "moduleLockedMessage": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+    "moduleLockedMessage": "Faz parte do Plano Completo, que desbloqueia todas as funcionalidades deste evento com um pagamento único.",
     "moduleLockedMessagePartner": "Este módulo ainda não foi ativado para este evento. Contacte o seu parceiro para o ativar.",
     "moduleLockedInviteNote": "Inclui também Convidados & Mesas, necessário para o RSVP funcionar.",
     "moduleLockedContactBtn": "Contactar",
     "moduleLockedBadge": "Bloqueado",
-    "moduleBuyBtn": "Comprar",
+    "moduleBuyBtn": "Ativar Plano Completo",
     "couponToggleLabel": "Tenho um código promocional",
     "couponPlaceholder": "CÓDIGO",
     "saving": "A guardar...",
@@ -491,6 +493,7 @@ const pt = {
     }
   },
   "DashboardHub": {
+    "tabs": { "active": "Ativos", "archived": "Arquivados", "archivedHint": "Casamentos que já aconteceram. Continuam acessíveis até 60 dias depois do evento.", "archivedEmpty": "Ainda não há casamentos arquivados." },
     "loadingText": "A carregar projetos...",
     "logoutBtn": "Terminar Sessão",
     "title": "Os Meus Projetos",
@@ -502,6 +505,7 @@ const pt = {
     "inviteState": {
       "noName": "Convite sem nome",
       "activeOwner": "Dono / Ativo",
+      "archived": "Arquivado",
       "collaborator": "Colaborador",
       "eventDateLabel": "Data do Evento",
       "originalOwnerLabel": "Dono Original",
@@ -515,7 +519,7 @@ const pt = {
       "badge": "Funcionalidades",
       "title1": "O convite no centro.",
       "title2": "E tudo o que vem com ele.",
-      "desc": "O convite digital é onde tudo começa: é ele que os convidados abrem e é nele que confirmam presença. À volta, juntem os módulos de que precisam, todos no mesmo painel e com a mesma lista de convidados."
+      "desc": "O convite digital é onde tudo começa: é ele que os convidados abrem e é nele que confirmam presença. À volta, tudo o resto vem incluído, no mesmo painel e com a mesma lista de convidados."
     },
     "jumpLabel": "Ir para",
     "invite": {
@@ -524,7 +528,7 @@ const pt = {
     },
     "around": {
       "tag": "À volta do convite",
-      "title": "Os módulos que juntam quando precisarem",
+      "title": "Tudo o que vem incluído",
       "desc": "Cada um resolve um momento do casamento, do primeiro anúncio às memórias depois da festa."
     },
     "connected": {
@@ -532,7 +536,7 @@ const pt = {
       "items": [
         { "title": "Uma só lista de convidados", "desc": "Quem confirma no convite fica logo pronto para sentar nas mesas, sem copiar nada." },
         { "title": "Um só painel", "desc": "Convite, convidados, mesas, fotos e mensagens no mesmo sítio, partilhado com quem vos ajuda." },
-        { "title": "Paguem só o que usam", "desc": "Cada módulo compra-se à parte ou em pacote, com pagamento único por evento." }
+        { "title": "Um só preço", "desc": "Pagamento único por evento, com todas as funcionalidades incluídas." }
       ]
     },
     "bespoke": {
@@ -795,10 +799,12 @@ const pt = {
     "guestbook": "Guestbook"
   },
   "BundleOffers": {
-    "title": "Poupe com um pacote",
-    "subtitle": "Compre vários módulos de uma vez, mais barato do que separado",
-    "savingsLabel": "Poupa",
-    "buyBtn": "Comprar pacote",
+    "title": "Desbloqueiem tudo",
+    "subtitle": "Um só pagamento para todas as funcionalidades deste evento",
+    "buyBtn": "Ativar Plano Completo",
+    "launchLabel": "Preço de lançamento",
+    "upgradeNote": "Já têm alguns módulos: pagam só a diferença. Pagamento único, IVA incluído.",
+    "oneTime": "Pagamento único por evento, IVA incluído.",
     "couponToggleLabel": "Tenho um código promocional",
     "couponPlaceholder": "CÓDIGO",
     "bundles": {
@@ -811,8 +817,8 @@ const pt = {
         "desc": "Photo Sharing, Live Wall e Guestbook, tudo para reviver o dia do evento."
       },
       "completo": {
-        "name": "Pacote Completo",
-        "desc": "Todos os módulos, sem exceção. A experiência completa."
+        "name": "Plano Completo",
+        "desc": "O convite e tudo o que vem com ele: Save the Date, RSVP, convidados e mesas, fotos com Live Wall e livro de visitas."
       }
     }
   },
@@ -1243,10 +1249,10 @@ const pt = {
     },
     "locked": {
       "title": "Photo Sharing & Live Wall ainda não está ativo",
-      "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "message": "Faz parte do Plano Completo, que desbloqueia todas as funcionalidades deste evento com um pagamento único.",
       "messagePartner": "Este módulo ainda não foi ativado para este evento. Contacte o seu parceiro para o ativar.",
       "contactBtn": "Contactar",
-      "buyBtn": "Comprar",
+      "buyBtn": "Ativar Plano Completo",
       "couponToggleLabel": "Tenho um código promocional",
       "couponPlaceholder": "CÓDIGO"
     }
@@ -1288,10 +1294,10 @@ const pt = {
     },
     "locked": {
       "title": "Guestbook ainda não está ativo",
-      "message": "Este módulo ainda não foi ativado para este evento. Contacte-nos para o adicionar.",
+      "message": "Faz parte do Plano Completo, que desbloqueia todas as funcionalidades deste evento com um pagamento único.",
       "messagePartner": "Este módulo ainda não foi ativado para este evento. Contacte o seu parceiro para o ativar.",
       "contactBtn": "Contactar",
-      "buyBtn": "Comprar",
+      "buyBtn": "Ativar Plano Completo",
       "couponToggleLabel": "Tenho um código promocional",
       "couponPlaceholder": "CÓDIGO"
     }
@@ -1556,7 +1562,7 @@ const pt = {
       "s3_title": "3. Retenção e Bloqueio de Dados após o Evento",
       "s3_prefix": "O acesso dos convidados aos módulos de um evento é ",
       "s3_bold": "totalmente bloqueado 60 dias após a data do evento",
-      "s3_suffix": ". Os noivos mantêm acesso de consulta (só leitura) ao seu painel depois desse prazo. Os dados armazenados, incluindo fotografias e mensagens, não são eliminados automaticamente nesta fase — pode solicitar a eliminação total dos dados do seu evento a qualquer momento, através dos nossos Contactos.",
+      "s3_suffix": ". A partir desse prazo, os conteúdos do evento (fotografias, vídeos, mensagens, lista de convidados e textos do convite) podem ser eliminados definitivamente. Os noivos são avisados antes do fim do prazo e podem descarregar tudo a partir do painel. Mantêm-se o registo do evento, os dados de faturação e os dados de planeamento geridos por agências parceiras. Pode solicitar a eliminação total dos dados do seu evento a qualquer momento, através dos nossos Contactos.",
       "s4_title": "4. Subcontratantes e Alojamento de Dados",
       "s4_desc": "Para prestar o serviço, recorremos a fornecedores de confiança que processam dados em nosso nome: a Supabase para a base de dados, autenticação e armazenamento de ficheiros, a Stripe para o processamento de pagamentos, e a Vercel para o alojamento do site. Todos operam com garantias de segurança reconhecidas e são utilizados exclusivamente para viabilizar o funcionamento da plataforma.",
       "s5_title": "5. Direitos dos Titulares dos Dados (RGPD)",
@@ -1589,7 +1595,7 @@ const pt = {
       "s6_title": "6. Validade e Expiração do Evento",
       "s6_prefix": "A data do evento fica bloqueada assim que o primeiro módulo é ativado, para impedir o uso indevido do sistema. O acesso dos convidados a todos os módulos é ",
       "s6_bold": "totalmente bloqueado 60 dias após a data do evento",
-      "s6_suffix": ". Os noivos mantêm acesso de consulta (só leitura) ao seu painel depois desse prazo. Os dados não são eliminados automaticamente nesta fase; a eliminação de conteúdos como fotografias e mensagens poderá vir a ser configurada separadamente no futuro.",
+      "s6_suffix": ". A partir desse prazo, os conteúdos do evento (fotografias, vídeos, mensagens, lista de convidados e textos do convite) podem ser eliminados definitivamente, depois de os noivos serem avisados. Mantêm-se o registo do evento, os dados de faturação e os dados de planeamento geridos por agências parceiras.",
       "s7_title": "7. Parceiros e Marca Branca",
       "s7_desc": "Alguns eventos são geridos através de agências ou wedding planners parceiros, sob a marca desses parceiros (\"white label\"). Nestes casos, estes Termos continuam a aplicar-se integralmente entre a Digital Invite Studio e o utilizador final, independentemente da marca visível no serviço.",
       "s8_title": "8. Lei Aplicável",
@@ -1611,20 +1617,67 @@ const pt = {
     "error": "Erro ao atualizar a password. O link pode ter expirado."
   },
   "PricingPage": {
-    "title": "Preços simples, sem surpresas",
-    "desc": "Pagamento único por evento, sem mensalidades e sem letras pequenas. Escolha um pacote com desconto ou monte a sua combinação perfeita módulo a módulo.",
-    "bestseller": "Melhor Valor",
-    "startBtn": "Começar Agora",
-    "bundlesTitle": "Pacotes com desconto",
-    "bundlesSubtitle": "A forma mais simples e mais barata de ter tudo o que precisa",
-    "alaCarteTitle": "Ou monte o seu à medida",
-    "alaCarteSubtitle": "Compre só os módulos que realmente vai usar, um a um",
-    "includesLabel": "Inclui",
-    "alaCarteInviteNote": "O Convite de Casamento inclui sempre Convidados & Mesas, para o RSVP funcionar corretamente.",
-    "b2b": {
-      "title": "É Organizador de Eventos?",
-      "desc": "Oferecemos soluções especiais de White Label para Wedding Planners e Agências. Utilize a nossa tecnologia com a sua própria marca e beneficie de preços de revenda.",
-      "link": "Consultar Condições B2B"
+    "title": "Um só preço. Tudo incluído.",
+    "desc": "Pagamento único por evento, sem mensalidades. O convite e todas as funcionalidades, ou um convite desenhado só para vocês.",
+    "full": {
+      "tag": "Para casais",
+      "name": "Plano Completo",
+      "launchLabel": "Preço de lançamento",
+      "per": "por evento",
+      "note": "Pagamento único · IVA incluído",
+      "features": [
+        "Convite digital no modelo que escolherem",
+        "RSVP com menus e restrições alimentares",
+        "Lista de convidados e plano de mesas",
+        "Save the Date pronto a partilhar",
+        "Fotos dos convidados e Live Wall no dia",
+        "Livro de visitas com mensagens e votos",
+        "Links por família e código de acesso",
+        "Alterações sempre que quiserem, visíveis na hora"
+      ],
+      "cta": "Criar o nosso convite",
+      "liveLink": "Ver um convite ao vivo"
+    },
+    "bespoke": {
+      "tag": "Exclusivo",
+      "name": "Convite à Medida",
+      "from": "a partir de",
+      "per": "por evento",
+      "note": "Orçamento ajustado a cada projeto · IVA incluído",
+      "features": [
+        "Desenho exclusivo, criado de raiz para vocês",
+        "Ilustrações, tipografia e animações próprias",
+        "Acompanhamento direto da nossa equipa",
+        "Tudo o que o Plano Completo inclui"
+      ],
+      "cta": "Pedir proposta"
+    },
+    "wp": {
+      "tag": "Para wedding planners",
+      "title": "Planos mensais para agências",
+      "desc": "Todos os convites dos vossos casamentos com o Plano Completo, mais as ferramentas de planeamento: orçamento, tarefas, cronograma, fornecedores e a vista «Esta semana».",
+      "perMonth": "/mês",
+      "events": "{n} convites ativos",
+      "plans": {
+        "solo": "Para quem organiza até cerca de 5 casamentos por ano.",
+        "profissional": "Para quem organiza até cerca de 12 casamentos por ano.",
+        "agencia": "Para equipas com até cerca de 30 casamentos por ano."
+      },
+      "popular": "Mais escolhido",
+      "slotNote": "Cada convite ocupa uma vaga até ao dia do casamento. No dia seguinte, a vaga fica livre para o próximo.",
+      "annual": "No plano anual, 2 meses grátis.",
+      "cta": "Falar connosco",
+      "partnersLink": "Conhecer a área de parceiros"
+    },
+    "faq": {
+      "title": "Perguntas sobre preços",
+      "items": [
+        { "q": "Há mensalidades ou custos escondidos?", "a": "Não. Para casais é um pagamento único por evento, com IVA incluído." },
+        { "q": "O que acontece depois do casamento?", "a": "O convite e o painel ficam disponíveis até 60 dias depois do casamento, para descarregarem com calma as fotos e as mensagens dos convidados." },
+        { "q": "Já tínhamos comprado módulos soltos. Pagamos tudo outra vez?", "a": "Não. Ao ativarem o Plano Completo pagam só a diferença para o que já têm." },
+        { "q": "Posso usar um código promocional?", "a": "Sim. Ao ativar o plano, carreguem em «Tenho um código promocional»." },
+        { "q": "Como funciona o convite à medida?", "a": "Contam-nos a vossa ideia e enviamos uma proposta com o valor final e o prazo. O convite à medida inclui tudo o que o Plano Completo tem." }
+      ]
     }
   },
   "PartnersPage": {

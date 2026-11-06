@@ -65,7 +65,7 @@ const en = {
       "tag": "From the first announcement to the memories",
       "title1": "The invitation is the centre.",
       "title2": "Everything else connects to it.",
-      "desc": "Add the modules you need, when you need them. They all live in the same dashboard, with the same guest list.",
+      "desc": "It all comes in the same plan and lives in the same dashboard, with the same guest list.",
       "steps": [
         { "when": "Months before", "title": "Save the Date", "desc": "A beautiful card so guests can keep the date free." },
         { "when": "The invitation", "title": "Invitation and RSVP", "desc": "The heart of it all: the invitation and the replies." },
@@ -113,7 +113,7 @@ const en = {
         { "q": "Do we need design or tech skills?", "a": "No. Pick the design and fill in your words and photos in the editor. If you'd rather have an invitation we design from scratch, there's the bespoke invitation." },
         { "q": "What about guests who aren't comfortable with technology?", "a": "They'll be fine. They open the link, look up their name and confirm in a few taps, with no account or password." },
         { "q": "Does the invitation stay online after the wedding?", "a": "Yes, for a while, so you can calmly download the photos and messages your guests left." },
-        { "q": "How much does it cost?", "a": "You pay once per event, with no subscriptions. Prices for each module and bundle are on the pricing page." }
+        { "q": "How much does it cost?", "a": "One price with everything included, paid once per event with no subscriptions. You'll find it on the pricing page." }
       ]
     },
     "cta": {
@@ -235,13 +235,15 @@ const en = {
     "readOnly": "Read Only",
     "expiredBadge": "Event Expired",
     "expiredBanner": "This event expired on {date} — the dashboard is now in read-only mode. Contact us to renew access.",
+    "availableUntilBanner": "The wedding has happened! Your guests' photos, videos and messages stay available until {date}. Download everything before then: after that the content is deleted.",
+    "purgedBanner": "This event's content (photos, videos, messages and guest list) was deleted on {date}, after the end of the period.",
     "moduleLockedTitle": "{module} is not active yet",
-    "moduleLockedMessage": "This module hasn't been activated for this event yet. Contact us to add it.",
+    "moduleLockedMessage": "It's part of the Full Plan, which unlocks every feature of this event with a one-time payment.",
     "moduleLockedMessagePartner": "This module hasn't been activated for this event yet. Contact your partner to activate it.",
     "moduleLockedInviteNote": "Also includes Guests & Seating, needed for RSVP to work.",
     "moduleLockedContactBtn": "Contact Us",
     "moduleLockedBadge": "Locked",
-    "moduleBuyBtn": "Buy",
+    "moduleBuyBtn": "Get the Full Plan",
     "couponToggleLabel": "I have a promo code",
     "couponPlaceholder": "CODE",
     "saving": "Saving...",
@@ -491,6 +493,7 @@ const en = {
     }
   },
   "DashboardHub": {
+    "tabs": { "active": "Active", "archived": "Archived", "archivedHint": "Weddings that have already happened. They stay available until 60 days after the event.", "archivedEmpty": "No archived weddings yet." },
     "loadingText": "Loading projects...",
     "logoutBtn": "Log Out",
     "title": "My Projects",
@@ -502,6 +505,7 @@ const en = {
     "inviteState": {
       "noName": "Unnamed Invitation",
       "activeOwner": "Owner / Active",
+      "archived": "Archived",
       "collaborator": "Collaborator",
       "eventDateLabel": "Event Date",
       "originalOwnerLabel": "Original Owner",
@@ -515,7 +519,7 @@ const en = {
       "badge": "Features",
       "title1": "The invitation at the centre.",
       "title2": "And everything that comes with it.",
-      "desc": "The digital invitation is where it all starts: it's what your guests open and where they RSVP. Around it, add the modules you need, all in the same dashboard and with the same guest list."
+      "desc": "The digital invitation is where it all starts: it's what your guests open and where they RSVP. Around it, everything else comes included, in the same dashboard and with the same guest list."
     },
     "jumpLabel": "Jump to",
     "invite": {
@@ -524,7 +528,7 @@ const en = {
     },
     "around": {
       "tag": "Around the invitation",
-      "title": "Modules you add when you need them",
+      "title": "Everything that comes included",
       "desc": "Each one takes care of a moment of the wedding, from the first announcement to the memories after the party."
     },
     "connected": {
@@ -532,7 +536,7 @@ const en = {
       "items": [
         { "title": "One guest list", "desc": "Whoever RSVPs on the invitation is ready to be seated at a table, with nothing to copy." },
         { "title": "One dashboard", "desc": "Invitation, guests, tables, photos and messages in one place, shared with whoever helps you." },
-        { "title": "Pay only for what you use", "desc": "Buy each module on its own or in a bundle, with a one-time payment per event." }
+        { "title": "One price", "desc": "A one-time payment per event, with every feature included." }
       ]
     },
     "bespoke": {
@@ -795,10 +799,12 @@ const en = {
     "guestbook": "Guestbook"
   },
   "BundleOffers": {
-    "title": "Save with a bundle",
-    "subtitle": "Buy several modules at once, cheaper than separately",
-    "savingsLabel": "Save",
-    "buyBtn": "Buy bundle",
+    "title": "Unlock everything",
+    "subtitle": "One payment for every feature of this event",
+    "buyBtn": "Get the Full Plan",
+    "launchLabel": "Launch price",
+    "upgradeNote": "You already have some modules: you only pay the difference. One-time payment, VAT included.",
+    "oneTime": "One-time payment per event, VAT included.",
     "couponToggleLabel": "I have a promo code",
     "couponPlaceholder": "CODE",
     "bundles": {
@@ -811,8 +817,8 @@ const en = {
         "desc": "Photo Sharing, Live Wall and Guestbook, everything to relive the big day."
       },
       "completo": {
-        "name": "Complete Bundle",
-        "desc": "Every module, no exceptions. The full experience."
+        "name": "Full Plan",
+        "desc": "The invitation and everything that comes with it: Save the Date, RSVP, guests and seating, photos with Live Wall and guestbook."
       }
     }
   },
@@ -1243,10 +1249,10 @@ const en = {
     },
     "locked": {
       "title": "Photo Sharing & Live Wall is not active yet",
-      "message": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "message": "It's part of the Full Plan, which unlocks every feature of this event with a one-time payment.",
       "messagePartner": "This module hasn't been activated for this event yet. Contact your partner to activate it.",
       "contactBtn": "Contact Us",
-      "buyBtn": "Buy",
+      "buyBtn": "Get the Full Plan",
       "couponToggleLabel": "I have a promo code",
       "couponPlaceholder": "CODE"
     }
@@ -1288,10 +1294,10 @@ const en = {
     },
     "locked": {
       "title": "Guestbook is not active yet",
-      "message": "This module hasn't been activated for this event yet. Contact us to add it.",
+      "message": "It's part of the Full Plan, which unlocks every feature of this event with a one-time payment.",
       "messagePartner": "This module hasn't been activated for this event yet. Contact your partner to activate it.",
       "contactBtn": "Contact Us",
-      "buyBtn": "Buy",
+      "buyBtn": "Get the Full Plan",
       "couponToggleLabel": "I have a promo code",
       "couponPlaceholder": "CODE"
     }
@@ -1556,7 +1562,7 @@ const en = {
       "s3_title": "3. Data Retention and Blocking After the Event",
       "s3_prefix": "Guest access to an event's modules is ",
       "s3_bold": "fully blocked 60 days after the event date",
-      "s3_suffix": ". The couple keeps read-only access to their dashboard after that period. Stored data, including photos and messages, is not automatically deleted at this stage — you may request full deletion of your event's data at any time, through our Contact page.",
+      "s3_suffix": ". From then on, the event's content (photos, videos, messages, guest list and invitation texts) may be permanently deleted. The couple is notified before the end of the period and can download everything from the dashboard. The event record, billing data and planning data managed by partner agencies are kept. You may request full deletion of your event's data at any time through our Contact page.",
       "s4_title": "4. Subprocessors and Data Hosting",
       "s4_desc": "To provide the service, we rely on trusted providers that process data on our behalf: Supabase for the database, authentication, and file storage, Stripe for payment processing, and Vercel for hosting the website. All of them operate with recognised security guarantees and are used exclusively to run the platform.",
       "s5_title": "5. Data Subject Rights (GDPR)",
@@ -1589,7 +1595,7 @@ const en = {
       "s6_title": "6. Event Validity and Expiration",
       "s6_prefix": "The event date is locked as soon as the first module is activated, to prevent misuse of the system. Guest access to all modules is ",
       "s6_bold": "fully blocked 60 days after the event date",
-      "s6_suffix": ". The couple keeps read-only access to their dashboard after that period. Data is not automatically deleted at this stage; deletion of content such as photos and messages may be configured separately in the future.",
+      "s6_suffix": ". From then on, the event's content (photos, videos, messages, guest list and invitation texts) may be permanently deleted, after the couple has been notified. The event record, billing data and planning data managed by partner agencies are kept.",
       "s7_title": "7. Partners and White Label",
       "s7_desc": "Some events are managed through partner agencies or wedding planners, under those partners' own branding (\"white label\"). In these cases, these Terms still apply in full between Digital Invite Studio and the end user, regardless of the branding visible in the service.",
       "s8_title": "8. Applicable Law",
@@ -1611,20 +1617,67 @@ const en = {
     "error": "Error updating the password. The link may have expired."
   },
   "PricingPage": {
-    "title": "Simple pricing, no surprises",
-    "desc": "One-time payment per event, no monthly fees and no fine print. Choose a discounted bundle or build your own perfect combination module by module.",
-    "bestseller": "Best Value",
-    "startBtn": "Start Now",
-    "bundlesTitle": "Discounted bundles",
-    "bundlesSubtitle": "The simplest, cheapest way to get everything you need",
-    "alaCarteTitle": "Or build your own",
-    "alaCarteSubtitle": "Buy only the modules you'll actually use, one by one",
-    "includesLabel": "Includes",
-    "alaCarteInviteNote": "The Wedding Invitation always includes Guests & Seating, so RSVP works correctly.",
-    "b2b": {
-      "title": "Are you an Event Planner?",
-      "desc": "We offer special White Label solutions for Wedding Planners and Agencies. Use our technology with your own branding and benefit from wholesale pricing.",
-      "link": "Consult B2B Conditions"
+    "title": "One price. Everything included.",
+    "desc": "A one-time payment per event, no subscriptions. The invitation and every feature, or an invitation designed just for you.",
+    "full": {
+      "tag": "For couples",
+      "name": "Full Plan",
+      "launchLabel": "Launch price",
+      "per": "per event",
+      "note": "One-time payment · VAT included",
+      "features": [
+        "Digital invitation in the design you choose",
+        "RSVP with menus and dietary requirements",
+        "Guest list and seating plan",
+        "Save the Date ready to share",
+        "Guests' photos and Live Wall on the day",
+        "Guestbook with messages and wishes",
+        "Links per family and access code",
+        "Change it whenever you like, visible right away"
+      ],
+      "cta": "Create our invitation",
+      "liveLink": "See a live invitation"
+    },
+    "bespoke": {
+      "tag": "Exclusive",
+      "name": "Bespoke Invitation",
+      "from": "from",
+      "per": "per event",
+      "note": "Quote tailored to each project · VAT included",
+      "features": [
+        "An exclusive design, created from scratch for you",
+        "Custom illustrations, typography and animations",
+        "Direct support from our team",
+        "Everything the Full Plan includes"
+      ],
+      "cta": "Request a proposal"
+    },
+    "wp": {
+      "tag": "For wedding planners",
+      "title": "Monthly plans for agencies",
+      "desc": "Every invitation for your weddings with the Full Plan, plus the planning tools: budget, tasks, timeline, vendors and the “This week” view.",
+      "perMonth": "/month",
+      "events": "{n} active invitations",
+      "plans": {
+        "solo": "For planners with up to about 5 weddings a year.",
+        "profissional": "For planners with up to about 12 weddings a year.",
+        "agencia": "For teams with up to about 30 weddings a year."
+      },
+      "popular": "Most popular",
+      "slotNote": "Each invitation takes a slot until the wedding day. The next day, the slot is free for the next one.",
+      "annual": "On the yearly plan, 2 months free.",
+      "cta": "Talk to us",
+      "partnersLink": "Discover the partner area"
+    },
+    "faq": {
+      "title": "Pricing questions",
+      "items": [
+        { "q": "Are there subscriptions or hidden costs?", "a": "No. For couples it's a one-time payment per event, VAT included." },
+        { "q": "What happens after the wedding?", "a": "The invitation and dashboard stay available for 60 days after the wedding, so you can calmly download your guests' photos and messages." },
+        { "q": "We had bought single modules. Do we pay everything again?", "a": "No. When you get the Full Plan you only pay the difference for what you already have." },
+        { "q": "Can I use a promo code?", "a": "Yes. When getting the plan, tap “I have a promo code”." },
+        { "q": "How does the bespoke invitation work?", "a": "Tell us your idea and we'll send a proposal with the final price and timeline. The bespoke invitation includes everything in the Full Plan." }
+      ]
     }
   },
   "PartnersPage": {

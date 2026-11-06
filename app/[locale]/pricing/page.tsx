@@ -1,37 +1,39 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Check, CalendarHeart, Mail, Users, Camera, MessageSquareHeart, Loader2 } from "lucide-react";
-import { ALL_MODULE_IDS, MODULE_DEPENDENCIES, type ModuleId } from "@/lib/modules";
-import { BUNDLES, MODULE_PRICES_CENTS, bundleSavingsCents } from "@/lib/pricing";
+import { motion, AnimatePresence } from "framer-motion";
+import { Check, Loader2, Sparkles, ArrowRight, ChevronDown, Crown } from "lucide-react";
+import { FULL_PLAN, FULL_PLAN_LIST_PRICE_CENTS, BESPOKE_FROM_CENTS, isLaunchPrice } from "@/lib/pricing";
+import { PLANNER_PLANS, type PlannerPlan } from "@/lib/planner";
+import { INVITE_TEMPLATES } from "@/lib/templates";
 import { formatPriceCents } from "@/lib/checkout";
 import { useBrand } from "@/components/site/BrandProvider";
+import { Eyebrow } from "@/components/site/Eyebrow";
 
-// 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás)
 import pt from "../../../dictionaries/pt";
 import en from "../../../dictionaries/en";
 
 const dictionaries = { pt, en };
 
-const MODULE_ICONS: Record<ModuleId, React.ReactNode> = {
-  save_the_date: <CalendarHeart size={22} />,
-  invite: <Mail size={22} />,
-  guests_seating: <Users size={22} />,
-  photo_sharing: <Camera size={22} />,
-  guestbook: <MessageSquareHeart size={22} />,
-};
+// Página de Preços: um só produto para casais (Plano Completo), o convite à
+// medida (orçamento) e os planos mensais para wedding planners. Os valores vêm
+// de lib/pricing.ts e lib/planner.ts, as mesmas fontes do checkout e do
+// painel, para esta página nunca mostrar um preço diferente do cobrado.
+
+const WP_PLANS: PlannerPlan[] = ["solo", "profissional", "agencia"];
+const WP_POPULAR: PlannerPlan = "profissional";
 
 export default function PricingPage() {
   const params = useParams();
   const router = useRouter();
   const brand = useBrand();
-  const locale = (params?.locale as 'en' | 'pt') || 'pt';
+  const locale = (params?.locale as "en" | "pt") || "pt";
   const dict = dictionaries[locale]?.PricingPage || dictionaries.pt.PricingPage;
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Preços e o pitch de white label são coisa da DIS — num domínio de
-  // parceiro (marca própria), esta página não faz sentido nenhum.
+  // Preços e planos são coisa da DIS — num domínio de parceiro (marca
+  // própria), esta página não faz sentido nenhum.
   useEffect(() => {
     if (brand.id !== "dis") router.replace(`/${locale}`);
   }, [brand.id, locale, router]);
@@ -43,200 +45,200 @@ export default function PricingPage() {
       </div>
     );
   }
-  const bundleDict = dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers;
-  const moduleNames = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
-  const groupsDict = (dictionaries[locale]?.Dashboard || dictionaries.pt.Dashboard).groups;
 
-  // Os pacotes e os módulos (nome, descrição e preço) vêm sempre de
-  // lib/pricing.ts, a mesma fonte usada no checkout real, para esta
-  // página nunca mostrar valores diferentes dos que são realmente cobrados.
-  const plans = BUNDLES.map(bundle => {
-    const meta = (bundleDict.bundles as Record<string, { name: string; desc: string }>)[bundle.id];
-    return {
-      id: bundle.id,
-      name: meta?.name || bundle.id,
-      description: meta?.desc || "",
-      price: formatPriceCents(bundle.priceCents, locale),
-      savings: bundleSavingsCents(bundle),
-      features: bundle.moduleIds.map(m => (moduleNames as Record<string, string>)[m]),
-      highlight: bundle.id === "completo",
-    };
-  });
-
-  const modules = ALL_MODULE_IDS.map(id => ({
-    id,
-    icon: MODULE_ICONS[id],
-    name: (moduleNames as Record<string, string>)[id],
-    description: (groupsDict as Record<string, { title: string; desc: string }>)[id]?.desc || "",
-    price: formatPriceCents(MODULE_PRICES_CENTS[id], locale),
-    includes: (MODULE_DEPENDENCIES[id] || []).map(dep => (moduleNames as Record<string, string>)[dep]),
-  }));
+  const launch = isLaunchPrice();
+  const featured = INVITE_TEMPLATES[0];
 
   return (
-    <div className="min-h-screen bg-cream pt-32 pb-20 px-6 font-sans">
-      <div className="max-w-7xl mx-auto">
-
-        {/* Cabeçalho da Página */}
-        <div className="text-center mb-20">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-serif text-[#722F37] mb-6"
-          >
-            {dict.title}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-gray-500 max-w-2xl mx-auto text-lg"
-          >
-            {dict.desc}
-          </motion.p>
-        </div>
-
-        {/* Título da secção de pacotes */}
-        <div className="text-center mb-10">
-          <h2 className="font-serif text-2xl md:text-3xl text-ink">{dict.bundlesTitle}</h2>
-          <p className="text-gray-400 text-sm mt-2">{dict.bundlesSubtitle}</p>
-        </div>
-
-        {/* Grelha de Pacotes */}
-        <div className="grid md:grid-cols-3 gap-8 items-stretch">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`relative flex flex-col p-8 rounded-[2.5rem] transition-all duration-500 ${
-                plan.highlight
-                ? "bg-white border-2 border-[#722F37] shadow-2xl scale-105 z-10"
-                : "bg-white border border-gray-100 shadow-lg hover:shadow-xl"
-              }`}
-            >
-              {plan.highlight && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#722F37] text-white text-[10px] font-bold uppercase tracking-widest px-6 py-2 rounded-full shadow-md">
-                  {dict.bestseller}
-                </div>
-              )}
-
-              <div className="mb-8">
-                <h3 className={`font-serif text-2xl mb-2 ${plan.highlight ? "text-[#722F37]" : "text-gray-800"}`}>
-                  {plan.name}
-                </h3>
-                <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-serif text-gray-900">{plan.price}</span>
-                  <span className="text-gray-400 text-sm">/evento</span>
-                </div>
-                {plan.savings > 0 && (
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-green-600 bg-green-50 px-2.5 py-1 rounded-md mt-1 mb-3">
-                    {bundleDict.savingsLabel} {formatPriceCents(plan.savings, locale)}
-                  </span>
-                )}
-                <p className="text-sm text-gray-500 leading-relaxed mt-2">
-                  {plan.description}
-                </p>
-              </div>
-
-              <div className="flex-1 space-y-4 mb-10">
-                {plan.features.map((feature: string) => (
-                  <div key={feature} className="flex items-start gap-3">
-                    <div className={`mt-1 flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${plan.highlight ? "bg-[#722F37] text-white" : "bg-gray-100 text-gray-400"}`}>
-                      <Check size={10} strokeWidth={4} />
-                    </div>
-                    <span className="text-sm text-gray-600">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              <Link
-                href={`/${locale}/dashboard`}
-                className={`w-full text-center py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  plan.highlight
-                  ? "bg-[#722F37] text-white shadow-lg hover:bg-[#5a252b] hover:scale-[1.02]"
-                  : "bg-gray-50 text-gray-800 hover:bg-gray-100"
-                }`}
-              >
-                {dict.startBtn}
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Compra à peça */}
-        <motion.div
+    <div className="min-h-screen bg-cream pt-32 font-sans">
+      {/* ── CABEÇALHO ────────────────────────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-6 text-center mb-16">
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-24"
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl md:text-6xl font-serif text-ink mb-6 leading-tight"
         >
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-2xl md:text-3xl text-ink">{dict.alaCarteTitle}</h2>
-            <p className="text-gray-400 text-sm mt-2">{dict.alaCarteSubtitle}</p>
+          {dict.title}
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed"
+        >
+          {dict.desc}
+        </motion.p>
+      </section>
+
+      {/* ── CASAIS: COMPLETO + À MEDIDA ──────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-6 grid md:grid-cols-[1.15fr_1fr] gap-8 items-stretch mb-28">
+        {/* Plano Completo */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="relative flex flex-col bg-white border-2 border-brand rounded-[2.5rem] p-8 md:p-10 shadow-2xl"
+        >
+          {launch && (
+            <div className="absolute -top-4 left-8 bg-brand text-gold-soft text-[10px] font-bold uppercase tracking-widest px-5 py-2 rounded-full shadow-md">
+              {dict.full.launchLabel}
+            </div>
+          )}
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold mb-2">{dict.full.tag}</p>
+          <h2 className="font-serif text-3xl text-ink mb-5">{dict.full.name}</h2>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            {launch && <span className="font-serif text-2xl text-gray-400 line-through">{formatPriceCents(FULL_PLAN_LIST_PRICE_CENTS, locale)}</span>}
+            <span className="font-serif text-6xl text-brand">{formatPriceCents(FULL_PLAN.priceCents, locale)}</span>
+            <span className="text-gray-400 text-sm">{dict.full.per}</span>
+          </div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mt-2 mb-8">{dict.full.note}</p>
+
+          <ul className="space-y-3 mb-10 flex-1">
+            {(dict.full.features as string[]).map(f => (
+              <li key={f} className="flex items-start gap-3 text-sm text-ink/85">
+                <span className="mt-0.5 w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center shrink-0"><Check size={11} strokeWidth={3.5} /></span>
+                {f}
+              </li>
+            ))}
+          </ul>
+
+          <Link
+            href={`/${locale}/dashboard/new-invite`}
+            className="w-full text-center py-4 rounded-full bg-brand text-gold-soft text-[11px] font-bold uppercase tracking-widest shadow-lg hover:bg-brand-dark transition-colors"
+          >
+            {dict.full.cta}
+          </Link>
+          {featured && (
+            <Link href={`/${locale}/preview/${featured.id}`} className="mt-4 inline-flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-brand transition-colors">
+              {dict.full.liveLink} <ArrowRight size={13} />
+            </Link>
+          )}
+        </motion.div>
+
+        {/* Convite à medida */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="relative flex flex-col bg-ink text-white rounded-[2.5rem] p-8 md:p-10 shadow-xl overflow-hidden"
+        >
+          <img src="/home/bespoke-hortensias.webp" alt="" className="absolute -right-10 -bottom-10 w-56 opacity-20 pointer-events-none" />
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold mb-2 flex items-center gap-2"><Crown size={13} /> {dict.bespoke.tag}</p>
+          <h2 className="font-serif text-3xl text-gold-soft mb-5">{dict.bespoke.name}</h2>
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <span className="text-gray-400 text-sm">{dict.bespoke.from}</span>
+            <span className="font-serif text-5xl text-white">{formatPriceCents(BESPOKE_FROM_CENTS, locale)}</span>
+          </div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mt-2 mb-8">{dict.bespoke.note}</p>
+
+          <ul className="space-y-3 mb-10 flex-1 relative">
+            {(dict.bespoke.features as string[]).map(f => (
+              <li key={f} className="flex items-start gap-3 text-sm text-white/85">
+                <Sparkles size={15} className="text-gold shrink-0 mt-0.5" /> {f}
+              </li>
+            ))}
+          </ul>
+
+          <Link
+            href={`/${locale}/contact?assunto=medida`}
+            className="relative w-full text-center py-4 rounded-full bg-gold text-ink text-[11px] font-bold uppercase tracking-widest hover:bg-[#C9A96E] transition-colors"
+          >
+            {dict.bespoke.cta}
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* ── WEDDING PLANNERS ─────────────────────────────────────────── */}
+      <section className="bg-white border-y border-gold-soft/60 py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-14 space-y-4">
+            <Eyebrow>{dict.wp.tag}</Eyebrow>
+            <h2 className="font-serif text-3xl md:text-4xl text-ink">{dict.wp.title}</h2>
+            <p className="text-gray-500 text-lg leading-relaxed">{dict.wp.desc}</p>
           </div>
 
-          <div className="max-w-3xl mx-auto bg-white rounded-[2.5rem] border border-gray-100 shadow-sm divide-y divide-gray-100">
-            {modules.map(m => (
-              <div key={m.id} className="flex items-center gap-5 p-6 sm:p-7">
-                <div className="w-12 h-12 rounded-2xl bg-cream border border-gold-soft/60 flex items-center justify-center text-[#722F37] shrink-0">
-                  {m.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="font-serif text-lg text-gray-800">{m.name}</h4>
-                    {m.includes.length > 0 && (
-                      <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">
-                        <Check size={10} strokeWidth={4} /> {dict.includesLabel} {m.includes.join(", ")}
-                      </span>
-                    )}
+          <div className="grid md:grid-cols-3 gap-6">
+            {WP_PLANS.map((id, i) => {
+              const plan = PLANNER_PLANS[id];
+              const popular = id === WP_POPULAR;
+              return (
+                <motion.div
+                  key={id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className={`relative flex flex-col rounded-[2rem] p-8 ${popular ? "bg-cream border-2 border-brand shadow-xl" : "bg-cream/60 border border-gray-100"}`}
+                >
+                  {popular && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand text-white text-[9px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
+                      {dict.wp.popular}
+                    </div>
+                  )}
+                  <h3 className="font-serif text-2xl text-ink mb-3">{plan.name}</h3>
+                  <div className="flex items-baseline gap-1 mb-1">
+                    <span className="font-serif text-4xl text-brand">{formatPriceCents(plan.priceCentsMonthly ?? 0, locale)}</span>
+                    <span className="text-gray-400 text-sm">{dict.wp.perMonth}</span>
                   </div>
-                  <p className="text-gray-400 text-sm mt-0.5">{m.description}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="font-serif text-2xl text-[#722F37]">{m.price}</span>
-                  <p className="text-gray-300 text-[9px] uppercase tracking-widest font-bold">/evento</p>
-                </div>
+                  <p className="text-sm font-semibold text-ink mb-3">{dict.wp.events.replace("{n}", String(plan.activeEvents ?? ""))}</p>
+                  <p className="text-sm text-gray-500 leading-relaxed flex-1">{(dict.wp.plans as Record<string, string>)[id]}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="mt-10 text-center space-y-2 text-sm text-gray-500">
+            <p>{dict.wp.slotNote}</p>
+            <p className="font-semibold text-ink">{dict.wp.annual}</p>
+          </div>
+
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5">
+            <Link
+              href={`/${locale}/contact?assunto=parceria`}
+              className="inline-flex items-center justify-center h-12 px-10 rounded-full bg-brand text-gold-soft text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-brand-dark transition-colors"
+            >
+              {dict.wp.cta}
+            </Link>
+            <Link href={`/${locale}/partners`} className="group inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink hover:text-brand transition-colors">
+              {dict.wp.partnersLink} <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────────────────── */}
+      <section className="py-24 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="font-serif text-3xl md:text-4xl text-ink text-center mb-12">{dict.faq.title}</h2>
+          <div className="space-y-3">
+            {(dict.faq.items as { q: string; a: string }[]).map((item, i) => (
+              <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden bg-white">
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  aria-expanded={openFaq === i}
+                  className="w-full flex items-center justify-between px-7 py-5 text-left hover:bg-cream transition-colors"
+                >
+                  <span className="font-semibold text-ink text-sm pr-6">{item.q}</span>
+                  <ChevronDown size={18} className={`text-brand shrink-0 transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence initial={false}>
+                  {openFaq === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.28, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <p className="px-7 pb-6 pt-1 text-sm text-gray-500 leading-relaxed border-t border-gray-100">{item.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>
-
-          <p className="text-center text-gray-400 text-xs mt-6 max-w-lg mx-auto">
-            {dict.alaCarteInviteNote}
-          </p>
-
-          <div className="text-center mt-10">
-            <Link
-              href={`/${locale}/dashboard`}
-              className="inline-block bg-white border border-gray-200 text-gray-800 px-8 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all"
-            >
-              {dict.startBtn}
-            </Link>
-          </div>
-        </motion.div>
-
-        {/* Secção White Label / B2B */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-16 bg-white rounded-[3rem] p-12 border border-gray-100 shadow-sm text-center"
-        >
-          <div className="max-w-3xl mx-auto">
-            <h2 className="font-serif text-3xl text-gray-800 mb-4">{dict.b2b.title}</h2>
-            <p className="text-gray-500 mb-8 leading-relaxed">
-              {dict.b2b.desc}
-            </p>
-            <Link
-              href={`/${locale}/partners`}
-              className="inline-block border-b-2 border-[#722F37] pb-1 text-[10px] font-bold uppercase tracking-widest text-gray-800 hover:text-[#722F37] transition-colors"
-            >
-              {dict.b2b.link}
-            </Link>
-          </div>
-        </motion.div>
-
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

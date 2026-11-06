@@ -58,8 +58,9 @@ import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
 import { fetchPlannerPlan, type PlannerPlan } from "@/lib/planner";
-import { fetchPricingOverrides, effectiveModulePriceCents, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from "@/lib/pricing";
-import { startModuleCheckout, formatPriceCents } from "@/lib/checkout";
+import { fetchPricingOverrides, fullPlanPriceFor, FULL_PLAN_ID, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from "@/lib/pricing";
+import { startBundleCheckout, formatPriceCents } from "@/lib/checkout";
+import { isArchivedEvent } from "@/lib/eventArchive";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -374,6 +375,36 @@ export default function Dashboard() {
   const expiredDateLabel = isExpired
     ? new Date(formData.expires_at).toLocaleDateString(locale === 'en' ? 'en-US' : 'pt-PT', { day: '2-digit', month: 'long', year: 'numeric' })
     : "";
+  // Depois do casamento: aviso até quando o conteúdo fica disponível (expires_at,
+  // 60 dias depois) e, se o super admin já o apagou, quando (migração 0014).
+  const longDate = (d: string) => new Date(d).toLocaleDateString(locale === 'en' ? 'en-US' : 'pt-PT', { day: '2-digit', month: 'long', year: 'numeric' });
+  const statusBanner = (margin: string) => {
+    if (formData.content_purged_at) {
+      return (
+        <div className={`${margin} bg-gray-100 border border-gray-200 text-gray-600 text-xs rounded-2xl px-5 py-3.5 flex items-center gap-2.5`}>
+          <AlertTriangle size={16} className="shrink-0" />
+          <span>{dict.purgedBanner.replace("{date}", longDate(formData.content_purged_at))}</span>
+        </div>
+      );
+    }
+    if (isExpired) {
+      return (
+        <div className={`${margin} bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-2xl px-5 py-3.5 flex items-center gap-2.5`}>
+          <AlertTriangle size={16} className="shrink-0" />
+          <span>{dict.expiredBanner.replace("{date}", expiredDateLabel)}</span>
+        </div>
+      );
+    }
+    if (formData.expires_at && isArchivedEvent(formData)) {
+      return (
+        <div className={`${margin} bg-gold-soft/30 border border-gold-soft text-ink text-xs rounded-2xl px-5 py-3.5 flex items-center gap-2.5`}>
+          <AlertTriangle size={16} className="shrink-0 text-gold" />
+          <span>{dict.availableUntilBanner.replace("{date}", longDate(formData.expires_at))}</span>
+        </div>
+      );
+    }
+    return null;
+  };
 
   // Módulos: super-admin vê e edita sempre tudo. Contas de wedding planner
   // também — é a "inclusão total" do módulo (ver documento de estratégia):
@@ -402,7 +433,9 @@ export default function Dashboard() {
   const handleBuyModule = async (moduleId: string, couponCode?: string) => {
     setBuyingModule(moduleId);
     try {
-      await startModuleCheckout({ invitationId: formData.id, slug: formData.slug, locale, moduleId, couponCode });
+      // Só se vende o Plano Completo (lib/pricing.ts): qualquer separador
+      // bloqueado desbloqueia tudo de uma vez.
+      await startBundleCheckout({ invitationId: formData.id, slug: formData.slug, locale, bundleId: FULL_PLAN_ID, couponCode });
     } catch (err: any) {
       alert(err.message || dict.moduleLockedMessage);
       setBuyingModule(null);
@@ -415,9 +448,7 @@ export default function Dashboard() {
     // comprar "invite" desbloqueia sempre "guests_seating" também (ver
     // lib/modules.ts). Deixar isso claro no ecrã de compra.
     const baseMessage = isPartnerBrand ? dict.moduleLockedMessagePartner : dict.moduleLockedMessage;
-    const message = moduleId === 'invite'
-      ? `${baseMessage} ${dict.moduleLockedInviteNote}`
-      : baseMessage;
+    const message = baseMessage;
     return (
       <LockedModuleNotice
         title={dict.moduleLockedTitle.replace("{module}", moduleName)}
@@ -425,7 +456,7 @@ export default function Dashboard() {
         contactUrl={isPartnerBrand ? partnerContactUrl : (brand.contactUrl ?? `/${locale}/contact`)}
         contactLabel={dict.moduleLockedContactBtn}
         buyLabel={isPartnerBrand ? undefined : dict.moduleBuyBtn}
-        priceLabel={!isPartnerBrand && moduleId ? formatPriceCents(effectiveModulePriceCents(moduleId, pricingOverrides), locale) : undefined}
+        priceLabel={!isPartnerBrand && moduleId ? formatPriceCents(fullPlanPriceFor(unlockedModules, pricingOverrides).cents, locale) : undefined}
         onBuy={!isPartnerBrand && moduleId ? (couponCode) => handleBuyModule(moduleId, couponCode) : undefined}
         buying={buyingModule === moduleId}
         couponToggleLabel={isPartnerBrand ? undefined : dict.couponToggleLabel}
@@ -568,12 +599,7 @@ export default function Dashboard() {
 
         <main className="flex-1 px-6 py-14 sm:py-20">
           <div className="max-w-5xl mx-auto">
-            {isExpired && (
-              <div className="mb-10 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-2xl px-5 py-3.5 flex items-center gap-2.5">
-                <AlertTriangle size={16} className="shrink-0" />
-                <span>{dict.expiredBanner.replace("{date}", expiredDateLabel)}</span>
-              </div>
-            )}
+            {statusBanner("mb-10")}
             <div className="text-center mb-12 sm:mb-16">
               <h2 className="font-serif text-3xl sm:text-4xl text-ink">{dict.hubTitle}</h2>
               <p className="text-gray-400 text-sm mt-2">{dict.hubSubtitle}</p>
@@ -812,12 +838,7 @@ export default function Dashboard() {
           <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-32 scroll-smooth relative">
             <EventBrandProvider brandId={formData.brand_id}>
             <div className="max-w-5xl mx-auto">
-              {isExpired && (
-                <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-2xl px-5 py-3.5 flex items-center gap-2.5">
-                  <AlertTriangle size={16} className="shrink-0" />
-                  <span>{dict.expiredBanner.replace("{date}", expiredDateLabel)}</span>
-                </div>
-              )}
+              {statusBanner("mb-6")}
               {(activeTab === 'design' || activeTab === 'content') && !isTabLocked('design') && (
                 <div role="tablist" className="mb-6 inline-flex items-center gap-1 bg-white border border-gray-100 rounded-full p-1 shadow-sm">
                   {inviteSections.map(sec => (

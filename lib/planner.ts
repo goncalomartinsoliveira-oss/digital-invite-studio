@@ -18,6 +18,11 @@ export type PlannerPlanInfo = {
   priceCentsMonthly: number | null;
 };
 
+// Vaga: um convite conta como ativo até ao dia do casamento e deixa de contar
+// no dia seguinte (decidido em nov. 2026), mesmo continuando online mais 60 dias.
+// Preços mostrados na página de Preços; a cobrança automática (subscrição
+// Stripe) ainda não existe.
+//
 // Dimensionados a partir do pipeline real: um casamento entra na plataforma
 // 12-18 meses antes de acontecer, por isso os eventos ativos em simultâneo são
 // ~1,2× os casamentos por ano. Limites folgados de propósito — se as vagas

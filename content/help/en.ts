@@ -88,6 +88,7 @@ export const helpEn: HelpContent = {
         "The link can't be repeated. If it's already in use, add a number or change a word.",
         "Pick a short link that's easy to read: it will be sent to everyone.",
         "Each event lives in **My Projects**. Events other people have shared with you appear under **Shared With Me**.",
+        "The day after the wedding, the event moves to the **Archived** tab. It stays available until 60 days after the event.",
       ],
       faq: [
         { q: "Can I change the link after creating the event?", a: "The link is set when the event is created, so choose it carefully. If you really need to change it, contact us." },
@@ -503,18 +504,17 @@ export const helpEn: HelpContent = {
       slug: "buy-modules",
       chapter: "account",
       audience: "dis",
-      title: "How do I buy modules and bundles?",
-      summary: "Each area of the dashboard is a module you activate one by one or in a discounted bundle.",
+      title: "How do I get the Full Plan?",
+      summary: "A single payment unlocks every feature of the event: invitation, RSVP, guests and seating, Save the Date, photos and guestbook.",
       steps: [
-        "A module that isn't active shows the **Locked** badge. Open the area and click **Buy**.",
+        "On the dashboard home page, under **Unlock everything**, click **Get the Full Plan**. You can also do it from any area with the **Locked** badge.",
         "If you have a promo code, click **I have a promo code** and enter it before paying.",
-        "Payment is made on a secure screen. When it finishes, the module is active.",
-        "To buy several at once, cheaper, use **Save with a bundle** on the dashboard home page and **Buy bundle**.",
+        "Payment is made on a secure screen. When it finishes, every area is active.",
         "Your payment history is under **My Account** › **Purchase History**.",
       ],
       tips: [
-        "Current prices are on the **Pricing** page.",
-        "The invitation module always includes **Guests & tables**, because the RSVP needs the guest list.",
+        "The current price is on the **Pricing** page. It's a one-time payment per event, VAT included.",
+        "If you had already bought a module on its own, you only pay the difference.",
         "After the first purchase, the wedding date is locked.",
       ],
       faq: [{ q: "Is the purchase recorded?", a: "Yes. Every payment appears under **Purchase History**, with the status **Paid**, **Pending**, **Failed** or **Refunded**." }],
@@ -560,8 +560,12 @@ export const helpEn: HelpContent = {
       steps: [
         "After that date, anyone opening the invitation sees the message “This invitation is no longer available”.",
         "The dashboard becomes read-only: you can still see everything, but no longer edit.",
+        "After that date, photos, videos, messages, the guest list and the invitation texts may be permanently deleted.",
       ],
-      tips: ["If you need to renew access, contact us. First download the photos, the guest list and the messages you want to keep."],
+      tips: [
+        "From the day after the wedding, the dashboard shows a notice with the deadline. Before then, download photos and videos in **Photo Sharing & Live Wall** (**ZIP** button) and messages in **Guestbook**.",
+        "If you need more time, contact us before the deadline.",
+      ],
       related: ["manage-photos", "import-export"],
     },
 

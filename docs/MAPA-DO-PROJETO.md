@@ -58,7 +58,7 @@ O convite fica disponível até 60 dias depois do casamento (`expires_at`; decid
 ### Painel (precisa de login)
 | Rota | O que é |
 |---|---|
-| `/dashboard` | Lista de eventos. Para agências e super admin, tem uma barra com as vistas extra (secções 6 e 7). |
+| `/dashboard` | Lista de eventos, com separadores **Ativos** e **Arquivados** (no dia seguinte ao casamento o evento passa para Arquivados; `lib/eventArchive.ts`; a vista Gestão do super admin tem os mesmos separadores e mostra até quando cada arquivado fica online). Para agências e super admin, tem uma barra com as vistas extra (secções 6 e 7). |
 | `/dashboard/new-invite` | Criar um evento novo. |
 | `/dashboard/<slug>` | O painel de um evento (secção 4). |
 
@@ -212,7 +212,7 @@ simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
 
 | Vista | Componente | O que faz |
 |---|---|---|
-| Gestão | `AdminManagementView` | Todos os eventos ativos, com marca, data e convidados. |
+| Gestão | `AdminManagementView` | Todos os eventos, com marca, data e convidados, em **Ativos** e **Arquivados**. Nos arquivados (só super admin): **Enviar aviso** (e-mail aos noivos com a data-limite e como descarregar fotos e mensagens; `api/admin/expiry-notice`, Resend, grava `expiry_notice_sent_at`) e, nos expirados, **Apagar conteúdo** (`api/admin/event-cleanup` + `lib/eventCleanup.ts`; confirmação com contagens e "APAGAR"; também em massa). A limpeza apaga Storage (`fotos_evento/<id>`, imagens do convite em `invites`), convidados, mesas, links por família, livro de visitas, gostos, código de acesso e o conteúdo do convite, e grava `content_purged_at`. **Nunca toca** no registo do evento, nos pagamentos, nem nos dados do Planeamento (orçamento, fornecedores, valores, tarefas, cronograma, documentos, moodboard), que a agência continua a ver. Migração `0014`. |
 | Membros | `MembersManagementView` | Quem pertence a cada marca. |
 | Marcas | `BrandsManagementView` | Criar e editar marcas parceiras. |
 | Cupões | `CouponsManagementView` | Cupões de desconto. |
@@ -223,14 +223,36 @@ simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
 
 ## 8. Pagamentos
 
-1. O casal clica "comprar" num módulo bloqueado ou num pacote (`lib/checkout.ts`).
-2. `api/checkout` cria a sessão no Stripe, já com o cupão aplicado.
+**Preços (nov. 2026), todos em `lib/pricing.ts` com IVA incluído:**
+- **Plano Completo** (`FULL_PLAN`, id `completo`): o único produto para casais.
+  Desbloqueia todos os módulos com um pagamento único. Preço de lançamento
+  119 € (`FULL_PLAN.priceCents`) com o normal, 149 € (`FULL_PLAN_LIST_PRICE_CENTS`),
+  riscado; para acabar o lançamento basta igualar os dois valores.
+- Quem já tinha módulos comprados à peça paga **só a diferença**
+  (`fullPlanPriceFor`: preço do plano menos o valor do que já tem, nunca mais do
+  que os módulos em falta valeriam). Se já pagou tanto ou mais do que o plano,
+  o `api/checkout` desbloqueia o resto sem pagamento.
+- **Convite à medida:** a partir de 699 € (`BESPOKE_FROM_CENTS`), sem checkout;
+  "Pedir proposta" → `/contact?assunto=medida`.
+- **Wedding planners:** planos mensais em `lib/planner.ts` (Solo 39 €/6, Profissional
+  89 €/15, Agência 169 €/35 convites ativos; anual com 2 meses grátis). Ainda
+  sem subscrição automática: ativados à mão em Parceiros. Regra da vaga: um
+  convite deixa de contar como ativo no dia seguinte ao casamento.
+- Os módulos continuam a existir por dentro (`unlocked_modules`), mas já não se
+  vendem à peça; os pacotes antigos ("convite", "momentos") só aparecem em
+  pagamentos e cupões antigos. Preços por parceiro (`brand_pricing_overrides`)
+  continuam a funcionar sobre o plano.
+
+**Fluxo:**
+1. O casal carrega em **Ativar Plano Completo** no hub (`BundleOffers`) ou num
+   separador bloqueado (`LockedModuleNotice`), via `lib/checkout.ts`.
+2. `api/checkout` calcula o preço (ou a diferença), cria a sessão no Stripe, já
+   com o cupão aplicado.
 3. Quando o pagamento termina, `api/stripe/webhook` (evento
    `checkout.session.completed`) regista a linha em `payments` e acrescenta os
-   módulos em `invitations.unlocked_modules`. É o **único** sítio que escreve
-   `unlocked_modules`.
-
----
+   módulos em `invitations.unlocked_modules`. Fora isto, só escrevem
+   `unlocked_modules` o super admin (Conta › Módulos do Evento) e o desbloqueio
+   sem pagamento acima.
 
 ## 9. Marcas e white-label
 

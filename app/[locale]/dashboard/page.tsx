@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store, ShieldCheck } from "lucide-react";
+import { Plus, Calendar, Archive, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
 import { fetchPlannerPlan, type PlannerPlan } from "@/lib/planner";
+import { isArchivedEvent } from "@/lib/eventArchive";
 import AdminManagementView from "@/components/dashboard/AdminManagementView";
 import MembersManagementView from "@/components/dashboard/MembersManagementView";
 import BrandsManagementView from "@/components/dashboard/BrandsManagementView";
@@ -48,6 +49,8 @@ export default function DashboardHub() {
   // Plano de wedding planner da marca efetiva — mostra a Vista de Conjunto
   // (tarefas + pagamentos de todos os eventos ativos) só a contas de agência.
   const [plannerPlan, setPlannerPlan] = useState<PlannerPlan | null>(null);
+  // Separador da lista de eventos: ativos ou arquivados (casamento já passou).
+  const [listTab, setListTab] = useState<'active' | 'archived'>('active');
   const [viewMode, setViewMode] = useState<'events' | 'planning' | 'vendors' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business'>('events');
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
@@ -213,7 +216,15 @@ export default function DashboardHub() {
   );
 
   // Membro de agência vê o portfólio da marca; caso contrário, os seus eventos.
-  const primaryInvites = isAgencyMember ? agencyInvites : invites;
+  const allPrimaryInvites = isAgencyMember ? agencyInvites : invites;
+  // No dia seguinte ao casamento o evento passa para "Arquivados" (lib/eventArchive.ts).
+  // É só arrumação: o convite continua online até 60 dias depois do evento.
+  const archivedPrimary = allPrimaryInvites.filter(i => isArchivedEvent(i));
+  const archivedShared = sharedInvites.filter(i => isArchivedEvent(i));
+  const archivedCount = archivedPrimary.length + archivedShared.length;
+  const showArchived = listTab === 'archived' && archivedCount > 0;
+  const primaryInvites = allPrimaryInvites.filter(i => isArchivedEvent(i) === showArchived);
+  const visibleSharedInvites = sharedInvites.filter(i => isArchivedEvent(i) === showArchived);
   const effBrandName = workingBrand?.name ?? brand.name;
   const primaryHeading = isAgencyMember
     ? (locale === 'en' ? `${effBrandName} events` : `Eventos · ${effBrandName}`)
@@ -347,6 +358,7 @@ export default function DashboardHub() {
             brands={manageableBrands}
             locale={locale}
             onOpen={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+            canCleanup={isSuperAdmin && brand.id === "dis"}
           />
           </>
         ) : viewMode === 'members' && canManageMembers ? (
@@ -378,11 +390,36 @@ export default function DashboardHub() {
           <p className="text-gray-500 text-sm max-w-xl leading-relaxed">
             {primaryDesc}
           </p>
+          {archivedCount > 0 && (
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div role="tablist" className="inline-flex bg-white border border-gray-100 rounded-full p-1 shadow-sm">
+                {(['active', 'archived'] as const).map(tab => {
+                  const n = tab === 'active'
+                    ? allPrimaryInvites.length + sharedInvites.length - archivedCount
+                    : archivedCount;
+                  const on = (tab === 'archived') === showArchived;
+                  return (
+                    <button
+                      key={tab}
+                      role="tab"
+                      aria-selected={on}
+                      onClick={() => setListTab(tab)}
+                      className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${on ? 'bg-brand text-gold-soft' : 'text-gray-400 hover:text-brand'}`}
+                    >
+                      {tab === 'archived' && <Archive size={12} />}
+                      {dict.tabs[tab]} <span className={on ? 'text-gold-soft/70' : 'text-gray-300'}>{n}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {showArchived && <p className="text-xs text-gray-400">{dict.tabs.archivedHint}</p>}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {/* CARTÃO: CRIAR NOVO EVENTO */}
-          <motion.div 
+          {/* CARTÃO: CRIAR NOVO EVENTO (só nos ativos) */}
+          {!showArchived && <motion.div 
             whileHover={{ scale: 1.02, y: -5 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => router.push(`/${params.locale}/dashboard/new-invite`)}
@@ -393,7 +430,7 @@ export default function DashboardHub() {
             </div>
             <h3 className="font-serif text-2xl text-ink mb-2 group-hover:text-brand transition-colors">{dict.newEvent.title}</h3>
             <p className="text-xs text-gray-400 font-medium">{dict.newEvent.subtitle}</p>
-          </motion.div>
+          </motion.div>}
 
           {/* LISTA DE EVENTOS (próprios ou da agência) */}
           {primaryInvites.map((invite) => (
@@ -417,10 +454,17 @@ export default function DashboardHub() {
                     : dict.inviteState.noName}
                 </h3>
                 
-                <div className="inline-flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full border border-green-100">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-green-700">{dict.inviteState.activeOwner}</span>
-                </div>
+                {showArchived ? (
+                  <div className="inline-flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
+                    <Archive size={10} className="text-gray-500" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-gray-500">{dict.inviteState.archived}</span>
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full border border-green-100">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-green-700">{dict.inviteState.activeOwner}</span>
+                  </div>
+                )}
               </div>
 
               <div className="relative z-10 flex justify-between items-end pt-6 border-t border-gray-50 mt-4">
@@ -437,7 +481,7 @@ export default function DashboardHub() {
         </div>
 
         {/* SECÇÃO 2: EVENTOS PARTILHADOS */}
-        {sharedInvites.length > 0 && (
+        {visibleSharedInvites.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-12 border-t border-gray-100">
             <div className="mb-10 flex items-center gap-4">
               <Users className="text-brand" size={28} />
@@ -447,7 +491,7 @@ export default function DashboardHub() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {sharedInvites.map((invite) => (
+              {visibleSharedInvites.map((invite) => (
                 <motion.div 
                   key={invite.id}
                   whileHover={{ scale: 1.02, y: -5 }}

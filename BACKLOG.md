@@ -49,7 +49,11 @@ Documento de estratégia: https://claude.ai/code/artifact/af5b0757-a3b7-470e-9b8
 - [ ] Central de mensagens/atividade para o casal — resumo tipo "o seu wedding planner confirmou o pagamento do fotógrafo". Deixado para decidir depois do piloto: muda o destinatário do que construímos até agora (tudo serve a agência; isto serve o casal), e a forma mais robusta (registo próprio de eventos) toca em todos os pontos de escrita do módulo
 - [ ] Onboarding — link enviado pela WP aos noivos para recolher informação estruturada logo no início da relação. Adiado para trabalhar mais tarde; por decidir quando retomar: se o link existe antes de o evento ser criado no DIS (primeiro contacto, sem conta) ou só depois (dentro do painel do casal)
 - [ ] Fase 3 — subscrições Stripe (não existe nada hoje: todo o checkout é pagamento único), vagas, desbloqueio automático das licenças, templates de checklist, planta do salão
-- [ ] Decidir preços antes da primeira conversa com as agências (proposta no documento: Solo 39€, Profissional 89€, Agência 169€/mês, anual com 2 meses grátis)
+- [x] Preços decididos (nov/2026): Solo 39€ (6 convites ativos), Profissional 89€ (15), Agência 169€/mês (35), anual com 2 meses grátis; um convite deixa de contar como ativo **no dia seguinte ao casamento**. Mostrados na página de Preços, com "Falar connosco"
+- [x] Casais: preço único, Plano Completo 149€ (lançamento 119€), IVA incluído; quem já tinha módulos paga a diferença; convite à medida a partir de 699€
+- [x] Lista de eventos com separadores Ativos/Arquivados (arquiva no dia seguinte ao casamento); Gestão do super admin com os mesmos separadores e data de expiração
+- [x] Limpeza de conteúdo pelo super admin depois dos 60 dias (Gestão › Arquivados, por evento ou todos os expirados): ficheiros + dados pessoais; mantém evento, pagamentos e Planeamento. Aviso aos noivos no painel desde o dia seguinte ao casamento e por e-mail (botão do super admin). Migração `0014`
+- [ ] Limpeza/aviso automáticos (hoje são manuais), se o volume o justificar
 
 ## Marketing / Crescimento
 - [x] Melhorar SEO das páginas de marketing — `sitemap.xml` e `robots.txt` dinâmicos (adaptados ao domínio, PT+EN, com as páginas privadas/dashboard bloqueadas), `metadataBase`, e título+descrição próprios por página (home, preços, parceiros, contacto, termos, privacidade, cookies, e cada uma das 5 páginas de funcionalidades)

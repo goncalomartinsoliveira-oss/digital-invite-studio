@@ -27,10 +27,13 @@ export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState(dict.form.options[0]);
-  // "Pedir proposta" do convite à medida (página inicial) chega com ?assunto=medida
-  // e já abre com "Pedido de Orçamento Personalizado" escolhido.
+  // "Pedir proposta" (convite à medida) chega com ?assunto=medida e "Falar
+  // connosco" dos planos de wedding planner com ?assunto=parceria: o
+  // formulário já abre com o assunto certo escolhido.
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("assunto") === "medida") setSubject(dict.form.options[1]);
+    const assunto = new URLSearchParams(window.location.search).get("assunto");
+    if (assunto === "medida") setSubject(dict.form.options[1]);
+    else if (assunto === "parceria") setSubject(dict.form.options[3]);
   }, [dict]);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");

@@ -12,8 +12,8 @@ import JSZip from 'jszip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isModuleUnlocked } from '@/lib/modules';
 import { downloadQRAsPng, downloadQRAsSvg } from '@/lib/qrDownload';
-import { effectiveModulePriceCents, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from '@/lib/pricing';
-import { startModuleCheckout, formatPriceCents } from '@/lib/checkout';
+import { fullPlanPriceFor, FULL_PLAN_ID, type PricingOverrides } from '@/lib/pricing';
+import { startBundleCheckout, formatPriceCents } from '@/lib/checkout';
 import LockedModuleNotice from './LockedModuleNotice';
 import { useBrand } from '@/components/site/BrandProvider';
 
@@ -56,7 +56,7 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
   const handleBuy = async (couponCode?: string) => {
     setBuying(true);
     try {
-      await startModuleCheckout({ invitationId, slug, locale, moduleId: 'photo_sharing', couponCode });
+      await startBundleCheckout({ invitationId, slug, locale, bundleId: FULL_PLAN_ID, couponCode });
     } catch (err: any) {
       alert(err.message || dict.locked.message);
       setBuying(false);
@@ -172,7 +172,7 @@ export default function PhotoSharingModule({ invitationId, slug, canEdit, unlock
         contactUrl={contactUrl}
         contactLabel={dict.locked.contactBtn}
         buyLabel={isPartnerBrand ? undefined : dict.locked.buyBtn}
-        priceLabel={isPartnerBrand ? undefined : formatPriceCents(effectiveModulePriceCents('photo_sharing', overrides ?? EMPTY_PRICING_OVERRIDES), locale)}
+        priceLabel={isPartnerBrand ? undefined : formatPriceCents(fullPlanPriceFor(unlockedModules || [], overrides).cents, locale)}
         onBuy={isPartnerBrand ? undefined : handleBuy}
         buying={buying}
         couponToggleLabel={isPartnerBrand ? undefined : dict.locked.couponToggleLabel}
