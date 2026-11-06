@@ -1,11 +1,27 @@
 import { ALL_MODULE_IDS, MODULE_DEPENDENCIES, type ModuleId } from "./modules";
 
-// ⚠️ PREÇOS — ajuste à vontade, é só isto que precisa de mudar. Tanto o
-// checkout real (Stripe) como a página pública de Pricing lêem estes
-// valores, por isso nunca ficam dessincronizados entre si.
-// Valores em cêntimos de euro (ex.: 7900 = 79,00€).
-// "invite" já inclui "guests_seating" de borla (ver MODULE_DEPENDENCIES em
-// modules.ts), daí o preço refletir os dois módulos.
+// ⚠️ PREÇOS — é só isto que precisa de mudar. O checkout real (Stripe), a
+// página pública de Preços e os ecrãs de compra do painel leem estes valores,
+// por isso nunca ficam dessincronizados entre si. Valores em cêntimos de euro
+// com IVA incluído (ex.: 11900 = 119,00 €).
+//
+// Modelo (nov. 2026): um só produto para os casais, o PLANO COMPLETO, que
+// desbloqueia todos os módulos do evento com um pagamento único. Os módulos
+// continuam a existir por dentro (unlocked_modules, separadores bloqueados),
+// mas já não se vendem à peça.
+
+// Preço normal do Plano Completo. Enquanto durar o lançamento aparece riscado
+// ao lado do preço de lançamento (FULL_PLAN.priceCents). Para terminar o
+// lançamento, pôr FULL_PLAN.priceCents igual a este valor: o riscado some.
+export const FULL_PLAN_LIST_PRICE_CENTS = 14900;
+
+// Convite à medida (desenho exclusivo, com o Plano Completo incluído).
+// Não tem checkout: é "a partir de", com orçamento pedido pelo contacto.
+export const BESPOKE_FROM_CENTS = 69900;
+
+// Valor de cada módulo, usado só para descontar no Plano Completo o que um
+// evento já tinha comprado à peça antes da mudança (ver fullPlanPriceFor).
+// "invite" inclui "guests_seating" (MODULE_DEPENDENCIES em modules.ts).
 export const MODULE_PRICES_CENTS: Record<ModuleId, number> = {
   save_the_date: 1500,
   invite: 7900,
@@ -20,58 +36,50 @@ export type Bundle = {
   priceCents: number;
 };
 
-// Uma bundle é só um preset de módulos + preço fixo (mais barato que a soma
-// à peça). Os nomes/descrições ficam nos dicionários
-// (dictionaries/pt.ts, en.ts → "BundleOffers.bundles.<id>"), aqui só o
-// "esqueleto" comercial. "convite" + "momentos" cobrem exatamente os
-// mesmos 5 módulos que "completo" — dá para vender às duas metades ou
-// tudo de uma vez.
-export const BUNDLES: Bundle[] = [
-  {
-    id: "convite",
-    moduleIds: ["save_the_date", "invite", "guests_seating"],
-    priceCents: 7500,
-  },
-  {
-    id: "momentos",
-    moduleIds: ["photo_sharing", "guestbook"],
-    priceCents: 4400,
-  },
-  {
-    id: "completo",
-    moduleIds: ALL_MODULE_IDS,
-    priceCents: 11900,
-  },
-];
+export const FULL_PLAN_ID = "completo";
 
-export function moduleFullPriceCents(moduleId: ModuleId): number {
-  return MODULE_PRICES_CENTS[moduleId];
-}
+export const FULL_PLAN: Bundle = {
+  id: FULL_PLAN_ID,
+  moduleIds: ALL_MODULE_IDS,
+  priceCents: 11900, // preço de lançamento; normal = FULL_PLAN_LIST_PRICE_CENTS
+};
+
+// Só o Plano Completo está à venda. Os ids antigos ("convite", "momentos")
+// ainda podem aparecer em pagamentos e cupões antigos, mas já não se vendem.
+export const BUNDLES: Bundle[] = [FULL_PLAN];
 
 export function getBundle(bundleId: string): Bundle | undefined {
   return BUNDLES.find(b => b.id === bundleId);
 }
 
-// Soma do preço à peça dos módulos incluídos, usada só para mostrar a
-// poupança da bundle (nunca é o valor cobrado). Não conta módulos que já
-// vêm de borla por dependência de outro módulo do mesmo pacote (ex.: não
-// soma "guests_seating" outra vez se "invite" já o inclui), senão a
-// poupança apresentada ficaria artificialmente inflacionada.
-export function bundleFullPriceCents(bundle: Bundle): number {
-  const impliedByOthers = new Set<ModuleId>();
-  bundle.moduleIds.forEach(m => {
-    (MODULE_DEPENDENCIES[m] || []).forEach(dep => impliedByOthers.add(dep));
-  });
-  const billableModules = bundle.moduleIds.filter(m => !impliedByOthers.has(m));
-  return billableModules.reduce((sum, m) => sum + MODULE_PRICES_CENTS[m], 0);
+export function isLaunchPrice(): boolean {
+  return FULL_PLAN.priceCents < FULL_PLAN_LIST_PRICE_CENTS;
 }
 
-export function bundleSavingsCents(bundle: Bundle): number {
-  return Math.max(0, bundleFullPriceCents(bundle) - bundle.priceCents);
+// Módulos que contam para desconto: os comprados, sem os que vêm de borla por
+// dependência de outro também comprado (ex.: "guests_seating" com "invite").
+function billableModules(moduleIds: ModuleId[]): ModuleId[] {
+  const implied = new Set<ModuleId>();
+  moduleIds.forEach(m => (MODULE_DEPENDENCIES[m] || []).forEach(dep => implied.add(dep)));
+  return moduleIds.filter(m => !implied.has(m));
 }
 
-export function cheapestModulePriceCents(): number {
-  return Math.min(...Object.values(MODULE_PRICES_CENTS));
+// Quanto custa o Plano Completo para ESTE evento.
+//   - Sem nada comprado: o preço do plano (com o preço do parceiro, se houver).
+//   - Com módulos comprados à peça antes da mudança: paga só a diferença —
+//     o preço do plano menos o valor do que já tem, e nunca mais do que os
+//     módulos que lhe faltam valeriam à peça.
+//   - Com tudo desbloqueado: 0 (nada a comprar).
+export function fullPlanPriceFor(unlocked: string[], overrides?: PricingOverrides | null): { cents: number; isUpgrade: boolean } {
+  const owned = ALL_MODULE_IDS.filter(m => unlocked.includes(m));
+  const missing = ALL_MODULE_IDS.filter(m => !unlocked.includes(m));
+  const planCents = effectiveBundlePriceCents(FULL_PLAN, overrides);
+  if (missing.length === 0) return { cents: 0, isUpgrade: owned.length > 0 };
+  if (owned.length === 0) return { cents: planCents, isUpgrade: false };
+  const credit = billableModules(owned).reduce((sum, m) => sum + effectiveModulePriceCents(m, overrides), 0);
+  // Os que faltam "à peça", sem contar dependências que já estão desbloqueadas.
+  const missingValue = billableModules(missing).reduce((sum, m) => sum + effectiveModulePriceCents(m, overrides), 0);
+  return { cents: Math.max(0, Math.min(planCents - credit, missingValue)), isUpgrade: true };
 }
 
 // ── Preços diferenciados por parceiro/marca ────────────────────────────
@@ -114,20 +122,4 @@ export function effectiveModulePriceCents(moduleId: ModuleId, overrides?: Pricin
 
 export function effectiveBundlePriceCents(bundle: Bundle, overrides?: PricingOverrides | null): number {
   return overrides?.bundles[bundle.id] ?? bundle.priceCents;
-}
-
-// Mesma lógica de bundleFullPriceCents, mas usando os preços por módulo já
-// ajustados ao parceiro — senão a poupança apresentada ficava errada para
-// quem tem preços diferentes.
-export function effectiveBundleFullPriceCents(bundle: Bundle, overrides?: PricingOverrides | null): number {
-  const impliedByOthers = new Set<ModuleId>();
-  bundle.moduleIds.forEach(m => {
-    (MODULE_DEPENDENCIES[m] || []).forEach(dep => impliedByOthers.add(dep));
-  });
-  const billableModules = bundle.moduleIds.filter(m => !impliedByOthers.has(m));
-  return billableModules.reduce((sum, m) => sum + effectiveModulePriceCents(m, overrides), 0);
-}
-
-export function effectiveBundleSavingsCents(bundle: Bundle, overrides?: PricingOverrides | null): number {
-  return Math.max(0, effectiveBundleFullPriceCents(bundle, overrides) - effectiveBundlePriceCents(bundle, overrides));
 }

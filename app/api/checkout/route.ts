@@ -2,21 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { ALL_MODULE_IDS, expandWithDependencies, type ModuleId } from "@/lib/modules";
-import { getBundle, fetchPricingOverrides, effectiveModulePriceCents, effectiveBundlePriceCents } from "@/lib/pricing";
+import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
+import { FULL_PLAN, fetchPricingOverrides, fullPlanPriceFor } from "@/lib/pricing";
 import { isCouponValid, couponAppliesToOrder, applyCouponDiscount, MIN_CHECKOUT_TOTAL_CENTS, type Coupon } from "@/lib/coupons";
 
-const MODULE_NAMES: Record<ModuleId, string> = {
-  save_the_date: "Save the Date",
-  invite: "Convite de Casamento",
-  guests_seating: "Convidados & Mesas",
-  photo_sharing: "Photo Sharing & Live Wall",
-  guestbook: "Guestbook",
-};
-
-// Cria uma sessão de checkout do Stripe para desbloquear módulos de um
-// evento — à peça (moduleIds) ou como bundle (bundleId). Os preços vêm
-// sempre de lib/pricing.ts, nunca do que o cliente enviar no pedido.
+// Cria uma sessão de checkout do Stripe para o Plano Completo de um evento
+// (desbloqueia todos os módulos). Desde nov. 2026 é o único produto: um pedido
+// com moduleIds ou outro bundleId (ecrãs antigos em cache) compra também o
+// plano. Quem já tinha módulos paga só a diferença (fullPlanPriceFor). Os
+// preços vêm sempre de lib/pricing.ts, nunca do que o cliente enviar.
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -48,52 +42,32 @@ export async function POST(req: NextRequest) {
     const pricingOverrides = await fetchPricingOverrides(supabaseAdmin, invite.brand_id);
 
     const alreadyUnlocked: string[] = invite.unlocked_modules || [];
-    let toPurchase: ModuleId[];
-    let bundleUsed: string | null = null;
-
-    if (bundleId) {
-      const bundle = getBundle(bundleId);
-      if (!bundle) return NextResponse.json({ error: "Bundle inválida." }, { status: 400 });
-      // O preço da bundle é fixo para o conjunto completo — se já tiver
-      // algum dos módulos incluídos, comprá-la de novo cobrava a dobrar
-      // por esse módulo. Nesse caso, sugerir compra à peça dos que faltam.
-      const alreadyOwnsSome = bundle.moduleIds.some(m => alreadyUnlocked.includes(m));
-      if (alreadyOwnsSome) {
-        return NextResponse.json(
-          { error: "Já tem alguns dos módulos deste pacote — compre os que faltam à peça." },
-          { status: 400 }
-        );
-      }
-      toPurchase = bundle.moduleIds;
-      bundleUsed = bundle.id;
-    } else {
-      const requested = (moduleIds || []).filter((m): m is ModuleId => ALL_MODULE_IDS.includes(m as ModuleId));
-      toPurchase = requested.filter(m => !alreadyUnlocked.includes(m));
+    const toUnlock: ModuleId[] = ALL_MODULE_IDS.filter(m => !alreadyUnlocked.includes(m));
+    if (toUnlock.length === 0) {
+      return NextResponse.json({ error: "Nada por comprar — o evento já tem tudo desbloqueado." }, { status: 400 });
     }
-
-    if (toPurchase.length === 0) {
-      return NextResponse.json({ error: "Nada por comprar — módulos já desbloqueados." }, { status: 400 });
-    }
-
-    // toPurchase é o que é cobrado (linhas do Stripe); toUnlock é o que
-    // realmente fica desbloqueado — inclui dependências gratuitas (ex.:
-    // comprar "invite" desbloqueia sempre "guests_seating" também, sem
-    // custo extra, porque o RSVP não funciona sem lista de convidados).
-    const toUnlock = expandWithDependencies(toPurchase).filter(m => !alreadyUnlocked.includes(m));
+    void moduleIds; void bundleId; // pedidos antigos: compram sempre o plano
+    const bundleUsed = FULL_PLAN.id;
+    const { cents: planCents, isUpgrade } = fullPlanPriceFor(alreadyUnlocked, pricingOverrides);
 
     const origin = req.headers.get("origin") || `https://${req.headers.get("host")}`;
+    const successUrl = `${origin}/${locale}/dashboard/${slug}?checkout=success`;
 
-    let lineItems: { moduleId?: ModuleId; name: string; unitAmountCents: number }[];
-    if (bundleUsed) {
-      const bundle = getBundle(bundleUsed)!;
-      lineItems = [{ name: `Digital Invite Studio — ${bundle.id}`, unitAmountCents: effectiveBundlePriceCents(bundle, pricingOverrides) }];
-    } else {
-      lineItems = toPurchase.map(moduleId => ({
-        moduleId,
-        name: `Digital Invite Studio — ${MODULE_NAMES[moduleId]}`,
-        unitAmountCents: effectiveModulePriceCents(moduleId, pricingOverrides),
-      }));
+    // Já pagou à peça tanto ou mais do que o plano custa: desbloqueia o que
+    // falta sem pagamento (o Stripe nem aceita valores abaixo do mínimo).
+    if (planCents < MIN_CHECKOUT_TOTAL_CENTS) {
+      const { error: unlockError } = await supabaseAdmin
+        .from("invitations")
+        .update({ unlocked_modules: [...alreadyUnlocked, ...toUnlock] })
+        .eq("id", invitationId);
+      if (unlockError) return NextResponse.json({ error: "Erro ao desbloquear o plano." }, { status: 500 });
+      return NextResponse.json({ url: successUrl });
     }
+
+    let lineItems: { moduleId?: ModuleId; name: string; unitAmountCents: number }[] = [{
+      name: isUpgrade ? "Digital Invite Studio — Plano Completo (diferença)" : "Digital Invite Studio — Plano Completo",
+      unitAmountCents: planCents,
+    }];
 
     // Cupões vivem só na tabela `coupons` (leitura restrita a super-admin
     // via RLS), por isso a validação usa sempre o cliente service_role.
@@ -110,7 +84,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Erro ao validar o cupão." }, { status: 500 });
       }
       const coupon = couponRow as Coupon | null;
-      if (!coupon || !isCouponValid(coupon) || !couponAppliesToOrder(coupon, { bundleId: bundleUsed, moduleIds: toPurchase })) {
+      if (!coupon || !isCouponValid(coupon) || !couponAppliesToOrder(coupon, { bundleId: bundleUsed, moduleIds: toUnlock })) {
         return NextResponse.json({ error: "Cupão inválido, expirado ou não aplicável a esta compra." }, { status: 400 });
       }
       appliedCoupon = coupon;
@@ -137,7 +111,7 @@ export async function POST(req: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: stripeLineItems,
-      success_url: `${origin}/${locale}/dashboard/${slug}?checkout=success`,
+      success_url: successUrl,
       cancel_url: `${origin}/${locale}/dashboard/${slug}?checkout=cancelled`,
       metadata: {
         invitationId,

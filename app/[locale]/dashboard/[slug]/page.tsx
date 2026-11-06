@@ -58,8 +58,8 @@ import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
 import { fetchPlannerPlan, type PlannerPlan } from "@/lib/planner";
-import { fetchPricingOverrides, effectiveModulePriceCents, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from "@/lib/pricing";
-import { startModuleCheckout, formatPriceCents } from "@/lib/checkout";
+import { fetchPricingOverrides, fullPlanPriceFor, FULL_PLAN_ID, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from "@/lib/pricing";
+import { startBundleCheckout, formatPriceCents } from "@/lib/checkout";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
 import pt from "../../../../dictionaries/pt";
@@ -402,7 +402,9 @@ export default function Dashboard() {
   const handleBuyModule = async (moduleId: string, couponCode?: string) => {
     setBuyingModule(moduleId);
     try {
-      await startModuleCheckout({ invitationId: formData.id, slug: formData.slug, locale, moduleId, couponCode });
+      // Só se vende o Plano Completo (lib/pricing.ts): qualquer separador
+      // bloqueado desbloqueia tudo de uma vez.
+      await startBundleCheckout({ invitationId: formData.id, slug: formData.slug, locale, bundleId: FULL_PLAN_ID, couponCode });
     } catch (err: any) {
       alert(err.message || dict.moduleLockedMessage);
       setBuyingModule(null);
@@ -415,9 +417,7 @@ export default function Dashboard() {
     // comprar "invite" desbloqueia sempre "guests_seating" também (ver
     // lib/modules.ts). Deixar isso claro no ecrã de compra.
     const baseMessage = isPartnerBrand ? dict.moduleLockedMessagePartner : dict.moduleLockedMessage;
-    const message = moduleId === 'invite'
-      ? `${baseMessage} ${dict.moduleLockedInviteNote}`
-      : baseMessage;
+    const message = baseMessage;
     return (
       <LockedModuleNotice
         title={dict.moduleLockedTitle.replace("{module}", moduleName)}
@@ -425,7 +425,7 @@ export default function Dashboard() {
         contactUrl={isPartnerBrand ? partnerContactUrl : (brand.contactUrl ?? `/${locale}/contact`)}
         contactLabel={dict.moduleLockedContactBtn}
         buyLabel={isPartnerBrand ? undefined : dict.moduleBuyBtn}
-        priceLabel={!isPartnerBrand && moduleId ? formatPriceCents(effectiveModulePriceCents(moduleId, pricingOverrides), locale) : undefined}
+        priceLabel={!isPartnerBrand && moduleId ? formatPriceCents(fullPlanPriceFor(unlockedModules, pricingOverrides).cents, locale) : undefined}
         onBuy={!isPartnerBrand && moduleId ? (couponCode) => handleBuyModule(moduleId, couponCode) : undefined}
         buying={buyingModule === moduleId}
         couponToggleLabel={isPartnerBrand ? undefined : dict.couponToggleLabel}

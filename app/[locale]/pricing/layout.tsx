@@ -3,8 +3,8 @@ import { headers, cookies } from "next/headers";
 import { resolveBrand } from "@/lib/brands";
 
 const SEO = {
-  pt: { title: "Preços | Digital Invite Studio", desc: "Pagamento único por evento, sem mensalidades. Escolha um pacote com desconto (Convite, Momentos ou Completo) ou monte a sua combinação módulo a módulo." },
-  en: { title: "Pricing | Digital Invite Studio", desc: "One-time payment per event, no subscriptions. Pick a discounted bundle (Invitation, Moments or Complete) or build your own combination module by module." },
+  pt: { title: "Preços | Digital Invite Studio", desc: "Um só preço com tudo incluído: convite digital, RSVP, convidados e mesas, Save the Date, fotos e livro de visitas. Pagamento único por evento. Também convites à medida e planos para wedding planners." },
+  en: { title: "Pricing | Digital Invite Studio", desc: "One price with everything included: digital invitation, RSVP, guests and seating, Save the Date, photos and guestbook. One-time payment per event. Also bespoke invitations and plans for wedding planners." },
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
