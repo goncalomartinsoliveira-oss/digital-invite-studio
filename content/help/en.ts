@@ -560,8 +560,12 @@ export const helpEn: HelpContent = {
       steps: [
         "After that date, anyone opening the invitation sees the message “This invitation is no longer available”.",
         "The dashboard becomes read-only: you can still see everything, but no longer edit.",
+        "After that date, photos, videos, messages, the guest list and the invitation texts may be permanently deleted.",
       ],
-      tips: ["If you need to renew access, contact us. First download the photos, the guest list and the messages you want to keep."],
+      tips: [
+        "From the day after the wedding, the dashboard shows a notice with the deadline. Before then, download photos and videos in **Photo Sharing & Live Wall** (**ZIP** button) and messages in **Guestbook**.",
+        "If you need more time, contact us before the deadline.",
+      ],
       related: ["manage-photos", "import-export"],
     },
 

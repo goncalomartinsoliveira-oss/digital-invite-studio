@@ -358,6 +358,7 @@ export default function DashboardHub() {
             brands={manageableBrands}
             locale={locale}
             onOpen={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+            canCleanup={isSuperAdmin && brand.id === "dis"}
           />
           </>
         ) : viewMode === 'members' && canManageMembers ? (

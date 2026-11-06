@@ -212,7 +212,7 @@ simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
 
 | Vista | Componente | O que faz |
 |---|---|---|
-| Gestão | `AdminManagementView` | Todos os eventos ativos, com marca, data e convidados. |
+| Gestão | `AdminManagementView` | Todos os eventos, com marca, data e convidados, em **Ativos** e **Arquivados**. Nos arquivados (só super admin): **Enviar aviso** (e-mail aos noivos com a data-limite e como descarregar fotos e mensagens; `api/admin/expiry-notice`, Resend, grava `expiry_notice_sent_at`) e, nos expirados, **Apagar conteúdo** (`api/admin/event-cleanup` + `lib/eventCleanup.ts`; confirmação com contagens e "APAGAR"; também em massa). A limpeza apaga Storage (`fotos_evento/<id>`, imagens do convite em `invites`), convidados, mesas, links por família, livro de visitas, gostos, código de acesso e o conteúdo do convite, e grava `content_purged_at`. **Nunca toca** no registo do evento, nos pagamentos, nem nos dados do Planeamento (orçamento, fornecedores, valores, tarefas, cronograma, documentos, moodboard), que a agência continua a ver. Migração `0014`. |
 | Membros | `MembersManagementView` | Quem pertence a cada marca. |
 | Marcas | `BrandsManagementView` | Criar e editar marcas parceiras. |
 | Cupões | `CouponsManagementView` | Cupões de desconto. |

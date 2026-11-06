@@ -39,6 +39,7 @@ Plataforma de convites digitais de casamento. Stack: **Next.js 16** (App Router,
 ## Dados
 - Coluna `content` (JSON) da tabela `invitations`: `{ sections_visibility: {...}, content: { <seccao>: {...} } }`. Nos módulos: `dbContent = formData.content`, `content = dbContent.content`. Guardar via `handleSaveDesign()` (faz update em `invitations`). Autosave: `useEffect` com debounce de 1500 ms sobre `formData`.
 - **Colunas geridas fora dos editores** (`unlocked_modules`, `date_locked_at`: Conta › Módulos do Evento e webhook do Stripe): o `handleSaveDesign()` **não** as grava (senão o autosave, a partir de uma cópia local desatualizada, desfazia ativações). Quem as altera avisa o painel (`onModulesChange` do `AccountModule`). Nova coluna assim → excluí-la também no `handleSaveDesign`.
+- **Fim de prazo e limpeza:** um evento arquiva no dia seguinte ao casamento (`lib/eventArchive.ts`) e fica online até `expires_at` (60 dias). Depois, o super admin pode apagar o conteúdo em Gestão › Arquivados (`lib/eventCleanup.ts`, `api/admin/event-cleanup`; aviso por e-mail em `api/admin/expiry-notice`; migração `0014`). A limpeza **não** apaga o registo do evento, os pagamentos nem os dados do Planeamento; uma tabela nova com dados pessoais dos convidados tem de entrar em `runEventCleanup`.
 - Storage Supabase: bucket `invites` (imagens do convite/Save the Date), `fotos_evento` (galeria/guestbook).
 - Nomes/data do evento vêm dos campos `bride_name`, `groom_name`, `event_date`.
 

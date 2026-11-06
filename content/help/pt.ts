@@ -558,8 +558,12 @@ export const helpPt: HelpContent = {
       steps: [
         "Passada essa data, quem abre o convite vê a mensagem “Este convite já não está disponível”.",
         "O painel passa a modo de leitura: continuam a ver tudo, mas já não editam.",
+        "Depois desse prazo, as fotos, os vídeos, as mensagens, a lista de convidados e os textos do convite podem ser apagados definitivamente.",
       ],
-      tips: ["Se precisarem de renovar o acesso, falem connosco. Descarreguem antes as fotos, a lista de convidados e as mensagens que queiram guardar."],
+      tips: [
+        "Desde o dia seguinte ao casamento, o painel mostra um aviso com a data-limite. Até lá, descarreguem as fotos e os vídeos em **Photo Sharing & Live Wall** (botão **ZIP**) e as mensagens em **Guestbook**.",
+        "Se precisarem de mais tempo, falem connosco antes da data-limite.",
+      ],
       related: ["manage-photos", "import-export"],
     },
 

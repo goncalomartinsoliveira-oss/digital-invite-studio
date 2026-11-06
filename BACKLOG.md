@@ -52,7 +52,8 @@ Documento de estratégia: https://claude.ai/code/artifact/af5b0757-a3b7-470e-9b8
 - [x] Preços decididos (nov/2026): Solo 39€ (6 convites ativos), Profissional 89€ (15), Agência 169€/mês (35), anual com 2 meses grátis; um convite deixa de contar como ativo **no dia seguinte ao casamento**. Mostrados na página de Preços, com "Falar connosco"
 - [x] Casais: preço único, Plano Completo 149€ (lançamento 119€), IVA incluído; quem já tinha módulos paga a diferença; convite à medida a partir de 699€
 - [x] Lista de eventos com separadores Ativos/Arquivados (arquiva no dia seguinte ao casamento); Gestão do super admin com os mesmos separadores e data de expiração
-- [ ] Limpeza de conteúdo pelo super admin depois dos 60 dias (libertar espaço: fotos, vídeos e mensagens do Storage) — por desenhar/confirmar
+- [x] Limpeza de conteúdo pelo super admin depois dos 60 dias (Gestão › Arquivados, por evento ou todos os expirados): ficheiros + dados pessoais; mantém evento, pagamentos e Planeamento. Aviso aos noivos no painel desde o dia seguinte ao casamento e por e-mail (botão do super admin). Migração `0014`
+- [ ] Limpeza/aviso automáticos (hoje são manuais), se o volume o justificar
 
 ## Marketing / Crescimento
 - [x] Melhorar SEO das páginas de marketing — `sitemap.xml` e `robots.txt` dinâmicos (adaptados ao domínio, PT+EN, com as páginas privadas/dashboard bloqueadas), `metadataBase`, e título+descrição próprios por página (home, preços, parceiros, contacto, termos, privacidade, cookies, e cada uma das 5 páginas de funcionalidades)
