@@ -1,6 +1,8 @@
 "use client";
+import { useState } from "react";
 import { BRANDS } from "@/lib/brands";
-import { ExternalLink, Users, CheckCircle2 } from "lucide-react";
+import { isArchivedEvent, isExpiredEvent } from "@/lib/eventArchive";
+import { ExternalLink, Users, CheckCircle2, Archive } from "lucide-react";
 
 interface AdminManagementViewProps {
   events: any[];                                   // eventos no âmbito (marca ou todas)
@@ -29,7 +31,16 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
     open: en ? "Open" : "Abrir",
     empty: en ? "No events yet." : "Ainda não há eventos.",
     total: en ? "events" : "eventos",
+    active: en ? "Active" : "Ativos",
+    archived: en ? "Archived" : "Arquivados",
+    archivedHint: en
+      ? "Weddings that have already happened. Each one stays online until 60 days after the event."
+      : "Casamentos que já aconteceram. Cada um fica online até 60 dias depois do evento.",
+    availability: en ? "Online until" : "Online até",
+    expiredOn: en ? "Expired on" : "Expirou a",
+    noExpiry: en ? "No end date" : "Sem data de fim",
   };
+  const [tab, setTab] = useState<"active" | "archived">("active");
 
   const now = new Date();
   const fmtDate = (d?: string) => {
@@ -48,8 +59,20 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
   const brandLookup = new Map((brands || []).map(b => [b.id, b.name]));
   const brandName = (id?: string) => (id && (brandLookup.get(id) || BRANDS[id]?.name)) || id || "—";
 
-  // Ordenar: com data mais próxima primeiro; sem data no fim.
-  const sorted = [...events].sort((a, b) => {
+  // Arquivados: o casamento já passou (no dia seguinte ao evento, lib/eventArchive.ts).
+  const archivedEvents = events.filter(ev => isArchivedEvent(ev));
+  const activeEvents = events.filter(ev => !isArchivedEvent(ev));
+  const showArchived = tab === "archived";
+  const list = showArchived ? archivedEvents : activeEvents;
+
+  // Ativos: data mais próxima primeiro, sem data no fim. Arquivados: os que
+  // expiram primeiro no topo (são os primeiros que podem ser limpos).
+  const sorted = [...list].sort((a, b) => {
+    if (showArchived) {
+      const ea = a.expires_at ? new Date(a.expires_at).getTime() : Infinity;
+      const eb = b.expires_at ? new Date(b.expires_at).getTime() : Infinity;
+      return ea - eb;
+    }
     const da = a.event_date ? new Date(a.event_date).getTime() : Infinity;
     const db = b.event_date ? new Date(b.event_date).getTime() : Infinity;
     return da - db;
@@ -60,9 +83,26 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
       <div className="mb-8">
         <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-3">{t.title}</h1>
         <p className="text-gray-500 text-sm">{t.subtitle} · <span className="font-semibold">{events.length}</span> {t.total}</p>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div role="tablist" className="inline-flex bg-white border border-gray-100 rounded-full p-1 shadow-sm">
+            {(["active", "archived"] as const).map(id => (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={tab === id}
+                onClick={() => setTab(id)}
+                className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${tab === id ? "bg-brand text-gold-soft" : "text-gray-400 hover:text-brand"}`}
+              >
+                {id === "archived" && <Archive size={12} />}
+                {t[id]} <span className={tab === id ? "text-gold-soft/70" : "text-gray-300"}>{id === "active" ? activeEvents.length : archivedEvents.length}</span>
+              </button>
+            ))}
+          </div>
+          {showArchived && <p className="text-xs text-gray-400">{t.archivedHint}</p>}
+        </div>
       </div>
 
-      {events.length === 0 ? (
+      {list.length === 0 ? (
         <div className="bg-white border border-gray-100 rounded-3xl p-16 text-center text-gray-400 text-sm">{t.empty}</div>
       ) : (
         <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
@@ -74,7 +114,7 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
                   {showBrand && <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.brand}</th>}
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.date}</th>
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.registered}</th>
-                  <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{t.status}</th>
+                  <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400">{showArchived ? t.availability : t.status}</th>
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-center">{t.guests}</th>
                   <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-gray-400 text-center">{t.confirmed}</th>
                   <th className="px-6 py-4"></th>
@@ -100,7 +140,17 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
                       <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{fmtDate(ev.event_date)}</td>
                       <td className="px-6 py-4 text-[11px] text-gray-400 whitespace-nowrap">{fmtDate(ev.created_at)}</td>
                       <td className="px-6 py-4">
-                        <span className={`inline-block text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${st.cls}`}>{st.label}</span>
+                        {showArchived ? (
+                          !ev.expires_at ? (
+                            <span className="text-[11px] text-gray-400">{t.noExpiry}</span>
+                          ) : isExpiredEvent(ev) ? (
+                            <span className="inline-block text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-100">{t.expiredOn} {fmtDate(ev.expires_at)}</span>
+                          ) : (
+                            <span className="text-[11px] text-gray-600 whitespace-nowrap">{fmtDate(ev.expires_at)}</span>
+                          )
+                        ) : (
+                          <span className={`inline-block text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${st.cls}`}>{st.label}</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="inline-flex items-center gap-1.5 text-sm text-gray-700"><Users size={13} className="text-gray-300" />{gc.total}</span>
