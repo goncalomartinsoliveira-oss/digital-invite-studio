@@ -67,6 +67,9 @@ export default function TermsAndConditionsPage() {
           <h2 className="text-2xl font-serif text-[#722F37] mt-12 mb-4">{s.s8_title}</h2>
           <p className="mb-8">{s.s8_desc}</p>
 
+          <h2 className="text-2xl font-serif text-[#722F37] mt-12 mb-4">{s.s9_title}</h2>
+          <p className="mb-8">{s.s9_desc}</p>
+
           <div className="mt-16 p-8 bg-gray-50 rounded-2xl border border-gray-100">
             <h3 className="font-serif text-xl text-gray-800 mb-2">{dict.footerBox.title}</h3>
             <p className="text-sm">

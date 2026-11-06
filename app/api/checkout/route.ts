@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
 import { FULL_PLAN } from "@/lib/pricing";
 import { quoteFullPlan } from "@/lib/partnerPricing";
+import { REF_COOKIE, attachReferral, findPartnerByCode } from "@/lib/referrals";
 import { isCouponValid, couponAppliesToOrder, applyCouponDiscount, MIN_CHECKOUT_TOTAL_CENTS, type Coupon } from "@/lib/coupons";
 
 // Cria uma sessão de checkout do Stripe para o Plano Completo de um evento
@@ -75,15 +76,35 @@ export async function POST(req: NextRequest) {
       unitAmountCents: planCents,
     }];
 
+    // Recomendação de parceiro (lib/referrals.ts), só quando pagam os noivos:
+    // um código de parceiro escrito no campo do código promocional atribui o
+    // evento a esse parceiro (ganha ao link) e não dá desconto; sem código,
+    // vale o cookie do link /r/CODIGO, se o evento ainda não tiver recomendação.
+    let promoCode = couponCode;
+    if (quote.payer === "couple") {
+      const typed = couponCode?.trim();
+      if (typed) {
+        const { data: isCoupon } = await supabaseAdmin.from("coupons").select("id").eq("code", typed.toUpperCase()).maybeSingle();
+        if (!isCoupon && (await findPartnerByCode(supabaseAdmin, typed))) {
+          await attachReferral(supabaseAdmin, invite, typed, { override: true });
+          promoCode = undefined;
+        }
+      }
+      const cookieCode = req.cookies.get(REF_COOKIE)?.value;
+      if (promoCode !== undefined || !typed) {
+        if (cookieCode && !invite.referred_by_brand_id) await attachReferral(supabaseAdmin, invite, cookieCode);
+      }
+    }
+
     // Cupões vivem só na tabela `coupons` (leitura restrita a super-admin
     // via RLS), por isso a validação usa sempre o cliente service_role.
     // Os cupões são promoções para os noivos; não se somam ao preço de parceiro.
-    if (couponCode && couponCode.trim() && quote.partnerPrice) {
+    if (promoCode && promoCode.trim() && quote.partnerPrice) {
       return NextResponse.json({ error: "Os códigos promocionais não se aplicam ao preço de parceiro." }, { status: 400 });
     }
     let appliedCoupon: Coupon | null = null;
-    if (couponCode && couponCode.trim()) {
-      const normalizedCode = couponCode.trim().toUpperCase();
+    if (promoCode && promoCode.trim()) {
+      const normalizedCode = promoCode.trim().toUpperCase();
       const { data: couponRow, error: couponError } = await supabaseAdmin
         .from("coupons")
         .select("*")

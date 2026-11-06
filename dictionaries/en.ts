@@ -1605,7 +1605,7 @@ const en = {
   },
   "TermsPage": {
     "title": "Terms and Conditions",
-    "lastUpdate": "Last update: July 18, 2026",
+    "lastUpdate": "Last update: November 7, 2026",
     "intro": "Welcome to Digital Invite Studio. By creating an account or using our platform, you agree to the following terms. Please read them carefully.",
     "sections": {
       "s1_title": "1. Service Description",
@@ -1629,8 +1629,10 @@ const en = {
       "s6_suffix": ". From then on, the event's content (photos, videos, messages, guest list and invitation texts) may be permanently deleted, after the couple has been notified. The event record, billing data and planning data managed by partner agencies are kept.",
       "s7_title": "7. Partners and White Label",
       "s7_desc": "Some events are managed through partner agencies or wedding planners, under those partners' own branding (\"white label\"). In these cases, these Terms still apply in full between Digital Invite Studio and the end user, regardless of the branding visible in the service.",
-      "s8_title": "8. Applicable Law",
-      "s8_desc": "These terms are governed by Portuguese law. For the resolution of any dispute, the parties submit to the jurisdiction of the Lisbon district court."
+      "s8_title": "8. Partner Programme",
+      "s8_desc": "Partners (wedding planners, agencies and other businesses in the sector) have their own terms, agreed with Digital Invite Studio and shown in their partner area. With referrals, the partner earns a commission on the amount paid by the couple, excluding VAT, for each event they referred that was published; the commission is approved 14 days after payment, paid by monthly bank transfer against the partner's invoice or receipt, and cancelled if the payment is fully refunded. With resale, the partner pays the partner price for the events they manage and freely sets the price for their clients. The same event never qualifies for both a commission and a partner price, and there is no commission on the partner's own events.",
+      "s9_title": "9. Applicable Law",
+      "s9_desc": "These terms are governed by Portuguese law. For the resolution of any dispute, the parties submit to the jurisdiction of the Lisbon district court."
     },
     "footerBox": {
       "title": "Questions?",

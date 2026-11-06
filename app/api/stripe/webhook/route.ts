@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { commissionCents } from "@/lib/referrals";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { resend, CONTACT_FROM } from "@/lib/resend";
@@ -78,7 +79,7 @@ async function handleCheckoutCompleted(session: any) {
 
     const { data: invite, error: inviteError } = await supabaseAdmin
       .from("invitations")
-      .select("unlocked_modules, slug, groom_name, bride_name")
+      .select("*")
       .eq("id", invitationId)
       .single();
 
@@ -94,7 +95,27 @@ async function handleCheckoutCompleted(session: any) {
 
     if (updateError) throw new Error(`update invitations falhou: ${updateError.message}`);
 
+    // Comissão de recomendação (lib/referrals.ts): só quando pagam os noivos,
+    // num evento recomendado por um parceiro com a recomendação ligada, e
+    // nunca num evento do próprio parceiro. A percentagem fica gravada aqui.
+    let commission: Record<string, unknown> = {};
+    const payer = session.metadata?.payer || "couple";
+    const refBrand: string | null = invite?.referred_by_brand_id || null;
+    if (payer === "couple" && refBrand && invite?.brand_id !== refBrand && (session.amount_total || 0) > 0) {
+      const { data: acc } = await supabaseAdmin.from("partner_accounts").select("referral_enabled, commission_pct").eq("brand_id", refBrand).maybeSingle();
+      if (acc?.referral_enabled) {
+        const pct = Number(acc.commission_pct) || 0;
+        commission = {
+          referral_brand_id: refBrand,
+          commission_pct: pct,
+          commission_cents: commissionCents(session.amount_total || 0, pct),
+          commission_status: "pending",
+        };
+      }
+    }
+
     const { error: insertError } = await supabaseAdmin.from("payments").insert({
+      ...commission,
       invitation_id: invitationId,
       stripe_session_id: session.id,
       stripe_payment_intent: session.payment_intent || null,
@@ -216,7 +237,14 @@ async function handleChargeRefunded(charge: any) {
 
     const { error: statusUpdateError } = await supabaseAdmin
       .from("payments")
-      .update({ status: newStatus, refunded_at: new Date().toISOString(), amount_refunded_cents: charge.amount_refunded })
+      .update({
+        status: newStatus,
+        refunded_at: new Date().toISOString(),
+        amount_refunded_cents: charge.amount_refunded,
+        // Reembolso total → a comissão ainda não paga é cancelada
+        // (lib/referrals.ts); um parcial fica para o super admin decidir.
+        ...(isFullRefund && payment.commission_status && payment.commission_status !== "paid" ? { commission_status: "cancelled" } : {}),
+      })
       .eq("id", payment.id);
     if (statusUpdateError) throw new Error(`update payments falhou: ${statusUpdateError.message}`);
 
