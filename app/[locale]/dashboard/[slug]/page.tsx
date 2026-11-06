@@ -146,6 +146,7 @@ export default function Dashboard() {
   const [buyingModule, setBuyingModule] = useState<string | null>(null);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
+  const [sessionEmail, setSessionEmail] = useState("");
   // Preço do Plano Completo para este evento, calculado no servidor
   // (api/checkout/quote): preço normal, de parceiro ou de volume.
   const [planQuote, setPlanQuote] = useState<ClientPlanQuote | null>(null);
@@ -168,6 +169,7 @@ export default function Dashboard() {
       if (!session) { router.push(`/${params.locale}/login`); return; }
       
       const email = session.user.email;
+      setSessionEmail(email || "");
       // brand_members/super_admins/invitation_collaborators guardam o email
       // normalizado (trim+minúsculas); invitations.user_email não — por isso
       // há duas variantes, cada uma só contra a tabela com a mesma convenção.
@@ -1061,7 +1063,25 @@ export default function Dashboard() {
                   dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />
               )}
-              {activeTab === 'account' && <AccountModule userEmail={formData.user_email} invitationId={formData.id} isSuperAdmin={isSuperAdmin} moduleNames={moduleNamesDict} bundleNames={bundleNamesDict} onModulesChange={(modules, lockedAt) => setFormData((f: any) => ({ ...f, unlocked_modules: modules, date_locked_at: lockedAt }))} dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule} />}
+              {activeTab === 'account' && (
+                <AccountModule
+                  invite={formData}
+                  currentEmail={sessionEmail}
+                  isSuperAdmin={isSuperAdmin}
+                  isPartnerBrand={isPartnerBrand}
+                  isPartnerStaff={isPartnerEvent && isAgencyStaff}
+                  partnerName={isPartnerEvent ? eventBrand?.name : undefined}
+                  partnerContactUrl={isPartnerBrand ? partnerContactUrl : undefined}
+                  canManageTeam={canEdit}
+                  quote={planQuote}
+                  publishing={buyingModule !== null}
+                  onPublish={handlePublish}
+                  moduleNames={moduleNamesDict}
+                  bundleNames={bundleNamesDict}
+                  onModulesChange={(modules, lockedAt) => setFormData((f: any) => ({ ...f, unlocked_modules: modules, date_locked_at: lockedAt }))}
+                  dict={dictionaries[locale]?.AccountModule || dictionaries.pt.AccountModule}
+                />
+              )}
             </div>
             </EventBrandProvider>
           </main>

@@ -12,8 +12,9 @@ import { formatPriceCents } from "@/lib/checkout";
 
 type Props = {
   brandId: string;
-  plannerOn: boolean;
-  onPlannerChange: (on: boolean) => void;
+  // Sem estes dois (marca de código, fora da tabela brands), o Planeamento não aparece.
+  plannerOn?: boolean;
+  onPlannerChange?: (on: boolean) => void;
   locale: string;
 };
 
@@ -127,7 +128,7 @@ export default function PartnerTermsCard({ brandId, plannerOn, onPlannerChange, 
         <div className="grid md:grid-cols-3 gap-3">
           <Toggle on={form.referral} onChange={v => setForm(f => ({ ...f, referral: v }))} icon={<Megaphone size={16} />} title={t.referral} hint={t.referralHint} />
           <Toggle on={form.partnerPrice} onChange={v => setForm(f => ({ ...f, partnerPrice: v }))} icon={<Tag size={16} />} title={t.partnerPrice} hint={t.partnerPriceHint} />
-          <Toggle on={plannerOn} onChange={onPlannerChange} icon={<ClipboardList size={16} />} title={t.planner} hint={t.plannerHint} />
+          {onPlannerChange && <Toggle on={!!plannerOn} onChange={onPlannerChange} icon={<ClipboardList size={16} />} title={t.planner} hint={t.plannerHint} />}
         </div>
       </div>
 

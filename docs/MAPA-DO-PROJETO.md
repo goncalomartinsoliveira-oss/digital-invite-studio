@@ -102,7 +102,7 @@ Duas camadas: **áreas** (uma por módulo vendável) e, dentro de cada uma, os
 | Livro de visitas | Livro de visitas | `GuestbookModule` |
 | Links e QR codes | Links | `LinksHub` |
 | Planeamento *(só agências)* | Orçamento · Tarefas · Cronograma · Partilha · Inspiração | ver secção 6 |
-| Conta | Minha conta | `AccountModule` |
+| Conta | Minha conta | `AccountModule`: quatro blocos com âncoras — **O vosso plano** (publicado ou não, data de publicação e "online até", o que inclui, preço do servidor e **Publicar convite**; nos eventos pagos pelo parceiro, "incluído no serviço de …" e contacto do parceiro; para a equipa do parceiro, quem paga), **Pagamentos** (escondidos aos noivos quando paga o parceiro, para não mostrar o preço de parceiro; tentativas falhadas só para o super admin), **Equipa do evento** (dono + colaboradores; só quem edita convida ou remove) e **Os vossos dados** (e-mail da sessão, password, sair). Super admin: bloco extra **Módulos do Evento**. |
 
 Se o módulo não estiver comprado, o separador mostra `LockedModuleNotice` com
 botão de compra direta (`lib/checkout.ts`). O `WelcomeTour` é o tour de
@@ -179,7 +179,7 @@ Acrescentam sempre, nunca apagam.
 sem resposta, os que nunca abriram o link primeiro, com mensagem editável por grupo (nome, link
 pessoal ou geral, prazo do RSVP) para copiar. Modelo da mensagem e "lembrado a" ficam no browser.
 
-**Piloto Wedding Planner** (Administração › Gestão, só super-admin no DIS, `PlannerPilotCard`): por
+**Piloto Wedding Planner** (Administração › Visão geral, só super-admin no DIS, `PlannerPilotCard`): por
 agência com plano — eventos, eventos com Planeamento, última atividade, itens criados ou alterados
 nos últimos 7/30 dias, fornecedores; expande por evento. Usa `updated_at` (migração `0013`) e, sem ela,
 só as datas de criação.
@@ -209,17 +209,17 @@ importar esses ficheiros num componente `"use client"`.
 ## 7. Administração (só super admin, no domínio da DIS)
 
 Vistas da lista de eventos (`dashboard/page.tsx`, `viewMode`), reunidas no menu
-**"Administração"** (`AdminMenu`). Agências, que só têm "Gestão", veem o botão
-simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
+**"Administração"** (`AdminMenu`), por ordem de uso. Agências só têm a tabela de
+eventos e veem o botão simples "Gestão". Eventos, Parceiro e Wedding Planner ficam à parte.
 
 | Vista | Componente | O que faz |
 |---|---|---|
-| Gestão | `AdminManagementView` | Todos os eventos, com marca, data e convidados, em **Ativos** e **Arquivados**. Nos arquivados (só super admin): **Enviar aviso** (e-mail aos noivos com a data-limite e como descarregar fotos e mensagens; `api/admin/expiry-notice`, Resend, grava `expiry_notice_sent_at`) e, nos expirados, **Apagar conteúdo** (`api/admin/event-cleanup` + `lib/eventCleanup.ts`; confirmação com contagens e "APAGAR"; também em massa). A limpeza apaga Storage (`fotos_evento/<id>`, imagens do convite em `invites`), convidados, mesas, links por família, livro de visitas, gostos, código de acesso e o conteúdo do convite, e grava `content_purged_at`. **Nunca toca** no registo do evento, nos pagamentos, nem nos dados do Planeamento (orçamento, fornecedores, valores, tarefas, cronograma, documentos, moodboard), que a agência continua a ver. Migração `0014`. |
-| Membros | `MembersManagementView` | Quem pertence a cada marca. |
-| Marcas | `BrandsManagementView` | Criar e editar marcas parceiras. |
-| Cupões | `CouponsManagementView` | Cupões de desconto. |
-| Preços | `BrandPricingView` | Preços por marca (`brand_pricing_overrides`). |
-| Negócio | `BusinessOverviewView` | Visão geral do negócio (`api/admin/business-overview`). |
+| Visão geral | `BusinessOverviewView` + `api/admin/business-overview` | Receita total e do mês, publicados (de quantos eventos), eventos novos no mês, parceiros ativos (com alguma funcionalidade ligada); **Para tratar** com atalhos (comissões aprovadas por pagar, parceiros sem NIF/IBAN com comissões, avisos de fim de prazo por enviar, conteúdo expirado por apagar → abre Todos os eventos › Arquivados); comissões por pagar; receita dos últimos 6 meses; receita por parceiro com as contas; Piloto Wedding Planner. |
+| Todos os eventos | `AdminManagementView` | Todos os eventos, com pesquisa e filtros por parceiro e por publicado, em **Ativos** e **Arquivados**. Nos arquivados (só super admin): **Enviar aviso** (e-mail aos noivos com a data-limite e como descarregar fotos e mensagens; `api/admin/expiry-notice`, Resend, grava `expiry_notice_sent_at`) e, nos expirados, **Apagar conteúdo** (`api/admin/event-cleanup` + `lib/eventCleanup.ts`; confirmação com contagens e "APAGAR"; também em massa). A limpeza apaga Storage (`fotos_evento/<id>`, imagens do convite em `invites`), convidados, mesas, links por família, livro de visitas, gostos, código de acesso e o conteúdo do convite, e grava `content_purged_at`. **Nunca toca** no registo do evento, nos pagamentos, nem nos dados do Planeamento (orçamento, fornecedores, valores, tarefas, cronograma, documentos, moodboard), que a agência continua a ver. Migração `0014`. |
+| Parceiros | `BrandsManagementView` | Lista (funcionalidades, eventos, receita, comissões por pagar) e ficha de cada parceiro: condições (`PartnerTermsCard`), **equipa do parceiro** (`BrandMembersPanel`, `brand_members`), logótipo e contacto. Inclui as marcas de código (ex.: Amazing Moon), sem Planeamento, logótipo e contacto editáveis. Criar parceiro fica no fim. |
+| Comissões | `CommissionsView` | Ver "Recomendações" em Pagamentos. |
+| Cupões | `CouponsManagementView` | Cupões de desconto (promoções da DIS; os códigos de parceiro vivem na ficha do parceiro). |
+| Equipa interna | `InternalTeamView` | Quem é super admin (`super_admins`). |
 
 ---
 

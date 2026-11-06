@@ -109,7 +109,7 @@ export const helpEn: HelpContent = {
         "At the top, the **What's left to do** list shows the steps still missing and takes you to each one.",
         "Click a card to enter that area. Inside, the menu on the left switches tabs and **Areas** goes back to the home page. On small screens the menu is at the bottom.",
         "In the **Invitation**, the phone on the right shows the invitation as guests will see it and refreshes by itself after saving.",
-        "**My Account**, at the bottom of the menu, has your team, purchases and password.",
+        "**My Account**, at the bottom of the menu, has four blocks: **Your plan**, **Payments**, **Event team** and **Your details**.",
       ],
       tips: [
         "You can prepare everything before paying. For guests to open the invitation, click **Publish invitation**.",
@@ -509,17 +509,17 @@ export const helpEn: HelpContent = {
       steps: [
         "While you prepare, you can use the whole dashboard without paying: invitation, guests, seating, Save the Date (with a watermark) and, to try them out, up to 5 photos and 5 guestbook messages.",
         "The **Preview** button shows you the full invitation. Guests can only open it once it's published.",
-        "When everything is ready, click **Publish invitation** (at the top of the dashboard or under **Ready to send?** on the dashboard home page).",
+        "When everything is ready, click **Publish invitation** (at the top of the dashboard, under **Ready to send?** on the dashboard home page, or in **My Account** › **Your plan**).",
         "If you have a promo code, click **I have a promo code** and enter it before paying.",
         "Payment is made on a secure screen. When it finishes, the invitation is published and everything is unlocked: RSVP, Save the Date without watermark, unlimited photos and messages.",
-        "Your payment history is under **My Account** › **Purchase History**.",
+        "In **My Account**, the **Your plan** block shows whether the invitation is published and until when it stays online, and the **Payments** block shows what you have paid.",
       ],
       tips: [
         "The current price is on the **Pricing** page. It's a one-time payment per event, VAT included.",
         "If you had already bought a module on its own, you only pay the difference.",
         "After the first purchase, the wedding date is locked.",
       ],
-      faq: [{ q: "Is the purchase recorded?", a: "Yes. Every payment appears under **Purchase History**, with the status **Paid**, **Pending**, **Failed** or **Refunded**." }],
+      faq: [{ q: "Is the purchase recorded?", a: "Yes. Every payment appears under **My Account** › **Payments**, with the status **Paid**, **Pending**, **Failed** or **Refunded**." }],
       related: ["change-date", "panel-overview"],
     },
     {
@@ -528,17 +528,17 @@ export const helpEn: HelpContent = {
       title: "How do I give someone else access?",
       summary: "You can share the event with your partner, family or a wedding planner.",
       shots: [
-        { file: "collaborators", alt: "The “Collaborators” card in My Account, with the email, the permission and the list of people with access." },
+        { file: "collaborators", alt: "The “Event team” block in My Account, with the event owner, the email, the permission and the list of people with access." },
       ],
       steps: [
-        "Open **My Account** and go to **Collaborators**.",
+        "Open **My Account** and go to **Event team**.",
         "Enter the person's email.",
         "Choose **Can Edit** (can change everything) or **Read Only** (can only view).",
         "Click **Invite**.",
       ],
       tips: [
         "The person logs in with that email and sees the event under **Shared With Me**. If they don't have an account yet, they create one with the same email.",
-        "To take access away, remove the person from the collaborators list.",
+        "To take access away, remove the person from the list. Only people who can edit the event can invite or remove others.",
       ],
       related: ["login-password"],
     },
@@ -550,7 +550,7 @@ export const helpEn: HelpContent = {
       steps: [
         "**I forgot it:** on the login screen, click **Forgot?**, enter your email and click **Send Recovery Link**.",
         "Open the email (check your spam too) and follow the link to choose a new password.",
-        "**I want to change it:** in **My Account**, enter the **New Password** (at least 6 characters) and save.",
+        "**I want to change it:** in **My Account** › **Your details**, enter the **New Password** (at least 6 characters) and save.",
       ],
       related: ["collaborators"],
     },

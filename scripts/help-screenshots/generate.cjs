@@ -21,8 +21,8 @@ const SESSION = {
 
 // Textos do painel que o script precisa de localizar (por idioma).
 const TXT = {
-  pt: { dataTools: "Ferramentas de Dados", collaborators: "Colaboradores", account: "Minha Conta", addForm: "Adicionar à Lista" },
-  en: { dataTools: "Data Tools", collaborators: "Collaborators", account: "My Account", addForm: "Add to List" },
+  pt: { dataTools: "Ferramentas de Dados", collaborators: "Equipa do evento", account: "Minha Conta", addForm: "Adicionar à Lista" },
+  en: { dataTools: "Data Tools", collaborators: "Event team", account: "My Account", addForm: "Add to List" },
 };
 
 const HIDE_DEV_UI = "nextjs-portal, [data-nextjs-dev-tools-button], #next-logo { display: none !important; }";
@@ -167,8 +167,8 @@ async function run(locale) {
 
   // conta: colaboradores
   await page.locator("aside button", { hasText: TXT[locale].account }).click();
-  await page.getByText(TXT[locale].collaborators, { exact: true }).first().waitFor(); await page.waitForTimeout(800);
-  const colHeading = page.getByText(TXT[locale].collaborators, { exact: true }).first();
+  const colHeading = page.locator("h3", { hasText: TXT[locale].collaborators }).first();
+  await colHeading.waitFor(); await page.waitForTimeout(800);
   await shotRegion(page, locale, "collaborators", await pageBox(page, colHeading.locator("xpath=ancestor::*[contains(@class,'rounded-')][1]")), 12);
 
   await browser.close();
