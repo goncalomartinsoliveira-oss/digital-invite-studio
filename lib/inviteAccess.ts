@@ -30,6 +30,15 @@ export function accessCookieName(invitationId: string): string {
   return "dis_ia_" + crypto.createHash("sha256").update(invitationId).digest("hex").slice(0, 16);
 }
 
+// Pré-visualização de um convite ainda por publicar (Plano Completo por
+// pagar): só quem gere o evento a recebe, via app/api/invite-access/preview.
+// Mesmo formato assinado do cookie do código, com a versão fixa 0 (as versões
+// do código começam em 1, por isso um cookie nunca serve pelo outro).
+export const OWNER_PREVIEW_VERSION = 0;
+export function ownerPreviewCookieName(invitationId: string): string {
+  return "dis_op_" + crypto.createHash("sha256").update(invitationId).digest("hex").slice(0, 16);
+}
+
 function mac(invitationId: string, version: number, exp: number, key: string): string {
   return crypto.createHmac("sha256", key).update(`${invitationId}|${version}|${exp}`).digest("hex");
 }

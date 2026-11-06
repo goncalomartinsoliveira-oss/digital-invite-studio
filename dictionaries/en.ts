@@ -13,7 +13,7 @@ const en = {
       "desc": "An elegant invitation your guests open on their phone: the envelope, your story, the schedule, the map and the RSVP, all in a single link. You personalise it yourselves in the editor, at your own pace.",
       "btnPrimary": "Create our invitation",
       "btnSecondary": "See a live invitation",
-      "microcopy": ["No app", "Works on any phone", "One-time payment"],
+      "microcopy": ["Free until you publish", "No app", "One-time payment"],
       "floatingBadge": "RSVP",
       "floatingText": "Marta is coming!"
     },
@@ -251,6 +251,11 @@ const en = {
     "copyLink": "Copy Link",
     "copied": "Copied",
     "openInvite": "Open Invite",
+    "previewInvite": "Preview",
+    "publishBtn": "Publish invitation",
+    "publishPlanBtn": "Get the Full Plan",
+    "stdWatermark": "PREVIEW · DIGITAL INVITE STUDIO",
+    "stdWatermarkNote": "Until you get the Full Plan, the card is downloaded with a watermark.",
     "mobilePreview": "View Preview",
     "mobilePreviewLabel": "Real Mobile View",
     "mobilePreviewSub": "Updates upon saving",
@@ -427,6 +432,7 @@ const en = {
       "photo": { "label": "Cover photo", "hint": "Choose the photo or video that opens the invitation." },
       "texts": { "label": "Invitation texts", "hint": "Write your story and the details of the day." },
       "guests": { "label": "Guest list", "hint": "Add your guests so they can confirm attendance." },
+      "publish": { "label": "Publish the invitation", "hint": "When everything is ready, publish the invitation so your guests can open it." },
       "share": { "label": "Share the link", "hint": "Copy the invitation link and send it to your guests." }
     }
   },
@@ -436,7 +442,7 @@ const en = {
     "copy": "Copy link",
     "copied": "Copied",
     "open": "Open",
-    "locked": "Module not active",
+    "locked": "Available once published",
     "items": {
       "invite": { "title": "Invitation", "desc": "The main link — send it to all your guests." },
       "rsvp": { "title": "RSVP", "desc": "A page just for confirming attendance. Ideal for the QR on a printed invitation." },
@@ -799,9 +805,9 @@ const en = {
     "guestbook": "Guestbook"
   },
   "BundleOffers": {
-    "title": "Unlock everything",
-    "subtitle": "One payment for every feature of this event",
-    "buyBtn": "Get the Full Plan",
+    "title": "Ready to send?",
+    "subtitle": "Prepare everything at your own pace, for free. When you're ready, one payment publishes the invitation and unlocks everything.",
+    "buyBtn": "Publish invitation",
     "launchLabel": "Launch price",
     "upgradeNote": "You already have some modules: you only pay the difference. One-time payment, VAT included.",
     "oneTime": "One-time payment per event, VAT included.",
@@ -821,6 +827,19 @@ const en = {
         "desc": "The invitation and everything that comes with it: Save the Date, RSVP, guests and seating, photos with Live Wall and guestbook."
       }
     }
+  },
+  "InviteUnpublished": {
+    "title": "This invitation hasn't been published yet",
+    "desc": "The couple is still getting everything ready. Please open this link again later.",
+    "previewBadge": "Preview · not published yet",
+    "rsvpNote": "RSVP becomes available once the invitation is published."
+  },
+  "Trial": {
+    "limitReached": "This event is in trial mode and has reached the limit of {n} {items}. The couple can get the Full Plan for unlimited uploads.",
+    "photos": "photos",
+    "messages": "messages",
+    "banner": "Trial mode: {used} of {n} {items}. Get the Full Plan for unlimited uploads.",
+    "bannerBtn": "Get the Full Plan"
   },
   "EventExpired": {
     "title": "This invitation is no longer available",
@@ -1618,13 +1637,13 @@ const en = {
   },
   "PricingPage": {
     "title": "One price. Everything included.",
-    "desc": "A one-time payment per event, no subscriptions. The invitation and every feature, or an invitation designed just for you.",
+    "desc": "Prepare everything for free and only pay when you publish. A one-time payment per event, no subscriptions.",
     "full": {
       "tag": "For couples",
       "name": "Full Plan",
       "launchLabel": "Launch price",
       "per": "per event",
-      "note": "One-time payment · VAT included",
+      "note": "Paid when you publish · One-time payment · VAT included",
       "features": [
         "Digital invitation in the design you choose",
         "RSVP with menus and dietary requirements",
@@ -1672,6 +1691,7 @@ const en = {
     "faq": {
       "title": "Pricing questions",
       "items": [
+        { "q": "Can I try it before paying?", "a": "Yes. Prepare everything for free with no time limit: the invitation, guests, seating and Save the Date. You only pay when you publish the invitation to your guests." },
         { "q": "Are there subscriptions or hidden costs?", "a": "No. For couples it's a one-time payment per event, VAT included." },
         { "q": "What happens after the wedding?", "a": "The invitation and dashboard stay available for 60 days after the wedding, so you can calmly download your guests' photos and messages." },
         { "q": "We had bought single modules. Do we pay everything again?", "a": "No. When you get the Full Plan you only pay the difference for what you already have." },

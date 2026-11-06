@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { UUID_RE, accessCookieName, accessCookieOptions, signAccessCookie } from "@/lib/inviteAccess";
+import { UUID_RE, accessCookieName, accessCookieOptions, signAccessCookie, ownerPreviewCookieName, OWNER_PREVIEW_VERSION } from "@/lib/inviteAccess";
 
 // Para quem gere o evento: a pré-visualização do painel e o botão "Abrir
 // convite" não devem pedir o código ao próprio administrador. O painel envia
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   if (!UUID_RE.test(invitationId)) return NextResponse.json({ error: "invalid_body" }, { status: 400 });
 
   const { data: inv } = await supabaseAdmin
-    .from("invitations").select("id, user_email, brand_id, access_code_enabled, access_code_version").eq("id", invitationId).maybeSingle();
+    .from("invitations").select("id, user_email, brand_id, access_code_enabled, access_code_version, unlocked_modules").eq("id", invitationId).maybeSingle();
   if (!inv) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
   const isOwner = (inv.user_email || "").trim().toLowerCase() === email;
@@ -39,10 +39,20 @@ export async function POST(req: NextRequest) {
   }
   if (!allowed) return NextResponse.json({ error: "forbidden" }, { status: 403 });
 
-  if (!inv.access_code_enabled) return NextResponse.json({ ok: true, gated: false });
-  const cookie = signAccessCookie(invitationId, inv.access_code_version ?? 1);
-  if (!cookie) return NextResponse.json({ error: "not_configured" }, { status: 500 });
+  // Convite por publicar → cookie de pré-visualização do dono.
+  // Código de acesso ligado → cookie do código, para não o pedir a quem gere.
+  const unpublished = !(inv.unlocked_modules || []).includes("invite");
+  if (!inv.access_code_enabled && !unpublished) return NextResponse.json({ ok: true, gated: false });
   const res = NextResponse.json({ ok: true, gated: true });
-  res.cookies.set(accessCookieName(invitationId), cookie, accessCookieOptions());
+  if (unpublished) {
+    const preview = signAccessCookie(invitationId, OWNER_PREVIEW_VERSION);
+    if (!preview) return NextResponse.json({ error: "not_configured" }, { status: 500 });
+    res.cookies.set(ownerPreviewCookieName(invitationId), preview, accessCookieOptions());
+  }
+  if (inv.access_code_enabled) {
+    const cookie = signAccessCookie(invitationId, inv.access_code_version ?? 1);
+    if (!cookie) return NextResponse.json({ error: "not_configured" }, { status: 500 });
+    res.cookies.set(accessCookieName(invitationId), cookie, accessCookieOptions());
+  }
   return res;
 }

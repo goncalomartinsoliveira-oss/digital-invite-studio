@@ -13,7 +13,7 @@ const pt = {
       "desc": "Um convite elegante que os convidados abrem no telemóvel: o envelope, a vossa história, o programa, o mapa e a confirmação de presença, tudo num único link. Personalizam-no vocês, no editor, ao vosso ritmo.",
       "btnPrimary": "Criar o nosso convite",
       "btnSecondary": "Ver um convite ao vivo",
-      "microcopy": ["Sem app", "Funciona em qualquer telemóvel", "Pagamento único"],
+      "microcopy": ["Grátis até publicar", "Sem app", "Pagamento único"],
       "floatingBadge": "RSVP",
       "floatingText": "A Marta confirmou presença"
     },
@@ -251,6 +251,11 @@ const pt = {
     "copyLink": "Copiar Link",
     "copied": "Copiado",
     "openInvite": "Abrir Convite",
+    "previewInvite": "Pré-visualizar",
+    "publishBtn": "Publicar convite",
+    "publishPlanBtn": "Ativar Plano Completo",
+    "stdWatermark": "PRÉ-VISUALIZAÇÃO · DIGITAL INVITE STUDIO",
+    "stdWatermarkNote": "Enquanto não ativarem o Plano Completo, o cartão sai com marca d'água.",
     "mobilePreview": "Ver Preview",
     "mobilePreviewLabel": "Vista Mobile Real",
     "mobilePreviewSub": "Atualiza ao guardar",
@@ -427,6 +432,7 @@ const pt = {
       "photo": { "label": "Foto de capa", "hint": "Escolham a foto ou vídeo que abre o convite." },
       "texts": { "label": "Textos do convite", "hint": "Escrevam a vossa história e os detalhes do dia." },
       "guests": { "label": "Lista de convidados", "hint": "Adicionem os convidados para poderem confirmar presença." },
+      "publish": { "label": "Publicar o convite", "hint": "Quando estiver tudo pronto, publiquem o convite para os convidados o poderem abrir." },
       "share": { "label": "Partilhar o link", "hint": "Copiem o link do convite e enviem aos convidados." }
     }
   },
@@ -436,7 +442,7 @@ const pt = {
     "copy": "Copiar link",
     "copied": "Copiado",
     "open": "Abrir",
-    "locked": "Módulo por ativar",
+    "locked": "Disponível depois de publicar",
     "items": {
       "invite": { "title": "Convite", "desc": "O link principal — enviem-no a todos os convidados." },
       "rsvp": { "title": "Confirmar presença (RSVP)", "desc": "Página só para confirmar presença. Ideal para o QR do convite impresso." },
@@ -799,9 +805,9 @@ const pt = {
     "guestbook": "Guestbook"
   },
   "BundleOffers": {
-    "title": "Desbloqueiem tudo",
-    "subtitle": "Um só pagamento para todas as funcionalidades deste evento",
-    "buyBtn": "Ativar Plano Completo",
+    "title": "Prontos para enviar?",
+    "subtitle": "Preparem tudo à vontade, sem pagar. Quando estiverem prontos, um só pagamento publica o convite e desbloqueia tudo.",
+    "buyBtn": "Publicar convite",
     "launchLabel": "Preço de lançamento",
     "upgradeNote": "Já têm alguns módulos: pagam só a diferença. Pagamento único, IVA incluído.",
     "oneTime": "Pagamento único por evento, IVA incluído.",
@@ -821,6 +827,19 @@ const pt = {
         "desc": "O convite e tudo o que vem com ele: Save the Date, RSVP, convidados e mesas, fotos com Live Wall e livro de visitas."
       }
     }
+  },
+  "InviteUnpublished": {
+    "title": "Este convite ainda não foi publicado",
+    "desc": "Os noivos ainda estão a preparar tudo. Voltem a abrir este link mais tarde.",
+    "previewBadge": "Pré-visualização · ainda não publicado",
+    "rsvpNote": "A confirmação de presença fica ativa quando o convite for publicado."
+  },
+  "Trial": {
+    "limitReached": "Este evento está em modo de experiência e já chegou ao limite de {n} {items}. Os noivos podem ativar o Plano Completo para envios ilimitados.",
+    "photos": "fotos",
+    "messages": "mensagens",
+    "banner": "Modo de experiência: {used} de {n} {items}. Ativem o Plano Completo para envios ilimitados.",
+    "bannerBtn": "Ativar Plano Completo"
   },
   "EventExpired": {
     "title": "Este convite já não está disponível",
@@ -1618,13 +1637,13 @@ const pt = {
   },
   "PricingPage": {
     "title": "Um só preço. Tudo incluído.",
-    "desc": "Pagamento único por evento, sem mensalidades. O convite e todas as funcionalidades, ou um convite desenhado só para vocês.",
+    "desc": "Preparem tudo de graça e paguem só quando publicarem. Pagamento único por evento, sem mensalidades.",
     "full": {
       "tag": "Para casais",
       "name": "Plano Completo",
       "launchLabel": "Preço de lançamento",
       "per": "por evento",
-      "note": "Pagamento único · IVA incluído",
+      "note": "Paga-se ao publicar · Pagamento único · IVA incluído",
       "features": [
         "Convite digital no modelo que escolherem",
         "RSVP com menus e restrições alimentares",
@@ -1672,6 +1691,7 @@ const pt = {
     "faq": {
       "title": "Perguntas sobre preços",
       "items": [
+        { "q": "Posso experimentar antes de pagar?", "a": "Sim. Preparem tudo de graça e sem prazo: o convite, os convidados, as mesas e o Save the Date. Só pagam quando publicarem o convite para os convidados." },
         { "q": "Há mensalidades ou custos escondidos?", "a": "Não. Para casais é um pagamento único por evento, com IVA incluído." },
         { "q": "O que acontece depois do casamento?", "a": "O convite e o painel ficam disponíveis até 60 dias depois do casamento, para descarregarem com calma as fotos e as mensagens dos convidados." },
         { "q": "Já tínhamos comprado módulos soltos. Pagamos tudo outra vez?", "a": "Não. Ao ativarem o Plano Completo pagam só a diferença para o que já têm." },

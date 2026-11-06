@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGuestLink, invalidateGuestLink } from "./useGuestLink";
 import { DEMO_INVITATION_ID, DEMO_GUESTS, DEMO_DIETARY_TAGS } from "./demoGuests";
+import { useInviteMode } from "./InviteMode";
 import pt from "@/dictionaries/pt";
 import en from "@/dictionaries/en";
 
@@ -184,6 +185,18 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
 
   const s0 = dict.step0;
   const s1 = dict.step1;
+
+  // Pré-visualização de um convite por publicar: o RSVP fica inativo, para
+  // quem gere o evento não alterar a lista real ao experimentar.
+  const { unpublished } = useInviteMode();
+  if (unpublished && !isDemo) {
+    const note = (dictionaries[locale]?.InviteUnpublished || dictionaries.pt.InviteUnpublished).rsvpNote;
+    return (
+      <section id="rsvp" className="py-24 px-6 bg-white border-t border-neutral-100 font-sans">
+        <p className="max-w-md mx-auto text-center text-sm text-neutral-500 italic border border-dashed border-neutral-200 rounded-sm px-6 py-8">{note}</p>
+      </section>
+    );
+  }
 
   return (
     <section id="rsvp" className="py-24 px-6 bg-white border-t border-neutral-100 font-sans">

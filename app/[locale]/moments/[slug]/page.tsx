@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
+import { trialRemaining, TRIAL_LIMIT, type TrialKind } from "@/lib/trial";
 import { useParams } from 'next/navigation';
 import { useBrand } from "@/components/site/BrandProvider";
 import { resolveBrandById } from "@/lib/brands";
@@ -138,12 +139,24 @@ export default function GuestMomentsPage() {
     });
   };
 
+  // Modo de experiência (lib/trial.ts): antes de o Plano Completo estar pago,
+  // no máximo TRIAL_LIMIT fotos e mensagens por evento.
+  const trialMessage = (kind: TrialKind) => {
+    const t = dictionaries[currentLocale]?.Trial || dictionaries.pt.Trial;
+    return t.limitReached.replace("{n}", String(TRIAL_LIMIT[kind])).replace("{items}", kind === "photo_sharing" ? t.photos : t.messages);
+  };
+
   const handleUploadProcess = async (files: FileList | null, isPrivate: boolean, type: string = 'media') => {
     if (!files || files.length === 0 || !invitation) return;
+    const kind: TrialKind = isPrivate ? 'guestbook' : 'photo_sharing';
+    const remaining = await trialRemaining(invitation.id, kind);
+    if (remaining <= 0) { alert(trialMessage(kind)); return; }
+    const toSend = Array.from(files).slice(0, Number.isFinite(remaining) ? remaining : undefined);
+    if (toSend.length < files.length) alert(trialMessage(kind));
     setUploading(true);
     setUploadProgress(5);
     let completed = 0;
-    for (const file of Array.from(files)) {
+    for (const file of toSend) {
       const processed = await compressImage(file);
       const prefix = isPrivate ? 'private_gb_' : '';
       const fileName = `${prefix}${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
@@ -155,7 +168,7 @@ export default function GuestMomentsPage() {
           await supabase.from('guestbook').insert([{ invitation_id: invitation.id, tipo: type, conteudo: publicUrl, autor: autor || 'Anónimo' }]);
         }
         completed++;
-        setUploadProgress(Math.round((completed / files.length) * 100));
+        setUploadProgress(Math.round((completed / toSend.length) * 100));
       }
     }
     if (!isPrivate) await fetchFotos(invitation.id);
@@ -204,11 +217,6 @@ export default function GuestMomentsPage() {
     return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
   }
 
-  if (!invitation?.unlocked_modules?.includes('photo_sharing')) {
-    const unavailableDict = dictionaries[currentLocale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
-    const footerText = (dictionaries[currentLocale]?.EventExpired || dictionaries.pt.EventExpired).footerText;
-    return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} footerText={footerText} brandName={eventBrand?.name ?? brand.name} />;
-  }
 
   return (
     <div className="fixed inset-0 z-[100] bg-white overflow-y-auto font-montserrat">
@@ -281,7 +289,9 @@ export default function GuestMomentsPage() {
             <div className="space-y-6">
               <input type="text" placeholder={dict.modal.namePlaceholder} className="w-full bg-gray-50 p-4 rounded-2xl border-none outline-none font-bold text-sm" value={autor} onChange={e => setAutor(e.target.value)} />
               {modalType === 'text' && (<><textarea placeholder={dict.modal.textPlaceholder} className="w-full bg-gray-50 p-4 rounded-2xl h-40 border-none outline-none font-medium text-sm resize-none" value={textoMensagem} onChange={e => setTextoMensagem(e.target.value)} /><button onClick={async () => {
-                if(!textoMensagem) return; setUploading(true);
+                if(!textoMensagem) return;
+                if ((await trialRemaining(invitation.id, 'guestbook')) <= 0) { alert(trialMessage('guestbook')); return; }
+                setUploading(true);
                 await supabase.from('guestbook').insert([{ invitation_id: invitation.id, tipo: 'texto', conteudo: textoMensagem, autor: autor || 'Anónimo' }]);
                 setUploading(false); setModalType(null); setTextoMensagem(""); alert(dict.alerts.textSent);
               }} className={`w-full py-5 ${premiumGradient} text-gold-soft rounded-2xl font-bold uppercase text-xs tracking-[0.2em] shadow-xl flex items-center justify-center gap-2`}><Send size={16}/> {dict.modal.submitBtn}</button></>)}

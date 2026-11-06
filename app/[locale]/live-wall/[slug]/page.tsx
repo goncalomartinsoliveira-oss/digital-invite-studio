@@ -126,11 +126,8 @@ export default function LiveWallPage() {
     return <EventExpiredScreen title={expiredDict.title} desc={expiredDict.desc} footerText={expiredDict.footerText} brandName={eventBrand?.name ?? brand.name} />;
   }
 
-  if (invitation && !invitation.unlocked_modules?.includes('photo_sharing')) {
-    const unavailableDict = dictionaries[currentLocale]?.ModuleUnavailable || dictionaries.pt.ModuleUnavailable;
-    const footerText = (dictionaries[currentLocale]?.EventExpired || dictionaries.pt.EventExpired).footerText;
-    return <EventExpiredScreen title={unavailableDict.title} desc={unavailableDict.desc} footerText={footerText} brandName={eventBrand?.name ?? brand.name} />;
-  }
+  // Antes de pagar, o Live Wall funciona em modo de experiência (mostra o que
+  // houver, no máximo TRIAL_LIMIT fotos — ver lib/trial.ts).
 
   if (loading) return (
     <div className="h-screen bg-[#111] flex flex-col items-center justify-center text-white font-montserrat">
