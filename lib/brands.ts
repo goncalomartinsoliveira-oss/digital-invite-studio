@@ -66,7 +66,7 @@ export async function resolveBrandById(sb: any, id?: string): Promise<WorkingBra
 export async function resolveWorkingBrand(sb: any, email: string, domainBrandId: string): Promise<WorkingBrand | null> {
   if (domainBrandId !== "dis" || !email) return null;
   // super_admins/brand_members guardam o email normalizado (trim+minúsculas,
-  // ver MembersManagementView) — comparar aqui com o email em bruto da sessão
+  // ver BrandMembersPanel) — comparar aqui com o email em bruto da sessão
   // falha sempre que a capitalização não bater certo (ex.: login por Google
   // devolve maiúsculas onde o email foi escrito em minúsculas). Foi isto que
   // fez um evento criado por um wedding planner ficar preso à marca "dis" em

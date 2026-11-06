@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { BRANDS } from "@/lib/brands";
 import { isArchivedEvent, isExpiredEvent } from "@/lib/eventArchive";
-import { ExternalLink, Users, CheckCircle2, Archive, Mail, Trash2, Loader2, X } from "lucide-react";
+import { ExternalLink, Users, CheckCircle2, Archive, Mail, Trash2, Loader2, X, Search } from "lucide-react";
 
 interface AdminManagementViewProps {
   events: any[];                                   // eventos no âmbito (marca ou todas)
@@ -15,6 +15,7 @@ interface AdminManagementViewProps {
   // Só super admin: avisar os noivos do fim do prazo e apagar o conteúdo dos
   // expirados (app/api/admin/expiry-notice e event-cleanup).
   canCleanup?: boolean;
+  initialTab?: "active" | "archived";
 }
 
 type CleanupResult = { id: string; name: string; ok?: boolean; skipped?: string; error?: string; warning?: string; files?: number; guests?: number; messages?: number };
@@ -31,11 +32,19 @@ async function adminPost(path: string, body: unknown) {
   return json;
 }
 
-export default function AdminManagementView({ events, guestCounts, showBrand, brands, locale, onOpen, canCleanup }: AdminManagementViewProps) {
+export default function AdminManagementView({ events: allEvents, guestCounts, showBrand, brands, locale, onOpen, canCleanup, initialTab = "active" }: AdminManagementViewProps) {
   const en = locale === "en";
   const t = {
-    title: en ? "Event management" : "Gestão de eventos",
-    subtitle: en ? "Overview of all active events." : "Visão geral de todos os eventos ativos.",
+    title: en ? "All events" : "Todos os eventos",
+    subtitle: en ? "Every event, with filters by partner and by publication." : "Todos os eventos, com filtros por parceiro e por publicação.",
+    search: en ? "Search couple or email…" : "Pesquisar casal ou e-mail…",
+    allBrands: en ? "All partners" : "Todos os parceiros",
+    direct: en ? "Direct (DIS)" : "Diretos (DIS)",
+    allPub: en ? "Published or not" : "Publicados ou não",
+    published: en ? "Published" : "Publicado",
+    unpublished: en ? "Not published" : "Por publicar",
+    publishedPlural: en ? "Published" : "Publicados",
+    unpublishedPlural: en ? "Not published" : "Por publicar",
     couple: en ? "Couple" : "Casal",
     brand: en ? "Brand" : "Marca",
     date: en ? "Event date" : "Data do evento",
@@ -89,7 +98,19 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
   const [purged, setPurged] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [purgeModal, setPurgeModal] = useState<null | { ids: string[]; plan: CleanupResult[] | null; typed: string; running: boolean; done: CleanupResult[] | null; error?: string }>(null);
-  const [tab, setTab] = useState<"active" | "archived">("active");
+  const [tab, setTab] = useState<"active" | "archived">(initialTab);
+  const [q, setQ] = useState("");
+  const [brandFilter, setBrandFilter] = useState("all");
+  const [pubFilter, setPubFilter] = useState<"all" | "published" | "unpublished">("all");
+  const isPublished = (ev: any) => (ev.unlocked_modules || []).includes("invite");
+  const events = allEvents.filter(ev => {
+    if (brandFilter !== "all" && (ev.brand_id || "dis") !== brandFilter) return false;
+    if (pubFilter !== "all" && isPublished(ev) !== (pubFilter === "published")) return false;
+    const needle = q.trim().toLowerCase();
+    if (needle && ![ev.groom_name, ev.bride_name, ev.slug, ev.user_email].filter(Boolean).join(" ").toLowerCase().includes(needle)) return false;
+    return true;
+  });
+  const brandIds = Array.from(new Set(allEvents.map(ev => ev.brand_id || "dis")));
 
   const now = new Date();
   const fmtDate = (d?: string) => {
@@ -180,7 +201,7 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
     <div>
       <div className="mb-8">
         <h1 className="font-serif text-4xl sm:text-5xl text-brand font-light italic mb-3">{t.title}</h1>
-        <p className="text-gray-500 text-sm">{t.subtitle} · <span className="font-semibold">{events.length}</span> {t.total}</p>
+        <p className="text-gray-500 text-sm">{t.subtitle} · <span className="font-semibold">{allEvents.length}</span> {t.total}</p>
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <div role="tablist" className="inline-flex bg-white border border-gray-100 rounded-full p-1 shadow-sm">
             {(["active", "archived"] as const).map(id => (
@@ -197,6 +218,23 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
             ))}
           </div>
           {showArchived && <p className="text-xs text-gray-400">{t.archivedHint}</p>}
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="relative">
+            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
+            <input value={q} onChange={e => setQ(e.target.value)} placeholder={t.search} className="pl-8 pr-3 py-2 text-[12px] bg-white border border-gray-200 rounded-full outline-none focus:border-brand w-56" />
+          </div>
+          {showBrand && brandIds.length > 1 && (
+            <select aria-label={t.brand} value={brandFilter} onChange={e => setBrandFilter(e.target.value)} className="py-2 px-3 text-[12px] bg-white border border-gray-200 rounded-full outline-none focus:border-brand">
+              <option value="all">{t.allBrands}</option>
+              {brandIds.map(id => <option key={id} value={id}>{id === "dis" ? t.direct : brandName(id)}</option>)}
+            </select>
+          )}
+          <select aria-label={t.published} value={pubFilter} onChange={e => setPubFilter(e.target.value as any)} className="py-2 px-3 text-[12px] bg-white border border-gray-200 rounded-full outline-none focus:border-brand">
+            <option value="all">{t.allPub}</option>
+            <option value="published">{t.publishedPlural}</option>
+            <option value="unpublished">{t.unpublishedPlural}</option>
+          </select>
         </div>
         {showArchived && canCleanup && (() => {
           const toNotify = archivedEvents.filter(ev => !isExpiredEvent(ev) && !noticeAt(ev) && ev.user_email).map(ev => ev.id);
@@ -270,7 +308,10 @@ export default function AdminManagementView({ events, guestCounts, showBrand, br
                             <span className="text-[11px] text-gray-600 whitespace-nowrap">{fmtDate(ev.expires_at)}</span>
                           )
                         ) : (
-                          <span className={`inline-block text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${st.cls}`}>{st.label}</span>
+                          <span className="flex flex-wrap gap-1.5">
+                            <span className={`inline-block text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${st.cls}`}>{st.label}</span>
+                            <span className={`inline-block text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${isPublished(ev) ? "bg-brand/5 text-brand" : "bg-amber-50 text-amber-700"}`}>{isPublished(ev) ? t.published : t.unpublished}</span>
+                          </span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-center">

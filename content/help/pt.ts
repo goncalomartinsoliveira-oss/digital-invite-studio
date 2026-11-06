@@ -107,7 +107,7 @@ export const helpPt: HelpContent = {
         "No topo, a lista **O que falta fazer** mostra os passos que ainda faltam e leva-vos a cada um.",
         "Carreguem num cartão para entrar nessa área. Lá dentro, o menu à esquerda muda de separador e **Áreas** volta à página inicial. Em ecrãs pequenos o menu fica em baixo.",
         "No **Convite**, o telemóvel à direita mostra o convite como os convidados o vão ver e atualiza sozinho depois de gravar.",
-        "**Minha Conta**, no fundo do menu, tem a vossa equipa, as compras e a password.",
+        "**Minha Conta**, no fundo do menu, tem quatro blocos: **O vosso plano**, **Pagamentos**, **Equipa do evento** e **Os vossos dados**.",
       ],
       tips: [
         "Podem preparar tudo antes de pagar. Para os convidados abrirem o convite, carreguem em **Publicar convite**.",
@@ -507,17 +507,17 @@ export const helpPt: HelpContent = {
       steps: [
         "Enquanto preparam, podem usar todo o painel sem pagar: convite, convidados, mesas, Save the Date (com marca d'água) e, para experimentar, até 5 fotos e 5 mensagens no livro de visitas.",
         "O botão **Pré-visualizar** mostra-vos o convite completo. Os convidados só o conseguem abrir depois de publicado.",
-        "Quando estiver tudo pronto, carreguem em **Publicar convite** (no topo do painel ou em **Prontos para enviar?**, na página inicial do painel).",
+        "Quando estiver tudo pronto, carreguem em **Publicar convite** (no topo do painel, em **Prontos para enviar?**, na página inicial do painel, ou em **Minha Conta** › **O vosso plano**).",
         "Se tiverem um código promocional, carreguem em **Tenho um código promocional** e escrevam-no antes de pagar.",
         "O pagamento faz-se num ecrã seguro. Quando termina, o convite fica publicado e tudo desbloqueado: RSVP, Save the Date sem marca d'água, fotos e mensagens sem limite.",
-        "O histórico de pagamentos está em **Minha Conta** › **Histórico de Compras**.",
+        "Em **Minha Conta**, o bloco **O vosso plano** mostra se o convite está publicado e até quando fica online, e o bloco **Pagamentos** mostra o que já pagaram.",
       ],
       tips: [
         "O preço atual está na página **Preços**. É um pagamento único por evento, com IVA incluído.",
         "Se já tinham comprado algum módulo à peça, pagam só a diferença.",
         "Depois da primeira compra, a data do casamento fica bloqueada.",
       ],
-      faq: [{ q: "Fica registada a compra?", a: "Sim. Cada pagamento aparece em **Histórico de Compras**, com o estado **Pago**, **Pendente**, **Falhou** ou **Reembolsado**." }],
+      faq: [{ q: "Fica registada a compra?", a: "Sim. Cada pagamento aparece em **Minha Conta** › **Pagamentos**, com o estado **Pago**, **Pendente**, **Falhou** ou **Reembolsado**." }],
       related: ["change-date", "panel-overview"],
     },
     {
@@ -526,17 +526,17 @@ export const helpPt: HelpContent = {
       title: "Como dou acesso a outra pessoa?",
       summary: "Podem partilhar o evento com o vosso par, a família ou um wedding planner.",
       shots: [
-        { file: "collaborators", alt: "O cartão “Colaboradores” em Minha Conta, com o e-mail, a permissão e a lista de pessoas com acesso." },
+        { file: "collaborators", alt: "O bloco “Equipa do evento” em Minha Conta, com o dono do evento, o e-mail, a permissão e a lista de pessoas com acesso." },
       ],
       steps: [
-        "Abram **Minha Conta** e vão a **Colaboradores**.",
+        "Abram **Minha Conta** e vão a **Equipa do evento**.",
         "Escrevam o e-mail da pessoa.",
         "Escolham **Pode Editar** (mexe em tudo) ou **Apenas Leitura** (só vê).",
         "Carreguem em **Convidar**.",
       ],
       tips: [
         "A pessoa entra com esse e-mail e vê o evento em **Partilhados Comigo**. Se ainda não tiver conta, cria uma com o mesmo e-mail.",
-        "Para retirar o acesso, removam a pessoa da lista de colaboradores.",
+        "Para retirar o acesso, removam a pessoa da lista. Só quem pode editar o evento consegue convidar ou remover pessoas.",
       ],
       related: ["login-password"],
     },
@@ -548,7 +548,7 @@ export const helpPt: HelpContent = {
       steps: [
         "**Esqueci-me:** no ecrã de login, carreguem em **Esqueceu-se?**, escrevam o e-mail e carreguem em **Enviar Link de Recuperação**.",
         "Abram o e-mail (vejam também o SPAM) e sigam o link para escolher uma nova password.",
-        "**Quero mudar:** em **Minha Conta**, escrevam a **Nova Password** (mínimo 6 caracteres) e gravem.",
+        "**Quero mudar:** em **Minha Conta** › **Os vossos dados**, escrevam a **Nova Password** (mínimo 6 caracteres) e gravem.",
       ],
       related: ["collaborators"],
     },

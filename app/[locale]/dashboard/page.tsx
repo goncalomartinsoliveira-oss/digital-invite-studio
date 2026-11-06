@@ -3,14 +3,14 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { Plus, Calendar, Archive, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Tag, Wallet, CalendarClock, Store, ShieldCheck, Handshake } from "lucide-react";
+import { Plus, Calendar, Archive, LogOut, ArrowRight, Users, Loader2, ArrowLeft, LayoutGrid, Table, Building2, Ticket, Gauge, CalendarClock, Store, ShieldCheck, Handshake, UserCog } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBrand } from "@/components/site/BrandProvider";
 import { BRANDS, resolveWorkingBrand, type WorkingBrand } from "@/lib/brands";
 import { fetchPlannerPlan, type PlannerPlan } from "@/lib/planner";
 import { isArchivedEvent } from "@/lib/eventArchive";
 import AdminManagementView from "@/components/dashboard/AdminManagementView";
-import MembersManagementView from "@/components/dashboard/MembersManagementView";
+import InternalTeamView from "@/components/dashboard/InternalTeamView";
 import BrandsManagementView from "@/components/dashboard/BrandsManagementView";
 import CouponsManagementView from "@/components/dashboard/CouponsManagementView";
 import BusinessOverviewView from "@/components/dashboard/BusinessOverviewView";
@@ -19,7 +19,6 @@ import VendorsView from "@/components/dashboard/VendorsView";
 import AdminMenu from "@/components/dashboard/AdminMenu";
 import PartnerAreaView from "@/components/dashboard/PartnerAreaView";
 import CommissionsView from "@/components/dashboard/CommissionsView";
-import PlannerPilotCard from "@/components/dashboard/PlannerPilotCard";
 
 // 1. IMPORTAR OS DICIONÁRIOS (3 níveis para trás a partir de app/[locale]/dashboard/)
 import pt from "../../../dictionaries/pt";
@@ -52,7 +51,9 @@ export default function DashboardHub() {
   const [plannerPlan, setPlannerPlan] = useState<PlannerPlan | null>(null);
   // Separador da lista de eventos: ativos ou arquivados (casamento já passou).
   const [listTab, setListTab] = useState<'active' | 'archived'>('active');
-  const [viewMode, setViewMode] = useState<'events' | 'planning' | 'vendors' | 'admin' | 'members' | 'brands' | 'coupons' | 'pricing' | 'business' | 'partner' | 'commissions'>('events');
+  const [viewMode, setViewMode] = useState<'events' | 'planning' | 'vendors' | 'admin' | 'team' | 'brands' | 'coupons' | 'business' | 'partner' | 'commissions'>('events');
+  // Administração › Todos os eventos: abrir já em "Arquivados" (atalho da Visão geral).
+  const [adminTab, setAdminTab] = useState<'active' | 'archived'>('active');
   // Área "Parceiro": membros de um parceiro com recomendação ou preço de parceiro ligados.
   const [hasPartnerArea, setHasPartnerArea] = useState(false);
 
@@ -253,7 +254,6 @@ export default function DashboardHub() {
   const canManageMembers = isSuperAdmin && brand.id === "dis";
   const canManageBrands = isSuperAdmin && brand.id === "dis";
   const canManageCoupons = isSuperAdmin && brand.id === "dis";
-  const canManagePricing = isSuperAdmin && brand.id === "dis";
   const canViewBusiness = isSuperAdmin && brand.id === "dis";
   const moduleNamesDict = dictionaries[locale]?.ModuleNames || dictionaries.pt.ModuleNames;
   const bundleOffersDict = dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers;
@@ -319,14 +319,16 @@ export default function DashboardHub() {
                 label={locale === 'en' ? 'Administration' : 'Administração'}
                 icon={<ShieldCheck size={12} />}
                 active={viewMode}
-                onSelect={(id) => setViewMode(id)}
+                onSelect={(id) => { setAdminTab('active'); setViewMode(id); }}
                 items={[
-                  { id: 'admin' as const, label: locale === 'en' ? 'Management' : 'Gestão', icon: <Table size={12} /> },
-                  ...(canManageMembers ? [{ id: 'members' as const, label: locale === 'en' ? 'Members' : 'Membros', icon: <Users size={12} /> }] : []),
+                  // Super admin (DIS), por ordem de uso: Visão geral, Todos os eventos,
+                  // Parceiros, Comissões, Cupões, Equipa interna. Agências: só a tabela de eventos.
+                  ...(canViewBusiness ? [{ id: 'business' as const, label: locale === 'en' ? 'Overview' : 'Visão geral', icon: <Gauge size={12} /> }] : []),
+                  { id: 'admin' as const, label: canViewBusiness ? (locale === 'en' ? 'All events' : 'Todos os eventos') : (locale === 'en' ? 'Management' : 'Gestão'), icon: <Table size={12} /> },
                   ...(canManageBrands ? [{ id: 'brands' as const, label: locale === 'en' ? 'Partners' : 'Parceiros', icon: <Building2 size={12} /> }] : []),
-                  ...(canManageCoupons ? [{ id: 'coupons' as const, label: locale === 'en' ? 'Coupons' : 'Cupões', icon: <Ticket size={12} /> }] : []),
-                  ...(canViewBusiness ? [{ id: 'business' as const, label: locale === 'en' ? 'Business' : 'Negócio', icon: <Wallet size={12} /> }] : []),
                   ...(canViewBusiness ? [{ id: 'commissions' as const, label: locale === 'en' ? 'Commissions' : 'Comissões', icon: <Handshake size={12} /> }] : []),
+                  ...(canManageCoupons ? [{ id: 'coupons' as const, label: locale === 'en' ? 'Coupons' : 'Cupões', icon: <Ticket size={12} /> }] : []),
+                  ...(canManageMembers ? [{ id: 'team' as const, label: locale === 'en' ? 'Internal team' : 'Equipa interna', icon: <UserCog size={12} /> }] : []),
                 ]}
               />
             </div>
@@ -367,10 +369,8 @@ export default function DashboardHub() {
             onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
           />
         ) : viewMode === 'admin' && canManage ? (
-          <>
-          {/* Medir o piloto: só super-admin no DIS. */}
-          {canViewBusiness && <PlannerPilotCard locale={locale} />}
           <AdminManagementView
+            key={adminTab}
             events={adminInvites}
             guestCounts={guestCounts}
             showBrand={showBrandColumn}
@@ -378,15 +378,10 @@ export default function DashboardHub() {
             locale={locale}
             onOpen={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
             canCleanup={isSuperAdmin && brand.id === "dis"}
+            initialTab={adminTab}
           />
-          </>
-        ) : viewMode === 'members' && canManageMembers ? (
-          <MembersManagementView
-            brands={manageableBrands}
-            isSuperAdmin={isSuperAdmin}
-            currentEmail={userEmail}
-            locale={locale}
-          />
+        ) : viewMode === 'team' && canManageMembers ? (
+          <InternalTeamView currentEmail={userEmail} locale={locale} />
         ) : viewMode === 'brands' && canManageBrands ? (
           <BrandsManagementView locale={locale} />
         ) : viewMode === 'coupons' && canManageCoupons ? (
@@ -396,6 +391,10 @@ export default function DashboardHub() {
             locale={locale}
             moduleNames={moduleNamesDict}
             onOpenEvent={(slug) => router.push(`/${params.locale}/dashboard/${slug}`)}
+            onGo={(v) => {
+              if (v === 'archived') { setAdminTab('archived'); setViewMode('admin'); }
+              else setViewMode(v);
+            }}
           />
         ) : (
         <>
