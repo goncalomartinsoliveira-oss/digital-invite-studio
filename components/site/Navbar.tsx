@@ -31,7 +31,7 @@ export default function Navbar({ brand }: { brand?: Brand }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (pathname.includes("/invite") || pathname.includes("/dashboard") || pathname.includes("/login")) {
+  if (pathname.includes("/invite") || pathname.includes("/dashboard") || pathname.includes("/login") || pathname.includes("/preview/")) {
     return null;
   }
 

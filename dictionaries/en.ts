@@ -124,6 +124,25 @@ const en = {
       "btnSecondary": "See plans and pricing"
     }
   },
+  "PreviewShowroom": {
+    "back": "Back",
+    "eyebrow": "Live invitation",
+    "tryTitle": "Try it",
+    "try": [
+      "Tap the envelope to open it.",
+      "Scroll to see the story, the schedule and the map.",
+      "In the RSVP, search for “Silva” and reply for the family."
+    ],
+    "useBtn": "Use this design",
+    "bespokeBtn": "I'd like a bespoke invitation",
+    "qrTitle": "Open on your phone",
+    "qrDesc": "Point your camera and see the invitation as your guests will.",
+    "otherTemplates": "Other designs",
+    "demoNote": "Example with made-up details. Nothing you do here is saved.",
+    "restart": "Start over",
+    "info": "About this design",
+    "close": "Close"
+  },
   "Navbar": {
     "features": "Features",
     "pricing": "Pricing",

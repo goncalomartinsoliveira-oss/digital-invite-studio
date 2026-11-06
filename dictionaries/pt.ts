@@ -124,6 +124,25 @@ const pt = {
       "btnSecondary": "Ver planos e preços"
     }
   },
+  "PreviewShowroom": {
+    "back": "Voltar",
+    "eyebrow": "Convite ao vivo",
+    "tryTitle": "Experimente",
+    "try": [
+      "Toque no envelope para o abrir.",
+      "Deslize para ver a história, o programa e o mapa.",
+      "No RSVP, procure «Silva» e confirme pela família."
+    ],
+    "useBtn": "Usar este modelo",
+    "bespokeBtn": "Quero um convite à medida",
+    "qrTitle": "Abrir no seu telemóvel",
+    "qrDesc": "Aponte a câmara e veja o convite como os convidados o vão ver.",
+    "otherTemplates": "Outros modelos",
+    "demoNote": "Exemplo com dados fictícios. Nada do que fizer aqui é guardado.",
+    "restart": "Recomeçar",
+    "info": "Sobre este modelo",
+    "close": "Fechar"
+  },
   "Navbar": {
     "features": "Funcionalidades",
     "pricing": "Preços",

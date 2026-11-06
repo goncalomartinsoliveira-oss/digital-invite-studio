@@ -4,8 +4,8 @@
 // um evento novo leem todos daqui. Para pôr um modelo novo no ar:
 //   1. Criar o desenho em app/[locale]/templates/<id>/page.tsx.
 //   2. Ligá-lo em app/[locale]/invite/[slug]/page.tsx (escolha por template_id).
-//   3. Criar a página de exemplo em app/[locale]/preview/<id>/page.tsx
-//      (copiar a do renaissance-blue-01 e trocar o modelo e os dados).
+//   3. Juntar o desenho e os dados fictícios em app/[locale]/preview/demos.tsx
+//      (TEMPLATE_DEMOS). A sala de demonstração /preview/<id> aparece sozinha.
 //   4. Imagens: public/home/tpl-<id>.jpg (telemóvel, 480×984, o topo do convite)
 //      e uma miniatura para o seletor (proporção 4:3).
 //   5. Acrescentar a entrada em INVITE_TEMPLATES e baixar COMING_SOON_SLOTS.
