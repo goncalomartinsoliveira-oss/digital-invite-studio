@@ -195,6 +195,11 @@ const pt = {
       ],
       "labelMessage": "Mensagem",
       "placeholderMessage": "Como podemos ajudar?",
+      "partnerTypes": {
+        "recomendar": "Gostaria de receber as condições para recomendar a Digital Invite Studio (programa de recomendação).",
+        "revender": "Gostaria de receber as condições para revender a Digital Invite Studio aos meus clientes.",
+        "wedding-planner": "Gostaria de receber as condições de parceria para wedding planners (revenda, Planeamento e marca própria)."
+      },
       "btnSubmit": "Enviar Mensagem",
       "btnSending": "A enviar...",
       "errorMessage": "Não foi possível enviar a mensagem. Tente novamente ou escreva para hello@digitalinvitestudio.com."
@@ -253,6 +258,11 @@ const pt = {
     "openInvite": "Abrir Convite",
     "previewInvite": "Pré-visualizar",
     "publishBtn": "Publicar convite",
+    "payer": {
+      "title": "Quem paga a publicação deste convite?",
+      "partner": { "label": "A agência", "desc": "Publicam vocês, ao preço de parceiro, e incluem o convite no vosso serviço." },
+      "couple": { "label": "Os noivos", "desc": "Os noivos publicam no painel deles, ao preço normal." }
+    },
     "publishPlanBtn": "Ativar Plano Completo",
     "stdWatermark": "PRÉ-VISUALIZAÇÃO · DIGITAL INVITE STUDIO",
     "stdWatermarkNote": "Enquanto não ativarem o Plano Completo, o cartão sai com marca d'água.",
@@ -809,6 +819,8 @@ const pt = {
     "subtitle": "Preparem tudo à vontade, sem pagar. Quando estiverem prontos, um só pagamento publica o convite e desbloqueia tudo.",
     "buyBtn": "Publicar convite",
     "launchLabel": "Preço de lançamento",
+    "partnerLabel": "Preço de parceiro",
+    "volumeLabel": "Preço de volume",
     "upgradeNote": "Já têm alguns módulos: pagam só a diferença. Pagamento único, IVA incluído.",
     "oneTime": "Pagamento único por evento, IVA incluído.",
     "couponToggleLabel": "Tenho um código promocional",
@@ -1695,8 +1707,8 @@ const pt = {
       "title": "Os vossos casamentos, organizados num só sítio.",
       "titleAccent": "E convites com a vossa marca.",
       "desc": "Orçamento, fornecedores, tarefas e cronograma de todos os casamentos num só painel, e cada casal com o convite digital completo, RSVP, mesas, fotos e livro de visitas.",
-      "ctaPrimary": "Marcar uma demonstração",
-      "ctaSecondary": "Ver planos e preços"
+      "ctaPrimary": "Pedir condições",
+      "ctaSecondary": "Ver formas de parceria"
     },
     "planning": {
       "tag": "O dia a dia da agência",
@@ -1724,7 +1736,7 @@ const pt = {
     "couples": {
       "tag": "O que os vossos noivos recebem",
       "title": "O Plano Completo, em cada casamento",
-      "desc": "Convite digital, RSVP com menus e restrições alimentares, plano de mesas, Save the Date, fotos com Live Wall e livro de visitas. Incluído no vosso plano: os noivos não pagam nada à parte.",
+      "desc": "Convite digital, RSVP com menus e restrições alimentares, plano de mesas, Save the Date, fotos com Live Wall e livro de visitas. Vocês decidem se o incluem no vosso serviço ou se são os noivos a pagar.",
       "cta": "Ver um convite ao vivo"
     },
     "modelsTitle": "Dois modelos para terem a vossa marca",
@@ -1751,38 +1763,30 @@ const pt = {
         ]
       }
     },
-    "plans": {
-      "tag": "Planos e preços",
-      "title": "Um plano mensal, à medida do vosso volume",
-      "perMonth": "/mês",
-      "vat": "IVA incluído",
-      "events": "{n} convites ativos",
-      "perInvite": "cerca de {v} por convite ativo",
-      "popular": "Mais escolhido",
-      "descs": {
-        "solo": "Para quem organiza até cerca de 5 casamentos por ano.",
-        "profissional": "Para quem organiza até cerca de 12 casamentos por ano.",
-        "agencia": "Para equipas com até cerca de 30 casamentos por ano."
-      },
-      "includesAll": "Todos os planos incluem o Planeamento completo, a vossa marca e o Plano Completo em cada convite.",
-      "slotNote": "Cada convite ocupa uma vaga até ao dia do casamento. No dia seguinte, a vaga fica livre para o próximo.",
-      "annual": "No plano anual, 2 meses grátis.",
-      "cta": "Marcar uma demonstração"
+    "ways": {
+      "tag": "Formas de trabalhar connosco",
+      "title": "Escolham a parceria que faz sentido para vós",
+      "desc": "Enviamos as condições do tipo de parceria que vos interessa. Sem compromisso.",
+      "cta": "Pedir condições",
+      "items": [
+        { "key": "recomendar", "title": "Recomendar", "who": "Fotógrafos, quintas, empresas de convites, wedding planners", "desc": "Recomendam a Digital Invite Studio aos vossos noivos com um link e um código próprios e recebem uma comissão por cada casal que publica o convite. Acompanham tudo numa área própria." },
+        { "key": "revender", "title": "Revender", "who": "Empresas de convites, wedding planners", "desc": "Têm condições especiais para os eventos que gerem e incluem o convite digital no vosso serviço, ao preço que definirem para os vossos clientes." },
+        { "key": "wedding-planner", "title": "Wedding planner", "who": "Agências e wedding planners", "desc": "Tudo o que a revenda inclui, mais o Planeamento completo (orçamento, fornecedores, tarefas, cronograma, Esta semana) e, se quiserem, a vossa marca no produto. Sem mensalidades." }
+      ]
     },
     "faq": {
       "title": "Perguntas frequentes",
       "items": [
-        { "q": "O que conta como convite ativo?", "a": "Cada casamento conta desde que o criam no painel até ao dia do casamento. No dia seguinte, a vaga fica livre para outro casamento." },
+        { "q": "Quanto custa?", "a": "Depende do tipo de parceria. Peçam as condições e enviamos tudo o que se aplica ao vosso caso. Não há mensalidades: paga-se por casamento." },
+        { "q": "Os noivos pagam alguma coisa?", "a": "Vocês decidem, casamento a casamento: incluem o convite no vosso serviço ou deixam que sejam os noivos a publicá-lo no painel deles." },
         { "q": "O que acontece ao orçamento e aos fornecedores depois do casamento?", "a": "Ficam sempre guardados. Mesmo quando as fotos e a lista de convidados são apagadas, depois dos 60 dias, o orçamento, os fornecedores, os valores e as tarefas continuam disponíveis para consulta e para o histórico de preços." },
-        { "q": "Os noivos pagam alguma coisa?", "a": "Não. Cada convite dos vossos casamentos tem o Plano Completo incluído no vosso plano." },
-        { "q": "Posso mudar de plano?", "a": "Sim. Se o número de casamentos crescer, passam para o plano seguinte. Falem connosco." },
         { "q": "Já tenho tudo em Excel. Tenho de começar do zero?", "a": "Não. Convidados, tarefas e fornecedores importam-se a partir do Excel, com um modelo pronto a preencher." },
         { "q": "Posso usar a minha própria marca?", "a": "Sim. No modelo Domínio Próprio, a plataforma corre num endereço vosso com o vosso logótipo; no Parceiro Leve, o vosso logótipo aparece nos eventos que gerem." }
       ]
     },
-    "finalTitle": "Vamos mostrar-vos como funciona",
-    "finalDesc": "Uma demonstração curta, com os vossos casamentos em mente.",
-    "finalCta": "Marcar uma demonstração"
+    "finalTitle": "Vamos falar?",
+    "finalDesc": "Digam-nos que tipo de parceria vos interessa e enviamos as condições.",
+    "finalCta": "Pedir condições"
   },
   "SeatingPublic": {
     "notFound": "Evento não encontrado",

@@ -13,7 +13,6 @@ import AdminManagementView from "@/components/dashboard/AdminManagementView";
 import MembersManagementView from "@/components/dashboard/MembersManagementView";
 import BrandsManagementView from "@/components/dashboard/BrandsManagementView";
 import CouponsManagementView from "@/components/dashboard/CouponsManagementView";
-import BrandPricingView from "@/components/dashboard/BrandPricingView";
 import BusinessOverviewView from "@/components/dashboard/BusinessOverviewView";
 import AgencyOverviewView from "@/components/dashboard/AgencyOverviewView";
 import VendorsView from "@/components/dashboard/VendorsView";
@@ -308,9 +307,8 @@ export default function DashboardHub() {
                 items={[
                   { id: 'admin' as const, label: locale === 'en' ? 'Management' : 'Gestão', icon: <Table size={12} /> },
                   ...(canManageMembers ? [{ id: 'members' as const, label: locale === 'en' ? 'Members' : 'Membros', icon: <Users size={12} /> }] : []),
-                  ...(canManageBrands ? [{ id: 'brands' as const, label: locale === 'en' ? 'Brands' : 'Marcas', icon: <Building2 size={12} /> }] : []),
+                  ...(canManageBrands ? [{ id: 'brands' as const, label: locale === 'en' ? 'Partners' : 'Parceiros', icon: <Building2 size={12} /> }] : []),
                   ...(canManageCoupons ? [{ id: 'coupons' as const, label: locale === 'en' ? 'Coupons' : 'Cupões', icon: <Ticket size={12} /> }] : []),
-                  ...(canManagePricing ? [{ id: 'pricing' as const, label: locale === 'en' ? 'Pricing' : 'Preços', icon: <Tag size={12} /> }] : []),
                   ...(canViewBusiness ? [{ id: 'business' as const, label: locale === 'en' ? 'Business' : 'Negócio', icon: <Wallet size={12} /> }] : []),
                 ]}
               />
@@ -372,8 +370,6 @@ export default function DashboardHub() {
           <BrandsManagementView locale={locale} />
         ) : viewMode === 'coupons' && canManageCoupons ? (
           <CouponsManagementView locale={locale} />
-        ) : viewMode === 'pricing' && canManagePricing ? (
-          <BrandPricingView brands={manageableBrands} moduleNames={moduleNamesDict} bundleNames={bundleNamesDict} locale={locale} />
         ) : viewMode === 'business' && canViewBusiness ? (
           <BusinessOverviewView
             locale={locale}

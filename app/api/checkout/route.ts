@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { ALL_MODULE_IDS, type ModuleId } from "@/lib/modules";
-import { FULL_PLAN, fetchPricingOverrides, fullPlanPriceFor } from "@/lib/pricing";
+import { FULL_PLAN } from "@/lib/pricing";
+import { quoteFullPlan } from "@/lib/partnerPricing";
 import { isCouponValid, couponAppliesToOrder, applyCouponDiscount, MIN_CHECKOUT_TOTAL_CENTS, type Coupon } from "@/lib/coupons";
 
 // Cria uma sessão de checkout do Stripe para o Plano Completo de um evento
@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Dados em falta." }, { status: 400 });
     }
 
-    const { data: invite, error } = await supabase
+    const { data: invite, error } = await supabaseAdmin
       .from("invitations")
-      .select("id, unlocked_modules, brand_id")
+      .select("*")
       .eq("id", invitationId)
       .single();
 
@@ -37,9 +37,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Convite não encontrado." }, { status: 404 });
     }
 
-    // Preços diferenciados por parceiro/marca (lib/pricing.ts) — sem
-    // override para este brand_id, cai sempre no preço global.
-    const pricingOverrides = await fetchPricingOverrides(supabaseAdmin, invite.brand_id);
+    // Quem está a pagar (sessão opcional): nos eventos de parceiros com
+    // "pago eu", só a equipa do parceiro paga, ao preço de parceiro
+    // (lib/partnerPricing.ts). Os noivos desses eventos não podem pagar.
+    const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+    const buyerEmail = token ? (await supabaseAdmin.auth.getUser(token)).data?.user?.email ?? null : null;
+    const quote = await quoteFullPlan(supabaseAdmin, invite, buyerEmail);
+    if (!quote.canBuy) {
+      return NextResponse.json({ error: "A publicação deste convite é feita pelo vosso parceiro." }, { status: 403 });
+    }
 
     const alreadyUnlocked: string[] = invite.unlocked_modules || [];
     const toUnlock: ModuleId[] = ALL_MODULE_IDS.filter(m => !alreadyUnlocked.includes(m));
@@ -48,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
     void moduleIds; void bundleId; // pedidos antigos: compram sempre o plano
     const bundleUsed = FULL_PLAN.id;
-    const { cents: planCents, isUpgrade } = fullPlanPriceFor(alreadyUnlocked, pricingOverrides);
+    const { cents: planCents, isUpgrade } = quote;
 
     const origin = req.headers.get("origin") || `https://${req.headers.get("host")}`;
     const successUrl = `${origin}/${locale}/dashboard/${slug}?checkout=success`;
@@ -71,6 +77,10 @@ export async function POST(req: NextRequest) {
 
     // Cupões vivem só na tabela `coupons` (leitura restrita a super-admin
     // via RLS), por isso a validação usa sempre o cliente service_role.
+    // Os cupões são promoções para os noivos; não se somam ao preço de parceiro.
+    if (couponCode && couponCode.trim() && quote.partnerPrice) {
+      return NextResponse.json({ error: "Os códigos promocionais não se aplicam ao preço de parceiro." }, { status: 400 });
+    }
     let appliedCoupon: Coupon | null = null;
     if (couponCode && couponCode.trim()) {
       const normalizedCode = couponCode.trim().toUpperCase();
@@ -119,6 +129,7 @@ export async function POST(req: NextRequest) {
         bundleId: bundleUsed || "",
         couponCode: appliedCoupon?.code || "",
         couponId: appliedCoupon?.id || "",
+        payer: quote.payer,
         locale,
       },
     });

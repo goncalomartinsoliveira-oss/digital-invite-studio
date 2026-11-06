@@ -33,7 +33,13 @@ export default function ContactPage() {
   useEffect(() => {
     const assunto = new URLSearchParams(window.location.search).get("assunto");
     if (assunto === "medida") setSubject(dict.form.options[1]);
-    else if (assunto === "parceria") setSubject(dict.form.options[3]);
+    else if (assunto === "parceria") {
+      setSubject(dict.form.options[3]);
+      // "Pedir condições" da página de parceiros: já diz que tipo de parceria.
+      const tipo = new URLSearchParams(window.location.search).get("tipo");
+      const tipos = (dict.form as any).partnerTypes as Record<string, string> | undefined;
+      if (tipo && tipos?.[tipo]) setMessage(tipos[tipo]);
+    }
   }, [dict]);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");

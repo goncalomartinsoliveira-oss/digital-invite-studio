@@ -12,7 +12,7 @@ import JSZip from 'jszip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isModuleUnlocked } from '@/lib/modules';
 import { downloadQRAsPng, downloadQRAsSvg } from '@/lib/qrDownload';
-import { fullPlanPriceFor, FULL_PLAN_ID, type PricingOverrides } from '@/lib/pricing';
+import { FULL_PLAN_ID, type PricingOverrides } from '@/lib/pricing';
 import { startBundleCheckout, formatPriceCents } from '@/lib/checkout';
 import { TRIAL_LIMIT } from '@/lib/trial';
 import pt from '@/dictionaries/pt';

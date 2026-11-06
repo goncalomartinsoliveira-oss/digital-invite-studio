@@ -3,12 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Check, Globe, Sparkles, Loader2, ChevronDown, Mail } from "lucide-react";
+import { ArrowRight, Check, Globe, Sparkles, Loader2, ChevronDown, Mail, Megaphone, Tag, ClipboardList } from "lucide-react";
 import { useBrand } from "@/components/site/BrandProvider";
 import { Eyebrow } from "@/components/site/Eyebrow";
-import { PLANNER_PLANS, type PlannerPlan } from "@/lib/planner";
 import { INVITE_TEMPLATES } from "@/lib/templates";
-import { formatPriceCents } from "@/lib/checkout";
 
 import pt from "../../../dictionaries/pt";
 import en from "../../../dictionaries/en";
@@ -17,12 +15,10 @@ const dictionaries = { pt, en };
 
 // Página para wedding planners e agências: o Planeamento (com capturas reais,
 // public/partners/*.jpg, geradas no simulador com a agência fictícia "Atelier
-// Lua"), o que os noivos recebem, a marca própria, os planos mensais
-// (lib/planner.ts, IVA incluído) e perguntas frequentes. Os casais veem os
-// preços em /pricing; daqui só se chega pela faixa de lá ou pelo menu.
-
-const WP_PLANS: PlannerPlan[] = ["solo", "profissional", "agencia"];
-const WP_POPULAR: PlannerPlan = "profissional";
+// Lua"), o que os noivos recebem, a marca própria, as três formas de parceria
+// (recomendar, revender, wedding planner) e perguntas frequentes. Sem valores
+// nem percentagens: cada forma tem "Pedir condições" (contacto com o tipo
+// pré-preenchido) e as condições enviam-se por e-mail.
 
 export default function PartnersPage() {
   const params = useParams();
@@ -83,7 +79,7 @@ export default function PartnersPage() {
             <Link href={demoHref} className="inline-flex items-center gap-2 bg-gold-soft text-ink px-8 py-4 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-white transition-all shadow-lg">
               {dict.hero.ctaPrimary} <ArrowRight size={14} />
             </Link>
-            <a href="#planos" className="inline-flex items-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all">
+            <a href="#parcerias" className="inline-flex items-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all">
               {dict.hero.ctaSecondary}
             </a>
           </motion.div>
@@ -205,52 +201,40 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      {/* ── PLANOS E PREÇOS ──────────────────────────────────────────── */}
-      <section id="planos" className="bg-ink py-24 px-6 scroll-mt-20">
+      {/* ── FORMAS DE PARCERIA (sem valores: as condições enviam-se a pedido) ── */}
+      <section id="parcerias" className="bg-ink py-24 px-6 scroll-mt-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-4">
-            <Eyebrow tone="gold">{dict.plans.tag}</Eyebrow>
-            <h2 className="font-serif text-3xl md:text-4xl text-gold-soft">{dict.plans.title}</h2>
-            <p className="text-gray-400">{dict.plans.includesAll}</p>
+            <Eyebrow tone="gold">{dict.ways.tag}</Eyebrow>
+            <h2 className="font-serif text-3xl md:text-4xl text-gold-soft">{dict.ways.title}</h2>
+            <p className="text-gray-400">{dict.ways.desc}</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {WP_PLANS.map((id, i) => {
-              const plan = PLANNER_PLANS[id];
-              const popular = id === WP_POPULAR;
-              const perInvite = plan.priceCentsMonthly && plan.activeEvents ? Math.round(plan.priceCentsMonthly / plan.activeEvents) : 0;
+            {(dict.ways.items as { key: string; title: string; who: string; desc: string }[]).map((w, i) => {
+              const Icon = [Megaphone, Tag, ClipboardList][i] ?? Sparkles;
+              const featuredWay = w.key === "wedding-planner";
               return (
                 <motion.div
-                  key={id}
+                  key={w.key}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className={`relative flex flex-col rounded-[2rem] p-8 ${popular ? "bg-cream text-ink shadow-2xl md:-translate-y-3" : "bg-white/[0.04] border border-gold-soft/15 text-white"}`}
+                  className={`flex flex-col rounded-[2rem] p-8 ${featuredWay ? "bg-cream text-ink shadow-2xl" : "bg-white/[0.04] border border-gold-soft/15 text-white"}`}
                 >
-                  {popular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand text-gold-soft text-[9px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">{dict.plans.popular}</div>
-                  )}
-                  <h3 className={`font-serif text-2xl mb-4 ${popular ? "text-ink" : "text-gold-soft"}`}>{plan.name}</h3>
-                  <div className="flex items-baseline gap-1">
-                    <span className={`font-serif text-5xl ${popular ? "text-brand" : "text-white"}`}>{formatPriceCents(plan.priceCentsMonthly ?? 0, locale)}</span>
-                    <span className={popular ? "text-gray-500 text-sm" : "text-gray-400 text-sm"}>{dict.plans.perMonth}</span>
-                  </div>
-                  <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 mb-5 ${popular ? "text-gray-400" : "text-gray-500"}`}>{dict.plans.vat}</p>
-                  <p className="text-sm font-semibold mb-1">{dict.plans.events.replace("{n}", String(plan.activeEvents ?? ""))}</p>
-                  <p className={`text-xs mb-4 ${popular ? "text-gray-500" : "text-gray-400"}`}>{dict.plans.perInvite.replace("{v}", formatPriceCents(perInvite, locale))}</p>
-                  <p className={`text-sm leading-relaxed flex-1 ${popular ? "text-gray-600" : "text-gray-400"}`}>{(dict.plans.descs as Record<string, string>)[id]}</p>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 ${featuredWay ? "bg-brand text-gold-soft" : "bg-gold-soft/10 text-gold-soft"}`}><Icon size={20} /></div>
+                  <h3 className={`font-serif text-2xl mb-1 ${featuredWay ? "text-ink" : "text-gold-soft"}`}>{w.title}</h3>
+                  <p className={`text-[10px] font-bold uppercase tracking-widest mb-4 ${featuredWay ? "text-gold" : "text-gray-500"}`}>{w.who}</p>
+                  <p className={`text-sm leading-relaxed flex-1 mb-6 ${featuredWay ? "text-gray-600" : "text-gray-400"}`}>{w.desc}</p>
+                  <Link
+                    href={`${demoHref}&tipo=${w.key}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${featuredWay ? "bg-brand text-gold-soft hover:bg-brand-dark" : "border border-gold-soft/30 text-gold-soft hover:bg-gold-soft/10"}`}
+                  >
+                    {dict.ways.cta} <ArrowRight size={13} />
+                  </Link>
                 </motion.div>
               );
             })}
-          </div>
-          <div className="mt-12 text-center space-y-2 text-sm text-gray-400">
-            <p>{dict.plans.slotNote}</p>
-            <p className="font-semibold text-gold-soft">{dict.plans.annual}</p>
-          </div>
-          <div className="mt-10 text-center">
-            <Link href={demoHref} className="inline-flex items-center gap-2 bg-gold-soft text-ink px-10 py-4 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-white transition-all shadow-lg">
-              {dict.plans.cta} <ArrowRight size={14} />
-            </Link>
           </div>
         </div>
       </section>

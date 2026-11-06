@@ -236,12 +236,7 @@ simples. Eventos, Tarefas e Fornecedores ficam como separadores à parte.
   o `api/checkout` desbloqueia o resto sem pagamento.
 - **Convite à medida:** a partir de 699 € (`BESPOKE_FROM_CENTS`), sem checkout;
   "Pedir proposta" → `/contact?assunto=medida`.
-- **Wedding planners:** planos mensais em `lib/planner.ts` (Solo 39 €/6, Profissional
-  89 €/15, Agência 169 €/35 convites ativos; anual com 2 meses grátis; IVA
-  incluído). Mostrados na página de parceiros (`/partners`), não em `/pricing`
-  (que só tem uma faixa a encaminhar para lá). Ainda
-  sem subscrição automática: ativados à mão em Parceiros. Regra da vaga: um
-  convite deixa de contar como ativo no dia seguinte ao casamento.
+- **Parceiros (nov. 2026, fase A):** um parceiro é uma marca (`brands`) com funcionalidades ligadas pelo super admin em Administração › **Parceiros** (`BrandsManagementView` + ficha `PartnerTermsCard`): **recomendação** (comissão e código, fase B), **preço de parceiro** (normal e de volume, a partir do N.º casamento pago pelo parceiro, contado desde sempre; por omissão 79 €/69 €/10), **Planeamento** (`brands.planner_plan`, sem mensalidade) e **marca própria**. As condições vivem em `partner_accounts` (migração `0015`; leitura só super admin e membros do parceiro, porque `brands` é pública). Nos eventos de parceiros, a equipa escolhe **quem paga** (`invitations.paid_by`): "a agência" (preço de parceiro; só a equipa do parceiro pode pagar) ou "os noivos" (preço normal). O preço é sempre calculado no servidor (`lib/partnerPricing.ts`, `api/checkout/quote`, `api/checkout`); os cupões não se somam ao preço de parceiro. A página `/partners` não mostra valores: "Pedir condições" abre o contacto com o tipo de parceria pré-preenchido. Os planos mensais (Solo/Profissional/Agência) e `brand_pricing_overrides` deixaram de ser usados.
 - Os módulos continuam a existir por dentro (`unlocked_modules`), mas já não se
   vendem à peça; os pacotes antigos ("convite", "momentos") só aparecem em
   pagamentos e cupões antigos. Preços por parceiro (`brand_pricing_overrides`)

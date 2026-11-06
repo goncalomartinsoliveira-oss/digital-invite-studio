@@ -59,8 +59,8 @@ import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
 import { TAB_MODULE, isModuleUnlocked } from "@/lib/modules";
 import { fetchPlannerPlan, type PlannerPlan } from "@/lib/planner";
-import { fetchPricingOverrides, fullPlanPriceFor, FULL_PLAN_ID, EMPTY_PRICING_OVERRIDES, type PricingOverrides } from "@/lib/pricing";
-import { startBundleCheckout, formatPriceCents } from "@/lib/checkout";
+import { FULL_PLAN_ID } from "@/lib/pricing";
+import { startBundleCheckout, formatPriceCents, fetchPlanQuote, type ClientPlanQuote } from "@/lib/checkout";
 import { isArchivedEvent } from "@/lib/eventArchive";
 
 // 1. IMPORTAR OS DICIONÁRIOS (4 níveis para trás)
@@ -146,7 +146,15 @@ export default function Dashboard() {
   const [buyingModule, setBuyingModule] = useState<string | null>(null);
   const brand = useBrand();
   const [eventBrand, setEventBrand] = useState<WorkingBrand | null>(null);
-  const [pricingOverrides, setPricingOverrides] = useState<PricingOverrides>(EMPTY_PRICING_OVERRIDES);
+  // Preço do Plano Completo para este evento, calculado no servidor
+  // (api/checkout/quote): preço normal, de parceiro ou de volume.
+  const [planQuote, setPlanQuote] = useState<ClientPlanQuote | null>(null);
+  const [savingPayer, setSavingPayer] = useState(false);
+  useEffect(() => {
+    if (!formData?.id) return;
+    fetchPlanQuote(formData.id).then(setPlanQuote);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData?.id, formData?.paid_by, (formData?.unlocked_modules || []).join(",")]);
 
   // 2. DESCOBRIR A LÍNGUA ATUAL
   const locale = (params?.locale as 'en' | 'pt') || 'pt';
@@ -231,7 +239,6 @@ export default function Dashboard() {
       setEventBrand(await resolveBrandById(supabase, invite.brand_id));
       // Preços diferenciados por parceiro (lib/pricing.ts) — sem override
       // para este brand_id, os ecrãs de compra usam sempre o preço global.
-      setPricingOverrides(await fetchPricingOverrides(supabase, invite.brand_id));
       // Conta de wedding planner? Desbloqueia a área de Gestão (orçamento e
       // tarefas) — ver lib/planner.ts.
       setPlannerPlan(await fetchPlannerPlan(supabase, invite.brand_id));
@@ -292,7 +299,7 @@ export default function Dashboard() {
     // unlocked_modules e date_locked_at são geridos fora dos editores (Conta ›
     // Módulos do Evento e webhook do Stripe). Não os regravar a partir da cópia
     // local, que pode estar desatualizada e desfazia ativações.
-    const { user_email, unlocked_modules, date_locked_at, ...dataToSave } = formData;
+    const { user_email, unlocked_modules, date_locked_at, paid_by, referred_by_brand_id, referred_at, content_purged_at, expiry_notice_sent_at, ...dataToSave } = formData;
     await supabase.from("invitations").update(dataToSave).eq("id", formData.id);
     setSaving(false);
     // Atualização "suave": o convite refaz só os dados (ver PreviewBridge) e mantém
@@ -431,7 +438,18 @@ export default function Dashboard() {
   // contacto (o do próprio parceiro, nunca o da DIS). O staff do parceiro
   // (agência) é diferente: esse continua a comprar normalmente, à tabela de
   // preços própria desse parceiro (ver "Preços" na gestão de marcas).
-  const isPartnerBrand = !!formData.brand_id && formData.brand_id !== "dis" && !isAgencyStaff;
+  // Eventos de parceiros: por omissão é o parceiro que paga (paid_by vazio ou
+  // 'partner'); se a agência escolher "pagam os noivos", o casal compra ao
+  // preço normal como num evento DIS.
+  const isPartnerEvent = !!formData.brand_id && formData.brand_id !== "dis";
+  const isPartnerBrand = isPartnerEvent && !isAgencyStaff && formData.paid_by !== 'couple';
+  const changePayer = async (payer: 'partner' | 'couple') => {
+    setSavingPayer(true);
+    const { error } = await supabase.from("invitations").update({ paid_by: payer }).eq("id", formData.id);
+    if (error) alert(error.message);
+    else setFormData((f: any) => ({ ...f, paid_by: payer }));
+    setSavingPayer(false);
+  };
   const partnerContactUrl = eventBrand?.contactUrl ?? brand.contactUrl ?? `/${locale}/contact`;
   const handleBuyModule = async (moduleId: string, couponCode?: string) => {
     setBuyingModule(moduleId);
@@ -476,7 +494,7 @@ export default function Dashboard() {
         contactUrl={isPartnerBrand ? partnerContactUrl : (brand.contactUrl ?? `/${locale}/contact`)}
         contactLabel={dict.moduleLockedContactBtn}
         buyLabel={isPartnerBrand ? undefined : dict.moduleBuyBtn}
-        priceLabel={!isPartnerBrand && moduleId ? formatPriceCents(fullPlanPriceFor(unlockedModules, pricingOverrides).cents, locale) : undefined}
+        priceLabel={!isPartnerBrand && moduleId && planQuote?.cents != null ? formatPriceCents(planQuote.cents, locale) : undefined}
         onBuy={!isPartnerBrand && moduleId ? (couponCode) => handleBuyModule(moduleId, couponCode) : undefined}
         buying={buyingModule === moduleId}
         couponToggleLabel={isPartnerBrand ? undefined : dict.couponToggleLabel}
@@ -654,21 +672,42 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* Contas de wedding planner já têm as licenças todas incluídas —
-                não faz sentido oferecer pacotes para comprar por cima. */}
-            {!plannerPlan && (
-              <BundleOffers
-                invitationId={formData.id}
-                slug={formData.slug}
-                locale={locale}
-                unlockedModules={unlockedModules}
-                isSuperAdmin={isSuperAdmin}
-                isPartnerBrand={isPartnerBrand}
-                overrides={pricingOverrides}
-                moduleNames={moduleNamesDict}
-                dict={dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers}
-              />
+            {/* Eventos de parceiros: a equipa do parceiro escolhe quem paga a publicação. */}
+            {isPartnerEvent && (isAgencyStaff || isSuperAdmin) && !invitePublished && (
+              <div className="mt-14 max-w-xl mx-auto bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">{dict.payer.title}</p>
+                <div className="grid sm:grid-cols-2 gap-3" role="radiogroup" aria-label={dict.payer.title}>
+                  {(['partner', 'couple'] as const).map(opt => {
+                    const on = (formData.paid_by === 'couple' ? 'couple' : 'partner') === opt;
+                    return (
+                      <button
+                        key={opt}
+                        role="radio"
+                        aria-checked={on}
+                        disabled={savingPayer || on}
+                        onClick={() => changePayer(opt)}
+                        className={`text-left rounded-2xl border px-4 py-3 transition-colors ${on ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand'}`}
+                      >
+                        <span className={`block text-sm font-semibold ${on ? 'text-brand' : 'text-ink'}`}>{dict.payer[opt].label}</span>
+                        <span className="block text-xs text-gray-500 mt-1 leading-relaxed">{dict.payer[opt].desc}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
+
+            <BundleOffers
+              invitationId={formData.id}
+              slug={formData.slug}
+              locale={locale}
+              unlockedModules={unlockedModules}
+              isSuperAdmin={isSuperAdmin}
+              isPartnerBrand={isPartnerBrand}
+              quote={planQuote}
+              moduleNames={moduleNamesDict}
+              dict={dictionaries[locale]?.BundleOffers || dictionaries.pt.BundleOffers}
+            />
 
             <div className="mt-12 flex justify-center">
               <button
@@ -919,7 +958,6 @@ export default function Dashboard() {
                   isSuperAdmin={isSuperAdmin}
                   isPartnerBrand={isPartnerBrand}
                   isPlannerAccount={!!plannerPlan}
-                  overrides={pricingOverrides}
                   dict={dictionaries[locale]?.PhotoSharingModule || dictionaries.pt.PhotoSharingModule}
                 />
               )}
@@ -1007,7 +1045,6 @@ export default function Dashboard() {
                   isSuperAdmin={isSuperAdmin}
                   isPartnerBrand={isPartnerBrand}
                   isPlannerAccount={!!plannerPlan}
-                  overrides={pricingOverrides}
                   dict={dictionaries[locale]?.GuestbookModule || dictionaries.pt.GuestbookModule}
                 />
               )}

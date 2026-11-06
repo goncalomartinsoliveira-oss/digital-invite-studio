@@ -2,8 +2,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { BRANDS } from "@/lib/brands";
-import { Plus, Trash2, Loader2, ImagePlus, Building2, Save, Mail, ClipboardList } from "lucide-react";
-import { ALL_PLANNER_PLANS, PLANNER_PLANS, type PlannerPlan } from "@/lib/planner";
+import { Plus, Trash2, Loader2, ImagePlus, Building2, Save, Mail, ClipboardList, Megaphone, Tag, ChevronDown, Globe } from "lucide-react";
+import { type PlannerPlan } from "@/lib/planner";
+import PartnerTermsCard from "./PartnerTermsCard";
 
 interface BrandRow {
   id: string;
@@ -17,8 +18,8 @@ interface BrandRow {
 export default function BrandsManagementView({ locale }: { locale: string }) {
   const en = locale === "en";
   const t = {
-    title: en ? "Partner brands" : "Marcas de parceiros",
-    subtitle: en ? "Onboard a partner: name + optional logo. No domain needed." : "Registe um parceiro: nome + logótipo opcional. Sem domínio necessário.",
+    title: en ? "Partners" : "Parceiros",
+    subtitle: en ? "Each partner is an organisation with features switched on: referrals, partner price, Planning and own brand. Open a partner to edit its terms." : "Cada parceiro é uma organização com funcionalidades ligadas: recomendação, preço de parceiro, Planeamento e marca própria. Abram um parceiro para editar as condições.",
     createTitle: en ? "New partner" : "Novo parceiro",
     nameLbl: en ? "Name" : "Nome",
     namePh: en ? "e.g. Flores & Aliança" : "Ex.: Flores & Aliança",
@@ -29,7 +30,7 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     uploading: en ? "Uploading..." : "A carregar...",
     contactLbl: en ? "Contact (email or link, optional)" : "Contacto (email ou link, opcional)",
     contactPh: en ? "e.g. mailto:ola@parceiro.pt or https://wa.me/..." : "Ex.: mailto:ola@parceiro.pt ou https://wa.me/...",
-    contactHint: en ? "Shown to their couples instead of prices — this partner sells modules directly, not through our checkout." : "Mostrado aos casais deste parceiro em vez de preços — este parceiro vende os módulos diretamente, não passa pelo nosso checkout.",
+    contactHint: en ? "Shown to this partner's couples when the partner is the one paying for the invitation." : "Mostrado aos casais deste parceiro quando é o parceiro a pagar o convite.",
     create: en ? "Create partner" : "Criar parceiro",
     existing: en ? "Partners" : "Parceiros",
     none: en ? "No partners yet." : "Ainda não há parceiros.",
@@ -59,6 +60,8 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
   const [msg, setMsg] = useState("");
   const [contactDrafts, setContactDrafts] = useState<Record<string, string>>({});
   const [savingContactId, setSavingContactId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [terms, setTerms] = useState<Record<string, { referral: boolean; price: boolean }>>({});
 
   const slugify = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
@@ -68,6 +71,8 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     const loaded = (data as BrandRow[]) || [];
     setRows(loaded);
     setContactDrafts(Object.fromEntries(loaded.map(r => [r.id, r.contact_url || ""])));
+    const { data: pa } = await supabase.from("partner_accounts").select("brand_id, referral_enabled, partner_price_enabled");
+    setTerms(Object.fromEntries(((pa as any[]) || []).map(a => [a.brand_id, { referral: !!a.referral_enabled, price: !!a.partner_price_enabled }])));
     setLoading(false);
   }, []);
   useEffect(() => { load(); }, [load]);
@@ -102,10 +107,9 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
     setCreating(false);
   };
 
-  // Interruptor de conta wedding planner. Fica na conta de parceiro, e não num
-  // papel da pessoa, porque o que desbloqueia (diretório de fornecedores,
-  // histórico, vista de conjunto) pertence à agência — e é a agência que
-  // subscreve quando os planos entrarem. Ver lib/planner.ts.
+  // Planeamento (módulo wedding planner): ligado/desligado por parceiro, sem
+  // mensalidade. Fica na conta de parceiro, e não num papel da pessoa, porque o
+  // que desbloqueia pertence à agência. Qualquer valor = ligado ("piloto").
   const setPlannerPlan = async (id: string, plan: PlannerPlan | null) => {
     setRows(prev => prev.map(r => (r.id === id ? { ...r, planner_plan: plan } : r)));
     await supabase.from("brands").update({ planner_plan: plan }).eq("id", id);
@@ -201,36 +205,27 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
         ) : (
           <ul className="divide-y divide-gray-50">
             {rows.map(r => (
-              <li key={r.id} className="px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <li key={r.id} className="px-6 py-4">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="w-16 h-11 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
                     {r.logo_url ? <img src={r.logo_url} className="max-w-full max-h-full object-contain" alt="" /> : <Building2 size={16} className="text-gray-300" />}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm text-ink font-semibold truncate">
-                      {r.name}
-                      {r.planner_plan && (
-                        <span className="ml-2 inline-flex items-center gap-1 align-middle bg-brand/5 text-brand text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">
-                          <ClipboardList size={10} /> {PLANNER_PLANS[r.planner_plan].name}
-                        </span>
-                      )}
-                    </p>
+                    <button onClick={() => setOpenId(openId === r.id ? null : r.id)} className="text-left flex items-center gap-2 group">
+                      <span className="text-sm text-ink font-semibold truncate group-hover:text-brand">{r.name}</span>
+                      <ChevronDown size={14} className={`text-gray-300 transition-transform ${openId === r.id ? "rotate-180" : ""}`} />
+                    </button>
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {terms[r.id]?.referral && <span className="inline-flex items-center gap-1 bg-brand/5 text-brand text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md"><Megaphone size={10} /> {en ? "Referrals" : "Recomendação"}</span>}
+                      {terms[r.id]?.price && <span className="inline-flex items-center gap-1 bg-brand/5 text-brand text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md"><Tag size={10} /> {en ? "Partner price" : "Preço de parceiro"}</span>}
+                      {r.planner_plan && <span className="inline-flex items-center gap-1 bg-brand/5 text-brand text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md"><ClipboardList size={10} /> {en ? "Planning" : "Planeamento"}</span>}
+                      {r.domain && <span className="inline-flex items-center gap-1 bg-brand/5 text-brand text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md"><Globe size={10} /> {r.domain}</span>}
+                    </div>
                     <p className="text-[10px] text-gray-400">{r.id}{r.domain ? ` · ${r.domain}` : ""}</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 shrink-0">
-                  <select
-                    value={r.planner_plan ?? ""}
-                    onChange={e => setPlannerPlan(r.id, (e.target.value || null) as PlannerPlan | null)}
-                    title={t.plannerHint}
-                    aria-label={t.plannerLbl}
-                    className="px-3 py-2 text-[11px] border border-gray-200 rounded-full outline-none focus:border-brand bg-white text-gray-600"
-                  >
-                    <option value="">{t.plannerLbl} — {t.plannerOff}</option>
-                    {ALL_PLANNER_PLANS.map(p => (
-                      <option key={p} value={p}>{t.plannerLbl} — {PLANNER_PLANS[p].name}</option>
-                    ))}
-                  </select>
                   <div className="relative">
                     <Mail size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
                     <input
@@ -255,6 +250,17 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
                     <Trash2 size={16} />
                   </button>
                 </div>
+                </div>
+                {openId === r.id && (
+                  <div className="mt-5 pt-5 border-t border-gray-100">
+                    <PartnerTermsCard
+                      brandId={r.id}
+                      locale={locale}
+                      plannerOn={!!r.planner_plan}
+                      onPlannerChange={on => setPlannerPlan(r.id, on ? "piloto" : null)}
+                    />
+                  </div>
+                )}
               </li>
             ))}
           </ul>
