@@ -1672,21 +1672,10 @@ const en = {
       "cta": "Request a proposal"
     },
     "wp": {
-      "tag": "For wedding planners",
-      "title": "Monthly plans for agencies",
-      "desc": "Every invitation for your weddings with the Full Plan, plus the planning tools: budget, tasks, timeline, vendors and the “This week” view.",
-      "perMonth": "/month",
-      "events": "{n} active invitations",
-      "plans": {
-        "solo": "For planners with up to about 5 weddings a year.",
-        "profissional": "For planners with up to about 12 weddings a year.",
-        "agencia": "For teams with up to about 30 weddings a year."
-      },
-      "popular": "Most popular",
-      "slotNote": "Each invitation takes a slot until the wedding day. The next day, the slot is free for the next one.",
-      "annual": "On the yearly plan, 2 months free.",
-      "cta": "Talk to us",
-      "partnersLink": "Discover the partner area"
+      "tag": "For wedding planners and agencies",
+      "title": "Manage all your weddings in one dashboard",
+      "desc": "Budget, vendors, tasks and timeline, and invitations with your brand for every couple.",
+      "cta": "Discover the area for professionals"
     },
     "faq": {
       "title": "Pricing questions",
@@ -1702,14 +1691,44 @@ const en = {
   },
   "PartnersPage": {
     "hero": {
-      "tag": "For agencies and wedding planners",
-      "title": "Bring Digital Invite Studio to your brand",
-      "desc": "Offer your clients digital invitations, smart RSVP, seating plans, photo sharing and guestbook, all under your agency's identity. Then manage every client's event from a single dashboard.",
-      "ctaPrimary": "Talk to our team",
-      "ctaSecondary": "See the available modules"
+      "tag": "For wedding planners and agencies",
+      "title": "All your weddings, organised in one place.",
+      "titleAccent": "And invitations with your brand.",
+      "desc": "Budget, vendors, tasks and timeline for every wedding in one dashboard, and every couple with the full digital invitation, RSVP, seating, photos and guestbook.",
+      "ctaPrimary": "Book a demo",
+      "ctaSecondary": "See plans and pricing"
     },
-    "modelsTitle": "Two partnership models",
-    "modelsSubtitle": "Choose whichever fits the size of your agency",
+    "planning": {
+      "tag": "Your agency's day-to-day",
+      "title": "Everything you manage, in one dashboard",
+      "desc": "Built for planners running several weddings at once who need to know, first thing in the morning, what's late.",
+      "items": [
+        { "key": "week", "title": "This week", "desc": "Every wedding at a glance, with a traffic light: what has slipped, what's due in the next few days and how guest replies are going." },
+        { "key": "orcamento", "title": "Budget and payments", "desc": "Costs per vendor with VAT, fixed or per-person pricing, deposits and balances with dates, and a warning when the budget gets tight." },
+        { "key": "tarefas", "title": "Tasks with deadlines", "desc": "Each wedding's checklist, split between agency, couple and joint tasks. Copy from another wedding or import from Excel." },
+        { "key": "vendors", "title": "Vendors and price history", "desc": "One directory for all your weddings, with ratings and the average price each vendor has charged you." },
+        { "key": "cronograma", "title": "Day-of timeline", "desc": "The minute-by-minute run sheet, with the vendor for each moment, as a PDF or shared with whoever needs it." }
+      ]
+    },
+    "extras": {
+      "title": "And also",
+      "items": [
+        "Vendor portal: a read-only link with the timeline, no account needed",
+        "Moodboard shared with the couple",
+        "You choose what the couple sees: tasks, costs and timeline",
+        "Team accounts with their own access, as admin or editor",
+        "A ready-made message to remind guests who haven't replied",
+        "Guests, tasks and vendors imported from Excel"
+      ]
+    },
+    "couples": {
+      "tag": "What your couples get",
+      "title": "The Full Plan, for every wedding",
+      "desc": "Digital invitation, RSVP with menus and dietary requirements, seating plan, Save the Date, photos with Live Wall and guestbook. Included in your plan: couples pay nothing extra.",
+      "cta": "See a live invitation"
+    },
+    "modelsTitle": "Two ways to use your own brand",
+    "modelsSubtitle": "Choose whichever fits your agency",
     "models": {
       "domain": {
         "title": "Your Own Domain",
@@ -1732,34 +1751,38 @@ const en = {
         ]
       }
     },
-    "featuresTitle": "What you get as a partner",
-    "features": {
-      "dashboard": {
-        "title": "Centralised dashboard",
-        "desc": "See all your clients' events in one place: couple names, dates, confirmed guests and each project's status."
+    "plans": {
+      "tag": "Plans and pricing",
+      "title": "A monthly plan that fits your volume",
+      "perMonth": "/month",
+      "vat": "VAT included",
+      "events": "{n} active invitations",
+      "perInvite": "about {v} per active invitation",
+      "popular": "Most popular",
+      "descs": {
+        "solo": "For planners with up to about 5 weddings a year.",
+        "profissional": "For planners with up to about 12 weddings a year.",
+        "agencia": "For teams with up to about 30 weddings a year."
       },
-      "team": {
-        "title": "Your own team access",
-        "desc": "Add your team with admin or editor roles, and control who manages each event."
-      },
-      "fullProduct": {
-        "title": "The full product included",
-        "desc": "Every event you create has access to every module: invitation, smart RSVP, seating plan, photo sharing and guestbook."
-      },
-      "branding": {
-        "title": "Your brand, everywhere",
-        "desc": "Dashboard, invitation, guestbook and gallery always show your logo, never ours."
-      }
+      "includesAll": "Every plan includes full Planning, your brand and the Full Plan on every invitation.",
+      "slotNote": "Each invitation takes a slot until the wedding day. The next day, the slot is free for the next one.",
+      "annual": "On the yearly plan, 2 months free.",
+      "cta": "Book a demo"
     },
-    "audienceTitle": "Who it's for",
-    "audience": [
-      "Independent planners who want to offer a premium experience without building their own technology",
-      "Growing agencies managing several weddings at once",
-      "Larger production companies and agencies that need to manage teams and many active events"
-    ],
-    "pricingTitle": "Favourable commercial terms",
-    "pricingDesc": "We work with special partner conditions, tailored to the number of events you manage. No hidden monthly fees and no fine print.",
-    "finalCta": "Talk to us"
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        { "q": "What counts as an active invitation?", "a": "Each wedding counts from when you create it in the dashboard until the wedding day. The next day, the slot is free for another wedding." },
+        { "q": "What happens to the budget and vendors after the wedding?", "a": "They're always kept. Even when photos and the guest list are deleted, after 60 days, the budget, vendors, amounts and tasks remain available to view and for price history." },
+        { "q": "Do couples pay anything?", "a": "No. Every invitation for your weddings includes the Full Plan as part of your plan." },
+        { "q": "Can I change plans?", "a": "Yes. If your number of weddings grows, you move up to the next plan. Talk to us." },
+        { "q": "I have everything in Excel. Do I start from scratch?", "a": "No. Guests, tasks and vendors can be imported from Excel, with a ready-to-fill template." },
+        { "q": "Can I use my own brand?", "a": "Yes. With Your Own Domain, the platform runs on your own address with your logo; as a Lightweight Partner, your logo shows on the events you manage." }
+      ]
+    },
+    "finalTitle": "Let us show you how it works",
+    "finalDesc": "A short demo, with your weddings in mind.",
+    "finalCta": "Book a demo"
   },
   "SeatingPublic": {
     "notFound": "Event not found",

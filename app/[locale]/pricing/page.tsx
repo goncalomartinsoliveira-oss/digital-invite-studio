@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Loader2, Sparkles, ArrowRight, ChevronDown, Crown } from "lucide-react";
 import { FULL_PLAN, FULL_PLAN_LIST_PRICE_CENTS, BESPOKE_FROM_CENTS, isLaunchPrice } from "@/lib/pricing";
-import { PLANNER_PLANS, type PlannerPlan } from "@/lib/planner";
 import { INVITE_TEMPLATES } from "@/lib/templates";
 import { formatPriceCents } from "@/lib/checkout";
 import { useBrand } from "@/components/site/BrandProvider";
@@ -17,12 +16,9 @@ import en from "../../../dictionaries/en";
 const dictionaries = { pt, en };
 
 // Página de Preços: um só produto para casais (Plano Completo), o convite à
-// medida (orçamento) e os planos mensais para wedding planners. Os valores vêm
-// de lib/pricing.ts e lib/planner.ts, as mesmas fontes do checkout e do
-// painel, para esta página nunca mostrar um preço diferente do cobrado.
-
-const WP_PLANS: PlannerPlan[] = ["solo", "profissional", "agencia"];
-const WP_POPULAR: PlannerPlan = "profissional";
+// medida (orçamento) e uma faixa para wedding planners, que leva a /partners
+// (onde estão os planos mensais). Os valores vêm de lib/pricing.ts, a mesma
+// fonte do checkout e do painel.
 
 export default function PricingPage() {
   const params = useParams();
@@ -148,61 +144,20 @@ export default function PricingPage() {
         </motion.div>
       </section>
 
-      {/* ── WEDDING PLANNERS ─────────────────────────────────────────── */}
-      <section className="bg-white border-y border-gold-soft/60 py-24 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-4">
-            <Eyebrow>{dict.wp.tag}</Eyebrow>
-            <h2 className="font-serif text-3xl md:text-4xl text-ink">{dict.wp.title}</h2>
-            <p className="text-gray-500 text-lg leading-relaxed">{dict.wp.desc}</p>
+      {/* ── WEDDING PLANNERS: só uma faixa; planos e preços em /partners ── */}
+      <section className="px-6 pb-4">
+        <div className="max-w-5xl mx-auto bg-brand rounded-[2.5rem] px-8 md:px-12 py-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <div className="space-y-2">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-soft/80">{dict.wp.tag}</p>
+            <h2 className="font-serif text-2xl md:text-3xl text-white">{dict.wp.title}</h2>
+            <p className="text-white/70 leading-relaxed">{dict.wp.desc}</p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {WP_PLANS.map((id, i) => {
-              const plan = PLANNER_PLANS[id];
-              const popular = id === WP_POPULAR;
-              return (
-                <motion.div
-                  key={id}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className={`relative flex flex-col rounded-[2rem] p-8 ${popular ? "bg-cream border-2 border-brand shadow-xl" : "bg-cream/60 border border-gray-100"}`}
-                >
-                  {popular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand text-white text-[9px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
-                      {dict.wp.popular}
-                    </div>
-                  )}
-                  <h3 className="font-serif text-2xl text-ink mb-3">{plan.name}</h3>
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <span className="font-serif text-4xl text-brand">{formatPriceCents(plan.priceCentsMonthly ?? 0, locale)}</span>
-                    <span className="text-gray-400 text-sm">{dict.wp.perMonth}</span>
-                  </div>
-                  <p className="text-sm font-semibold text-ink mb-3">{dict.wp.events.replace("{n}", String(plan.activeEvents ?? ""))}</p>
-                  <p className="text-sm text-gray-500 leading-relaxed flex-1">{(dict.wp.plans as Record<string, string>)[id]}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          <div className="mt-10 text-center space-y-2 text-sm text-gray-500">
-            <p>{dict.wp.slotNote}</p>
-            <p className="font-semibold text-ink">{dict.wp.annual}</p>
-          </div>
-
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5">
-            <Link
-              href={`/${locale}/contact?assunto=parceria`}
-              className="inline-flex items-center justify-center h-12 px-10 rounded-full bg-brand text-gold-soft text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-brand-dark transition-colors"
-            >
-              {dict.wp.cta}
-            </Link>
-            <Link href={`/${locale}/partners`} className="group inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink hover:text-brand transition-colors">
-              {dict.wp.partnersLink} <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
+          <Link
+            href={`/${locale}/partners`}
+            className="shrink-0 inline-flex items-center gap-2 bg-gold-soft text-brand px-8 py-4 text-[11px] uppercase tracking-[0.2em] font-bold rounded-full hover:bg-white transition-colors shadow-lg"
+          >
+            {dict.wp.cta} <ArrowRight size={14} />
+          </Link>
         </div>
       </section>
 

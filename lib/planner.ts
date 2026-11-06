@@ -20,7 +20,8 @@ export type PlannerPlanInfo = {
 
 // Vaga: um convite conta como ativo até ao dia do casamento e deixa de contar
 // no dia seguinte (decidido em nov. 2026), mesmo continuando online mais 60 dias.
-// Preços mostrados na página de Preços; a cobrança automática (subscrição
+// Preços (IVA incluído) mostrados na página de parceiros, /partners; a
+// cobrança automática (subscrição
 // Stripe) ainda não existe.
 //
 // Dimensionados a partir do pipeline real: um casamento entra na plataforma
