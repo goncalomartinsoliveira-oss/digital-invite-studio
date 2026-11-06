@@ -16,7 +16,7 @@ export default function Footer({ brand }: { brand?: Brand }) {
   const currentYear = new Date().getFullYear();
   const pathname = usePathname();
 
-  if (pathname.includes("/invite") || pathname.includes("/dashboard") || pathname.includes("/login")) {
+  if (pathname.includes("/invite") || pathname.includes("/dashboard") || pathname.includes("/login") || pathname.includes("/preview/")) {
     return null;
   }
 

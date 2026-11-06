@@ -1,10 +1,17 @@
-import Link from "next/link";
-import RenaissanceBlueTemplate from "../../templates/renaissance-blue-01/page";
+import type { ComponentType } from "react";
+import RenaissanceBlueTemplate from "../templates/renaissance-blue-01/page";
+import { DEMO_INVITATION_ID } from "@/components/invite/demoGuests";
 
-// Demo data — preenche todas as secções do modelo. Os textos do modelo são em
-// português (como nos outros modelos), por isso o exemplo também.
-const DEMO_DATA = {
-  id: "preview",
+// Convites de exemplo das salas de demonstração (/preview/<modelo>): o desenho
+// e os dados fictícios de cada modelo de lib/templates.ts. Um modelo novo
+// precisa de uma entrada aqui para ter sala de demonstração.
+// O id do evento é DEMO_INVITATION_ID: o RSVP usa convidados fictícios e não
+// grava nada (components/invite/demoGuests.ts).
+
+// Os textos do modelo são em português (como nos outros modelos), por isso o
+// exemplo também.
+const RENAISSANCE_BLUE_DEMO = {
+  id: DEMO_INVITATION_ID,
   groom_name: "Miguel",
   bride_name: "Sofia",
   event_date: "2027-09-18T15:00:00",
@@ -98,25 +105,11 @@ const DEMO_DATA = {
   },
 };
 
-export default async function PreviewRenaissanceBlue01(props: { params: Promise<{ locale: string }> }) {
-  const { locale } = await props.params;
-  return (
-    <>
-      <div className="fixed top-0 left-0 right-0 z-[999] bg-[#4F6F8F] text-white flex items-center justify-between px-5 py-3 shadow-lg font-montserrat">
-        <div className="flex items-center gap-3">
-          <span className="bg-gold text-[#2D3B4A] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">Preview</span>
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-white/80">Template — Renaissance Blue</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link href={`/${locale}`} className="text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white transition-colors">← Início</Link>
-          <Link href={`/${locale}/dashboard/new-invite`} className="bg-gold text-[#2D3B4A] text-[10px] font-bold uppercase tracking-widest px-5 py-2 rounded-full hover:bg-[#C9A96E] transition-colors">Usar este template</Link>
-        </div>
-      </div>
-      {/* Folga para a barra de pré-visualização + a navbar fixa do site */}
-      {/* O ecrã de entrada ocupa a altura que sobra (100vh menos a folga), para o envelope se ver inteiro sem fazer scroll. */}
-      <div className="pt-[120px] [&_section.min-h-screen]:min-h-[calc(100vh-120px)]">
-        <RenaissanceBlueTemplate data={DEMO_DATA} />
-      </div>
-    </>
-  );
-}
+export type TemplateDemo = {
+  Component: ComponentType<{ data: any; params?: any }>;
+  data: any;
+};
+
+export const TEMPLATE_DEMOS: Record<string, TemplateDemo> = {
+  "renaissance-blue-01": { Component: RenaissanceBlueTemplate, data: RENAISSANCE_BLUE_DEMO },
+};

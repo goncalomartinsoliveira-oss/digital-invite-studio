@@ -73,7 +73,7 @@ O convite fica disponível até 60 dias depois do casamento (`expires_at`; decid
 | `/guestbook/<slug>` | Livro de visitas. |
 | `/fornecedor/<token>` | Portal de um fornecedor (só leitura). |
 | `/moodboard/<token>` | Moodboard partilhado (ver e acrescentar imagens, não apagar). |
-| `/preview/<modelo>` | Página de exemplo de um modelo, com dados de demonstração (hoje só `renaissance-blue-01`; cada modelo novo traz a sua). A montra da página inicial e o botão "Ver um convite ao vivo" ligam aqui. |
+| `/preview/<modelo>` | **Sala de demonstração** de um modelo (`app/[locale]/preview/[id]`, `components/site/PreviewShowroom.tsx`): no computador, o convite a funcionar dentro de um telemóvel (iframe de `/preview/<modelo>/convite`, escalado à altura do ecrã), com painel do modelo ("Experimente", **Usar este modelo**, **Quero um convite à medida**, QR code para abrir no telemóvel, outros modelos); no telemóvel, o convite em ecrã inteiro com barra em baixo e painel numa folha. Sem menu nem rodapé do site. Dados fictícios em `app/[locale]/preview/demos.tsx` (`TEMPLATE_DEMOS`); o id do evento é `preview` e o RSVP entra em **modo de demonstração** (`components/invite/demoGuests.ts`: Família Silva, Costa, Santos; nada é lido nem gravado na base de dados). Só existe para modelos de `lib/templates.ts` com entrada em `TEMPLATE_DEMOS`. |
 
 ### API (`app/api`)
 `checkout` (cria a sessão Stripe) · `stripe/webhook` (regista o pagamento e
@@ -268,7 +268,7 @@ ainda grava o id antigo `envelope-01-jose-e-dalia`: o convite público
 (`invite/[slug]/page.tsx`) e o `DesignModule` (`LEGACY_TEMPLATE_IDS`)
 tratam-no como o mesmo modelo, por isso não foi preciso mexer na base de dados. A
 documentação (elementos, posições lidas do SVG, fontes, ecrã de entrada) está em
-`public/renaissance-blue-01/elementos/LEIA-ME.md`. Está na montra da página inicial (`lib/templates.ts` + `public/home/tpl-<id>.jpg`, captura 480×984 do ecrã de entrada) com página de exemplo em `app/[locale]/preview/renaissance-blue-01`; a página inicial usa ainda `public/home/rb-open.jpg` (convite aberto), `rb-scroll.webp` (convite inteiro, a deslizar no telemóvel) e `bespoke-*.webp` (colagem do convite à medida, a partir de `elementos/`). Suporta a saudação dos links
+`public/renaissance-blue-01/elementos/LEIA-ME.md`. Está na montra da página inicial (`lib/templates.ts` + `public/home/tpl-<id>.jpg`, captura 480×984 do ecrã de entrada) com sala de demonstração em `/preview/renaissance-blue-01` (dados em `app/[locale]/preview/demos.tsx`); a página inicial usa ainda `public/home/rb-open.jpg` (convite aberto), `rb-scroll.webp` (convite inteiro, a deslizar no telemóvel) e `bespoke-*.webp` (colagem do convite à medida, a partir de `elementos/`). Suporta a saudação dos links
 pessoais (`GuestGreeting`) e os textos são fixos em português, como nos outros modelos.
 O convite é lido do evento, nada é específico do casal original.
 

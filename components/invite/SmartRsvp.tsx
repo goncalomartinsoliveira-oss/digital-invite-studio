@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGuestLink, invalidateGuestLink } from "./useGuestLink";
+import { DEMO_INVITATION_ID, DEMO_GUESTS, DEMO_DIETARY_TAGS } from "./demoGuests";
 import pt from "@/dictionaries/pt";
 import en from "@/dictionaries/en";
 
@@ -36,6 +37,11 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
 
   const [availableTags, setAvailableTags] = useState<string[]>([]);
 
+  // Convite de exemplo (sala de demonstração): convidados fictícios, guardados
+  // só em memória. Nada aqui toca na base de dados (ver demoGuests.ts).
+  const isDemo = invitationId === DEMO_INVITATION_ID;
+  const [demoGuests, setDemoGuests] = useState(() => DEMO_GUESTS.map(g => ({ ...g })));
+
   // Link personalizado (?c=...): abre direto no grupo certo e grava pelo
   // servidor (só o próprio grupo). Num link geral isto fica inativo e tudo
   // funciona como sempre: pesquisa por nome e gravação direta.
@@ -59,7 +65,7 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
 
     const delayDebounceFn = setTimeout(async () => {
       setLoadingSearch(true);
-      const { data, error } = await supabase
+      const { data, error } = isDemo ? { data: demoGuests, error: null } : await supabase
         .from('guests')
         .select('*')
         .eq('invitation_id', invitationId)
@@ -74,12 +80,13 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, invitationId]);
+  }, [searchTerm, invitationId, isDemo, demoGuests]);
 
   // Fetch dietary tags from invitation settings
   useEffect(() => {
     const fetchInvitationTags = async () => {
       if (!invitationId) return;
+      if (isDemo) { setAvailableTags(DEMO_DIETARY_TAGS[locale] || DEMO_DIETARY_TAGS.pt); return; }
       const { data, error } = await supabase
         .from('invitations')
         .select('dietary_tags')
@@ -90,9 +97,14 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
       }
     };
     fetchInvitationTags();
-  }, [invitationId]);
+  }, [invitationId, isDemo, locale]);
 
   const handleSelectGroup = async (guest: any) => {
+    if (isDemo) {
+      setGroupMembers(demoGuests.filter(g => g.group_id === guest.group_id).map(g => ({ ...g })));
+      setStep(1); setSearchTerm("");
+      return;
+    }
     setLoadingSearch(true);
     const { data, error } = await supabase
       .from('guests')
@@ -106,6 +118,11 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
 
   const handleSubmitRSVP = async () => {
     setSubmitting(true);
+    if (isDemo) {
+      setDemoGuests(prev => prev.map(g => groupMembers.find(m => m.id === g.id) ?? g));
+      setStep(2); setSubmitting(false);
+      return;
+    }
     if (viaLink && linkData) {
       const res = await fetch(`/api/guest-link/${encodeURIComponent(linkData.token)}?inv=${encodeURIComponent(invitationId)}`, {
         method: "POST",
@@ -135,6 +152,11 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!requestName.trim()) return;
+    if (isDemo) {
+      setStep(4);
+      setRequestName(""); setRequestContact(""); setRequestMessage("");
+      return;
+    }
     setSubmitting(true);
 
     const combinedNotes = `${dict.notes.contactPrefix}: ${requestContact} | ${dict.notes.messagePrefix}: ${requestMessage}`;
