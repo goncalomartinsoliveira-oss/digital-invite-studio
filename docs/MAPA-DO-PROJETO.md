@@ -273,6 +273,14 @@ eventos e veem o botão simples "Gestão". Eventos, Parceiro e Wedding Planner f
    `unlocked_modules` o super admin (Conta › Módulos do Evento) e o desbloqueio
    sem pagamento acima.
 
+**Dados dos convidados (migração `0018`):** `guests` e `guestbook` só são
+legíveis pela equipa do evento. O RSVP do link geral (`SmartRsvp`) usa
+`api/rsvp` (pesquisa por nome devolve só id e nome, até 5; o grupo vem pelo id
+de um convidado; as respostas só gravam um grupo; pedidos de quem não está na
+lista ficam "requested"), com o convite publicado, dentro do prazo e, se houver
+código de acesso, depois de o introduzir. "Encontre a sua mesa" usa
+`api/seating` (pelo menos 2 letras; nome e mesa). Ajudas em `lib/publicGuests.ts`.
+
 **Proteções na base de dados (migração `0016`):** o browser fala diretamente
 com o Supabase, por isso as regras de pagamento também estão em triggers, que
 valem para qualquer escrita: módulos ativos, datas de bloqueio/fim/limpeza,

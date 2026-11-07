@@ -66,16 +66,15 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
 
     const delayDebounceFn = setTimeout(async () => {
       setLoadingSearch(true);
-      const { data, error } = isDemo ? { data: demoGuests, error: null } : await supabase
-        .from('guests')
-        .select('*')
-        .eq('invitation_id', invitationId)
-        .neq('status', 'requested');
-
-      if (!error && data) {
-        const normalizeStr = (str: string) => str.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+      if (isDemo) {
+        const normalizeStr = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         const searchNormalized = normalizeStr(searchTerm);
-        setFoundGuests(data.filter((g: any) => normalizeStr(g.name).includes(searchNormalized)).slice(0, 5));
+        setFoundGuests(demoGuests.filter((g: any) => g.status !== 'requested' && normalizeStr(g.name).includes(searchNormalized)).slice(0, 5));
+      } else {
+        // Pesquisa no servidor (api/rsvp): só devolve nomes parecidos, nunca a lista.
+        const res = await fetch(`/api/rsvp?inv=${encodeURIComponent(invitationId)}&q=${encodeURIComponent(searchTerm)}`, { cache: "no-store" }).catch(() => null);
+        const j = res && res.ok ? await res.json().catch(() => null) : null;
+        setFoundGuests(j?.matches || []);
       }
       setLoadingSearch(false);
     }, 500);
@@ -107,13 +106,9 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
       return;
     }
     setLoadingSearch(true);
-    const { data, error } = await supabase
-      .from('guests')
-      .select('*')
-      .eq('invitation_id', invitationId)
-      .eq('group_id', guest.group_id);
-
-    if (!error && data) { setGroupMembers(data); setStep(1); setSearchTerm(""); }
+    const res = await fetch(`/api/rsvp?inv=${encodeURIComponent(invitationId)}&guest=${encodeURIComponent(guest.id)}`, { cache: "no-store" }).catch(() => null);
+    const j = res && res.ok ? await res.json().catch(() => null) : null;
+    if (j?.members?.length) { setGroupMembers(j.members); setStep(1); setSearchTerm(""); }
     setLoadingSearch(false);
   };
 
@@ -137,15 +132,16 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
       setSubmitting(false);
       return;
     }
-    const results = await Promise.all(groupMembers.map(member =>
-      supabase.from('guests').update({
-        status: member.status,
-        dietary_notes: member.status === 'confirmed' ? member.dietary_notes : null,
-        notes: member.status === 'confirmed' ? member.notes : null
-      }).eq('id', member.id)
-    ));
+    const res = await fetch(`/api/rsvp`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        inv: invitationId,
+        answers: groupMembers.map(m => ({ id: m.id, status: m.status, dietary_notes: m.dietary_notes, notes: m.notes })),
+      }),
+    }).catch(() => null);
 
-    if (results.some(r => r.error)) alert(dict.alerts.saveError);
+    if (!res || !res.ok) alert(dict.alerts.saveError);
     else setStep(2);
     setSubmitting(false);
   };
@@ -162,19 +158,13 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
 
     const combinedNotes = `${dict.notes.contactPrefix}: ${requestContact} | ${dict.notes.messagePrefix}: ${requestMessage}`;
 
-    const { error } = await supabase.from('guests').insert([{
-      invitation_id: invitationId,
-      name: requestName,
-      category: 'adult',
-      gender: 'masculino',
-      side: 'comum',
-      status: 'requested',
-      dietary_notes: null,
-      notes: combinedNotes,
-      group_id: `REQ-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
-    }]);
+    const res = await fetch(`/api/rsvp`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ inv: invitationId, request: { name: requestName, notes: combinedNotes } }),
+    }).catch(() => null);
 
-    if (!error) {
+    if (res && res.ok) {
       setStep(4);
       setRequestName(""); setRequestContact(""); setRequestMessage("");
     } else {

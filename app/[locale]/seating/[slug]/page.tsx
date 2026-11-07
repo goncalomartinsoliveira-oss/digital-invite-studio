@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useBrand } from "@/components/site/BrandProvider";
 import { resolveBrandById } from "@/lib/brands";
@@ -12,15 +12,12 @@ import pt from "@/dictionaries/pt";
 import en from "@/dictionaries/en";
 const dictionaries = { pt, en };
 
+// Convidados encontrados pela pesquisa no servidor (api/seating, migração
+// 0018): só nome e mesa dos que coincidem, nunca a lista inteira.
 interface Guest {
   id: string;
   name: string;
-  table_id: string;
-}
-
-interface Table {
-  id: string;
-  name: string;
+  table: string | null;
 }
 
 export default function SeatingPlanGuestView() {
@@ -31,9 +28,8 @@ export default function SeatingPlanGuestView() {
   const dict = dictionaries[locale]?.SeatingPublic || dictionaries.pt.SeatingPublic;
 
   const [loading, setLoading] = useState(true);
-  const [inviteData, setInviteData] = useState<{ groom_name: string; bride_name: string; expires_at?: string | null; unlocked_modules?: string[] | null } | null>(null);
-  const [guests, setGuests] = useState<Guest[]>([]);
-  const [tables, setTables] = useState<Record<string, string>>({}); 
+  const [inviteData, setInviteData] = useState<{ id: string; groom_name: string; bride_name: string; expires_at?: string | null; unlocked_modules?: string[] | null } | null>(null);
+  const [filteredGuests, setFilteredGuests] = useState<Guest[]>([]);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
@@ -54,42 +50,22 @@ export default function SeatingPlanGuestView() {
       setInviteData(invite);
       setEventBrand(await resolveBrandById(supabase, (invite as any)?.brand_id));
 
-      // 2. Buscar apenas os convidados que TÊM mesa atribuída
-      const { data: guestsData } = await supabase
-        .from("guests")
-        .select("id, name, table_id")
-        .eq("invitation_id", invite.id)
-        .not("table_id", "is", null);
-
-      // 3. Buscar as mesas (CORRIGIDO PARA event_tables)
-      const { data: tablesData } = await supabase
-        .from("event_tables")
-        .select("id, name")
-        .eq("invitation_id", invite.id);
-
-      // Criar um dicionário de mesas para acesso rápido
-      const tablesMap: Record<string, string> = {};
-      if (tablesData) {
-        tablesData.forEach(t => {
-          tablesMap[t.id] = t.name;
-        });
-      }
-
-      setGuests(guestsData || []);
-      setTables(tablesMap);
       setLoading(false);
     }
 
     fetchData();
   }, [params.slug]);
 
-  // Filtrar convidados à medida que o utilizador escreve
-  const filteredGuests = useMemo(() => {
-    if (searchQuery.length < 2) return [];
-    return guests.filter(g => 
-      g.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, guests]);
+  // Pesquisar no servidor à medida que o utilizador escreve (com pausa).
+  useEffect(() => {
+    if (!inviteData || searchQuery.trim().length < 2) { setFilteredGuests([]); return; }
+    const t = setTimeout(async () => {
+      const res = await fetch(`/api/seating?inv=${encodeURIComponent(inviteData.id)}&q=${encodeURIComponent(searchQuery.trim())}`, { cache: "no-store" }).catch(() => null);
+      const j = res && res.ok ? await res.json().catch(() => null) : null;
+      setFilteredGuests(j?.matches || []);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchQuery, inviteData]);
 
   if (loading) {
     return (
@@ -221,7 +197,7 @@ export default function SeatingPlanGuestView() {
 
                   <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-3">{dict.yourTableIs}</p>
                   <h2 className="font-serif text-5xl text-brand font-regular">
-                    {tables[selectedGuest.table_id] || dict.tableNotDefined}
+                    {selectedGuest.table || dict.tableNotDefined}
                   </h2>
                 </div>
               </div>

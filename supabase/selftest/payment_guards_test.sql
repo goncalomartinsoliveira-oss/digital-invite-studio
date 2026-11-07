@@ -1,6 +1,6 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Teste das migrações 0016 e 0017 (proteções de pagamento; grátis para
--- preparar) no Supabase real.
+-- Teste das migrações 0016, 0017 e 0018 (proteções de pagamento; grátis para
+-- preparar; privacidade dos convidados) no Supabase real.
 --
 -- Correr no SQL Editor → colar → Run. NÃO deixa nada na base de dados: cria
 -- dados de teste, experimenta cada regra como noivos, convidado anónimo,
@@ -28,6 +28,26 @@ begin
   return null;
 exception when others then
   return sqlerrm;
+end $$;
+
+-- Quantas linhas um papel consegue ver com uma consulta (count). Erro = -1.
+create or replace function pg_temp.dis_count(_role text, _email text, _sql text)
+returns int language plpgsql as $$
+declare _sub text := case when _email = 'noivos-teste-0016@exemplo.pt'
+                          then current_setting('dis.selftest_uid', true)
+                          else gen_random_uuid()::text end;
+        _n int;
+begin
+  perform set_config('request.jwt.claims',
+    case when _email is null then json_build_object('role', _role)::text
+         else json_build_object('role', _role, 'email', _email, 'sub', _sub)::text end, true);
+  execute format('set local role %I', _role);
+  execute _sql into _n;
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+  return _n;
+exception when others then
+  return -1;
 end $$;
 
 create or replace function pg_temp.dis_selftest_0016()
@@ -98,7 +118,8 @@ begin
         ['Noivos convidam alguém para a equipa', 'authenticated', c, format($q$insert into invitation_collaborators (invitation_id, user_email, role) values (%L, 'mae-teste-0016@exemplo.pt', 'editor')$q$, e1), 'sim'],
         ['RSVP de convidado com o convite por publicar', 'anon', null, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Tia', 'adult', 'feminino', 'comum', 'confirmed', 'T0016')$q$, e1), 'não'],
         ['Noivos preparam a lista antes de pagar', 'authenticated', c, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Tia', 'adult', 'feminino', 'comum', 'pending', 'T0016')$q$, e1), 'sim'],
-        ['RSVP de convidado com o convite publicado', 'anon', null, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Avó', 'adult', 'feminino', 'comum', 'confirmed', 'T0016')$q$, e3), 'sim'],
+        ['Convidado escreve na lista direto na base de dados (o RSVP passa pelo servidor)', 'anon', null, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Avó', 'adult', 'feminino', 'comum', 'confirmed', 'T0016')$q$, e3), 'não'],
+        ['Servidor grava o RSVP com o convite publicado', 'service_role', null, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Avó', 'adult', 'feminino', 'comum', 'confirmed', 'T0016')$q$, e3), 'sim'],
         ['Noivos montam mesas antes de pagar', 'authenticated', c, format($q$insert into event_tables (invitation_id, name, shape, capacity, position_x, position_y) values (%L, 'Mesa 1', 'round', 8, 50, 50)$q$, e1), 'sim'],
         ['Anónimo mexe nas mesas de um evento', 'anon', null, format($q$insert into event_tables (invitation_id, name, shape, capacity, position_x, position_y) values (%L, 'Mesa X', 'round', 8, 50, 50)$q$, e1), 'não'],
         ['Estranho mexe nas mesas de um evento', 'authenticated', z, format($q$insert into event_tables (invitation_id, name, shape, capacity, position_x, position_y) values (%L, 'Mesa X', 'round', 8, 50, 50)$q$, e1), 'não']
@@ -148,6 +169,48 @@ begin
         out_det := out_det || coalesce(err, 'correu');
       end if;
     end loop;
+
+    -- ── Privacidade (0018): quem consegue ver e alterar o quê ──
+    declare
+      cnt int;
+      checks text[][] := array[
+        ['Anónimo lê os convidados de um evento → deve ver 0', 'anon', null, format('select count(*) from guests where invitation_id = %L', e1), '0'],
+        ['Outra conta lê os convidados de um evento alheio → deve ver 0', 'authenticated', z, format('select count(*) from guests where invitation_id = %L', e1), '0'],
+        ['Noivos leem a própria lista → devem ver os convidados', 'authenticated', c, format('select count(*) from guests where invitation_id = %L', e1), '+'],
+        ['Anónimo lê as mensagens do livro de visitas → deve ver 0', 'anon', null, format('select count(*) from guestbook where invitation_id = %L', e1), '0'],
+        ['Outra conta lê o livro de visitas alheio → deve ver 0', 'authenticated', z, format('select count(*) from guestbook where invitation_id = %L', e1), '0'],
+        ['Noivos leem o próprio livro de visitas → devem ver as mensagens', 'authenticated', c, format('select count(*) from guestbook where invitation_id = %L', e1), '+'],
+        ['Anónimo vê os áudios/vídeos privados do livro de visitas → deve ver 0', 'anon', null, format($q$select count(*) from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/private\_%'), '0'],
+        ['Anónimo vê as fotos públicas do evento → deve vê-las', 'anon', null, format($q$select count(*) from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/teste-0016-%'), '+'],
+        ['Noivos veem os áudios/vídeos privados do próprio evento', 'authenticated', c, format($q$select count(*) from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/private\_%'), '+']
+      ];
+    begin
+      insert into storage.objects (bucket_id, name) values ('fotos_evento', e1::text || '/private_gb_audio_teste0016.webm');
+      for i in 1 .. array_length(checks, 1) loop
+        cnt := pg_temp.dis_count(checks[i][2], checks[i][3], checks[i][4]);
+        out_res := out_res || case when (checks[i][5] = '0' and cnt = 0) or (checks[i][5] = '+' and cnt > 0) then 'PASS' else 'FALHOU' end;
+        out_test := out_test || checks[i][1];
+        out_det := out_det || ('vê ' || cnt);
+      end loop;
+    end;
+
+    err := pg_temp.dis_try('anon', null, format($q$update guests set name = 'Alterado' where invitation_id = %L$q$, e3));
+    select count(*)::text into v from guests where invitation_id = e3 and name = 'Alterado';
+    out_res := out_res || case when v = '0' then 'PASS' else 'FALHOU' end;
+    out_test := out_test || 'Anónimo altera convidados de um convite publicado → deve ficar igual'::text;
+    out_det := out_det || ('alterados = ' || v || coalesce(' (' || err || ')', ''));
+
+    err := pg_temp.dis_try('authenticated', z, format($q$delete from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/teste-0016-%'));
+    select count(*)::text into v from storage.objects where bucket_id = 'fotos_evento' and name like e1::text || '/teste-0016-%';
+    out_res := out_res || case when v::int > 0 then 'PASS' else 'FALHOU' end;
+    out_test := out_test || 'Outra conta apaga fotos de um evento alheio → devem ficar'::text;
+    out_det := out_det || ('fotos que ficaram = ' || v || coalesce(' (' || err || ')', ''));
+
+    err := pg_temp.dis_try('authenticated', c, format($q$delete from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/teste-0016-%'));
+    select count(*)::text into v from storage.objects where bucket_id = 'fotos_evento' and name like e1::text || '/teste-0016-%';
+    out_res := out_res || case when v = '0' then 'PASS' else 'FALHOU' end;
+    out_test := out_test || 'Noivos apagam fotos do próprio evento → devem sair'::text;
+    out_det := out_det || ('fotos que ficaram = ' || v || coalesce(' (' || err || ')', ''));
 
     raise exception 'dis_selftest_rollback';
   exception when others then
