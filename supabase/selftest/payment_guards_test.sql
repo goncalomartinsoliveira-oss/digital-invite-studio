@@ -1,5 +1,6 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Teste da migração 0016 (proteções de pagamento) no Supabase real.
+-- Teste das migrações 0016 e 0017 (proteções de pagamento; grátis para
+-- preparar) no Supabase real.
 --
 -- Correr no SQL Editor → colar → Run. NÃO deixa nada na base de dados: cria
 -- dados de teste, experimenta cada regra como noivos, convidado anónimo,
@@ -97,7 +98,10 @@ begin
         ['Noivos convidam alguém para a equipa', 'authenticated', c, format($q$insert into invitation_collaborators (invitation_id, user_email, role) values (%L, 'mae-teste-0016@exemplo.pt', 'editor')$q$, e1), 'sim'],
         ['RSVP de convidado com o convite por publicar', 'anon', null, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Tia', 'adult', 'feminino', 'comum', 'confirmed', 'T0016')$q$, e1), 'não'],
         ['Noivos preparam a lista antes de pagar', 'authenticated', c, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Tia', 'adult', 'feminino', 'comum', 'pending', 'T0016')$q$, e1), 'sim'],
-        ['RSVP de convidado com o convite publicado', 'anon', null, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Avó', 'adult', 'feminino', 'comum', 'confirmed', 'T0016')$q$, e3), 'sim']
+        ['RSVP de convidado com o convite publicado', 'anon', null, format($q$insert into guests (invitation_id, name, category, gender, side, status, group_id) values (%L, 'Avó', 'adult', 'feminino', 'comum', 'confirmed', 'T0016')$q$, e3), 'sim'],
+        ['Noivos montam mesas antes de pagar', 'authenticated', c, format($q$insert into event_tables (invitation_id, name, shape, capacity, position_x, position_y) values (%L, 'Mesa 1', 'round', 8, 50, 50)$q$, e1), 'sim'],
+        ['Anónimo mexe nas mesas de um evento', 'anon', null, format($q$insert into event_tables (invitation_id, name, shape, capacity, position_x, position_y) values (%L, 'Mesa X', 'round', 8, 50, 50)$q$, e1), 'não'],
+        ['Estranho mexe nas mesas de um evento', 'authenticated', z, format($q$insert into event_tables (invitation_id, name, shape, capacity, position_x, position_y) values (%L, 'Mesa X', 'round', 8, 50, 50)$q$, e1), 'não']
       ];
     begin
       for i in 1 .. array_length(tests, 1) loop
