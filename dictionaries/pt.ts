@@ -987,13 +987,16 @@ const pt = {
       "uploadingPrivate": "Enviado em privado!",
       "permissionDenied": "Permissão negada.",
       "downloadError": "Erro ao descarregar.",
+      "deleteError": "Não foi possível apagar a foto. Tente outra vez.",
       "textSent": "Mensagem enviada!"
     },
     "uploadOverlay": {
       "title": "A carregar o seu momento..."
     },
     "lightbox": {
-      "save": "Guardar"
+      "save": "Guardar",
+      "delete": "Apagar",
+      "deleteConfirm": "Apagar esta foto? Só pode apagar as fotos que enviou deste telemóvel."
     }
   },
   "ContentModule": {

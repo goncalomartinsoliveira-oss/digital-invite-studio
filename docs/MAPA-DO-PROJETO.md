@@ -281,6 +281,14 @@ lista ficam "requested"), com o convite publicado, dentro do prazo e, se houver
 código de acesso, depois de o introduzir. "Encontre a sua mesa" usa
 `api/seating` (pelo menos 2 letras; nome e mesa). Ajudas em `lib/publicGuests.ts`.
 
+**Fotos dos convidados (migração `0019`):** na galeria `/moments`, cada browser
+tem uma chave secreta (`lib/uploaderKey.ts`, localStorage). O envio passa por
+`api/photos` (`upload`: verifica prazo e limite de experiência, cria o caminho,
+regista em `photo_uploads` o hash da chave e devolve um link de envio
+temporário); `mine` lista as fotos deste browser; `delete` apaga uma só se o
+hash bater certo. Na foto aberta aparece **Apagar** só nas próprias. A limpeza
+de eventos expirados também apaga `photo_uploads`.
+
 **Proteções na base de dados (migração `0016`):** o browser fala diretamente
 com o Supabase, por isso as regras de pagamento também estão em triggers, que
 valem para qualquer escrita: módulos ativos, datas de bloqueio/fim/limpeza,

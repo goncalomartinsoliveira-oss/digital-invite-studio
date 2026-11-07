@@ -425,6 +425,7 @@ export const helpEn: HelpContent = {
       tips: [
         "The **Live Wall** link is different from the gallery's. Each has its own **Copy Link** and **Open Direct**.",
         "Under **Content Management** you can customise the profile photo of the galleries.",
+        "A guest who sends a photo by mistake can delete it: they open the photo in the gallery and tap **Delete**. It only works on the same phone they sent it from, and only for their own photos. You can delete any photo from the dashboard.",
       ],
       related: ["manage-photos", "links-qr"],
     },

@@ -7,10 +7,11 @@ import { resolveBrandById } from "@/lib/brands";
 import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { getUploaderKey } from '@/lib/uploaderKey';
 import {
   Camera, Heart, Loader2, MessageSquare, Plus, X, 
   PlayCircle, ChevronDown, Mic, Video, Send, StopCircle,
-  ShieldCheck, ChevronLeft, ChevronRight, Download, Globe, CloudUpload
+  ShieldCheck, ChevronLeft, ChevronRight, Download, Globe, CloudUpload, Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -36,6 +37,9 @@ export default function GuestMomentsPage() {
 
   const [invitation, setInvitation] = useState<any>(null);
   const [fotos, setFotos] = useState<any[]>([]);
+  // Fotos enviadas deste browser (api/photos): só estas mostram "Apagar".
+  const [minhas, setMinhas] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [meusLikes, setMeusLikes] = useState<string[]>([]);
   
@@ -104,7 +108,35 @@ export default function GuestMomentsPage() {
         });
       setFotos(urls);
     }
+    fetchMinhas(invId);
   }
+
+  // A chave fica no browser; o servidor só conhece o hash (migração 0019).
+  const uploaderKey = useRef<string | null>(null);
+  const ensureKey = () => {
+    if (!uploaderKey.current) {
+      uploaderKey.current = getUploaderKey() ?? Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2, "0")).join("");
+    }
+    return uploaderKey.current;
+  };
+  const photosApi = async (payload: Record<string, unknown>) => {
+    const res = await fetch('/api/photos', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ key: ensureKey(), ...payload }) }).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
+    return { ok: !!res?.ok, status: res?.status ?? 0, json };
+  };
+  async function fetchMinhas(invId: string) {
+    const r = await photosApi({ action: 'mine', inv: invId });
+    setMinhas(new Set<string>(r.ok ? r.json.names || [] : []));
+  }
+  const apagarFoto = async (name: string) => {
+    if (!invitation || deleting || !confirm(dict.lightbox.deleteConfirm)) return;
+    setDeleting(true);
+    const r = await photosApi({ action: 'delete', inv: invitation.id, name });
+    setDeleting(false);
+    if (!r.ok) { alert(dict.alerts.deleteError); return; }
+    setSelectedIndex(null);
+    await fetchFotos(invitation.id);
+  };
 
   const downloadMedia = async (url: string, fileName: string) => {
     try {
@@ -159,9 +191,24 @@ export default function GuestMomentsPage() {
     for (const file of toSend) {
       const processed = await compressImage(file);
       const prefix = isPrivate ? 'private_gb_' : '';
-      const fileName = `${prefix}${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-      const path = `${invitation.id}/${fileName}`;
-      const { error } = await supabase.storage.from('fotos_evento').upload(path, processed);
+      let path = `${invitation.id}/${prefix}${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+      let error: unknown = null;
+      if (isPrivate) {
+        ({ error } = await supabase.storage.from('fotos_evento').upload(path, processed));
+      } else {
+        // Fotos da galeria: o servidor regista quem enviou (para poder apagar)
+        // e dá um link de envio temporário. Sem a migração 0019, envia como antes.
+        const r = await photosApi({ action: 'upload', inv: invitation.id, fileName: file.name });
+        if (r.ok) {
+          path = r.json.path;
+          ({ error } = await supabase.storage.from('fotos_evento').uploadToSignedUrl(path, r.json.token, processed));
+        } else if (r.status === 503) {
+          ({ error } = await supabase.storage.from('fotos_evento').upload(path, processed));
+        } else {
+          if (r.json?.error === 'trial_limit') { alert(trialMessage(kind)); break; }
+          error = r.json?.error || 'upload_failed';
+        }
+      }
       if (!error) {
         if (isPrivate) {
           const { data: { publicUrl } } = supabase.storage.from('fotos_evento').getPublicUrl(path);
@@ -303,7 +350,7 @@ export default function GuestMomentsPage() {
 
       <AnimatePresence>{selectedIndex !== null && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] bg-black/98 backdrop-blur-xl flex flex-col items-center justify-center" onClick={() => setSelectedIndex(null)}>
-          <div className="absolute top-6 left-0 w-full px-6 flex items-center justify-between text-white/70 z-[160]"><span className="text-[10px] font-black uppercase tracking-widest">{selectedIndex + 1} / {fotos.length}</span><div className="flex items-center gap-4"><button className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors flex items-center gap-2" onClick={(e) => { e.stopPropagation(); downloadMedia(fotos[selectedIndex].url, fotos[selectedIndex].name); }}><Download size={20} /><span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">{dict.lightbox.save}</span></button><button className="p-2 hover:text-white transition-colors" onClick={() => setSelectedIndex(null)}><X size={32} /></button></div></div>
+          <div className="absolute top-6 left-0 w-full px-6 flex items-center justify-between text-white/70 z-[160]"><span className="text-[10px] font-black uppercase tracking-widest">{selectedIndex + 1} / {fotos.length}</span><div className="flex items-center gap-4">{minhas.has(fotos[selectedIndex]?.name) && <button disabled={deleting} aria-label={dict.lightbox.delete} className="p-3 bg-white/10 hover:bg-red-500/80 rounded-full transition-colors flex items-center gap-2 disabled:opacity-50" onClick={(e) => { e.stopPropagation(); apagarFoto(fotos[selectedIndex].name); }}><Trash2 size={20} /><span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">{dict.lightbox.delete}</span></button>}<button aria-label={dict.lightbox.save} className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors flex items-center gap-2" onClick={(e) => { e.stopPropagation(); downloadMedia(fotos[selectedIndex].url, fotos[selectedIndex].name); }}><Download size={20} /><span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">{dict.lightbox.save}</span></button><button className="p-2 hover:text-white transition-colors" onClick={() => setSelectedIndex(null)}><X size={32} /></button></div></div>
           <button className="hidden md:flex absolute left-8 p-4 text-white/20 hover:text-white transition-all z-[160]" onClick={(e) => { e.stopPropagation(); goPrev(); }}><ChevronLeft size={64} /></button>
           <button className="hidden md:flex absolute right-8 p-4 text-white/20 hover:text-white transition-all z-[160]" onClick={(e) => { e.stopPropagation(); goNext(); }}><ChevronRight size={64} /></button>
           <motion.div key={fotos[selectedIndex].name} drag="x" dragConstraints={{ left: 0, right: 0 }} onDragEnd={(_, info) => { if (info.offset.x > 50) goPrev(); else if (info.offset.x < -50) goNext(); }} className="w-full h-full flex flex-col items-center justify-center p-4" onClick={(e) => e.stopPropagation()}><div className="max-h-[75vh] w-full flex items-center justify-center relative">{fotos[selectedIndex].isVideo ? <video src={fotos[selectedIndex].url} controls autoPlay className="max-h-full max-w-full rounded-2xl shadow-2xl" /> : <img src={fotos[selectedIndex].url} className="max-h-full max-w-full object-contain rounded-2xl shadow-2xl" />}</div><button onClick={(e) => handleLike(fotos[selectedIndex].name, e)} className={`mt-10 p-5 rounded-full backdrop-blur-md border transition-all ${meusLikes.includes(fotos[selectedIndex].name) ? 'bg-red-500 border-red-500 scale-110 shadow-xl' : 'bg-white/10 border-white/20 hover:bg-white/20'}`}><Heart size={32} className="text-white" fill={meusLikes.includes(fotos[selectedIndex].name) ? "white" : "none"} /></button></motion.div>

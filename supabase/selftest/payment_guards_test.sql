@@ -64,7 +64,7 @@ declare
   e1 uuid; e2 uuid; e3 uuid;
   uid uuid;
   mods_type text; m_all text; m_one text;
-  err text; v text;
+  err text; v text; cnt int;
   i int;
 begin
   begin
@@ -200,17 +200,22 @@ begin
     out_test := out_test || 'Anónimo altera convidados de um convite publicado → deve ficar igual'::text;
     out_det := out_det || ('alterados = ' || v || coalesce(' (' || err || ')', ''));
 
-    err := pg_temp.dis_try('authenticated', z, format($q$delete from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/teste-0016-%'));
-    select count(*)::text into v from storage.objects where bucket_id = 'fotos_evento' and name like e1::text || '/teste-0016-%';
-    out_res := out_res || case when v::int > 0 then 'PASS' else 'FALHOU' end;
-    out_test := out_test || 'Outra conta apaga fotos de um evento alheio → devem ficar'::text;
-    out_det := out_det || ('fotos que ficaram = ' || v || coalesce(' (' || err || ')', ''));
-
-    err := pg_temp.dis_try('authenticated', c, format($q$delete from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/teste-0016-%'));
-    select count(*)::text into v from storage.objects where bucket_id = 'fotos_evento' and name like e1::text || '/teste-0016-%';
+    -- Apagar fotos: o Supabase não deixa apagar ficheiros do Storage por SQL
+    -- ("Use the Storage API"), por isso confirma-se a regra em si: a política
+    -- fotos_evento_delete_team existe, a antiga (qualquer conta apagava) saiu, e
+    -- a condição autoriza os noivos e recusa outra conta.
+    select count(*)::text into v from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname = 'objects_delete_authenticated';
     out_res := out_res || case when v = '0' then 'PASS' else 'FALHOU' end;
-    out_test := out_test || 'Noivos apagam fotos do próprio evento → devem sair'::text;
-    out_det := out_det || ('fotos que ficaram = ' || v || coalesce(' (' || err || ')', ''));
+    out_test := out_test || 'Regra antiga "qualquer conta apaga fotos" foi retirada'::text;
+    out_det := out_det || ('regras antigas = ' || v);
+    cnt := pg_temp.dis_count('authenticated', z, format('select count(*) from (select 1 where public.dis_manages_event_folder(%L)) x', e1::text));
+    out_res := out_res || case when cnt = 0 then 'PASS' else 'FALHOU' end;
+    out_test := out_test || 'Outra conta pode apagar fotos de um evento alheio → não'::text;
+    out_det := out_det || case when cnt = 0 then 'não pode' else 'pode' end;
+    cnt := pg_temp.dis_count('authenticated', c, format('select count(*) from (select 1 where public.dis_manages_event_folder(%L)) x', e1::text));
+    out_res := out_res || case when cnt = 1 then 'PASS' else 'FALHOU' end;
+    out_test := out_test || 'Noivos podem apagar fotos do próprio evento → sim'::text;
+    out_det := out_det || case when cnt = 1 then 'pode' else 'não pode' end;
 
     raise exception 'dis_selftest_rollback';
   exception when others then
