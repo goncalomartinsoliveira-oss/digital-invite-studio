@@ -156,6 +156,7 @@ export const helpPt: HelpContent = {
         "Vejam o resultado no telemóvel ao lado.",
       ],
       tips: [
+        "Os campos da **Capa (Hero)** dependem do modelo escolhido. No **Renaissance Blue** podem mudar a **Frase do convite**, a **Palavra em destaque** (\"Casamento\"), o **Título do círculo** (\"Save the Date\") e o título e subtítulo dos botões dos detalhes e do RSVP. Um campo vazio mostra o texto original do modelo, a cinzento.",
         "Nos modelos com moldura (por exemplo, o envelope do **Renaissance Blue**), por baixo da foto de capa aparece **Enquadramento da foto**: arrastem a foto para escolher o que fica dentro da moldura e usem o **Zoom** para dar destaque a um ponto. **Centrar** volta ao início; uma foto nova começa sempre centrada.",
         "Em **Locais do Evento** podem pôr o **Link Google Maps** da cerimónia e da receção.",
         "Em **Detalhes do Evento** há **Logística & Estacionamento**, **Alojamento**, **Dress Code & Cores** e **Presentes & IBAN**. O botão do IBAN só aparece se o ativarem.",

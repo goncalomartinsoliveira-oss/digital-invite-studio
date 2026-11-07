@@ -1018,7 +1018,8 @@ const pt = {
         "frameTitle": "Enquadramento da foto",
         "frameHint": "Arrastem a foto para escolher o que aparece dentro da moldura e usem o zoom para dar destaque a um ponto. A foto nunca sai dos limites da moldura.",
         "frameZoom": "Zoom",
-        "frameReset": "Centrar"
+        "frameReset": "Centrar",
+        "defaultsHint": "Campos vazios mostram o texto original do modelo (o que aparece a cinzento)."
       },
       "countdown": {
         "title": "02. Contador Regressivo",

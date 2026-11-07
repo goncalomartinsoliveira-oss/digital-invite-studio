@@ -1018,7 +1018,8 @@ const en = {
         "frameTitle": "Photo framing",
         "frameHint": "Drag the photo to choose what shows inside the frame and use the zoom to highlight a spot. The photo never leaves the frame’s limits.",
         "frameZoom": "Zoom",
-        "frameReset": "Centre"
+        "frameReset": "Centre",
+        "defaultsHint": "Empty fields show the template’s original text (the one shown in grey)."
       },
       "countdown": {
         "title": "02. Countdown",

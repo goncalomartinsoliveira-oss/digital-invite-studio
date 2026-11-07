@@ -281,6 +281,15 @@ lista ficam "requested"), com o convite publicado, dentro do prazo e, se houver
 código de acesso, depois de o introduzir. "Encontre a sua mesa" usa
 `api/seating` (pelo menos 2 letras; nome e mesa). Ajudas em `lib/publicGuests.ts`.
 
+**Campos do conteúdo por modelo:** o editor mostra os campos do esquema do
+modelo (`layout` em `lib/templates.ts`; esquemas em `lib/templateContent.ts`).
+Hoje só a secção Capa (hero) depende do esquema: `classico` tem o Título
+secundário; `envelope-colagem` (Renaissance Blue e futuros temas com a mesma
+colagem) tem a frase do convite (até 3 linhas), a palavra em destaque, o
+título do círculo "Save the Date" e título/subtítulo dos botões Detalhes e
+RSVP. Os valores ficam em `content.hero.<campo>`; o template lê com
+`contentText()`, e um campo vazio mostra o texto original do modelo.
+
 **Enquadramento da foto de capa:** nos modelos com moldura (`COVER_FRAMES`
 em `lib/coverFrame.ts`, hoje o Renaissance Blue), o editor de conteúdo mostra
 **Enquadramento da foto** (`CoverFramer`): arrastar e zoom dentro da moldura,

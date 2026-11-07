@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import CoverFramer from "./CoverFramer";
 import { COVER_FRAMES } from "@/lib/coverFrame";
+import { getContentLayout } from "@/lib/templateContent";
+import { useParams } from "next/navigation";
 
 interface ContentModuleDict {
   toggle: { visible: string; hidden: string };
   sections: {
-    hero: { title: string; subtitleLabel: string; mediaLabel: string; noFile: string; uploading: string; changeMedia: string; frameTitle?: string; frameHint?: string; frameZoom?: string; frameReset?: string };
+    hero: { title: string; subtitleLabel: string; mediaLabel: string; noFile: string; uploading: string; changeMedia: string; frameTitle?: string; frameHint?: string; frameZoom?: string; frameReset?: string; defaultsHint?: string };
     countdown: { title: string; mainTitleLabel: string };
     story: { title: string; subtitleLabel: string; mainTitleLabel: string; photoLabel: string; photoEmpty: string; photoUpload: string; textsLabel: string; paragraphPrefix: string };
     gallery: { title: string; subtitleLabel: string; mainTitleLabel: string; photosLabel: string };
@@ -71,6 +73,11 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
   const content = dbContent.content || {};
 
   const s = dict.sections;
+  // Campos que dependem do modelo escolhido (lib/templateContent.ts).
+  const params = useParams();
+  const lang: "pt" | "en" = params?.locale === "en" ? "en" : "pt";
+  const layout = getContentLayout(formData?.template_id);
+  const heroFields = layout.sections.hero?.fields ?? [];
 
   useEffect(() => { setIsMounted(true); }, []);
 
@@ -134,9 +141,33 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
         {/* 01. HERO */}
         <AccordionItem {...accordionProps('hero', s.hero.title)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div>
-              <label className={labelClass}>{s.hero.subtitleLabel}</label>
-              <input className={inputClass} value={content.hero?.text_above_names ?? ''} onChange={e => handleTextChange('hero', 'text_above_names', e.target.value)} placeholder="Ex: THE WEDDING OF" />
+            <div className="space-y-6" data-hero-fields={layout.id}>
+              {heroFields.map(f => {
+                const value = content.hero?.[f.key] ?? '';
+                const placeholder = f.key === 'text_above_names' ? 'Ex: THE WEDDING OF' : (f.default?.[lang] ?? '');
+                const label = f.key === 'text_above_names' ? s.hero.subtitleLabel : f.label[lang];
+                return (
+                  <div key={f.key}>
+                    <label className={labelClass}>{label}</label>
+                    {f.lines && f.lines > 1 ? (
+                      <textarea
+                        className={`${inputClass} resize-none leading-relaxed`}
+                        rows={f.lines}
+                        maxLength={f.maxLength}
+                        value={value}
+                        placeholder={placeholder}
+                        onChange={e => handleTextChange('hero', f.key, e.target.value.split('\n').slice(0, f.lines).join('\n'))}
+                      />
+                    ) : (
+                      <input className={inputClass} maxLength={f.maxLength} value={value} placeholder={placeholder} onChange={e => handleTextChange('hero', f.key, e.target.value)} />
+                    )}
+                    {f.hint && <p className="text-[10px] text-gray-400 mt-1">{f.hint[lang]}</p>}
+                  </div>
+                );
+              })}
+              {heroFields.some(f => f.default?.[lang]) && (
+                <p className="text-[10px] text-gray-400 leading-relaxed">{s.hero.defaultsHint ?? 'Campos vazios mostram o texto original do modelo (o que aparece a cinzento).'}</p>
+              )}
             </div>
             <div>
               <label className={labelClass}>{s.hero.mediaLabel}</label>
