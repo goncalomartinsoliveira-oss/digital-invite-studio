@@ -289,6 +289,10 @@ colagem) tem a frase do convite (até 3 linhas), a palavra em destaque, o
 título do círculo "Save the Date" e título/subtítulo dos botões Detalhes e
 RSVP. Os valores ficam em `content.hero.<campo>`; o template lê com
 `contentText()`, e um campo vazio mostra o texto original do modelo.
+Também "A Nossa História" segue o esquema: no `envelope-colagem` o título é um
+só campo (`story.title`; eventos antigos com `title_our`/`title_history`
+continuam a mostrá-los) e a foto redonda tem enquadramento
+(`story.story_image_position`, moldura `CIRCLE_FRAME`).
 
 **Enquadramento da foto de capa:** nos modelos com moldura (`COVER_FRAMES`
 em `lib/coverFrame.ts`, hoje o Renaissance Blue), o editor de conteúdo mostra

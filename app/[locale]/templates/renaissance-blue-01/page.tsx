@@ -251,6 +251,12 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
   const footerImg = content.footer?.footer_image_url || DEFAULT_FOOTER_IMAGE;
 
   const storyParagraphs: string[] = (content.story?.paragraphs || []).filter((p: string) => p && p.trim() !== "");
+  // Título de "A Nossa História": campo único (esquema "envelope-colagem");
+  // se estiver vazio mas o evento tiver os dois campos antigos, usa esses.
+  const legacyStoryTitle = (content.story?.title_our || content.story?.title_history)
+    ? `${content.story?.title_our ?? "A Nossa"} ${content.story?.title_history ?? "História"}`.trim()
+    : "";
+  const storyTitle = content.story?.title?.trim() || legacyStoryTitle || contentText(content, "story", "title", "envelope-colagem");
   const programEvents: { time: string; title: string }[] = content.program?.events?.length
     ? content.program.events
     : [
@@ -576,27 +582,29 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
             {visibility.story !== false && (
               <section id="historia" className="px-6 py-20 scroll-mt-6">
                 <div className={wrap}>
-                  <SectionTitle eyebrow="O início">
-                    {(content.story?.title_our ?? "A Nossa")} {(content.story?.title_history ?? "História")}
-                  </SectionTitle>
+                  {/* Sem o título pequeno por cima ("O início"), a pedido.
+                      Título num só campo (story.title); eventos antigos com
+                      "A Nossa" + "História" continuam a mostrar esses. */}
+                  <SectionTitle>{storyTitle}</SectionTitle>
                   {content.story?.story_image_url && (
-                    <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden mx-auto mb-10 border-4 border-white shadow-sm">
-                      <img src={content.story.story_image_url} alt="" className="w-full h-full object-cover" />
+                    <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden mx-auto mb-10 border-4 border-white shadow-sm">
+                      {/* Enquadramento escolhido no painel (lib/coverFrame.ts). */}
+                      <img src={content.story.story_image_url} alt="" className="absolute inset-0 w-full h-full object-cover" style={coverImageStyle(content.story?.story_image_position)} />
                     </div>
                   )}
                   {storyParagraphs.length > 0 && (
-                    /* Os parágrafos do painel juntam-se num único texto, sem aspas
-                       (pedido do casal). Tira-se também aspas que venham dentro
-                       do próprio texto, no início/fim de cada parágrafo. */
-                    /* Mesmo estilo e tamanho do título pequeno das secções ("A
-                       AGENDA", "O INÍCIO"...), a pedido do casal: maiúsculas,
-                       11px, 0.3em de espaçamento e a mesma cor. Entrelinha
-                       larga, porque aqui são várias linhas. */
-                    <p className="uppercase text-center leading-[2.1]" style={{ fontSize: "11px", letterSpacing: "0.3em", color: T.accent }}>
-                      {storyParagraphs
-                        .map((p) => p.trim().replace(/^[“”"]+|[“”"]+$/g, "").trim())
-                        .join(" ")}
-                    </p>
+                    /* Um parágrafo do painel = um parágrafo no convite, com um
+                       espaço entre eles para se perceber a divisão. Sem aspas
+                       (pedido do casal): tiram-se as que venham no início/fim.
+                       Mesmo estilo do título pequeno das secções ("A AGENDA"…):
+                       maiúsculas, 11px, 0.3em e a mesma cor; entrelinha larga. */
+                    <div className="space-y-5">
+                      {storyParagraphs.map((p, i) => (
+                        <p key={i} className="uppercase text-center leading-[2.1]" style={{ fontSize: "11px", letterSpacing: "0.3em", color: T.accent }}>
+                          {p.trim().replace(/^[“”"]+|[“”"]+$/g, "").trim()}
+                        </p>
+                      ))}
+                    </div>
                   )}
                 </div>
               </section>
