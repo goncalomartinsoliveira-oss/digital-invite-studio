@@ -8,6 +8,7 @@ import { resolveBrandById } from "@/lib/brands";
 import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import SmartRsvp from "@/components/invite/SmartRsvp";
 import { supabase } from "@/lib/supabase";
+import { fetchPublicEvent } from "@/lib/publicEventClient";
 import pt from "@/dictionaries/pt";
 import en from "@/dictionaries/en";
 const dictionaries = { pt, en };
@@ -28,11 +29,7 @@ export default function RsvpGuestView() {
 
   useEffect(() => {
     async function fetchData() {
-      const { data: invite } = await supabase
-        .from("invitations")
-        .select("id, groom_name, bride_name, brand_id, expires_at, unlocked_modules")
-        .eq("slug", params.slug)
-        .single();
+      const invite = await fetchPublicEvent(String(params.slug));
 
       if (!invite) { setLoading(false); return; }
       setInviteData(invite);

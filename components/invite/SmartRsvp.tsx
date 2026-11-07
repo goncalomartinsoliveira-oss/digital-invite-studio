@@ -2,7 +2,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGuestLink, invalidateGuestLink } from "./useGuestLink";
 import { DEMO_INVITATION_ID, DEMO_GUESTS, DEMO_DIETARY_TAGS } from "./demoGuests";
@@ -87,13 +86,11 @@ export default function SmartRsvp({ invitationId, hideHeader }: SmartRsvpProps) 
     const fetchInvitationTags = async () => {
       if (!invitationId) return;
       if (isDemo) { setAvailableTags(DEMO_DIETARY_TAGS[locale] || DEMO_DIETARY_TAGS.pt); return; }
-      const { data, error } = await supabase
-        .from('invitations')
-        .select('dietary_tags')
-        .eq('id', invitationId)
-        .single();
-      if (!error && data && data.dietary_tags) {
-        setAvailableTags(data.dietary_tags.split(',').map((t: string) => t.trim()).filter(Boolean));
+      // Pelo servidor (api/rsvp): a tabela invitations já não é pública (0020).
+      const res = await fetch(`/api/rsvp?inv=${encodeURIComponent(invitationId)}&tags=1`, { cache: "no-store" }).catch(() => null);
+      const data = res && res.ok ? await res.json().catch(() => null) : null;
+      if (data?.dietary_tags) {
+        setAvailableTags(String(data.dietary_tags).split(',').map((t: string) => t.trim()).filter(Boolean));
       }
     };
     fetchInvitationTags();

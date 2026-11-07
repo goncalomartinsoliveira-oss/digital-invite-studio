@@ -1,6 +1,6 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Teste das migrações 0016, 0017 e 0018 (proteções de pagamento; grátis para
--- preparar; privacidade dos convidados) no Supabase real.
+-- Teste das migrações 0016-0020 (proteções de pagamento; grátis para
+-- preparar; privacidade dos convidados e dos eventos) no Supabase real.
 --
 -- Correr no SQL Editor → colar → Run. NÃO deixa nada na base de dados: cria
 -- dados de teste, experimenta cada regra como noivos, convidado anónimo,
@@ -182,7 +182,13 @@ begin
         ['Noivos leem o próprio livro de visitas → devem ver as mensagens', 'authenticated', c, format('select count(*) from guestbook where invitation_id = %L', e1), '+'],
         ['Anónimo vê os áudios/vídeos privados do livro de visitas → deve ver 0', 'anon', null, format($q$select count(*) from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/private\_%'), '0'],
         ['Anónimo vê as fotos públicas do evento → deve vê-las', 'anon', null, format($q$select count(*) from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/teste-0016-%'), '+'],
-        ['Noivos veem os áudios/vídeos privados do próprio evento', 'authenticated', c, format($q$select count(*) from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/private\_%'), '+']
+        ['Noivos veem os áudios/vídeos privados do próprio evento', 'authenticated', c, format($q$select count(*) from storage.objects where bucket_id = 'fotos_evento' and name like %L$q$, e1::text || '/private\_%'), '+'],
+        ['Anónimo lê os eventos (e-mails dos noivos) → deve ver 0', 'anon', null, format('select count(*) from invitations where id in (%L, %L)', e1, e2), '0'],
+        ['Outra conta lê eventos alheios → deve ver 0', 'authenticated', z, format('select count(*) from invitations where id in (%L, %L)', e1, e2), '0'],
+        ['Noivos leem o próprio evento', 'authenticated', c, format('select count(*) from invitations where id = %L', e1), '+'],
+        ['Equipa do parceiro lê o evento do parceiro', 'authenticated', s, format('select count(*) from invitations where id = %L', e2), '+'],
+        ['Equipa do parceiro lê eventos de outros → deve ver 0', 'authenticated', s, format('select count(*) from invitations where id = %L', e1), '0'],
+        ['Super admin lê qualquer evento', 'authenticated', sa, format('select count(*) from invitations where id in (%L, %L)', e1, e2), '+']
       ];
     begin
       insert into storage.objects (bucket_id, name) values ('fotos_evento', e1::text || '/private_gb_audio_teste0016.webm');

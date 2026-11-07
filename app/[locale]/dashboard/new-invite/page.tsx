@@ -85,9 +85,10 @@ export default function NovoConvitePage() {
 
     try {
       // 1. Verifica se o slug já existe
-      const { data: existing } = await supabase.from("invitations").select("id").eq("slug", cleanSlug).maybeSingle();
+      // Pelo servidor: desde a migração 0020 cada pessoa só lê os seus eventos.
+      const check = await fetch(`/api/slug-available?slug=${encodeURIComponent(cleanSlug)}`, { cache: "no-store" }).then(r => r.json()).catch(() => ({ available: true }));
       
-      if (existing) {
+      if (!check.available) {
         alert(dict.alerts.slugExists);
         setLoading(false);
         return;

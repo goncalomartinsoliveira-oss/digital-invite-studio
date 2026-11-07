@@ -281,6 +281,16 @@ lista ficam "requested"), com o convite publicado, dentro do prazo e, se houver
 código de acesso, depois de o introduzir. "Encontre a sua mesa" usa
 `api/seating` (pelo menos 2 letras; nome e mesa). Ajudas em `lib/publicGuests.ts`.
 
+**Eventos privados (migração `0020`):** a tabela `invitations` só é legível
+pela equipa de cada evento (dono, colaboradores, agência, super admin). As
+páginas públicas recebem só o que precisam: `/moments`, `/live-wall`,
+`/guestbook`, `/rsvp` e `/seating` usam `api/public-event` (nomes, imagem de
+perfil, marca, prazo, módulos); a página do convite lê com a chave de serviço e
+entrega aos templates só `INVITE_PAGE_FIELDS` (`lib/publicEvent.ts`) — nunca o
+e-mail dos noivos, orçamento, quem paga ou recomendação. As etiquetas de dieta
+do RSVP vêm de `api/rsvp?tags=1`; a verificação de link ao criar evento de
+`api/slug-available`.
+
 **Fotos dos convidados (migração `0019`):** na galeria `/moments`, cada browser
 tem uma chave secreta (`lib/uploaderKey.ts`, localStorage). O envio passa por
 `api/photos` (`upload`: verifica prazo e limite de experiência, cria o caminho,

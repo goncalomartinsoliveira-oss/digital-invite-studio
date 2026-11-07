@@ -21,6 +21,11 @@ export async function GET(req: NextRequest) {
   const invite = await loadPublicInvite(req, sp.get("inv"), "invite", { requireAccessCode: true });
   if (!invite) return NextResponse.json({ error: "not_found" }, { status: 404, headers: NO_STORE });
 
+  if (sp.get("tags")) {
+    const { data } = await supabaseAdmin.from("invitations").select("dietary_tags").eq("id", invite.id).maybeSingle();
+    return NextResponse.json({ dietary_tags: data?.dietary_tags || "" }, { headers: NO_STORE });
+  }
+
   const guestId = sp.get("guest");
   if (guestId) {
     if (!UUID_RE.test(guestId)) return NextResponse.json({ error: "invalid" }, { status: 400, headers: NO_STORE });

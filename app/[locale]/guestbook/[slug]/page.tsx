@@ -7,6 +7,7 @@ import { resolveBrandById } from "@/lib/brands";
 import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { fetchPublicEvent } from '@/lib/publicEventClient';
 import {
   Loader2, MessageSquare, Mic, Video, Send, StopCircle,
   ShieldCheck, ChevronLeft
@@ -55,8 +56,8 @@ export default function IsolatedGuestbookPage() {
 
   async function fetchInitialData() {
     try {
-      const { data: inv, error } = await supabase.from('invitations').select('id, bride_name, groom_name, profile_image_url, brand_id, expires_at, unlocked_modules').eq('slug', slug).single();
-      if (error) throw error;
+      const inv = await fetchPublicEvent(slug as string);
+      if (!inv) throw new Error('not_found');
       setInvitation(inv);
       setEventBrand(await resolveBrandById(supabase, (inv as any)?.brand_id));
     } catch (err) {
