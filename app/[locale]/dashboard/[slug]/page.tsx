@@ -693,15 +693,15 @@ export default function Dashboard() {
         {helpDrawer}
         {payerModal}
 
-        <main className="flex-1 px-6 py-14 sm:py-20">
+        <main className="flex-1 px-6 py-10 sm:py-14">
           <div className="max-w-5xl mx-auto">
             {statusBanner("mb-10")}
-            <div className="text-center mb-12 sm:mb-16">
+            <div className="text-center mb-8 sm:mb-10">
               <h2 className="font-serif text-3xl sm:text-4xl text-ink">{dict.hubTitle}</h2>
               <p className="text-gray-400 text-sm mt-2">{dict.hubSubtitle}</p>
             </div>
 
-            {!checklistHidden && <SetupChecklist items={checklistItems} dict={checklistDict} onDismiss={hideChecklist} onHelp={setHelpSlug} />}
+            {!checklistHidden && <SetupChecklist items={checklistItems} dict={checklistDict} onDismiss={hideChecklist} onHelp={setHelpSlug} storageKey={`dis_checklist_open_${params.slug}`} />}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {groupCards.map(card => (
