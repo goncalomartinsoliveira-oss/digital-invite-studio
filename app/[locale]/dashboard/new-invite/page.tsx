@@ -155,7 +155,8 @@ export default function NovoConvitePage() {
                   {locale === 'en' ? 'This event will belong to' : 'Este evento vai ficar associado a'}
                 </span>
                 <span className="text-[11px] font-bold text-brand">
-                  {workingBrand?.name || 'Digital Invite Studio'}
+                  {/* O mesmo que se grava em brand_id: marca de trabalho ou, sem ela, a do domínio. */}
+                  {workingBrand?.name || brand.name}
                 </span>
               </div>
             )}
