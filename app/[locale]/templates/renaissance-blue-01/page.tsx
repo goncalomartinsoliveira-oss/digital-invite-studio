@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cinzelFont as cinzel } from "@/lib/fonts/cinzel";
 import SmartRsvp from "../../../../components/invite/SmartRsvp";
 import { ENVELOPE_PHOTO_CLIP, coverImageStyle } from "@/lib/coverFrame";
+import { contentText } from "@/lib/templateContent";
 import GuestGreeting from "../../../../components/invite/GuestGreeting";
 
 // A pedido do casal, todo o texto do convite usa Cinzel — contador, história,
@@ -218,6 +219,10 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
   // Foto de capa escolhida no separador "Hero" do painel — é a que entra no
   // forro do envelope aberto.
   const coverPhoto: string = content.hero?.main_image_url || "";
+  // Textos da colagem da capa (esquema "envelope-colagem", lib/templateContent.ts):
+  // editáveis em Conteúdo do convite › Capa; vazios = texto original do modelo.
+  const heroText = (key: string) => contentText(content, "hero", key, "envelope-colagem");
+  const invitePhraseLines = heroText("invite_phrase").split("\n").map(l => l.trim()).filter(Boolean).slice(0, 3);
   const footerImg = content.footer?.footer_image_url || DEFAULT_FOOTER_IMAGE;
 
   const storyParagraphs: string[] = (content.story?.paragraphs || []).filter((p: string) => p && p.trim() !== "");
@@ -423,11 +428,12 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
               {/* Etiqueta com os nomes — ordem e disposição pedidas pelo
                   casal (ver maquete de referência "Carolina e Pedro"):
                   nome da noiva, "e", nome do noivo, cada um na sua linha;
-                  depois a frase fixa do convite; "Casamento" em destaque,
-                  maior que o resto. A frase e o "Casamento" são fixos
-                  (não vêm de `content.hero`, que aqui deixou de ter uma
-                  zona própria neste cartão) — texto exato pedido pelo
-                  casal, não um valor por omissão genérico. Data/local
+                  depois a frase do convite; "Casamento" em destaque,
+                  maior que o resto. A frase, a palavra em destaque e os
+                  textos do círculo, do coração e do losango vêm de
+                  `content.hero` (esquema "envelope-colagem",
+                  lib/templateContent.ts); vazios, mostram o texto pedido
+                  originalmente pelo casal. Data/local
                   deixaram de aparecer aqui (não estavam na disposição
                   pedida); continuam visíveis no contador e em "O Grande
                   Dia", mais abaixo na página. */}
@@ -457,16 +463,16 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
                     className="absolute left-0 right-0 flex flex-col items-center gap-[0.3em] px-[16%]"
                     style={{ top: "58%", transform: "translateY(-50%)" }}
                   >
-                    <span className={`${cinzel.className} uppercase`} style={moldSmallCaps}>É com muita alegria</span>
-                    <span className={`${cinzel.className} uppercase`} style={moldSmallCaps}>que convidamos</span>
-                    <span className={`${cinzel.className} uppercase`} style={moldSmallCaps}>para o nosso</span>
+                    {invitePhraseLines.map((line, i) => (
+                      <span key={i} className={`${cinzel.className} uppercase`} style={moldSmallCaps}>{line}</span>
+                    ))}
                   </div>
                   <div
                     className="absolute left-0 right-0 text-center px-[10%]"
                     style={{ top: "74%", transform: "translateY(-50%)" }}
                   >
                     <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(18px, 6.4cqw, 42px)", color: TEXT_BLUE, lineHeight: 1.35, paddingBlock: "0.1em" }}>
-                      Casamento
+                      {heroText("wedding_word")}
                     </span>
                   </div>
                 </div>
@@ -485,7 +491,7 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
                   <img src={`${EL}/forma-circulo.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                   <div className="absolute left-0 right-0 text-center px-[12%]" style={{ top: "42%", transform: "translateY(-50%)" }}>
                     <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(16px, 5.6cqw, 34px)", color: "#F2F0E6", lineHeight: 1.35, paddingBlock: "0.1em" }}>
-                      Save the Date
+                      {heroText("std_title")}
                     </span>
                   </div>
                   {dateShort && (
@@ -506,11 +512,11 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
                   <img src={`${EL}/coracao-renda.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                   <div className="absolute left-0 right-0 text-center" style={{ top: "35%", transform: "translateY(-50%)" }}>
                     <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(17px, 6cqw, 36px)", color: TEXT_BLUE, lineHeight: 1.35, paddingBlock: "0.1em" }}>
-                      Detalhes
+                      {heroText("details_title")}
                     </span>
                   </div>
                   <div className="absolute left-0 right-0 text-center" style={{ top: "55%", transform: "translateY(-50%)" }}>
-                    <ClickLabel>Clique aqui</ClickLabel>
+                    <ClickLabel>{heroText("details_subtitle")}</ClickLabel>
                   </div>
                 </div>
               </a>
@@ -527,11 +533,11 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
                   <img src={`${EL}/etiqueta-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
                   <div className="absolute left-0 right-0 text-center" style={{ top: "46%", transform: "translateY(-50%)" }}>
                     <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(24px, 8.6cqw, 52px)", color: "#F2F0E6", lineHeight: 1.35, paddingBlock: "0.1em" }}>
-                      RSVP
+                      {heroText("rsvp_title")}
                     </span>
                   </div>
                   <div className="absolute left-0 right-0 text-center px-[16%]" style={{ top: "62%", transform: "translateY(-50%)" }}>
-                    <ClickLabel dark>Confirme a sua presença</ClickLabel>
+                    <ClickLabel dark>{heroText("rsvp_subtitle")}</ClickLabel>
                   </div>
                 </div>
               </a>

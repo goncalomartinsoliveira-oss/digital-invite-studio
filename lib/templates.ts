@@ -9,6 +9,9 @@
 //   4. Imagens: public/home/tpl-<id>.jpg (telemóvel, 480×984, o topo do convite)
 //      e uma miniatura para o seletor (proporção 4:3).
 //   5. Acrescentar a entrada em INVITE_TEMPLATES e baixar COMING_SOON_SLOTS.
+//   6. Indicar o esquema de conteúdo (`layout`, lib/templateContent.ts): um tema
+//      com a mesma disposição do Renaissance Blue usa "envelope-colagem" e lê
+//      os textos com contentText(); uma disposição nova pede um esquema novo.
 // Um id ligado no passo 2 mas fora desta lista é um modelo à medida: só o
 // evento que o usa o vê, e o editor esconde-lhe o seletor.
 
@@ -18,6 +21,9 @@ export type InviteTemplate = {
   thumb: string;          // miniatura do seletor do editor (4:3)
   phone: string;          // captura em telemóvel para a montra da página inicial (480×984)
   supportsTheme?: boolean; // tem "Cor de Destaque" (um único token de cor em todo o desenho)
+  // Esquema de conteúdo (lib/templateContent.ts): que campos o editor mostra.
+  // Temas com a mesma disposição partilham o esquema. Sem isto: "classico".
+  layout?: string;
   desc: { pt: string; en: string };
 };
 
@@ -27,6 +33,7 @@ export const INVITE_TEMPLATES: InviteTemplate[] = [
     name: "Renaissance Blue",
     thumb: "/renaissance-blue-01/preview.webp",
     phone: "/home/tpl-renaissance-blue-01.jpg",
+    layout: "envelope-colagem",
     desc: {
       pt: "Envelope azul com selo de cera e colagem de hortênsias, em azul-céu e creme.",
       en: "A blue envelope with a wax seal and a hydrangea collage, in sky blue and cream.",

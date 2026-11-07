@@ -158,6 +158,7 @@ export const helpEn: HelpContent = {
         "Check the result on the phone next to it.",
       ],
       tips: [
+        "The **Cover (Hero)** fields depend on the chosen template. In **Renaissance Blue** you can change the **Invitation phrase**, the **Highlighted word** (\"Wedding\"), the **Circle title** (\"Save the Date\") and the title and subtitle of the details and RSVP buttons. An empty field shows the template’s original text, in grey.",
         "In templates with a frame (for example, the **Renaissance Blue** envelope), **Photo framing** appears under the cover photo: drag the photo to choose what shows inside the frame and use **Zoom** to highlight a spot. **Centre** goes back to the start; a new photo always starts centred.",
         "In **Event Venues** you can add the **Google Maps Link** for the ceremony and the reception.",
         "**Event Details** has **Logistics & Parking**, **Accommodation**, **Dress Code & Colors** and **Gifts & IBAN**. The IBAN button only appears if you turn it on.",
