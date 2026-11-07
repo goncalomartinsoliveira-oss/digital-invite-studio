@@ -1,7 +1,9 @@
 // Modo de experiência (antes de pagar o Plano Completo): o casal pode testar
 // as fotos e o livro de visitas com um limite de conteúdos. O limite é
-// verificado no momento do envio (as páginas enviam direto para o Supabase);
-// chega para experimentar, não para usar num casamento.
+// verificado no momento do envio (as páginas enviam direto para o Supabase) e
+// imposto também na base de dados (migração 0016: trigger em guestbook e
+// política restritiva em storage.objects). Chega para experimentar, não para
+// usar num casamento.
 export const TRIAL_LIMIT = { photo_sharing: 5, guestbook: 5 } as const;
 
 export type TrialKind = keyof typeof TRIAL_LIMIT;

@@ -325,7 +325,10 @@ export default function Dashboard() {
     // unlocked_modules e date_locked_at são geridos fora dos editores (Conta ›
     // Módulos do Evento e webhook do Stripe). Não os regravar a partir da cópia
     // local, que pode estar desatualizada e desfazia ativações.
-    const { user_email, unlocked_modules, date_locked_at, paid_by, referred_by_brand_id, referred_at, content_purged_at, expiry_notice_sent_at, ...dataToSave } = formData;
+    // Estes campos também estão protegidos na base de dados (migração 0016):
+    // reenviar um valor desatualizado (ex.: expires_at recalculado pelo Supabase
+    // depois de mudar a data) faria o gravar falhar.
+    const { user_email, unlocked_modules, date_locked_at, paid_by, referred_by_brand_id, referred_at, content_purged_at, expiry_notice_sent_at, expires_at, brand_id, ...dataToSave } = formData;
     await supabase.from("invitations").update(dataToSave).eq("id", formData.id);
     setSaving(false);
     // Atualização "suave": o convite refaz só os dados (ver PreviewBridge) e mantém
