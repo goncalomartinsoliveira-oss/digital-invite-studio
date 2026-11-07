@@ -8,13 +8,18 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- Corre um pedido como um papel (anon / authenticated / service_role) e um
--- e-mail de sessão. Devolve null se correu, ou a mensagem de erro.
+-- e-mail de sessão. Devolve null se correu, ou a mensagem de erro. Os noivos
+-- de teste usam o id de um utilizador real (invitations.user_id é obrigatório);
+-- os outros, um id qualquer.
 create or replace function pg_temp.dis_try(_role text, _email text, _sql text)
 returns text language plpgsql as $$
+declare _sub text := case when _email = 'noivos-teste-0016@exemplo.pt'
+                          then current_setting('dis.selftest_uid', true)
+                          else gen_random_uuid()::text end;
 begin
   perform set_config('request.jwt.claims',
     case when _email is null then json_build_object('role', _role)::text
-         else json_build_object('role', _role, 'email', _email)::text end, true);
+         else json_build_object('role', _role, 'email', _email, 'sub', _sub)::text end, true);
   execute format('set local role %I', _role);
   execute _sql;
   reset role;
@@ -36,12 +41,16 @@ declare
   b text := 'parceiro-teste-0016';
   sfx text := substr(md5(random()::text), 1, 6);
   e1 uuid; e2 uuid; e3 uuid;
+  uid uuid;
   mods_type text; m_all text; m_one text;
   err text; v text;
   i int;
 begin
   begin
     -- ── Dados de teste (como postgres: passa as proteções) ──
+    select id into uid from auth.users order by created_at limit 1;
+    if uid is null then raise exception 'é preciso pelo menos um utilizador em auth.users'; end if;
+    perform set_config('dis.selftest_uid', uid::text, true);
     select data_type into mods_type from information_schema.columns
       where table_schema = 'public' and table_name = 'invitations' and column_name = 'unlocked_modules';
     if mods_type in ('json', 'jsonb') then
@@ -55,18 +64,18 @@ begin
     insert into brand_members (brand_id, user_email, role) values (b, s, 'admin');
     insert into super_admins (user_email) values (sa);
     insert into partner_accounts (brand_id, referral_enabled, commission_pct) values (b, true, 15);
-    insert into invitations (user_email, slug, groom_name, bride_name, event_date, template_id, brand_id)
-      values (c, 'teste-0016-a-' || sfx, 'Rui', 'Ana', '2027-06-01', 'renaissance-blue-01', 'dis') returning id into e1;
-    insert into invitations (user_email, slug, groom_name, bride_name, event_date, template_id, brand_id)
-      values (s, 'teste-0016-b-' || sfx, 'Tó', 'Rita', '2027-06-01', 'renaissance-blue-01', b) returning id into e2;
-    insert into invitations (user_email, slug, groom_name, bride_name, event_date, template_id, brand_id)
-      values (c, 'teste-0016-c-' || sfx, 'Gil', 'Mia', '2027-06-01', 'renaissance-blue-01', 'dis') returning id into e3;
+    insert into invitations (user_id, user_email, slug, groom_name, bride_name, event_date, template_id, brand_id)
+      values (uid, c, 'teste-0016-a-' || sfx, 'Rui', 'Ana', '2027-06-01', 'renaissance-blue-01', 'dis') returning id into e1;
+    insert into invitations (user_id, user_email, slug, groom_name, bride_name, event_date, template_id, brand_id)
+      values (uid, s, 'teste-0016-b-' || sfx, 'Tó', 'Rita', '2027-06-01', 'renaissance-blue-01', b) returning id into e2;
+    insert into invitations (user_id, user_email, slug, groom_name, bride_name, event_date, template_id, brand_id)
+      values (uid, c, 'teste-0016-c-' || sfx, 'Gil', 'Mia', '2027-06-01', 'renaissance-blue-01', 'dis') returning id into e3;
 
     -- ── Testes ──
     -- (rótulo, papel, e-mail, SQL, deve passar?)
     declare
       tests text[][] := array[
-        ['Noivos criam o próprio evento', 'authenticated', c, format($q$insert into invitations (user_email, slug, groom_name, bride_name, event_date, template_id, brand_id) values (%L, %L, 'X', 'Y', '2027-01-01', 'renaissance-blue-01', 'dis')$q$, c, 'teste-0016-d-' || sfx), 'sim'],
+        ['Noivos criam o próprio evento', 'authenticated', c, format($q$insert into invitations (user_id, user_email, slug, groom_name, bride_name, event_date, template_id, brand_id) values (%L, %L, %L, 'X', 'Y', '2027-01-01', 'renaissance-blue-01', 'dis')$q$, uid, c, 'teste-0016-d-' || sfx), 'sim'],
         ['Criar evento já publicado', 'authenticated', c, format('insert into invitations (user_email, slug, unlocked_modules) values (%L, %L, %s)', c, 'teste-0016-e-' || sfx, m_one), 'não'],
         ['Criar evento em nome de outra pessoa', 'authenticated', c, format('insert into invitations (user_email, slug) values (%L, %L)', z, 'teste-0016-f-' || sfx), 'não'],
         ['Criar evento de um parceiro alheio', 'authenticated', c, format('insert into invitations (user_email, slug, brand_id) values (%L, %L, %L)', c, 'teste-0016-g-' || sfx, b), 'não'],
