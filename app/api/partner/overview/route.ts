@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { BRANDS } from "@/lib/brands";
 import { quoteFullPlan, type PartnerAccount } from "@/lib/partnerPricing";
 import { commissionDisplayStatus, approvalDate } from "@/lib/referrals";
 
@@ -71,13 +72,14 @@ export async function GET(req: NextRequest) {
     : null;
 
   return NextResponse.json({
-    brand: brandRow ? { id: brandRow.id, name: brandRow.name, logo: brandRow.logo_url, domain: brandRow.domain, planning: !!brandRow.planner_plan } : { id: brandId, name: brandId },
+    // Marcas de código (lib/brands.ts) têm nome, logótipo e domínio no código.
+    brand: { id: brandId, name: brandRow?.name || BRANDS[brandId]?.name || brandId, logo: brandRow?.logo_url || BRANDS[brandId]?.logo || null, domain: brandRow?.domain || BRANDS[brandId]?.domains[0] || null, planning: !!brandRow?.planner_plan },
     role: membership.role,
     features: {
       referral: !!account?.referral_enabled,
       partnerPrice: !!account?.partner_price_enabled,
       planning: !!brandRow?.planner_plan,
-      ownBrand: !!(brandRow?.logo_url || brandRow?.domain),
+      ownBrand: !!(brandRow?.logo_url || brandRow?.domain || BRANDS[brandId]),
     },
     terms: account ? {
       commissionPct: Number(account.commission_pct),

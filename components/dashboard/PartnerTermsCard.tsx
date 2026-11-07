@@ -12,7 +12,8 @@ import { formatPriceCents } from "@/lib/checkout";
 
 type Props = {
   brandId: string;
-  // Sem estes dois (marca de código, fora da tabela brands), o Planeamento não aparece.
+  brandName?: string;
+  // Sem estes dois, o cartão do Planeamento não aparece.
   plannerOn?: boolean;
   onPlannerChange?: (on: boolean) => void;
   locale: string;
@@ -21,7 +22,7 @@ type Props = {
 const euros = (cents: number) => (cents / 100).toFixed(2).replace(".", ",");
 const toCents = (v: string) => Math.round(parseFloat(v.replace(",", ".")) * 100);
 
-export default function PartnerTermsCard({ brandId, plannerOn, onPlannerChange, locale }: Props) {
+export default function PartnerTermsCard({ brandId, brandName, plannerOn, onPlannerChange, locale }: Props) {
   const en = locale === "en";
   const t = {
     features: en ? "Features" : "Funcionalidades",
@@ -137,7 +138,7 @@ export default function PartnerTermsCard({ brandId, plannerOn, onPlannerChange, 
           <div><label className={label}>{t.commission}</label><input className={input} inputMode="decimal" value={form.commission} onChange={e => setForm(f => ({ ...f, commission: e.target.value }))} /></div>
           <div>
             <label className={label}>{t.code}</label>
-            <input className={`${input} uppercase tracking-widest`} value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "") }))} placeholder="ATELIERLUA" />
+            <input className={`${input} uppercase tracking-widest`} value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "") }))} placeholder={`${en ? "e.g." : "ex.:"} ${(brandName || brandId).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "") || "CODIGO"}`} />
             {form.code && <p className="text-[10px] text-gray-400 mt-1">{t.codeHint} digitalinvitestudio.com/r/{form.code}</p>}
           </div>
         </div>
