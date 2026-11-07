@@ -1030,6 +1030,7 @@ const pt = {
         "subtitleLabel": "Título Secundário",
         "mainTitleLabel": "Título Principal",
         "photoLabel": "Foto Oval (Opcional)",
+        "photoLabelRound": "Foto redonda (opcional)",
         "photoEmpty": "FOTO",
         "photoUpload": "SUBIR",
         "textsLabel": "Textos da História",

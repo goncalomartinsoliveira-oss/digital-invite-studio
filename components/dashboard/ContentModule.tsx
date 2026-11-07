@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import CoverFramer from "./CoverFramer";
-import { COVER_FRAMES } from "@/lib/coverFrame";
+import { COVER_FRAMES, coverImageStyle } from "@/lib/coverFrame";
 import { getContentLayout } from "@/lib/templateContent";
 import { useParams } from "next/navigation";
 
@@ -11,7 +11,7 @@ interface ContentModuleDict {
   sections: {
     hero: { title: string; subtitleLabel: string; mediaLabel: string; noFile: string; uploading: string; changeMedia: string; frameTitle?: string; frameHint?: string; frameZoom?: string; frameReset?: string; defaultsHint?: string };
     countdown: { title: string; mainTitleLabel: string };
-    story: { title: string; subtitleLabel: string; mainTitleLabel: string; photoLabel: string; photoEmpty: string; photoUpload: string; textsLabel: string; paragraphPrefix: string };
+    story: { title: string; subtitleLabel: string; mainTitleLabel: string; photoLabel: string; photoLabelRound?: string; photoEmpty: string; photoUpload: string; textsLabel: string; paragraphPrefix: string };
     gallery: { title: string; subtitleLabel: string; mainTitleLabel: string; photosLabel: string };
     program: { title: string; subtitleLabel: string; mainTitleLabel: string; eventsLabel: string; addBtn: string; newEventDefault: string };
     event: { title: string; sectionTitleLabel: string; ceremonyTitle: string; receptionTitle: string; titleLabel: string; timeLabel: string; locationLabel: string; mapsLabel: string; mapsPlaceholder: string };
@@ -78,6 +78,13 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
   const lang: "pt" | "en" = params?.locale === "en" ? "en" : "pt";
   const layout = getContentLayout(formData?.template_id);
   const heroFields = layout.sections.hero?.fields ?? [];
+  const storySpec = layout.sections.story;
+  const framerDict = {
+    title: s.hero.frameTitle ?? 'Enquadramento da foto',
+    hint: s.hero.frameHint ?? '',
+    zoom: s.hero.frameZoom ?? 'Zoom',
+    reset: s.hero.frameReset ?? 'Centrar',
+  };
 
   useEffect(() => { setIsMounted(true); }, []);
 
@@ -112,6 +119,8 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
         const newUrls = [...(content.gallery?.images_urls || ["", "", "", "", ""])];
         newUrls[galleryIndex] = publicUrl;
         handleTextChange('gallery', 'images_urls', newUrls);
+      } else if (section === 'story' && field === 'story_image_url') {
+        setFormData({ ...formData, content: { ...dbContent, content: { ...content, story: { ...content.story, story_image_url: publicUrl, story_image_position: null } } } });
       } else if (section === 'hero' && field === 'main_image_url') {
         // Foto de capa nova → enquadramento volta ao centro (lib/coverFrame.ts).
         setFormData({ ...formData, content: { ...dbContent, content: { ...content, hero: { ...content.hero, main_image_url: publicUrl, main_image_position: null } } } });
@@ -195,12 +204,7 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                   value={content.hero?.main_image_position}
                   onChange={p => handleTextChange('hero', 'main_image_position', p)}
                   disabled={!canEdit}
-                  dict={{
-                    title: s.hero.frameTitle ?? 'Enquadramento da foto',
-                    hint: s.hero.frameHint ?? '',
-                    zoom: s.hero.frameZoom ?? 'Zoom',
-                    reset: s.hero.frameReset ?? 'Centrar',
-                  }}
+                  dict={framerDict}
                 />
               )}
             </div>
@@ -219,22 +223,52 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
         <AccordionItem {...accordionProps('story', s.story.title)}>
           <div className="space-y-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {storySpec ? (
+                /* Campos do esquema do modelo (lib/templateContent.ts). */
+                <div className="space-y-6" data-story-fields={layout.id}>
+                  {storySpec.fields.map(f => (
+                    <div key={f.key}>
+                      <label className={labelClass}>{f.label[lang]}</label>
+                      <input
+                        className={inputClass}
+                        maxLength={f.maxLength}
+                        value={content.story?.[f.key] ?? ''}
+                        placeholder={f.key === 'title' && (content.story?.title_our || content.story?.title_history)
+                          ? `${content.story?.title_our ?? 'A Nossa'} ${content.story?.title_history ?? 'História'}`
+                          : (f.default?.[lang] ?? '')}
+                        onChange={e => handleTextChange('story', f.key, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
               <div>
                 <label className={labelClass}>{s.story.subtitleLabel}</label>
                 <input className={inputClass} value={content.story?.title_our ?? ''} onChange={e => handleTextChange('story', 'title_our', e.target.value)} placeholder="Ex: A Nossa" />
                 <label className={`${labelClass} mt-8`}>{s.story.mainTitleLabel}</label>
                 <input className={inputClass} value={content.story?.title_history ?? ''} onChange={e => handleTextChange('story', 'title_history', e.target.value)} placeholder="Ex: História" />
               </div>
+              )}
               <div className="flex flex-col items-start md:items-center">
-                <label className={labelClass}>{s.story.photoLabel}</label>
-                <div className="relative w-32 h-44 rounded-full overflow-hidden bg-white border border-gray-200 shadow-sm group mt-3">
-                  {content.story?.story_image_url ? <img src={content.story.story_image_url} className="w-full h-full object-cover" /> : <div className="h-full flex items-center justify-center text-[10px] font-bold text-gray-300 tracking-widest bg-gray-50">{s.story.photoEmpty}</div>}
+                <label className={labelClass}>{storySpec?.photoFrame ? (s.story.photoLabelRound ?? s.story.photoLabel) : s.story.photoLabel}</label>
+                <div className={`relative ${storySpec?.photoFrame ? 'w-36 h-36' : 'w-32 h-44'} rounded-full overflow-hidden bg-white border border-gray-200 shadow-sm group mt-3`}>
+                  {content.story?.story_image_url ? <img src={content.story.story_image_url} className="w-full h-full object-cover" style={storySpec?.photoFrame ? coverImageStyle(content.story?.story_image_position) : undefined} /> : <div className="h-full flex items-center justify-center text-[10px] font-bold text-gray-300 tracking-widest bg-gray-50">{s.story.photoEmpty}</div>}
                   <label className="absolute inset-0 bg-brand/80 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer text-white text-[10px] font-bold tracking-widest transition-all">
                     <input type="file" className="hidden" onChange={e => handleUpload(e, 'story', 'story_image_url')} /> {uploading === 'story' ? '...' : s.story.photoUpload}
                   </label>
                 </div>
               </div>
             </div>
+            {storySpec?.photoFrame && content.story?.story_image_url && (
+              <CoverFramer
+                url={content.story.story_image_url}
+                frame={storySpec.photoFrame}
+                value={content.story?.story_image_position}
+                onChange={p => handleTextChange('story', 'story_image_position', p)}
+                disabled={!canEdit}
+                dict={framerDict}
+              />
+            )}
             <div className="space-y-6">
               <label className={labelClass}>{s.story.textsLabel}</label>
               {[0, 1, 2].map(idx => (

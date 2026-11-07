@@ -1030,6 +1030,7 @@ const en = {
         "subtitleLabel": "Secondary Title",
         "mainTitleLabel": "Main Title",
         "photoLabel": "Oval Photo (Optional)",
+        "photoLabelRound": "Round photo (optional)",
         "photoEmpty": "PHOTO",
         "photoUpload": "UPLOAD",
         "textsLabel": "Story Texts",

@@ -15,6 +15,7 @@
 // aqui, acrescentar a chave em `sections` e o ContentModule passa a usá-la.
 
 import { findTemplate, resolveTemplateId } from "./templates";
+import { CIRCLE_FRAME, type CoverFrame } from "./coverFrame";
 
 type Text = { pt: string; en: string };
 
@@ -31,6 +32,9 @@ export type ContentLayout = {
   id: string;
   sections: {
     hero?: { fields: ContentField[]; media: boolean };
+    // "A Nossa História": título(s) e, se tiver, moldura da foto (enquadramento).
+    // Sem esta chave, o editor usa a versão antiga (dois campos de título).
+    story?: { fields: ContentField[]; photoFrame?: CoverFrame };
   };
 };
 
@@ -72,6 +76,13 @@ export const CONTENT_LAYOUTS: Record<string, ContentLayout> = {
           { key: "rsvp_title", label: { pt: "Botão do RSVP — título", en: "RSVP button — title" }, default: { pt: "RSVP", en: "RSVP" }, maxLength: 20 },
           { key: "rsvp_subtitle", label: { pt: "Botão do RSVP — subtítulo", en: "RSVP button — subtitle" }, default: { pt: "Confirme a sua presença", en: "Confirm your attendance" }, maxLength: 40 },
         ],
+      },
+      story: {
+        // Um só título (antes "A Nossa" + "História"); foto redonda.
+        fields: [
+          { key: "title", label: { pt: "Título", en: "Title" }, default: { pt: "A Nossa História", en: "Our Story" }, maxLength: 40 },
+        ],
+        photoFrame: CIRCLE_FRAME,
       },
     },
   },

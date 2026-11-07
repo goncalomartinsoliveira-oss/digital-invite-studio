@@ -48,6 +48,9 @@ const RENAISSANCE_FRAME: CoverFrame = {
   clipPath: ENVELOPE_PHOTO_CLIP,
   background: "/renaissance-blue-01/elementos/envelope-aberto.webp",
 };
+// Moldura redonda (ex.: foto de "A Nossa História" no Renaissance Blue).
+export const CIRCLE_FRAME: CoverFrame = { aspectRatio: "1 / 1", clipPath: "circle(50% at 50% 50%)" };
+
 export const COVER_FRAMES: Record<string, CoverFrame> = {
   "renaissance-blue-01": RENAISSANCE_FRAME,
   "envelope-01-jose-e-dalia": RENAISSANCE_FRAME,

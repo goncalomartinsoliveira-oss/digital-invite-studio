@@ -99,6 +99,10 @@ export default function CoverFramer({ url, frame, value, onChange, disabled, dic
               style={coverImageStyle(pos)}
             />
           </div>
+          {/* Molduras sem desenho próprio (ex.: círculo): contorno para se ver o limite. */}
+          {!frame.background && frame.clipPath?.startsWith("circle") && (
+            <div className="absolute inset-0 rounded-full ring-2 ring-[#630100]/40 pointer-events-none" />
+          )}
         </div>
 
         <div className="w-full sm:flex-1 space-y-4">
