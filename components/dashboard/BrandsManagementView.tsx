@@ -77,12 +77,14 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
   const load = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase.from("brands").select("id, name, logo_url, domain, contact_url, planner_plan").order("created_at", { ascending: true });
-    const fromDb = (data as BrandRow[]) || [];
-    // Marcas de código (ex.: Amazing Moon) não estão na tabela brands, mas são parceiros.
+    // Marcas de código (ex.: Amazing Moon, lib/brands.ts): nome, logótipo, domínio e
+    // contacto vêm do código. Só têm linha em `brands` depois de se ligar o
+    // Planeamento (é lá que vive planner_plan) — ver setPlannerPlan.
+    const dbRows = (data as BrandRow[]) || [];
     const codeRows: BrandRow[] = Object.values(BRANDS)
-      .filter(b => b.id !== "dis" && !fromDb.some(r => r.id === b.id))
-      .map(b => ({ id: b.id, name: b.name, logo_url: b.logo, domain: b.domains[0] ?? null, contact_url: b.contactUrl ?? null, planner_plan: null, code: true }));
-    const loaded = [...codeRows, ...fromDb];
+      .filter(b => b.id !== "dis")
+      .map(b => ({ id: b.id, name: b.name, logo_url: b.logo, domain: b.domains[0] ?? null, contact_url: b.contactUrl ?? null, planner_plan: dbRows.find(r => r.id === b.id)?.planner_plan ?? null, code: true }));
+    const loaded = [...codeRows, ...dbRows.filter(r => !BRANDS[r.id])];
     setRows(loaded);
     setContactDrafts(Object.fromEntries(loaded.map(r => [r.id, r.contact_url || ""])));
     const { data: pa } = await supabase.from("partner_accounts").select("brand_id, referral_enabled, partner_price_enabled");
@@ -137,8 +139,14 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
   // mensalidade. Fica na conta de parceiro, e não num papel da pessoa, porque o
   // que desbloqueia pertence à agência. Qualquer valor = ligado ("piloto").
   const setPlannerPlan = async (id: string, plan: PlannerPlan | null) => {
+    const prevRows = rows;
     setRows(prev => prev.map(r => (r.id === id ? { ...r, planner_plan: plan } : r)));
-    await supabase.from("brands").update({ planner_plan: plan }).eq("id", id);
+    let { data, error } = await supabase.from("brands").update({ planner_plan: plan }).eq("id", id).select("id");
+    // Marca de código (lib/brands.ts) sem linha em `brands`: cria-a agora.
+    if (!error && !data?.length && BRANDS[id]) {
+      ({ error } = await supabase.from("brands").insert([{ id, name: BRANDS[id].name, planner_plan: plan }]));
+    }
+    if (error) { setRows(prevRows); alert(error.message); }
   };
 
   const saveContact = async (id: string) => {
@@ -244,9 +252,10 @@ export default function BrandsManagementView({ locale }: { locale: string }) {
                   <div className="mt-5 pt-5 border-t border-gray-100">
                     <PartnerTermsCard
                       brandId={r.id}
+                      brandName={r.name}
                       locale={locale}
-                      plannerOn={r.code ? undefined : !!r.planner_plan}
-                      onPlannerChange={r.code ? undefined : on => setPlannerPlan(r.id, on ? "piloto" : null)}
+                      plannerOn={!!r.planner_plan}
+                      onPlannerChange={on => setPlannerPlan(r.id, on ? "piloto" : null)}
                     />
                     <div className="mt-6 pt-6 border-t border-gray-100">
                       <BrandMembersPanel brandId={r.id} locale={locale} />
