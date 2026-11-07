@@ -6,10 +6,12 @@ import type { PartnerAccount } from "./partnerPricing";
 // Atribuição: o link /r/CODIGO guarda o código num cookie durante 90 dias;
 // quando os noivos criam (ou abrem) o evento, ou ao pagar, o evento fica com
 // referred_by_brand_id. Um código escrito no checkout ganha ao cookie.
-// Nunca há recomendação num evento do próprio parceiro (marca do evento =
-// parceiro, ou dono do evento é membro do parceiro).
+// Um link ou código nunca liga um evento ao próprio parceiro (marca do evento =
+// parceiro, ou dono do evento é membro do parceiro): esses eventos já são dele.
 //
-// Comissão: só quando pagam os noivos; percentagem do parceiro gravada no
+// Comissão: só quando pagam os noivos, ao preço normal. Num evento do próprio
+// parceiro com "Quem paga" = os noivos, a comissão é desse parceiro; num evento
+// direto, de quem o recomendou (ver api/stripe/webhook). Percentagem do parceiro gravada no
 // pagamento, calculada sobre o valor sem IVA; "pendente" até passarem 14 dias
 // (prazo de reembolso), depois "aprovada"; o super admin marca como "paga".
 // Um reembolso cancela a comissão ainda não paga.

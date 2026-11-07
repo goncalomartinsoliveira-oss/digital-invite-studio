@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { Loader2, X, CheckCircle2, UserPlus } from "lucide-react";
+import { Loader2, X, CheckCircle2, UserPlus, Lock, Percent } from "lucide-react";
 
 // "Publicar convite" num evento de parceiro, para a equipa do parceiro:
 // antes do pagamento, escolher quem paga (invitations.paid_by).
@@ -20,12 +20,15 @@ export type PayerModalDict = {
   coupleDoneText: string;
   inviteCouple: string;
   close: string;
+  commissionNote: string;
+  staffOnly: string;
 };
 
 type Props = {
   step: "choose" | "couple-done";
   current: "partner" | "couple";
   partnerPrice?: string; // ex.: "59,00 €", quando o servidor o deu
+  commissionPct?: number | null; // só com a recomendação ligada
   busy: boolean;
   dict: PayerModalDict;
   onChoose: (payer: "partner" | "couple") => void;
@@ -33,7 +36,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function PublishPayerModal({ step, current, partnerPrice, busy, dict, onChoose, onInviteCouple, onClose }: Props) {
+export default function PublishPayerModal({ step, current, partnerPrice, commissionPct, busy, dict, onChoose, onInviteCouple, onClose }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !busy) onClose(); };
     document.addEventListener("keydown", onKey);
@@ -67,11 +70,15 @@ export default function PublishPayerModal({ step, current, partnerPrice, busy, d
                 className={`w-full text-left rounded-2xl border px-5 py-4 transition-colors disabled:opacity-60 ${current === "couple" ? "border-brand bg-brand/5" : "border-gray-200 hover:border-brand"}`}>
                 <span className="text-sm font-semibold text-ink">{dict.couple.label}</span>
                 <span className="block text-xs text-gray-500 mt-1 leading-relaxed">{dict.couple.desc}</span>
+                {commissionPct ? (
+                  <span className="mt-2 flex items-start gap-1.5 text-xs text-green-800 bg-green-50 rounded-lg px-2.5 py-1.5"><Percent size={12} className="mt-0.5 shrink-0" /> {dict.commissionNote.replace("{pct}", String(commissionPct))}</span>
+                ) : null}
                 <span className="mt-3 inline-flex text-[10px] font-bold uppercase tracking-widest text-brand">{dict.continueCouple}</span>
               </button>
             </div>
-            <div className="mt-6 text-right">
-              <button onClick={onClose} disabled={busy} className={`${btn} text-gray-400 hover:text-ink`}>{dict.cancel}</button>
+            <div className="mt-6 flex items-center justify-between gap-4">
+              <p className="text-[10px] text-gray-400 flex items-start gap-1.5 leading-relaxed"><Lock size={10} className="mt-0.5 shrink-0" /> {dict.staffOnly}</p>
+              <button onClick={onClose} disabled={busy} className={`${btn} text-gray-400 hover:text-ink shrink-0`}>{dict.cancel}</button>
             </div>
           </>
         ) : (

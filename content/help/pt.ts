@@ -586,7 +586,7 @@ export const helpPt: HelpContent = {
       ],
       tips: [
         "Uma comissão fica aprovada 14 dias depois do pagamento e é paga por transferência, uma vez por mês. Precisam de nos enviar fatura ou recibo.",
-        "Não há comissão nos vossos próprios eventos: nesses, publicam ao preço de parceiro.",
+        "Nos vossos próprios eventos: se publicam vocês, pagam o preço de parceiro e não há comissão; se escolherem **Os noivos**, eles pagam o preço normal e vocês recebem a comissão (com a recomendação ligada).",
         "Para alterar os dados de faturação (NIF, IBAN), falem connosco.",
       ],
       related: ["planning-overview"],

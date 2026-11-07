@@ -588,7 +588,7 @@ export const helpEn: HelpContent = {
       ],
       tips: [
         "A commission is approved 14 days after the payment and paid by bank transfer once a month. You need to send us an invoice or receipt.",
-        "There's no commission on your own events: for those, you publish at your partner price.",
+        "On your own events: if you publish, you pay your partner price and there is no commission; if you choose **The couple**, they pay the normal price and you get the commission (with referrals switched on).",
         "To change your billing details (VAT no., IBAN), contact us.",
       ],
       related: ["planning-overview"],

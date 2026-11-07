@@ -154,6 +154,14 @@ export default function Dashboard() {
   const [savingPayer, setSavingPayer] = useState(false);
   // "Publicar convite" num evento de parceiro, para a equipa do parceiro: escolher quem paga primeiro.
   const [payerAsk, setPayerAsk] = useState<null | "choose" | "couple-done">(null);
+  // Comissão do parceiro dono do evento (só para a equipa dele): mostrada em "Quem paga".
+  const [partnerCommissionPct, setPartnerCommissionPct] = useState<number | null>(null);
+  useEffect(() => {
+    if (!isAgencyStaff || !formData?.brand_id || formData.brand_id === "dis") { setPartnerCommissionPct(null); return; }
+    supabase.from("partner_accounts").select("referral_enabled, commission_pct").eq("brand_id", formData.brand_id).maybeSingle()
+      .then(({ data }) => setPartnerCommissionPct(data?.referral_enabled ? Number(data.commission_pct) || null : null));
+  }, [isAgencyStaff, formData?.brand_id]);
+
   useEffect(() => {
     if (!formData?.id) return;
     fetchPlanQuote(formData.id).then(setPlanQuote);
@@ -500,6 +508,7 @@ export default function Dashboard() {
       step={payerAsk}
       current={formData.paid_by === 'couple' ? 'couple' : 'partner'}
       partnerPrice={planQuote?.payer === 'partner' && planQuote.cents != null ? formatPriceCents(planQuote.cents, locale) : undefined}
+      commissionPct={partnerCommissionPct}
       busy={savingPayer || buyingModule !== null}
       dict={dict.payer}
       onChoose={choosePayer}
@@ -733,6 +742,7 @@ export default function Dashboard() {
                       >
                         <span className={`block text-sm font-semibold ${on ? 'text-brand' : 'text-ink'}`}>{dict.payer[opt].label}</span>
                         <span className="block text-xs text-gray-500 mt-1 leading-relaxed">{dict.payer[opt].desc}</span>
+                        {opt === 'couple' && partnerCommissionPct ? <span className="block text-xs text-green-800 mt-1.5 leading-relaxed">{dict.payer.commissionNote.replace("{pct}", String(partnerCommissionPct))}</span> : null}
                       </button>
                     );
                   })}
