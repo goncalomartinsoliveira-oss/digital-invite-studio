@@ -441,6 +441,9 @@ const pt = {
   },
   "SetupChecklist": {
     "howBtn": "Como fazer?",
+    "next": "Próximo:",
+    "showAll": "Ver tudo",
+    "showLess": "Fechar",
     "title": "O que falta fazer",
     "progress": "{done} de {total} passos concluídos",
     "go": "Ir",

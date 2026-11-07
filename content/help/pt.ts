@@ -104,7 +104,7 @@ export const helpPt: HelpContent = {
       ],
       steps: [
         "Ao abrirem um evento vêm a página **O que quer gerir?**, com um cartão por área: **Save the Date**, **Convite de casamento**, **Convidados e mesas**, **Photo Sharing & Live Wall**, **Guestbook** e **Links e QR codes**.",
-        "No topo, a lista **O que falta fazer** mostra os passos que ainda faltam e leva-vos a cada um.",
+        "No topo, a barra **O que falta fazer** mostra o progresso e o próximo passo, com **Ir** para lá chegar. Em **Ver tudo** abrem a lista completa; o painel lembra-se se a deixaram aberta ou fechada.",
         "Carreguem num cartão para entrar nessa área. Lá dentro, o menu à esquerda muda de separador e **Áreas** volta à página inicial. Em ecrãs pequenos o menu fica em baixo.",
         "No **Convite**, o telemóvel à direita mostra o convite como os convidados o vão ver e atualiza sozinho depois de gravar.",
         "**Minha Conta**, no fundo do menu, tem quatro blocos: **O vosso plano**, **Pagamentos**, **Equipa do evento** e **Os vossos dados**.",

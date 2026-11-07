@@ -106,7 +106,7 @@ export const helpEn: HelpContent = {
       ],
       steps: [
         "When you open an event you land on **What would you like to manage?**, with one card per area: **Save the Date**, **Wedding invitation**, **Guests & tables**, **Photo Sharing & Live Wall**, **Guestbook** and **Links & QR codes**.",
-        "At the top, the **What's left to do** list shows the steps still missing and takes you to each one.",
+        "At the top, the **What's left to do** bar shows your progress and the next step, with **Go** to get there. **See all** opens the full list; the dashboard remembers whether you left it open or closed.",
         "Click a card to enter that area. Inside, the menu on the left switches tabs and **Areas** goes back to the home page. On small screens the menu is at the bottom.",
         "In the **Invitation**, the phone on the right shows the invitation as guests will see it and refreshes by itself after saving.",
         "**My Account**, at the bottom of the menu, has four blocks: **Your plan**, **Payments**, **Event team** and **Your details**.",
