@@ -98,6 +98,7 @@ export async function runEventCleanup(sb: SupabaseClient, inv: any, plan: Cleanu
     ["guests", () => sb.from("guests").delete().eq("invitation_id", id)],
     ["event_tables", () => sb.from("event_tables").delete().eq("invitation_id", id)],
     ["guestbook", () => sb.from("guestbook").delete().eq("invitation_id", id)],
+    ["photo_uploads", () => sb.from("photo_uploads").delete().eq("invitation_id", id)],
     ["invite_access_attempts", () => sb.from("invite_access_attempts").delete().eq("invitation_id", id)],
     ["invite_access", () => sb.from("invite_access").delete().eq("invitation_id", id)],
   ];

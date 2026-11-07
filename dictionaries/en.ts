@@ -987,13 +987,16 @@ const en = {
       "uploadingPrivate": "Sent privately!",
       "permissionDenied": "Permission denied.",
       "downloadError": "Error downloading.",
+      "deleteError": "Could not delete the photo. Please try again.",
       "textSent": "Message sent!"
     },
     "uploadOverlay": {
       "title": "Loading your moment..."
     },
     "lightbox": {
-      "save": "Save"
+      "save": "Save",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this photo? You can only delete photos you sent from this phone."
     }
   },
   "ContentModule": {

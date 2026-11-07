@@ -423,6 +423,7 @@ export const helpPt: HelpContent = {
       tips: [
         "O link do **Live Wall** é diferente do da galeria. Cada um tem o seu **Copiar Link** e o seu **Abrir Direto**.",
         "Em **Gestão de Conteúdos** podem personalizar a foto de perfil das galerias.",
+        "Um convidado que envie uma foto por engano pode apagá-la: abre a foto na galeria e carrega em **Apagar**. Só funciona no mesmo telemóvel de onde a enviou e só para as fotos dele. Vocês podem apagar qualquer foto no painel.",
       ],
       related: ["manage-photos", "links-qr"],
     },
