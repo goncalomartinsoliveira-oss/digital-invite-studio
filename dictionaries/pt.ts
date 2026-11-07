@@ -260,8 +260,16 @@ const pt = {
     "publishBtn": "Publicar convite",
     "payer": {
       "title": "Quem paga a publicação deste convite?",
+      "intro": "Escolham antes de publicar. Podem mudar enquanto o convite não estiver publicado.",
       "partner": { "label": "A agência", "desc": "Publicam vocês, ao preço de parceiro, e incluem o convite no vosso serviço." },
-      "couple": { "label": "Os noivos", "desc": "Os noivos publicam no painel deles, ao preço normal." }
+      "couple": { "label": "Os noivos", "desc": "Os noivos publicam no painel deles, ao preço normal." },
+      "continuePartner": "Publicar e pagar agora →",
+      "continueCouple": "Passar a publicação aos noivos →",
+      "cancel": "Cancelar",
+      "coupleDoneTitle": "A publicação fica com os noivos",
+      "coupleDoneText": "Os noivos publicam e pagam no painel deles, ao preço normal. Se ainda não têm acesso a este evento, convidem-nos com o e-mail deles em Minha Conta › Equipa do evento (com \"Pode Editar\"). Quando entrarem, veem o botão Publicar convite.",
+      "inviteCouple": "Convidar os noivos",
+      "close": "Fechar"
     },
     "publishPlanBtn": "Ativar Plano Completo",
     "stdWatermark": "PRÉ-VISUALIZAÇÃO · DIGITAL INVITE STUDIO",

@@ -260,8 +260,16 @@ const en = {
     "publishBtn": "Publish invitation",
     "payer": {
       "title": "Who pays to publish this invitation?",
+      "intro": "Choose before publishing. You can change it while the invitation is not published.",
       "partner": { "label": "The agency", "desc": "You publish it at your partner price and include the invitation in your service." },
-      "couple": { "label": "The couple", "desc": "The couple publishes it from their dashboard, at the normal price." }
+      "couple": { "label": "The couple", "desc": "The couple publishes it from their dashboard, at the normal price." },
+      "continuePartner": "Publish and pay now →",
+      "continueCouple": "Hand publishing over to the couple →",
+      "cancel": "Cancel",
+      "coupleDoneTitle": "The couple will publish it",
+      "coupleDoneText": "The couple publishes and pays from their dashboard, at the normal price. If they don't have access to this event yet, invite them with their email under My Account › Event team (with \"Can Edit\"). Once they log in, they'll see the Publish invitation button.",
+      "inviteCouple": "Invite the couple",
+      "close": "Close"
     },
     "publishPlanBtn": "Get the Full Plan",
     "stdWatermark": "PREVIEW · DIGITAL INVITE STUDIO",
