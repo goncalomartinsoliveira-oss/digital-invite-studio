@@ -6,6 +6,7 @@ import { resolveBrandById } from "@/lib/brands";
 import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { fetchPublicEvent } from "@/lib/publicEventClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, ArrowLeft, Loader2 } from "lucide-react";
 import pt from "@/dictionaries/pt";
@@ -37,11 +38,7 @@ export default function SeatingPlanGuestView() {
   useEffect(() => {
     async function fetchData() {
       // 1. Buscar dados do Casamento
-      const { data: invite } = await supabase
-        .from("invitations")
-        .select("id, groom_name, bride_name, brand_id, expires_at, unlocked_modules")
-        .eq("slug", params.slug)
-        .single();
+      const invite = await fetchPublicEvent(String(params.slug));
 
       if (!invite) {
         setLoading(false);

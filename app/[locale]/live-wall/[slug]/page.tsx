@@ -5,6 +5,7 @@ import { useBrand } from "@/components/site/BrandProvider";
 import { resolveBrandById } from "@/lib/brands";
 import EventExpiredScreen from "@/components/site/EventExpiredScreen";
 import { supabase } from '@/lib/supabase';
+import { fetchPublicEvent } from '@/lib/publicEventClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { Loader2, Maximize, Minimize, Camera } from 'lucide-react';
@@ -53,7 +54,7 @@ export default function LiveWallPage() {
   }, []);
 
   async function fetchInitialData() {
-    const { data: inv } = await supabase.from('invitations').select('id, brand_id, expires_at, unlocked_modules').eq('slug', slug).single();
+    const inv = await fetchPublicEvent(slug as string);
     if (inv) {
       setInvitation(inv);
       await fetchItems(inv.id);
@@ -65,7 +66,7 @@ export default function LiveWallPage() {
     // Se não passarmos ID, tenta ir buscar à primeira imagem (para a atualização de 60s)
     let currentInvId = invId;
     if (!currentInvId) {
-       const { data: inv } = await supabase.from('invitations').select('id, brand_id').eq('slug', slug).single();
+       const inv = await fetchPublicEvent(slug as string);
        if (inv) currentInvId = inv.id;
     }
     if (!currentInvId) return;

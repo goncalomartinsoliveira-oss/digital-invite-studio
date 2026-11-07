@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { INVITE_PAGE_FIELDS, pickFields } from "@/lib/publicEvent";
 import LuxuryTemplate from "../../templates/luxury-01/page";
 import CollageTemplate from "../../templates/collage-01/page";
 import Minimal01Template from "../../templates/minimal-01/page";
@@ -42,7 +43,9 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
   const slugWithSpaces = decodedSlug.replace(/-/g, ' ');
 
   // 6. Procurar o convite na base de dados de forma inteligente (testa ambas as hipóteses)
-  const { data: invite, error } = await supabase
+  // Servidor com a chave de serviço (migração 0020: invitations deixou de ser
+  // pública). Os templates recebem só INVITE_PAGE_FIELDS, nunca o registo todo.
+  const { data: invite, error } = await supabaseAdmin
     .from("invitations")
     .select("*")
     .or(`slug.eq.${decodedSlug},slug.eq.${slugWithSpaces}`)
@@ -96,29 +99,31 @@ export default async function InvitePage(props: { params: Promise<{ slug: string
     }
   }
 
-  // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO (com a marca do próprio evento)
+  // 8. RENDERIZAÇÃO DO TEMPLATE CORRETO (com a marca do próprio evento).
+  // Os templates correm no browser: tudo o que recebem fica no HTML da página.
+  const publicInvite = pickFields(invite, INVITE_PAGE_FIELDS) as typeof invite;
   return (
     <main>
       <PreviewBridge />
       <InviteModeProvider unpublished={unpublished} label={unpublishedLabel}>
       <EventBrandProvider brandId={invite.brand_id}>
         {invite.template_id === 'collage-01' ? (
-          <CollageTemplate data={invite} />
+          <CollageTemplate data={publicInvite} />
         ) : invite.template_id === 'minimal-01' ? (
-          <Minimal01Template data={invite} params={params} />
+          <Minimal01Template data={publicInvite} params={params} />
         ) : invite.template_id === 'classic-01' ? (
-          <ClassicTemplate data={invite} params={params} />
+          <ClassicTemplate data={publicInvite} params={params} />
         ) : invite.template_id === 'noir-01' ? (
-          <NoirTemplate data={invite} params={params} />
+          <NoirTemplate data={publicInvite} params={params} />
         ) : invite.template_id === 'arch-01' ? (
-          <ArchTemplate data={invite} params={params} />
+          <ArchTemplate data={publicInvite} params={params} />
         ) : invite.template_id === 'envelope-01' ? (
-          <EnvelopeTemplate data={invite} params={params} />
+          <EnvelopeTemplate data={publicInvite} params={params} />
         ) : invite.template_id === 'renaissance-blue-01' || invite.template_id === 'envelope-01-jose-e-dalia' ? (
           // 'envelope-01-jose-e-dalia' é o id antigo, ainda gravado no evento da Dália e do José.
-          <RenaissanceBlueTemplate data={invite} params={params} />
+          <RenaissanceBlueTemplate data={publicInvite} params={params} />
         ) : (
-          <LuxuryTemplate data={invite} params={params} />
+          <LuxuryTemplate data={publicInvite} params={params} />
         )}
       </EventBrandProvider>
       </InviteModeProvider>
