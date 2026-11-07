@@ -158,6 +158,7 @@ export const helpEn: HelpContent = {
         "Check the result on the phone next to it.",
       ],
       tips: [
+        "In templates with a frame (for example, the **Renaissance Blue** envelope), **Photo framing** appears under the cover photo: drag the photo to choose what shows inside the frame and use **Zoom** to highlight a spot. **Centre** goes back to the start; a new photo always starts centred.",
         "In **Event Venues** you can add the **Google Maps Link** for the ceremony and the reception.",
         "**Event Details** has **Logistics & Parking**, **Accommodation**, **Dress Code & Colors** and **Gifts & IBAN**. The IBAN button only appears if you turn it on.",
         "To hide a section without deleting it, see “How do I hide a section of the invitation?”.",

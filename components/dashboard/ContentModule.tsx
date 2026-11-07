@@ -1,11 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import CoverFramer from "./CoverFramer";
+import { COVER_FRAMES } from "@/lib/coverFrame";
 
 interface ContentModuleDict {
   toggle: { visible: string; hidden: string };
   sections: {
-    hero: { title: string; subtitleLabel: string; mediaLabel: string; noFile: string; uploading: string; changeMedia: string };
+    hero: { title: string; subtitleLabel: string; mediaLabel: string; noFile: string; uploading: string; changeMedia: string; frameTitle?: string; frameHint?: string; frameZoom?: string; frameReset?: string };
     countdown: { title: string; mainTitleLabel: string };
     story: { title: string; subtitleLabel: string; mainTitleLabel: string; photoLabel: string; photoEmpty: string; photoUpload: string; textsLabel: string; paragraphPrefix: string };
     gallery: { title: string; subtitleLabel: string; mainTitleLabel: string; photosLabel: string };
@@ -103,6 +105,9 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
         const newUrls = [...(content.gallery?.images_urls || ["", "", "", "", ""])];
         newUrls[galleryIndex] = publicUrl;
         handleTextChange('gallery', 'images_urls', newUrls);
+      } else if (section === 'hero' && field === 'main_image_url') {
+        // Foto de capa nova → enquadramento volta ao centro (lib/coverFrame.ts).
+        setFormData({ ...formData, content: { ...dbContent, content: { ...content, hero: { ...content.hero, main_image_url: publicUrl, main_image_position: null } } } });
       } else { handleTextChange(section, field, publicUrl); }
     }
     setUploading(null);
@@ -151,6 +156,22 @@ export default function ContentModule({ formData, setFormData, handleSaveDesign,
                   <input type="file" className="hidden" onChange={e => handleUpload(e, 'hero', 'main_image_url')} />
                 </label>
               </div>
+              {/* Modelos com moldura (ex.: envelope do Renaissance Blue): escolher o enquadramento. */}
+              {content.hero?.main_image_url && !content.hero.main_image_url.includes('.mp4') && COVER_FRAMES[formData?.template_id] && (
+                <CoverFramer
+                  url={content.hero.main_image_url}
+                  frame={COVER_FRAMES[formData.template_id]}
+                  value={content.hero?.main_image_position}
+                  onChange={p => handleTextChange('hero', 'main_image_position', p)}
+                  disabled={!canEdit}
+                  dict={{
+                    title: s.hero.frameTitle ?? 'Enquadramento da foto',
+                    hint: s.hero.frameHint ?? '',
+                    zoom: s.hero.frameZoom ?? 'Zoom',
+                    reset: s.hero.frameReset ?? 'Centrar',
+                  }}
+                />
+              )}
             </div>
           </div>
         </AccordionItem>
