@@ -1014,7 +1014,11 @@ const en = {
         "mediaLabel": "Photo / Video (.mp4)",
         "noFile": "No File",
         "uploading": "Uploading...",
-        "changeMedia": "Change Media"
+        "changeMedia": "Change Media",
+        "frameTitle": "Photo framing",
+        "frameHint": "Drag the photo to choose what shows inside the frame and use the zoom to highlight a spot. The photo never leaves the frame’s limits.",
+        "frameZoom": "Zoom",
+        "frameReset": "Centre"
       },
       "countdown": {
         "title": "02. Countdown",

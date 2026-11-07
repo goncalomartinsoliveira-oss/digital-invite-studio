@@ -281,6 +281,12 @@ lista ficam "requested"), com o convite publicado, dentro do prazo e, se houver
 código de acesso, depois de o introduzir. "Encontre a sua mesa" usa
 `api/seating` (pelo menos 2 letras; nome e mesa). Ajudas em `lib/publicGuests.ts`.
 
+**Enquadramento da foto de capa:** nos modelos com moldura (`COVER_FRAMES`
+em `lib/coverFrame.ts`, hoje o Renaissance Blue), o editor de conteúdo mostra
+**Enquadramento da foto** (`CoverFramer`): arrastar e zoom dentro da moldura,
+gravado em `content.hero.main_image_position` e aplicado pelo template com
+`coverImageStyle`. Uma foto nova volta ao centro.
+
 **Eventos privados (migração `0020`):** a tabela `invitations` só é legível
 pela equipa de cada evento (dono, colaboradores, agência, super admin). As
 páginas públicas recebem só o que precisam: `/moments`, `/live-wall`,

@@ -115,7 +115,14 @@ forma exata do pentágono de cantos arredondados, desta vez lida do
 `clipPath` do ficheiro SVG fonte (`path id` dentro de `<clipPath id="clippath">`)
 e convertida em polígono percentual amostrando as curvas Bézier em ~60
 pontos (não um polígono de poucos pontos a aproximar a olho). Ver
-`ENVELOPE_PHOTO_CLIP` em `page.tsx`.
+`ENVELOPE_PHOTO_CLIP` em `lib/coverFrame.ts` (partilhado com o editor do
+painel, para o "Enquadramento da foto" mostrar o mesmo recorte).
+
+**Enquadramento:** os noivos podem arrastar a foto e aplicar zoom no painel
+(Conteúdo do convite › Capa › Enquadramento da foto, `CoverFramer`). Fica em
+`content.hero.main_image_position = { x, y, zoom }` e o template aplica-o com
+`coverImageStyle` (object-position + scale à volta do mesmo ponto). O recorte
+está numa camada à volta da `<img>`, para o zoom não aumentar a forma.
 
 Ao contrário do `envelope-01` original (onde a foto entra por baixo, pelo
 buraco já recortado no `.webp`), aqui a foto entra **por cima** do

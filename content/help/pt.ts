@@ -156,6 +156,7 @@ export const helpPt: HelpContent = {
         "Vejam o resultado no telemóvel ao lado.",
       ],
       tips: [
+        "Nos modelos com moldura (por exemplo, o envelope do **Renaissance Blue**), por baixo da foto de capa aparece **Enquadramento da foto**: arrastem a foto para escolher o que fica dentro da moldura e usem o **Zoom** para dar destaque a um ponto. **Centrar** volta ao início; uma foto nova começa sempre centrada.",
         "Em **Locais do Evento** podem pôr o **Link Google Maps** da cerimónia e da receção.",
         "Em **Detalhes do Evento** há **Logística & Estacionamento**, **Alojamento**, **Dress Code & Cores** e **Presentes & IBAN**. O botão do IBAN só aparece se o ativarem.",
         "Para esconder uma secção sem a apagar, ver “Como escondo uma secção do convite?”.",

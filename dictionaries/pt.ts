@@ -1014,7 +1014,11 @@ const pt = {
         "mediaLabel": "Fotografia / Vídeo (.mp4)",
         "noFile": "Sem Ficheiro",
         "uploading": "A carregar...",
-        "changeMedia": "Alterar Média"
+        "changeMedia": "Alterar Média",
+        "frameTitle": "Enquadramento da foto",
+        "frameHint": "Arrastem a foto para escolher o que aparece dentro da moldura e usem o zoom para dar destaque a um ponto. A foto nunca sai dos limites da moldura.",
+        "frameZoom": "Zoom",
+        "frameReset": "Centrar"
       },
       "countdown": {
         "title": "02. Contador Regressivo",
