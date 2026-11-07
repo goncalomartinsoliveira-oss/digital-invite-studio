@@ -87,6 +87,9 @@ const CANVAS_H = 267.75;
 // Cor dos textos da etiqueta dos nomes (nomes, frase, "Casamento") e do coração
 // ("Detalhes", "Clique aqui") — pedida pelo casal.
 const TEXT_BLUE = "#7095b0";
+// Título dos cartões "Detalhes" (coração) e "RSVP" (losango): o mesmo tamanho
+// nos dois, para caberem palavras mais compridas quando os noivos os mudam.
+const HERO_CARD_TITLE_SIZE = "clamp(17px, 6cqw, 36px)";
 
 // Versaletes da frase fixa da etiqueta dos nomes ("É com muita alegria...")
 // — tamanho, tracking e cor; a fonte (Cinzel, a pedido do casal) vem do
@@ -155,6 +158,28 @@ function ClickLabel({ children, dark = false }: { children: React.ReactNode; dar
     >
       {children}
     </span>
+  );
+}
+
+// Título e subtítulo dos cartões da capa (coração "Detalhes" e losango "RSVP"):
+// um só bloco, para o afastamento ser o mesmo nos dois cartões, mesmo com o
+// subtítulo em duas linhas. O título tem o mesmo tamanho nos dois e encolhe
+// sozinho se uma palavra comprida (texto dos noivos) não couber no cartão.
+function HeroCardText({ top, padX, maxWidthCqw, title, subtitle, color, dark = false }: {
+  top: string; padX: string; maxWidthCqw: number; title: string; subtitle: string; color: string; dark?: boolean;
+}) {
+  // Largura média de uma letra da Pinyon Script ≈ 0,47 em.
+  const fit = Math.min(6, maxWidthCqw / (Math.max(1, title.length) * 0.47));
+  const size = fit >= 6 ? HERO_CARD_TITLE_SIZE : `clamp(11px, ${fit.toFixed(2)}cqw, 36px)`;
+  return (
+    <div className="absolute left-0 right-0 flex flex-col items-center text-center" style={{ top, transform: "translateY(-50%)", paddingInline: padX }}>
+      <span style={{ fontFamily: "var(--font-pinyon)", fontSize: size, color, lineHeight: 1.35, paddingBlock: "0.1em", whiteSpace: "nowrap" }}>
+        {title}
+      </span>
+      <div style={{ marginTop: "-0.6cqw" }}>
+        <ClickLabel dark={dark}>{subtitle}</ClickLabel>
+      </div>
+    </div>
   );
 }
 
@@ -510,14 +535,9 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
               <a href="#local" style={pieceStyle(PIECES.coracaoRenda)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/coracao-renda.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute left-0 right-0 text-center" style={{ top: "35%", transform: "translateY(-50%)" }}>
-                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(17px, 6cqw, 36px)", color: TEXT_BLUE, lineHeight: 1.35, paddingBlock: "0.1em" }}>
-                      {heroText("details_title")}
-                    </span>
-                  </div>
-                  <div className="absolute left-0 right-0 text-center" style={{ top: "55%", transform: "translateY(-50%)" }}>
-                    <ClickLabel>{heroText("details_subtitle")}</ClickLabel>
-                  </div>
+                  {/* Título + subtítulo num só bloco (mesmo tamanho e mesmo
+                      afastamento do losango "RSVP"), centrado onde estava. */}
+                  <HeroCardText top="45%" padX="14%" maxWidthCqw={30} title={heroText("details_title")} subtitle={heroText("details_subtitle")} color={TEXT_BLUE} />
                 </div>
               </a>
 
@@ -531,14 +551,7 @@ export default function RenaissanceBlueTemplate({ data }: { data: any; params?: 
               <a href="#rsvp" style={pieceStyle(PIECES.etiquetaDetalhes)} className="block group">
                 <div className="relative transition-transform duration-300 group-hover:scale-[1.03]">
                   <img src={`${EL}/etiqueta-detalhes.webp`} alt="" className="w-full h-auto select-none" draggable={false} />
-                  <div className="absolute left-0 right-0 text-center" style={{ top: "46%", transform: "translateY(-50%)" }}>
-                    <span style={{ fontFamily: "var(--font-pinyon)", fontSize: "clamp(24px, 8.6cqw, 52px)", color: "#F2F0E6", lineHeight: 1.35, paddingBlock: "0.1em" }}>
-                      {heroText("rsvp_title")}
-                    </span>
-                  </div>
-                  <div className="absolute left-0 right-0 text-center px-[16%]" style={{ top: "62%", transform: "translateY(-50%)" }}>
-                    <ClickLabel dark>{heroText("rsvp_subtitle")}</ClickLabel>
-                  </div>
+                  <HeroCardText top="54%" padX="16%" maxWidthCqw={22} title={heroText("rsvp_title")} subtitle={heroText("rsvp_subtitle")} color="#F2F0E6" dark />
                 </div>
               </a>
 
