@@ -273,6 +273,17 @@ eventos e veem o botão simples "Gestão". Eventos, Parceiro e Wedding Planner f
    `unlocked_modules` o super admin (Conta › Módulos do Evento) e o desbloqueio
    sem pagamento acima.
 
+**Proteções na base de dados (migração `0016`):** o browser fala diretamente
+com o Supabase, por isso as regras de pagamento também estão em triggers, que
+valem para qualquer escrita: módulos ativos, datas de bloqueio/fim/limpeza,
+recomendação, marca e dono de um evento só mudam pelo servidor (service_role)
+ou por um super admin; "quem paga" só pela equipa do parceiro; pagamentos,
+cupões, parceiros, condições, equipas e super admins só servidor / super admin;
+colaboradores só por quem edita o evento; 5 fotos / 5 mensagens até pagar
+(trigger em `guestbook`, política restritiva em `storage.objects`) e RSVP
+público só com o convite publicado. Os triggers são SECURITY INVOKER para ver
+o papel real de quem escreve; as contagens usam funções SECURITY DEFINER.
+
 ## 9. Marcas e white-label
 
 - `lib/brands.ts` resolve a marca pelo domínio (ex.: `digital.amazingmoon.pt`)
