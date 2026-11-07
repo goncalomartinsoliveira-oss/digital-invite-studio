@@ -260,8 +260,18 @@ const en = {
     "publishBtn": "Publish invitation",
     "payer": {
       "title": "Who pays to publish this invitation?",
+      "intro": "Choose before publishing. You can change it while the invitation is not published.",
       "partner": { "label": "The agency", "desc": "You publish it at your partner price and include the invitation in your service." },
-      "couple": { "label": "The couple", "desc": "The couple publishes it from their dashboard, at the normal price." }
+      "couple": { "label": "The couple", "desc": "The couple publishes it from their dashboard, at the normal price." },
+      "continuePartner": "Publish and pay now →",
+      "continueCouple": "Hand publishing over to the couple →",
+      "cancel": "Cancel",
+      "coupleDoneTitle": "The couple will publish it",
+      "coupleDoneText": "The couple publishes and pays from their dashboard, at the normal price. If they don't have access to this event yet, invite them with their email under My Account › Event team (with \"Can Edit\"). Once they log in, they'll see the Publish invitation button.",
+      "inviteCouple": "Invite the couple",
+      "close": "Close",
+      "commissionNote": "With referrals on, you get a {pct}% commission on what the couple pays (excluding VAT).",
+      "staffOnly": "Only visible to the agency team. The couple doesn't see this choice, the partner price or the commission."
     },
     "publishPlanBtn": "Get the Full Plan",
     "stdWatermark": "PREVIEW · DIGITAL INVITE STUDIO",
@@ -1656,7 +1666,7 @@ const en = {
       "s7_title": "7. Partners and White Label",
       "s7_desc": "Some events are managed through partner agencies or wedding planners, under those partners' own branding (\"white label\"). In these cases, these Terms still apply in full between Digital Invite Studio and the end user, regardless of the branding visible in the service.",
       "s8_title": "8. Partner Programme",
-      "s8_desc": "Partners (wedding planners, agencies and other businesses in the sector) have their own terms, agreed with Digital Invite Studio and shown in their partner area. With referrals, the partner earns a commission on the amount paid by the couple, excluding VAT, for each event they referred that was published; the commission is approved 14 days after payment, paid by monthly bank transfer against the partner's invoice or receipt, and cancelled if the payment is fully refunded. With resale, the partner pays the partner price for the events they manage and freely sets the price for their clients. The same event never qualifies for both a commission and a partner price, and there is no commission on the partner's own events.",
+      "s8_desc": "Partners (wedding planners, agencies and other businesses in the sector) have their own terms, agreed with Digital Invite Studio and shown in their partner area. With referrals, the partner earns a commission on the amount paid by the couple, excluding VAT, for each event they referred that was published; the commission is approved 14 days after payment, paid by monthly bank transfer against the partner's invoice or receipt, and cancelled if the payment is fully refunded. With resale, the partner pays the partner price for the events they manage and freely sets the price for their clients. The same event never qualifies for both a commission and a partner price: on the partner's own events, there is a commission only when the couple pays to publish, at the normal price.",
       "s9_title": "9. Applicable Law",
       "s9_desc": "These terms are governed by Portuguese law. For the resolution of any dispute, the parties submit to the jurisdiction of the Lisbon district court."
     },

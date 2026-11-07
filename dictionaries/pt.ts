@@ -260,8 +260,18 @@ const pt = {
     "publishBtn": "Publicar convite",
     "payer": {
       "title": "Quem paga a publicação deste convite?",
+      "intro": "Escolham antes de publicar. Podem mudar enquanto o convite não estiver publicado.",
       "partner": { "label": "A agência", "desc": "Publicam vocês, ao preço de parceiro, e incluem o convite no vosso serviço." },
-      "couple": { "label": "Os noivos", "desc": "Os noivos publicam no painel deles, ao preço normal." }
+      "couple": { "label": "Os noivos", "desc": "Os noivos publicam no painel deles, ao preço normal." },
+      "continuePartner": "Publicar e pagar agora →",
+      "continueCouple": "Passar a publicação aos noivos →",
+      "cancel": "Cancelar",
+      "coupleDoneTitle": "A publicação fica com os noivos",
+      "coupleDoneText": "Os noivos publicam e pagam no painel deles, ao preço normal. Se ainda não têm acesso a este evento, convidem-nos com o e-mail deles em Minha Conta › Equipa do evento (com \"Pode Editar\"). Quando entrarem, veem o botão Publicar convite.",
+      "inviteCouple": "Convidar os noivos",
+      "close": "Fechar",
+      "commissionNote": "Com a recomendação ligada, recebem {pct}% de comissão sobre o valor pago pelos noivos (sem IVA).",
+      "staffOnly": "Visível apenas para a equipa da agência. Os noivos não veem esta escolha, o preço de parceiro nem a comissão."
     },
     "publishPlanBtn": "Ativar Plano Completo",
     "stdWatermark": "PRÉ-VISUALIZAÇÃO · DIGITAL INVITE STUDIO",
@@ -1656,7 +1666,7 @@ const pt = {
       "s7_title": "7. Parceiros e Marca Branca",
       "s7_desc": "Alguns eventos são geridos através de agências ou wedding planners parceiros, sob a marca desses parceiros (\"white label\"). Nestes casos, estes Termos continuam a aplicar-se integralmente entre a Digital Invite Studio e o utilizador final, independentemente da marca visível no serviço.",
       "s8_title": "8. Programa de Parceiros",
-      "s8_desc": "Os parceiros (wedding planners, agências e outras empresas do setor) têm condições próprias, acordadas com a Digital Invite Studio e visíveis na sua área de parceiro. Na recomendação, o parceiro recebe uma comissão sobre o valor pago pelos noivos, sem IVA, por cada evento que recomendou e que foi publicado; a comissão fica aprovada 14 dias após o pagamento, é paga por transferência mensal mediante fatura ou recibo do parceiro, e é cancelada se o pagamento for reembolsado na totalidade. Na revenda, o parceiro paga o preço de parceiro pelos eventos que gere e define livremente o preço para os seus clientes. Um mesmo evento nunca dá direito a comissão e a preço de parceiro, nem há comissão em eventos do próprio parceiro.",
+      "s8_desc": "Os parceiros (wedding planners, agências e outras empresas do setor) têm condições próprias, acordadas com a Digital Invite Studio e visíveis na sua área de parceiro. Na recomendação, o parceiro recebe uma comissão sobre o valor pago pelos noivos, sem IVA, por cada evento que recomendou e que foi publicado; a comissão fica aprovada 14 dias após o pagamento, é paga por transferência mensal mediante fatura ou recibo do parceiro, e é cancelada se o pagamento for reembolsado na totalidade. Na revenda, o parceiro paga o preço de parceiro pelos eventos que gere e define livremente o preço para os seus clientes. Um mesmo evento nunca dá direito a comissão e a preço de parceiro: nos eventos do próprio parceiro, há comissão apenas quando são os noivos a pagar a publicação, ao preço normal.",
       "s9_title": "9. Lei Aplicável",
       "s9_desc": "Estes termos são regidos pela lei portuguesa. Para a resolução de qualquer litígio, as partes submetem-se ao foro da comarca de Lisboa."
     },

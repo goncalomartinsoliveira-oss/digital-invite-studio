@@ -582,11 +582,11 @@ export const helpPt: HelpContent = {
         "Em **As vossas recomendações** estão o vosso link e o vosso código, com **Copiar** e o QR code. Os noivos que chegam pelo link, ou que escrevem o código quando pagam, ficam associados a vocês.",
         "A tabela mostra cada casal recomendado que já publicou: a data do casamento, o valor pago e a comissão, com o estado (**Pendente**, **Aprovada**, **Paga** ou **Cancelada**).",
         "Em **Os vossos eventos** estão os casamentos que gerem, com quem paga a publicação e quanto custou.",
-        "Num evento vosso, escolham em **Quem paga a publicação deste convite?** se publicam vocês (**A agência**, ao preço de parceiro) ou se são **Os noivos**.",
+        "Num evento vosso, escolham em **Quem paga a publicação deste convite?** se publicam vocês (**A agência**, ao preço de parceiro) ou se são **Os noivos**. A pergunta aparece também quando carregam em **Publicar convite**; se escolherem **Os noivos**, convidem-nos em **Minha Conta** › **Equipa do evento** para publicarem e pagarem no painel deles.",
       ],
       tips: [
         "Uma comissão fica aprovada 14 dias depois do pagamento e é paga por transferência, uma vez por mês. Precisam de nos enviar fatura ou recibo.",
-        "Não há comissão nos vossos próprios eventos: nesses, publicam ao preço de parceiro.",
+        "Nos vossos próprios eventos: se publicam vocês, pagam o preço de parceiro e não há comissão; se escolherem **Os noivos**, eles pagam o preço normal e vocês recebem a comissão (com a recomendação ligada).",
         "Para alterar os dados de faturação (NIF, IBAN), falem connosco.",
       ],
       related: ["planning-overview"],

@@ -95,13 +95,15 @@ async function handleCheckoutCompleted(session: any) {
 
     if (updateError) throw new Error(`update invitations falhou: ${updateError.message}`);
 
-    // Comissão de recomendação (lib/referrals.ts): só quando pagam os noivos,
-    // num evento recomendado por um parceiro com a recomendação ligada, e
-    // nunca num evento do próprio parceiro. A percentagem fica gravada aqui.
+    // Comissão (lib/referrals.ts): só quando pagam os noivos (preço normal) e
+    // o parceiro tem a recomendação ligada. Vai para o parceiro dono do evento
+    // ("Quem paga" = os noivos) ou, num evento direto, para quem o recomendou.
+    // A percentagem fica gravada aqui.
     let commission: Record<string, unknown> = {};
     const payer = session.metadata?.payer || "couple";
-    const refBrand: string | null = invite?.referred_by_brand_id || null;
-    if (payer === "couple" && refBrand && invite?.brand_id !== refBrand && (session.amount_total || 0) > 0) {
+    const eventBrand: string | null = invite?.brand_id && invite.brand_id !== "dis" ? invite.brand_id : null;
+    const refBrand: string | null = eventBrand || invite?.referred_by_brand_id || null;
+    if (payer === "couple" && refBrand && (session.amount_total || 0) > 0) {
       const { data: acc } = await supabaseAdmin.from("partner_accounts").select("referral_enabled, commission_pct").eq("brand_id", refBrand).maybeSingle();
       if (acc?.referral_enabled) {
         const pct = Number(acc.commission_pct) || 0;

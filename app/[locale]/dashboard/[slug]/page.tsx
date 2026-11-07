@@ -54,6 +54,7 @@ import { TAB_HELP, CHECKLIST_HELP } from "@/lib/help";
 import MoodboardModule from "@/components/dashboard/MoodboardModule";
 import LockedModuleNotice from "@/components/dashboard/LockedModuleNotice";
 import BundleOffers from "@/components/dashboard/BundleOffers";
+import PublishPayerModal from "@/components/dashboard/PublishPayerModal";
 import WelcomeTour from "@/components/dashboard/WelcomeTour";
 import { useBrand, EventBrandProvider } from "@/components/site/BrandProvider";
 import { resolveBrandById, type WorkingBrand } from "@/lib/brands";
@@ -151,6 +152,16 @@ export default function Dashboard() {
   // (api/checkout/quote): preço normal, de parceiro ou de volume.
   const [planQuote, setPlanQuote] = useState<ClientPlanQuote | null>(null);
   const [savingPayer, setSavingPayer] = useState(false);
+  // "Publicar convite" num evento de parceiro, para a equipa do parceiro: escolher quem paga primeiro.
+  const [payerAsk, setPayerAsk] = useState<null | "choose" | "couple-done">(null);
+  // Comissão do parceiro dono do evento (só para a equipa dele): mostrada em "Quem paga".
+  const [partnerCommissionPct, setPartnerCommissionPct] = useState<number | null>(null);
+  useEffect(() => {
+    if (!isAgencyStaff || !formData?.brand_id || formData.brand_id === "dis") { setPartnerCommissionPct(null); return; }
+    supabase.from("partner_accounts").select("referral_enabled, commission_pct").eq("brand_id", formData.brand_id).maybeSingle()
+      .then(({ data }) => setPartnerCommissionPct(data?.referral_enabled ? Number(data.commission_pct) || null : null));
+  }, [isAgencyStaff, formData?.brand_id]);
+
   useEffect(() => {
     if (!formData?.id) return;
     fetchPlanQuote(formData.id).then(setPlanQuote);
@@ -464,6 +475,7 @@ export default function Dashboard() {
     if (error) alert(error.message);
     else setFormData((f: any) => ({ ...f, paid_by: payer }));
     setSavingPayer(false);
+    return !error;
   };
   const partnerContactUrl = eventBrand?.contactUrl ?? brand.contactUrl ?? `/${locale}/contact`;
   const handleBuyModule = async (moduleId: string, couponCode?: string) => {
@@ -482,8 +494,32 @@ export default function Dashboard() {
   const handlePublish = () => {
     if (isSuperAdmin) { setGroup('account'); setActiveTab('account'); return; }
     if (isPartnerBrand) { window.open(partnerContactUrl, '_blank'); return; }
+    if (isPartnerEvent && isAgencyStaff) { setPayerAsk('choose'); return; }
     handleBuyModule('invite');
   };
+  const choosePayer = async (payer: 'partner' | 'couple') => {
+    const current = formData.paid_by === 'couple' ? 'couple' : 'partner';
+    if (payer !== current && !(await changePayer(payer))) return;
+    if (payer === 'partner') { setPayerAsk(null); handleBuyModule('invite'); }
+    else setPayerAsk('couple-done');
+  };
+  const payerModal = payerAsk && (
+    <PublishPayerModal
+      step={payerAsk}
+      current={formData.paid_by === 'couple' ? 'couple' : 'partner'}
+      partnerPrice={planQuote?.payer === 'partner' && planQuote.cents != null ? formatPriceCents(planQuote.cents, locale) : undefined}
+      commissionPct={partnerCommissionPct}
+      busy={savingPayer || buyingModule !== null}
+      dict={dict.payer}
+      onChoose={choosePayer}
+      onClose={() => setPayerAsk(null)}
+      onInviteCouple={() => {
+        setPayerAsk(null);
+        openGroup('account');
+        setTimeout(() => document.getElementById('account-team')?.scrollIntoView({ behavior: 'smooth' }), 400);
+      }}
+    />
+  );
   const publishButton = (compact: boolean) => (
     <button
       onClick={handlePublish}
@@ -652,6 +688,7 @@ export default function Dashboard() {
 
         {showTour && dict.tour && <WelcomeTour dict={dict.tour} onClose={dismissTour} />}
         {helpDrawer}
+        {payerModal}
 
         <main className="flex-1 px-6 py-14 sm:py-20">
           <div className="max-w-5xl mx-auto">
@@ -705,6 +742,7 @@ export default function Dashboard() {
                       >
                         <span className={`block text-sm font-semibold ${on ? 'text-brand' : 'text-ink'}`}>{dict.payer[opt].label}</span>
                         <span className="block text-xs text-gray-500 mt-1 leading-relaxed">{dict.payer[opt].desc}</span>
+                        {opt === 'couple' && partnerCommissionPct ? <span className="block text-xs text-green-800 mt-1.5 leading-relaxed">{dict.payer.commissionNote.replace("{pct}", String(partnerCommissionPct))}</span> : null}
                       </button>
                     );
                   })}
@@ -749,6 +787,7 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-cream text-[#2D3748] overflow-hidden font-sans">
       {helpDrawer}
+      {payerModal}
       
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r border-gray-100 hidden xl:flex flex-col z-30 shadow-sm shrink-0">

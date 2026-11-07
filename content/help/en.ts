@@ -584,11 +584,11 @@ export const helpEn: HelpContent = {
         "Under **Your referrals** you'll find your link and your code, with **Copy** and the QR code. Couples who arrive through your link, or type your code when they pay, are linked to you.",
         "The table shows each referred couple who has published: the wedding date, the amount paid and the commission, with its status (**Pending**, **Approved**, **Paid** or **Cancelled**).",
         "Under **Your events** are the weddings you manage, with who pays to publish and how much it cost.",
-        "In one of your events, choose under **Who pays to publish this invitation?** whether you publish it (**The agency**, at your partner price) or **The couple** does.",
+        "In one of your events, choose under **Who pays to publish this invitation?** whether you publish it (**The agency**, at your partner price) or **The couple** does. The question also appears when you click **Publish invitation**; if you choose **The couple**, invite them under **My Account** › **Event team** so they can publish and pay from their dashboard.",
       ],
       tips: [
         "A commission is approved 14 days after the payment and paid by bank transfer once a month. You need to send us an invoice or receipt.",
-        "There's no commission on your own events: for those, you publish at your partner price.",
+        "On your own events: if you publish, you pay your partner price and there is no commission; if you choose **The couple**, they pay the normal price and you get the commission (with referrals switched on).",
         "To change your billing details (VAT no., IBAN), contact us.",
       ],
       related: ["planning-overview"],
